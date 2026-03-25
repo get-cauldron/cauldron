@@ -15,12 +15,13 @@
     "db:seed": "tsx src/db/seed.ts"
   },
   "dependencies": {
+    "dotenv": "^16.4.0",
     "drizzle-orm": "^0.45.1",
     "postgres": "^3.4.8",
-    "zod": "^4.3.6",
-    "dotenv": "^16.4.0"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@types/node": "^25.5.0",
     "drizzle-kit": "^0.31.10",
     "typescript": "^6.0.2"
   }
