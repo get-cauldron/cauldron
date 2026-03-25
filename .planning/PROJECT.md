@@ -132,6 +132,7 @@ A CLI bulk file renaming tool that accepts natural language requests. Deliberate
 | CLI renaming tool as v1 test case | Trivially simple app to prove pipeline end-to-end, complex enough to potentially trigger evolution | -- Pending |
 | Opinionated model defaults with per-project overrides | Reduces decision fatigue for common cases, preserves flexibility for advanced users | -- Pending |
 | HZD Cauldron visual identity | Distinctive, memorable, differentiated from generic SaaS aesthetics | -- Pending |
+| Dogfood ASAP | As soon as any Cauldron subsystem works, use it to build subsequent phases. Roadmap must flag the earliest dogfooding inflection point. Temporary skills may bridge gaps. | -- Pending |
 
 ## Evolution
 
