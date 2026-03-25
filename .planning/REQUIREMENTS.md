@@ -171,13 +171,95 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (Populated during roadmap creation) | | |
+| INFR-01 | Phase 1 | Pending |
+| INFR-02 | Phase 1 | Pending |
+| INFR-03 | Phase 1 | Pending |
+| INFR-04 | Phase 1 | Pending |
+| INFR-05 | Phase 1 | Pending |
+| INFR-06 | Phase 1 | Pending |
+| LLM-01 | Phase 2 | Pending |
+| LLM-02 | Phase 2 | Pending |
+| LLM-03 | Phase 2 | Pending |
+| LLM-04 | Phase 2 | Pending |
+| LLM-05 | Phase 2 | Pending |
+| LLM-06 | Phase 2 | Pending |
+| INTV-01 | Phase 3 | Pending |
+| INTV-02 | Phase 3 | Pending |
+| INTV-03 | Phase 3 | Pending |
+| INTV-04 | Phase 3 | Pending |
+| INTV-05 | Phase 3 | Pending |
+| INTV-06 | Phase 3 | Pending |
+| INTV-07 | Phase 3 | Pending |
+| SEED-01 | Phase 3 | Pending |
+| SEED-02 | Phase 3 | Pending |
+| SEED-03 | Phase 3 | Pending |
+| SEED-04 | Phase 3 | Pending |
+| HOLD-01 | Phase 4 | Pending |
+| HOLD-02 | Phase 4 | Pending |
+| HOLD-03 | Phase 4 | Pending |
+| HOLD-04 | Phase 4 | Pending |
+| HOLD-05 | Phase 4 | Pending |
+| HOLD-06 | Phase 4 | Pending |
+| HOLD-07 | Phase 4 | Pending |
+| HOLD-08 | Phase 4 | Pending |
+| DAG-01 | Phase 5 | Pending |
+| DAG-02 | Phase 5 | Pending |
+| DAG-03 | Phase 5 | Pending |
+| DAG-04 | Phase 5 | Pending |
+| DAG-05 | Phase 5 | Pending |
+| DAG-06 | Phase 5 | Pending |
+| DAG-07 | Phase 5 | Pending |
+| DAG-08 | Phase 5 | Pending |
+| DAG-09 | Phase 5 | Pending |
+| EXEC-01 | Phase 6 | Pending |
+| EXEC-02 | Phase 6 | Pending |
+| EXEC-03 | Phase 6 | Pending |
+| EXEC-04 | Phase 6 | Pending |
+| EXEC-05 | Phase 6 | Pending |
+| EXEC-06 | Phase 6 | Pending |
+| EXEC-07 | Phase 6 | Pending |
+| EXEC-08 | Phase 6 | Pending |
+| EXEC-09 | Phase 6 | Pending |
+| TEST-01 | Phase 6 | Pending |
+| TEST-02 | Phase 6 | Pending |
+| TEST-03 | Phase 6 | Pending |
+| TEST-04 | Phase 6 | Pending |
+| TEST-05 | Phase 6 | Pending |
+| TEST-06 | Phase 6 | Pending |
+| CODE-01 | Phase 6 | Pending |
+| CODE-02 | Phase 6 | Pending |
+| CODE-03 | Phase 6 | Pending |
+| CODE-04 | Phase 6 | Pending |
+| EVOL-01 | Phase 7 | Pending |
+| EVOL-02 | Phase 7 | Pending |
+| EVOL-03 | Phase 7 | Pending |
+| EVOL-04 | Phase 7 | Pending |
+| EVOL-05 | Phase 7 | Pending |
+| EVOL-06 | Phase 7 | Pending |
+| EVOL-07 | Phase 7 | Pending |
+| EVOL-08 | Phase 7 | Pending |
+| EVOL-09 | Phase 7 | Pending |
+| EVOL-10 | Phase 7 | Pending |
+| EVOL-11 | Phase 7 | Pending |
+| EVOL-12 | Phase 7 | Pending |
+| WEB-01 | Phase 8 | Pending |
+| WEB-02 | Phase 8 | Pending |
+| WEB-03 | Phase 8 | Pending |
+| WEB-04 | Phase 8 | Pending |
+| WEB-05 | Phase 8 | Pending |
+| WEB-06 | Phase 8 | Pending |
+| WEB-07 | Phase 8 | Pending |
+| WEB-08 | Phase 8 | Pending |
+| WEB-09 | Phase 8 | Pending |
+| CLI-01 | Phase 9 | Pending |
+| CLI-02 | Phase 9 | Pending |
+| CLI-03 | Phase 9 | Pending |
 
 **Coverage:**
-- v1 requirements: 72 total
-- Mapped to phases: 0
-- Unmapped: 72
+- v1 requirements: 83 total (note: original count of 72 was incorrect; actual count verified at 83)
+- Mapped to phases: 83
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-25*
-*Last updated: 2026-03-25 after initial definition*
+*Last updated: 2026-03-25 after roadmap creation — full traceability populated*
