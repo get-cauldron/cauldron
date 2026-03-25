@@ -54,7 +54,11 @@ Plans:
   3. Per-project model overrides override defaults and are persisted across restarts
   4. Token usage is recorded per bead, per evolution cycle, and per project and is queryable from the database
   5. Cross-model diversity is enforced: a holdout-stage call with the same provider as the implementer stage is rejected at the gateway level
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 02-01-PLAN.md — Schema, types, config, provider factory, and dependencies
+- [ ] 02-02-PLAN.md — LLMGateway class with failover, circuit breaker, and diversity enforcement
+- [ ] 02-03-PLAN.md — Budget enforcement, startup validation, and comprehensive test suite
 
 ### Phase 3: Interview & Seed Pipeline
 **Goal**: A user can describe what they want through a Socratic interview, receive a deterministic clarity score, and crystallize an immutable seed spec that becomes the sole source of truth for all subsequent execution.
@@ -162,7 +166,7 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Persistence Foundation | 3/3 | Complete   | 2026-03-25 |
-| 2. LLM Gateway | 0/TBD | Not started | - |
+| 2. LLM Gateway | 0/3 | Not started | - |
 | 3. Interview & Seed Pipeline | 0/TBD | Not started | - |
 | 4. Holdout Vault | 0/TBD | Not started | - |
 | 5. DAG Decomposition & Scheduler | 0/TBD | Not started | - |
