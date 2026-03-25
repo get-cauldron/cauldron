@@ -1,0 +1,153 @@
+# Cauldron
+
+## What This Is
+
+Cauldron is an AI-powered software development platform that orchestrates multiple LLM agents through a structured pipeline — from Socratic requirements gathering to parallel code implementation to evolutionary refinement — producing tested, validated software. Think Vercel's v0 on steroids: not just UI generation, but full-stack application development with multi-model orchestration, cross-model holdout testing, and autonomous evolutionary loops. Eventually open-sourced for other developers and small teams.
+
+## Core Value
+
+The full pipeline works end-to-end: a user describes what they want, and Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves the software until it meets the goal — with humans steering at key decision points, not babysitting every step.
+
+## Requirements
+
+### Validated
+
+(None yet — ship to validate)
+
+### Active
+
+#### Interview & Specification
+- [ ] Socratic interview with multi-perspective question generation (researcher, simplifier, architect, breadth-keeper, seed-closer)
+- [ ] Deterministic ambiguity scoring matrix (goal clarity 40%, constraint clarity 30%, success criteria clarity 30% for greenfield; 4 dimensions for brownfield)
+- [ ] Interview continues until ambiguity score <= 0.2 (weighted clarity >= 80%)
+- [ ] Multiple-choice answer suggestions with always-available freeform option
+- [ ] Structured summary and human approval round before seed crystallization
+- [ ] Immutable Seed spec in YAML format (goal, constraints, acceptance criteria, ontology schema, evaluation principles, exit conditions)
+
+#### Holdout Testing
+- [ ] Cross-model holdout test generation (different LLM family than interviewer)
+- [ ] Human review and approval of holdout tests before encryption
+- [ ] Holdout tests encrypted at rest, inaccessible to implementation agents
+- [ ] Holdout unsealing after evolutionary convergence for final validation
+
+#### Task Decomposition & Coordination
+- [ ] Seed decomposition into molecules (non-atomic parent tasks) and beads (atomic leaf tasks)
+- [ ] DAG-based dependency coordination with parallel-by-default execution
+- [ ] Four dependency types: blocks, parent-child, conditional-blocks, waits-for
+- [ ] Each bead sized to fit in one fresh context window of a commercial model (Opus 1M excluded)
+- [ ] Synchronization gates (waits-for) for fan-out/fan-in patterns
+
+#### Parallel Execution
+- [ ] Multiple agents executing independent beads concurrently
+- [ ] Fresh context window per bead (context rot prevention)
+- [ ] Agents claim beads atomically to prevent race conditions
+- [ ] Real-time progress tracking and visualization of active agents
+
+#### Evolutionary Loop
+- [ ] Post-execution evaluation: did we meet the goal, not just the spec?
+- [ ] Seed evolution produces new immutable seed (seeds never mutate)
+- [ ] Convergence detection: ontology stability, stagnation, oscillation, repetitive feedback, hard cap
+- [ ] Lateral thinking personas activate on stagnation (contrarian, hacker, simplifier, researcher, architect)
+- [ ] Escalation mechanism when convergence looks unlikely (human intervention)
+- [ ] At least one evolutionary cycle must be demonstrable in v1
+
+#### Testing Cube
+- [ ] Unit tests, integration tests, and E2E tests are all first-class with equal depth of coverage
+- [ ] AI agents generate thorough tests at all three levels for every feature
+- [ ] Encrypted holdout tests provide an additional adversarial verification layer
+
+#### Code Intelligence
+- [ ] Brownfield codebase mapping via knowledge graph (codebase-memory-mcp or equivalent)
+- [ ] Sub-millisecond code queries for agent context loading
+- [ ] Incremental re-indexing as agents modify code
+
+#### Web Dashboard
+- [ ] Chat-like interface for the Socratic interview
+- [ ] DAG visualization showing bead execution progress (active, completed, blocked)
+- [ ] Real-time streaming logs and diffs from executing agents
+- [ ] Project workspace management
+- [ ] Visual identity: Horizon Zero Dawn Cauldron aesthetic (dark metallic, glowing teal/blue energy conduits, hexagonal geometries, industrial-organic)
+
+#### Multi-Model Orchestration
+- [ ] Vercel AI SDK for standardized multi-provider interface
+- [ ] Opinionated default model assignments per pipeline stage
+- [ ] Per-project model configuration overrides
+- [ ] Cross-model diversity enforced for holdout generation (different provider than implementer)
+
+#### CLI
+- [ ] CLI interface for all pipeline operations (alternative to web dashboard)
+- [ ] Git-push triggered pipeline runs
+
+### Out of Scope
+
+- Deployment to cloud infrastructure — v2 concern, after the development pipeline is proven
+- Mobile app store packaging — v2+, requires deployment infrastructure
+- Multi-tenant SaaS hosting — eventual OSS concern, not v1
+- Real-time collaboration (multiple users on same project simultaneously) — v2+
+- Billing/payments — not needed until SaaS or hosted offering
+
+## Context
+
+### Inspirations and Their Contributions
+
+| Project | What Cauldron Takes | What Cauldron Improves |
+|---------|--------------------|-----------------------|
+| **Ouroboros** (Q00) | Socratic interview, ambiguity scoring, seed spec, nine minds, evolutionary loop, brownfield mapping | Adds cross-model holdouts, web UI, multi-provider routing |
+| **Beads** (Yegge) | DAG coordination, molecules/beads hierarchy, parallel-by-default, atomic claim | Integrates with Ouroboros decomposition, web visualization |
+| **GSD** | Context window decomposition (every task fits in fresh window) | Avoids GSD's waterfall rigidity and verbose file explosion |
+| **codebase-memory-mcp** (DeusData) | Fast code indexing, knowledge graph, sub-ms queries | Integrated as agent context layer, not standalone tool |
+| **BMAD** | Progressive context building, implementation readiness gate, agent-as-code pattern | Strips enterprise ceremony, keeps core insights |
+
+### Key Architectural Concepts
+
+- **Seeds are immutable**: Once crystallized, a seed never changes. Evolution creates new seeds. This provides clean lineage tracking.
+- **Parallel by default**: Beads execute concurrently unless explicit dependency edges exist. Sequencing is opt-in.
+- **Fresh context per bead**: Each atomic task gets a clean context window. No context rot regardless of project size.
+- **Cross-model adversarial testing**: Holdout tests generated by a different LLM family than the implementer, preventing correlated blind spots.
+- **Autonomous with escalation**: The evolutionary loop runs autonomously but escalates to human when convergence looks unlikely.
+- **Testing cube**: Unit, integration, and E2E testing all receive equal depth of coverage. AI has no excuse for thin E2E layers.
+
+### v1 Test Case
+
+A CLI bulk file renaming tool that accepts natural language requests. Deliberately trivial — the goal is proving the pipeline, not the product. Must be complex enough to trigger at least one evolutionary cycle.
+
+## Constraints
+
+- **Tech stack**: TypeScript end-to-end
+- **AI SDK**: Vercel AI SDK for multi-provider model interface
+- **Context window**: Each bead must fit in a commercial model's context window (Opus 1M excluded) — target ~200k tokens with room for implementation
+- **OSS dependencies**: Encouraged, but must not create coordination overhead or architectural contortion. If a library does 80% cleanly, use it. If 100% but forces contortion, don't.
+- **Encryption**: Holdout tests must be encrypted at rest with keys inaccessible to implementation agents
+
+## Key Decisions
+
+| Decision | Rationale | Outcome |
+|----------|-----------|---------|
+| TypeScript end-to-end | Single language across platform, large ecosystem, AI SDK compatibility | -- Pending |
+| Cross-model holdout testing | Prevents LLMs from gaming tests they can see; different model families have different blind spots | -- Pending |
+| Seeds are immutable | Clean lineage tracking, prevents spec mutation during execution, enables rollback | -- Pending |
+| Testing cube over testing pyramid | AI agents have infinite patience; E2E coverage should match unit test depth | -- Pending |
+| Deployment is v2 | Prove the development pipeline first; deployment adds cloud provider complexity | -- Pending |
+| CLI renaming tool as v1 test case | Trivially simple app to prove pipeline end-to-end, complex enough to potentially trigger evolution | -- Pending |
+| Opinionated model defaults with per-project overrides | Reduces decision fatigue for common cases, preserves flexibility for advanced users | -- Pending |
+| HZD Cauldron visual identity | Distinctive, memorable, differentiated from generic SaaS aesthetics | -- Pending |
+
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `/gsd:transition`):
+1. Requirements invalidated? -> Move to Out of Scope with reason
+2. Requirements validated? -> Move to Validated with phase reference
+3. New requirements emerged? -> Add to Active
+4. Decisions to log? -> Add to Key Decisions
+5. "What This Is" still accurate? -> Update if drifted
+
+**After each milestone** (via `/gsd:complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+
+---
+*Last updated: 2026-03-25 after initialization*
