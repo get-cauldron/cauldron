@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 01-persistence-foundation 01-01-PLAN.md
-last_updated: "2026-03-25T22:11:50.645Z"
+stopped_at: Completed 01-persistence-foundation 01-02-PLAN.md
+last_updated: "2026-03-25T22:17:01.549Z"
 progress:
   total_phases: 9
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 01 (persistence-foundation) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -47,6 +47,7 @@ Plan: 2 of 3
 
 *Updated after each plan completion*
 | Phase 01-persistence-foundation P01 | 3min | 2 tasks | 20 files |
+| Phase 01-persistence-foundation P02 | 3min | 2 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -61,6 +62,8 @@ Recent decisions affecting current work:
 - [Phase 01-persistence-foundation]: turbo.json uses tasks key (not pipeline) — Turborepo 2.x API, pipeline is deprecated
 - [Phase 01-persistence-foundation]: Two Postgres instances in Docker Compose: dev on 5432, test on 5433 with cauldron_test DB to prevent test data pollution
 - [Phase 01-persistence-foundation]: packages/web is a build stub — Next.js scaffold deferred to UI phase
+- [Phase 01-persistence-foundation]: Node16 moduleResolution requires explicit .js extensions on all relative TypeScript imports
+- [Phase 01-persistence-foundation]: events table and seeds table have no updatedAt — append-only/immutability invariants enforced at schema level
 
 ### Pending Todos
 
@@ -75,6 +78,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T22:11:50.642Z
-Stopped at: Completed 01-persistence-foundation 01-01-PLAN.md
+Last session: 2026-03-25T22:17:01.547Z
+Stopped at: Completed 01-persistence-foundation 01-02-PLAN.md
 Resume file: None

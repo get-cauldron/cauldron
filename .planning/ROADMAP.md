@@ -41,7 +41,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 Plans:
 - [x] 01-01-PLAN.md — Monorepo scaffold (Turborepo + pnpm) and Docker Compose dev environment
-- [ ] 01-02-PLAN.md — Drizzle schema (all 7 tables) and migration infrastructure
+- [x] 01-02-PLAN.md — Drizzle schema (all 7 tables) and migration infrastructure
 - [ ] 01-03-PLAN.md — Event sourcing module, schema invariant tests, and dev seed data
 
 ### Phase 2: LLM Gateway
@@ -161,7 +161,7 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Persistence Foundation | 0/3 | Planning complete | - |
+| 1. Persistence Foundation | 2/3 | In Progress|  |
 | 2. LLM Gateway | 0/TBD | Not started | - |
 | 3. Interview & Seed Pipeline | 0/TBD | Not started | - |
 | 4. Holdout Vault | 0/TBD | Not started | - |

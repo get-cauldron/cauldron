@@ -10,10 +10,10 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Persistence & Infrastructure
 
 - [x] **INFR-01**: Monorepo scaffolded with Turborepo + pnpm workspaces (packages: web, api, engine, shared)
-- [ ] **INFR-02**: PostgreSQL schema supports seeds, beads, DAG edges, agent sessions, and evolution lineage
+- [x] **INFR-02**: PostgreSQL schema supports seeds, beads, DAG edges, agent sessions, and evolution lineage
 - [x] **INFR-03**: Redis configured for job queue (Inngest/BullMQ) and pub/sub event streaming
 - [ ] **INFR-04**: Event sourcing model: all state changes are appended as immutable events; state derived by replay
-- [ ] **INFR-05**: Database migrations managed via Drizzle Kit with version-controlled schema
+- [x] **INFR-05**: Database migrations managed via Drizzle Kit with version-controlled schema
 - [x] **INFR-06**: Docker Compose configuration for local development (PostgreSQL + Redis + Inngest dev server)
 
 ### LLM Gateway & Model Routing
@@ -172,10 +172,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | INFR-01 | Phase 1 | Complete |
-| INFR-02 | Phase 1 | Pending |
+| INFR-02 | Phase 1 | Complete |
 | INFR-03 | Phase 1 | Complete |
 | INFR-04 | Phase 1 | Pending |
-| INFR-05 | Phase 1 | Pending |
+| INFR-05 | Phase 1 | Complete |
 | INFR-06 | Phase 1 | Complete |
 | LLM-01 | Phase 2 | Pending |
 | LLM-02 | Phase 2 | Pending |
