@@ -16,7 +16,7 @@ The v1 test case — a CLI bulk file renaming tool — drives at least one evolu
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Persistence Foundation** - PostgreSQL event store, Redis, Drizzle schema, Docker Compose dev environment
+- [x] **Phase 1: Persistence Foundation** - PostgreSQL event store, Redis, Drizzle schema, Docker Compose dev environment (completed 2026-03-25)
 - [ ] **Phase 2: LLM Gateway** - Vercel AI SDK multi-provider routing, per-stage model assignments, provider failover, token tracking
 - [ ] **Phase 3: Interview & Seed Pipeline** - Socratic interview FSM, ambiguity scoring, seed crystallization, human approval gates
 - [ ] **Phase 4: Holdout Vault** - Cross-model holdout generation, AES-256-GCM encryption, key isolation, unsealing protocol
@@ -42,7 +42,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 - [x] 01-01-PLAN.md — Monorepo scaffold (Turborepo + pnpm) and Docker Compose dev environment
 - [x] 01-02-PLAN.md — Drizzle schema (all 7 tables) and migration infrastructure
-- [ ] 01-03-PLAN.md — Event sourcing module, schema invariant tests, and dev seed data
+- [x] 01-03-PLAN.md — Event sourcing module, schema invariant tests, and dev seed data
 
 ### Phase 2: LLM Gateway
 **Goal**: Every pipeline stage can call any supported LLM provider through a single typed interface, with automatic failover and full token cost visibility.
@@ -161,7 +161,7 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Persistence Foundation | 2/3 | In Progress|  |
+| 1. Persistence Foundation | 3/3 | Complete   | 2026-03-25 |
 | 2. LLM Gateway | 0/TBD | Not started | - |
 | 3. Interview & Seed Pipeline | 0/TBD | Not started | - |
 | 4. Holdout Vault | 0/TBD | Not started | - |

@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 01-persistence-foundation 01-02-PLAN.md
-last_updated: "2026-03-25T22:17:01.549Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 01-persistence-foundation 01-03-PLAN.md
+last_updated: "2026-03-25T22:28:49.266Z"
 progress:
   total_phases: 9
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
+  completed_plans: 3
 ---
 
 # Project State
@@ -48,6 +48,7 @@ Plan: 3 of 3
 *Updated after each plan completion*
 | Phase 01-persistence-foundation P01 | 3min | 2 tasks | 20 files |
 | Phase 01-persistence-foundation P02 | 3min | 2 tasks | 14 files |
+| Phase 01-persistence-foundation P03 | 9min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -64,6 +65,8 @@ Recent decisions affecting current work:
 - [Phase 01-persistence-foundation]: packages/web is a build stub — Next.js scaffold deferred to UI phase
 - [Phase 01-persistence-foundation]: Node16 moduleResolution requires explicit .js extensions on all relative TypeScript imports
 - [Phase 01-persistence-foundation]: events table and seeds table have no updatedAt — append-only/immutability invariants enforced at schema level
+- [Phase 01-persistence-foundation]: project_snapshots.projectId needs unique constraint for onConflictDoUpdate — added .unique() and migration 0001
+- [Phase 01-persistence-foundation]: Vitest 4 maxWorkers:1 required for integration tests sharing single PostgreSQL — poolOptions.forks.singleFork is Vitest 3 API, silently ignored in v4
 
 ### Pending Todos
 
@@ -78,6 +81,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T22:17:01.547Z
-Stopped at: Completed 01-persistence-foundation 01-02-PLAN.md
+Last session: 2026-03-25T22:28:49.264Z
+Stopped at: Completed 01-persistence-foundation 01-03-PLAN.md
 Resume file: None
