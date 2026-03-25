@@ -12,7 +12,12 @@ The full pipeline works end-to-end: a user describes what they want, and Cauldro
 
 ### Validated
 
-(None yet — ship to validate)
+- Monorepo scaffold (Turborepo + pnpm, 4 packages) — Phase 1
+- PostgreSQL schema (7 tables: projects, seeds, beads, bead_edges, events, holdout_vault, snapshots) — Phase 1
+- Docker Compose dev environment (PG, Redis, Inngest) — Phase 1
+- Event sourcing with append/replay/snapshot — Phase 1
+- Drizzle migrations infrastructure — Phase 1
+- 13 integration tests against real PostgreSQL (no mocks) — Phase 1
 
 ### Active
 
@@ -152,4 +157,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-25 after initialization*
+*Last updated: 2026-03-25 after Phase 1 completion*
