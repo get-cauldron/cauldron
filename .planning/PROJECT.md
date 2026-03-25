@@ -80,6 +80,7 @@ The full pipeline works end-to-end: a user describes what they want, and Cauldro
 
 ### Out of Scope
 
+- Digital twins (locally-running mock servers for third-party integrations like Clerk, Stripe, AWS) — v2, first complex project Cauldron will build for itself (dogfooding)
 - Deployment to cloud infrastructure — v2 concern, after the development pipeline is proven
 - Mobile app store packaging — v2+, requires deployment infrastructure
 - Multi-tenant SaaS hosting — eventual OSS concern, not v1
