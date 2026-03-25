@@ -40,7 +40,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   5. Vitest integration tests pass against a real Docker PostgreSQL instance (no mocks)
 **Plans**: 3 plans
 Plans:
-- [ ] 01-01-PLAN.md — Monorepo scaffold (Turborepo + pnpm) and Docker Compose dev environment
+- [x] 01-01-PLAN.md — Monorepo scaffold (Turborepo + pnpm) and Docker Compose dev environment
 - [ ] 01-02-PLAN.md — Drizzle schema (all 7 tables) and migration infrastructure
 - [ ] 01-03-PLAN.md — Event sourcing module, schema invariant tests, and dev seed data
 

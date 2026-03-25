@@ -2,16 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-stopped_at: Phase 1 context gathered
-last_updated: "2026-03-25T21:42:02.506Z"
-last_activity: 2026-03-25 — Roadmap created, 9 phases, 83 requirements mapped, STATE.md initialized
+status: Ready to execute
+stopped_at: Completed 01-persistence-foundation 01-01-PLAN.md
+last_updated: "2026-03-25T22:11:50.645Z"
 progress:
   total_phases: 9
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_plans: 3
+  completed_plans: 1
 ---
 
 # Project State
@@ -21,16 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** User describes what they want; Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves until goal is met — humans steer at key decision points, not babysitting every step.
-**Current focus:** Phase 1 — Persistence Foundation
+**Current focus:** Phase 01 — persistence-foundation
 
 ## Current Position
 
-Phase: 1 of 9 (Persistence Foundation)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-25 — Roadmap created, 9 phases, 83 requirements mapped, STATE.md initialized
-
-Progress: [░░░░░░░░░░] 0%
+Phase: 01 (persistence-foundation) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -52,6 +46,7 @@ Progress: [░░░░░░░░░░] 0%
 - Trend: N/A
 
 *Updated after each plan completion*
+| Phase 01-persistence-foundation P01 | 3min | 2 tasks | 20 files |
 
 ## Accumulated Context
 
@@ -63,6 +58,9 @@ Recent decisions affecting current work:
 - Roadmap: **Inngest 4 over raw BullMQ** — Inngest wraps BullMQ, adds durable execution + step.waitForEvent() fan-in. BullMQ FlowProducer accessible via Inngest internals. Final.
 - Roadmap: **Dogfood inflection point = after Phase 6** — Phase 6 completes end-to-end execution path. Phases 7-9 can be partially built using Cauldron itself.
 - Roadmap: **Phase 4 and Phase 5 can proceed in parallel after Phase 3** — Holdout Vault (Phase 4) and DAG Scheduler (Phase 5) both depend only on Phase 3; no dependency between them.
+- [Phase 01-persistence-foundation]: turbo.json uses tasks key (not pipeline) — Turborepo 2.x API, pipeline is deprecated
+- [Phase 01-persistence-foundation]: Two Postgres instances in Docker Compose: dev on 5432, test on 5433 with cauldron_test DB to prevent test data pollution
+- [Phase 01-persistence-foundation]: packages/web is a build stub — Next.js scaffold deferred to UI phase
 
 ### Pending Todos
 
@@ -77,6 +75,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T21:42:02.503Z
-Stopped at: Phase 1 context gathered
-Resume file: .planning/phases/01-persistence-foundation/01-CONTEXT.md
+Last session: 2026-03-25T22:11:50.642Z
+Stopped at: Completed 01-persistence-foundation 01-01-PLAN.md
+Resume file: None
