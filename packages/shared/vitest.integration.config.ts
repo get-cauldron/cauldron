@@ -5,6 +5,7 @@ export default defineConfig({
     include: ['src/**/*.integration.test.ts'],
     testTimeout: 30000,
     hookTimeout: 30000,
-    pool: 'forks',  // forks for DB isolation
+    pool: 'forks',
+    maxWorkers: 1,  // run one test file at a time to prevent DB state conflicts between test files
   },
 });
