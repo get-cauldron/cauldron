@@ -38,7 +38,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Drizzle migrations run to completion and produce the full schema (Project, Seed, Bead, BeadEdge, Event, HoldoutVault, EvolutionLineage tables)
   4. A test script can append events to the event log and replay them to derive current state without touching the original rows
   5. Vitest integration tests pass against a real Docker PostgreSQL instance (no mocks)
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 01-01-PLAN.md — Monorepo scaffold (Turborepo + pnpm) and Docker Compose dev environment
+- [ ] 01-02-PLAN.md — Drizzle schema (all 7 tables) and migration infrastructure
+- [ ] 01-03-PLAN.md — Event sourcing module, schema invariant tests, and dev seed data
 
 ### Phase 2: LLM Gateway
 **Goal**: Every pipeline stage can call any supported LLM provider through a single typed interface, with automatic failover and full token cost visibility.
@@ -157,7 +161,7 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Persistence Foundation | 0/TBD | Not started | - |
+| 1. Persistence Foundation | 0/3 | Planning complete | - |
 | 2. LLM Gateway | 0/TBD | Not started | - |
 | 3. Interview & Seed Pipeline | 0/TBD | Not started | - |
 | 4. Holdout Vault | 0/TBD | Not started | - |
