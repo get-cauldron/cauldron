@@ -1,0 +1,14 @@
+{
+  "name": "@cauldron/web",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "echo 'web build placeholder'",
+    "typecheck": "tsc --noEmit",
+    "dev": "echo 'web dev placeholder'"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.2"
+  }
+}
