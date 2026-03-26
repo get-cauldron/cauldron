@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 06.1-03-PLAN.md
-last_updated: "2026-03-26T18:22:00.799Z"
+stopped_at: Completed 06.1-04-PLAN.md
+last_updated: "2026-03-26T18:37:49.194Z"
 progress:
   total_phases: 10
   completed_phases: 6
   total_plans: 25
-  completed_plans: 23
+  completed_plans: 24
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 06.1 (dogfooding-transition-bridge-claude-code-to-cauldron-for-self-building) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 
 ## Performance Metrics
 
@@ -69,6 +69,7 @@ Plan: 4 of 5
 | Phase 06.1 P01 | 3min | 2 tasks | 20 files |
 | Phase 06.1 P02 | 5min | 2 tasks | 7 files |
 | Phase 06.1 P03 | 7min | 2 tasks | 6 files |
+| Phase 06.1 P04 | 25min | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -136,6 +137,9 @@ Recent decisions affecting current work:
 - [Phase 06.1]: Commands self-contained (bootstrap + parseArgs internally): cli.ts calls them with no args, keeps routing simple
 - [Phase 06.1]: Prior context injected as first-answer preamble (not DB transcript injection): works with FSM scoring without DB surgery
 - [Phase 06.1]: Brownfield mode auto-selected when priorContext is non-empty: ties D-07 to D-04 naturally
+- [Phase 06.1]: conflict_resolved added to eventTypeEnum with migration 0008 for resolve command appendEvent type correctness
+- [Phase 06.1]: handleMergeRequested exported from decomposition/index.ts to expose full Inngest function set via @cauldron/engine
+- [Phase 06.1]: vi.fn(function(){}) for Hono constructor mock — arrow functions cannot be used as constructors in Vitest
 
 ### Pending Todos
 
@@ -150,6 +154,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T18:22:00.796Z
-Stopped at: Completed 06.1-03-PLAN.md
+Last session: 2026-03-26T18:37:49.191Z
+Stopped at: Completed 06.1-04-PLAN.md
 Resume file: None
