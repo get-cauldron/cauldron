@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: "Completed 06.2-02-PLAN.md (Task 1 done, Task 2 checkpoint: auth gate - Anthropic key disabled)"
-last_updated: "2026-03-26T20:48:24.386Z"
+stopped_at: "Completed 06.2-03-PLAN.md (Task 1 done, Task 2 checkpoint: human-verify pipeline)"
+last_updated: "2026-03-26T22:46:13.001Z"
 progress:
   total_phases: 11
-  completed_phases: 7
+  completed_phases: 8
   total_plans: 28
-  completed_plans: 27
+  completed_plans: 28
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 06.2 (testing-and-tuning-the-dogfood-process) — EXECUTING
-Plan: 3 of 3
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -73,6 +73,7 @@ Plan: 3 of 3
 | Phase 06.1-dogfooding-transition P05 | 15min | 2 tasks | 8 files |
 | Phase 06.2 P01 | 4min | 2 tasks | 5 files |
 | Phase 06.2-testing-and-tuning-the-dogfood-process P02 | 7min | 1 tasks | 4 files |
+| Phase 06.2 P03 | 95min | 1 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -149,6 +150,12 @@ Recent decisions affecting current work:
 - [Phase 06.2]: Recency weighting via prompt section split (not score weighting): split 3+ turn transcripts into EARLIER CONTEXT / MOST RECENT ANSWERS sections in buildScorerPrompt
 - [Phase 06.2]: Dimension-aware mid-turn routing: successCriteriaClarity -> seed-closer, constraintClarity -> breadth-keeper, goalClarity -> researcher
 - [Phase 06.2]: conditionalOn changed from z.string().optional() to z.string().nullable() for OpenAI structured output compatibility (all schema properties must be in required array)
+- [Phase 06.2]: INNGEST_DEV=1 env var required for CLI commands to send events to local dev server — without it, Inngest client silently targets cloud
+- [Phase 06.2]: Execute command must wait for Inngest dev server to sync functions before dispatching events — race condition causes events with zero function runs
+- [Phase 06.2]: Bead dispatch handler must call knowledgeGraph.indexRepository() before context assembly — codebase-memory-mcp returns "no project loaded" without prior indexing
+- [Phase 06.2]: codebase-memory-mcp allocates 32GB virtual memory (budget_mb=32768) which can crash Docker Desktop when combined with other heavy processes
+- [Phase 06.2]: Zod schema LLM compatibility: remove all min/max/int/uuid/record constraints from schemas sent to LLM providers — Anthropic and OpenAI both reject minimum, maximum, minItems, propertyNames, format keywords in JSON Schema
+- [Phase 06.2]: cauldron.config.ts model IDs must reference real API-available models — gpt-5.4/gpt-5-mini/gemini-3.1-pro-preview replaced with gpt-4.1/gpt-4.1-mini/gemini-2.5-pro
 
 ### Pending Todos
 
@@ -163,6 +170,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T20:48:24.383Z
-Stopped at: Completed 06.2-02-PLAN.md (Task 1 done, Task 2 checkpoint: auth gate - Anthropic key disabled)
+Last session: 2026-03-26T22:46:12.998Z
+Stopped at: Completed 06.2-03-PLAN.md (Task 1 done, Task 2 checkpoint: human-verify pipeline)
 Resume file: None
