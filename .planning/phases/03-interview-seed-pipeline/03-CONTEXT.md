@@ -131,7 +131,7 @@ Socratic interview FSM that gathers requirements through a multi-perspective pan
 <deferred>
 ## Deferred Ideas
 
-None — discussion stayed within phase scope
+- **D-23 edit-tracking for summary revisions** — The "Approve & Crystallize" flow is implemented in Phase 3, but the revision tracking mechanism (tracking diffs of user edits to the summary before approval) is deferred to Phase 8 (Dashboard & UX). Phase 3 provides the `approveAndCrystallize` API accepting a (possibly user-modified) `SeedSummary`; the UI layer in Phase 8 will track edit history.
 
 </deferred>
 
