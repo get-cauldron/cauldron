@@ -24,3 +24,11 @@ export {
   persistDecomposition,
   completeBead,
 } from './scheduler.js';
+
+export {
+  configureSchedulerDeps,
+  beadDispatchHandler,
+  beadCompletionHandler,
+  handleBeadDispatchRequested,
+  handleBeadCompleted,
+} from './events.js';
