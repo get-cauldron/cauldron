@@ -11,7 +11,7 @@ vi.mock('@cauldron/engine', () => {
   const mockInstance = { streamText: vi.fn() };
   const MockLLMGateway = vi.fn(function () {
     return mockInstance;
-  });
+  }) as ReturnType<typeof vi.fn> & { create: ReturnType<typeof vi.fn> };
   MockLLMGateway.create = vi.fn().mockResolvedValue(mockInstance);
   return {
     loadConfig: vi.fn(),

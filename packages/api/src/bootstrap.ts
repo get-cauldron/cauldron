@@ -6,6 +6,14 @@ import { db, ensureMigrations } from '@cauldron/shared';
 
 // Load API keys from ~/.env as fallback (project .env takes precedence via @cauldron/shared)
 dotenvConfig({ path: resolve(homedir(), '.env') });
+
+// Strip stray quotes from env vars — dotenv may leave them depending on .env formatting
+for (const key of ['OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'GOOGLE_GENERATIVE_AI_API_KEY', 'HOLDOUT_ENCRYPTION_KEY']) {
+  const val = process.env[key];
+  if (val) {
+    process.env[key] = val.replace(/^"|"$/g, '');
+  }
+}
 import {
   loadConfig,
   LLMGateway,

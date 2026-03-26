@@ -101,7 +101,10 @@ export async function sealCommand(): Promise<void> {
   const vaultId = vault.id;
   const approvedIds = approvedScenarios.map(s => s.id);
 
-  await approveScenarios(deps.db, { vaultId, approvedIds });
+  // Skip approval if vault is already approved (idempotent re-run)
+  if (vault.status !== 'approved') {
+    await approveScenarios(deps.db, { vaultId, approvedIds });
+  }
 
   // Find the projectId from the seed
   const seedRows = await deps.db

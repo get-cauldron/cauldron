@@ -6,15 +6,19 @@ import type { ProviderFamily } from './types.js';
 
 export const MODEL_FAMILY_MAP: Record<string, ProviderFamily> = {
   'claude-sonnet-4-6': 'anthropic',
+  'claude-opus-4-6': 'anthropic',
   'claude-opus-4-5': 'anthropic',
   'claude-haiku-4-5': 'anthropic',
-  'gpt-4o': 'openai',
-  'gpt-4o-mini': 'openai',
+  'gpt-5.4': 'openai',
+  'gpt-5-mini': 'openai',
+  'gpt-5-nano': 'openai',
   'gpt-4.1': 'openai',
   'gpt-4.1-mini': 'openai',
+  'gpt-4o': 'openai',
+  'gpt-4o-mini': 'openai',
+  'gemini-3.1-pro-preview': 'google',
   'gemini-2.5-pro': 'google',
   'gemini-2.5-flash': 'google',
-  'gemini-2.0-flash': 'google',
 };
 
 export function getProviderFamily(modelId: string): ProviderFamily {
