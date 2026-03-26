@@ -13,6 +13,8 @@ import { executeWithFailover } from './failover.js';
 import { enforceDiversity } from './diversity.js';
 import { getProviderFamily } from './providers.js';
 import { calculateCostCents } from './pricing.js';
+import { checkBudget } from './budget.js';
+import { validateProviderKeys } from './validation.js';
 import type { GatewayCallOptions, GatewayObjectOptions, PipelineStage, ProviderFamily } from './types.js';
 import type { GatewayConfig } from './config.js';
 import type { FailoverAttempt } from './errors.js';
@@ -52,6 +54,22 @@ export class LLMGateway {
     this.projectSettings = options.projectSettings;
   }
 
+  /**
+   * Validated factory method: constructs an LLMGateway and optionally validates
+   * API keys for all configured provider families before returning.
+   * Satisfies D-12: startup key validation at construction time.
+   */
+  static async create(
+    options: LLMGatewayOptions & { validateKeys?: boolean }
+  ): Promise<LLMGateway> {
+    const gateway = new LLMGateway(options);
+    if (options.validateKeys !== false) {
+      const allModels = Object.values(options.config.models).flat();
+      await validateProviderKeys(allModels, options.logger);
+    }
+    return gateway;
+  }
+
   private resolveModelChain(stage: PipelineStage): string[] {
     const chain = this.projectSettings?.models?.[stage] ?? this.config.models[stage];
     if (!chain || chain.length === 0) {
@@ -79,6 +97,9 @@ export class LLMGateway {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async streamText(options: GatewayCallOptions): Promise<any> {
+    const budgetLimit = this.projectSettings?.budgetLimitCents ?? this.config.budget.defaultLimitCents;
+    await checkBudget(this.db, options.projectId, budgetLimit);
+
     const modelChain = this.resolveModelChain(options.stage);
     const systemPrompt = this.buildSystemPrompt(options.stage, options.system);
 
@@ -113,6 +134,9 @@ export class LLMGateway {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async generateText(options: GatewayCallOptions): Promise<any> {
+    const budgetLimit = this.projectSettings?.budgetLimitCents ?? this.config.budget.defaultLimitCents;
+    await checkBudget(this.db, options.projectId, budgetLimit);
+
     const modelChain = this.resolveModelChain(options.stage);
     const systemPrompt = this.buildSystemPrompt(options.stage, options.system);
 
@@ -144,6 +168,9 @@ export class LLMGateway {
   }
 
   async generateObject<T extends z.ZodType>(options: GatewayObjectOptions<T>) {
+    const budgetLimit = this.projectSettings?.budgetLimitCents ?? this.config.budget.defaultLimitCents;
+    await checkBudget(this.db, options.projectId, budgetLimit);
+
     const modelChain = this.resolveModelChain(options.stage);
     const systemPrompt = this.buildSystemPrompt(options.stage, options.system);
 
@@ -171,6 +198,9 @@ export class LLMGateway {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async streamObject<T extends z.ZodType>(options: GatewayObjectOptions<T>): Promise<any> {
+    const budgetLimit = this.projectSettings?.budgetLimitCents ?? this.config.budget.defaultLimitCents;
+    await checkBudget(this.db, options.projectId, budgetLimit);
+
     const modelChain = this.resolveModelChain(options.stage);
     const systemPrompt = this.buildSystemPrompt(options.stage, options.system);
 

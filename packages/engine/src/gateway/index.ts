@@ -7,6 +7,9 @@ export { MODEL_FAMILY_MAP, getProviderFamily, resolveModel } from './providers.j
 export { MODEL_PRICING, calculateCostCents } from './pricing.js';
 export { LLMGateway } from './gateway.js';
 export type { LLMGatewayOptions } from './gateway.js';
+export { checkBudget } from './budget.js';
+export { validateProviderKeys } from './validation.js';
+export type { ValidationResult } from './validation.js';
 export { CircuitBreaker } from './circuit-breaker.js';
 export { enforceDiversity, filterDiverseModels } from './diversity.js';
 export { executeWithFailover } from './failover.js';
