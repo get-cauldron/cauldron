@@ -425,7 +425,7 @@ describe('completeBead', () => {
     // bead_failed for the conditional bead should also be emitted
     const appendEventCalls = vi.mocked(appendEvent).mock.calls;
     const skippedCalls = appendEventCalls.filter(
-      call => call[1]?.payload?.reason === 'upstream_conditional_failed'
+      call => (call[1]?.payload as Record<string, unknown>)?.['reason'] === 'upstream_conditional_failed'
     );
     expect(skippedCalls.length).toBeGreaterThan(0);
   });

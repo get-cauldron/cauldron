@@ -32,3 +32,9 @@ export {
   handleBeadDispatchRequested,
   handleBeadCompleted,
 } from './events.js';
+
+export {
+  runDecomposition,
+  type RunDecompositionOptions,
+  type RunDecompositionResult,
+} from './pipeline.js';
