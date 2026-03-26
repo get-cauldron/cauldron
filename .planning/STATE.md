@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Phase 6.2 context gathered
-last_updated: "2026-03-26T20:10:57.199Z"
+status: Ready to execute
+stopped_at: Completed 06.2-01-PLAN.md
+last_updated: "2026-03-26T20:44:14.015Z"
 progress:
   total_phases: 11
   completed_phases: 7
-  total_plans: 25
-  completed_plans: 25
+  total_plans: 28
+  completed_plans: 26
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** User describes what they want; Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves until goal is met — humans steer at key decision points, not babysitting every step.
-**Current focus:** Phase 06.1 — dogfooding-transition-bridge-claude-code-to-cauldron-for-self-building
+**Current focus:** Phase 06.2 — testing-and-tuning-the-dogfood-process
 
 ## Current Position
 
-Phase: 7
-Plan: Not started
+Phase: 06.2 (testing-and-tuning-the-dogfood-process) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -71,6 +71,7 @@ Plan: Not started
 | Phase 06.1 P03 | 7min | 2 tasks | 6 files |
 | Phase 06.1 P04 | 25min | 2 tasks | 12 files |
 | Phase 06.1-dogfooding-transition P05 | 15min | 2 tasks | 8 files |
+| Phase 06.2 P01 | 4min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -144,6 +145,8 @@ Recent decisions affecting current work:
 - [Phase 06.1]: vi.fn(function(){}) for Hono constructor mock — arrow functions cannot be used as constructors in Vitest
 - [Phase 06.1]: Skill files are plain markdown — Claude Code reads .claude/skills/*.md directly; no manifest or registration needed
 - [Phase 06.1]: Inngest v4 health endpoint is /v1/events (not /v0/envs) — corrected health check probe to POST empty events array for 200 response
+- [Phase 06.2]: Recency weighting via prompt section split (not score weighting): split 3+ turn transcripts into EARLIER CONTEXT / MOST RECENT ANSWERS sections in buildScorerPrompt
+- [Phase 06.2]: Dimension-aware mid-turn routing: successCriteriaClarity -> seed-closer, constraintClarity -> breadth-keeper, goalClarity -> researcher
 
 ### Pending Todos
 
@@ -158,6 +161,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T20:10:57.195Z
-Stopped at: Phase 6.2 context gathered
-Resume file: .planning/phases/06.2-testing-and-tuning-the-dogfood-process/06.2-CONTEXT.md
+Last session: 2026-03-26T20:44:14.012Z
+Stopped at: Completed 06.2-01-PLAN.md
+Resume file: None
