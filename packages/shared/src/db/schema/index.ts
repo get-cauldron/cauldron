@@ -4,3 +4,4 @@ export * from './bead.js';
 export * from './event.js';
 export * from './holdout.js';
 export * from './snapshot.js';
+export * from './llm-usage.js';

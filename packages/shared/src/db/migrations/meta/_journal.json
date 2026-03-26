@@ -15,6 +15,13 @@
       "when": 1774477429096,
       "tag": "0001_graceful_ultragirl",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774483800730,
+      "tag": "0002_material_ikaris",
+      "breakpoints": true
     }
   ]
 }
