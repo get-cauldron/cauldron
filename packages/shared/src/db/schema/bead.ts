@@ -29,6 +29,8 @@ export const beads = pgTable('beads', {
   completedAt: timestamp('completed_at', { withTimezone: true }),
   version: integer('version').notNull().default(1), // DAG-08: optimistic concurrency control
   coversCriteria: jsonb('covers_criteria').$type<string[]>().notNull().default([]), // DAG-09: acceptance criteria mapping
+  worktreePath: text('worktree_path'),        // Phase 6: git worktree location during execution
+  worktreeBranch: text('worktree_branch'),     // Phase 6: git branch name in worktree
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
