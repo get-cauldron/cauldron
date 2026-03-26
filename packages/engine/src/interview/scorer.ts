@@ -100,11 +100,22 @@ export function computeWeightedScore(
 // ─── System Prompt & Prompt Builder ──────────────────────────────────────────
 
 export const SCORER_SYSTEM_PROMPT =
-  'Evaluate the interview transcript for clarity across dimensions. Score each dimension from 0 (completely unclear) to 1 (perfectly clear). ' +
-  'Goal clarity: how well-defined is the project\'s objective? ' +
-  'Constraint clarity: how well-defined are technical/business constraints? ' +
-  'Success criteria clarity: how testable and measurable are the success conditions? ' +
-  'Context clarity (brownfield only): how well-understood is the existing codebase and its constraints? ' +
+  'Evaluate the interview transcript for clarity across dimensions. Score each dimension from 0 (completely unclear) to 1 (perfectly clear).\n\n' +
+  '## Dimension Definitions\n\n' +
+  '- **Goal clarity**: What is being built and for whom? Is the problem and intended outcome well-defined?\n' +
+  '- **Constraint clarity**: What technical/business limits apply? (tech stack, timeline, budget, platform, scale)\n' +
+  '- **Success criteria clarity**: How will we know it works? Are acceptance criteria testable and measurable?\n' +
+  '- **Context clarity** (brownfield only): How well-understood is the existing codebase and its constraints?\n\n' +
+  '## Scoring Anchors\n\n' +
+  'Score 0.8-1.0: The user has given specific, testable, unambiguous answers for this dimension ' +
+  '(e.g., "TypeScript, CLI tool, Unix-only, dry-run mode required, under 5s on 10k files"). ' +
+  'Score 0.4-0.7: Partial clarity — the user has expressed intent but key details are vague or missing ' +
+  '(e.g., "some kind of file tool, maybe for the web"). ' +
+  'Score 0.0-0.3: Little or no information provided for this dimension. The user has not meaningfully addressed it.\n\n' +
+  '## Recency Rule\n\n' +
+  'Score based on the MOST RECENT state of knowledge. If the user gave a specific answer in turn 8 that resolves ' +
+  'a question from turn 2, score the dimension based on turn 8\'s answer, not turn 2\'s ambiguity. ' +
+  'Later answers supersede earlier vagueness.\n\n' +
   'Provide concise reasoning for your scores.';
 
 export function buildScorerPrompt(transcript: InterviewTurn[], mode: InterviewMode): string {
@@ -113,13 +124,30 @@ export function buildScorerPrompt(transcript: InterviewTurn[], mode: InterviewMo
     return `Mode: ${modeLabel}\n\nNo interview turns yet. Score all dimensions at 0 with reasoning "Interview not started."`;
   }
 
-  const turns = transcript
-    .map(
-      (t, i) =>
-        `Turn ${i + 1} (${t.perspective}):\n  Q: ${t.question}\n  A: ${t.userAnswer}${t.freeformText ? `\n  Additional: ${t.freeformText}` : ''}`,
-    )
-    .join('\n\n');
+  const formatTurn = (t: InterviewTurn, i: number): string =>
+    `Turn ${i + 1} (${t.perspective}):\n  Q: ${t.question}\n  A: ${t.userAnswer}${t.freeformText ? `\n  Additional: ${t.freeformText}` : ''}`;
 
+  if (transcript.length >= 3) {
+    // Split into earlier context and most recent turns (last 2) for recency weighting
+    const earlierTurns = transcript
+      .slice(0, transcript.length - 2)
+      .map(formatTurn)
+      .join('\n\n');
+    const recentTurns = transcript
+      .slice(transcript.length - 2)
+      .map((t, i) => formatTurn(t, transcript.length - 2 + i))
+      .join('\n\n');
+
+    return (
+      `Mode: ${modeLabel}\n\n` +
+      `EARLIER CONTEXT:\n${earlierTurns}\n\n` +
+      `MOST RECENT ANSWERS (weight heavily):\n${recentTurns}\n\n` +
+      `Score each clarity dimension based on the MOST RECENT state of knowledge above.`
+    );
+  }
+
+  // Short transcripts (1-2 turns): single section, no splitting
+  const turns = transcript.map(formatTurn).join('\n\n');
   return `Mode: ${modeLabel}\n\nInterview transcript:\n${turns}\n\nScore each clarity dimension based on the full transcript above.`;
 }
 

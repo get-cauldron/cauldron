@@ -5,6 +5,8 @@ import {
   computeWeightedScore,
   scoreTranscript,
   validateScoreRules,
+  SCORER_SYSTEM_PROMPT,
+  buildScorerPrompt,
 } from '../scorer.js';
 import type { AmbiguityScores, InterviewTurn } from '../types.js';
 import type { LLMGateway } from '../../gateway/gateway.js';
@@ -285,5 +287,54 @@ describe('scoreTranscript', () => {
 
     const callArgs = (mockGateway.generateObject as ReturnType<typeof vi.fn>).mock.calls[0][0];
     expect(callArgs.stage).toBe('interview');
+  });
+});
+
+// ─── SCORER_SYSTEM_PROMPT calibration regression tests ───────────────────────
+
+describe('SCORER_SYSTEM_PROMPT calibration', () => {
+  it('contains "0.8-1.0" anchoring text for high-clarity examples', () => {
+    expect(SCORER_SYSTEM_PROMPT).toContain('0.8-1.0');
+  });
+
+  it('contains "specific, testable" concrete-answer reward signal', () => {
+    expect(SCORER_SYSTEM_PROMPT).toContain('specific, testable');
+  });
+
+  it('contains "MOST RECENT state of knowledge" recency instruction', () => {
+    expect(SCORER_SYSTEM_PROMPT).toContain('MOST RECENT state of knowledge');
+  });
+});
+
+// ─── buildScorerPrompt recency weighting regression tests ────────────────────
+
+function makeTurns(count: number): InterviewTurn[] {
+  return Array.from({ length: count }, (_, i) => ({
+    perspective: 'researcher' as const,
+    question: `Question ${i + 1}?`,
+    userAnswer: `Answer ${i + 1}`,
+    freeformText: undefined,
+  }));
+}
+
+describe('buildScorerPrompt recency weighting', () => {
+  it('returns "No interview turns yet" message for 0 turns', () => {
+    const result = buildScorerPrompt([], 'greenfield');
+    expect(result).toContain('No interview turns yet');
+  });
+
+  it('does NOT contain "MOST RECENT ANSWERS" for 2 turns (too few for splitting)', () => {
+    const result = buildScorerPrompt(makeTurns(2), 'greenfield');
+    expect(result).not.toContain('MOST RECENT ANSWERS');
+  });
+
+  it('contains "MOST RECENT ANSWERS" for 5 turns', () => {
+    const result = buildScorerPrompt(makeTurns(5), 'greenfield');
+    expect(result).toContain('MOST RECENT ANSWERS');
+  });
+
+  it('contains "MOST RECENT ANSWERS" for exactly 3 turns (boundary case)', () => {
+    const result = buildScorerPrompt(makeTurns(3), 'greenfield');
+    expect(result).toContain('MOST RECENT ANSWERS');
   });
 });
