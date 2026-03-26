@@ -17,3 +17,10 @@ export {
 } from './validator.js';
 
 export { decomposeSeed } from './decomposer.js';
+
+export {
+  findReadyBeads,
+  claimBead,
+  persistDecomposition,
+  completeBead,
+} from './scheduler.js';

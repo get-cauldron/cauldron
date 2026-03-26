@@ -36,6 +36,13 @@
       "when": 1774657200000,
       "tag": "0004_holdout_vault_review_lifecycle",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1774743600000,
+      "tag": "0005_dag_decomposition",
+      "breakpoints": true
     }
   ]
 }

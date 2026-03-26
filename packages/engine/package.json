@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
+    "postgres": "^3.4.8",
     "typescript": "^6.0.2"
   }
 }
