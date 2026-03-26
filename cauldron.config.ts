@@ -23,4 +23,6 @@ export default defineConfig({
   },
   // D-18: fast/cheap model for scoring (runs every turn, user waiting)
   scoringModel: 'gpt-4o-mini',
+  // D-15: this IS the Cauldron project itself — activates engine snapshot + migration review gates
+  selfBuild: true,
 });

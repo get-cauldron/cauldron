@@ -9,16 +9,24 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
+    "test:integration": "vitest run --config vitest.integration.config.ts --passWithNoTests",
+    "cauldron": "tsx src/cli.ts",
     "dev": "tsx watch src/index.ts"
   },
   "dependencies": {
+    "@cauldron/engine": "workspace:*",
     "@cauldron/shared": "workspace:*",
+    "@hono/node-server": "^1.13.0",
     "drizzle-orm": "^0.45.1",
-    "postgres": "^3.4.8",
+    "hono": "^4.12.9",
+    "inngest": "^4.1.0",
     "ioredis": "^5.10.1",
+    "pino": "^10.3.1",
+    "postgres": "^3.4.8",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.1"
   }
 }

@@ -6,6 +6,7 @@ export interface GatewayConfig {
   budget: { defaultLimitCents: number };
   perspectiveModels?: Partial<Record<string, string>>; // D-10: PerspectiveName → model ID
   scoringModel?: string; // D-18: fast/cheap model for ambiguity scoring
+  selfBuild?: boolean; // D-15: activates engine snapshot + migration review gates when building Cauldron itself
 }
 
 export function defineConfig(config: GatewayConfig): GatewayConfig {

@@ -29,15 +29,30 @@ importers:
 
   packages/api:
     dependencies:
+      '@cauldron/engine':
+        specifier: workspace:*
+        version: link:../engine
       '@cauldron/shared':
         specifier: workspace:*
         version: link:../shared
+      '@hono/node-server':
+        specifier: ^1.13.0
+        version: 1.19.11(hono@4.12.9)
       drizzle-orm:
         specifier: ^0.45.1
         version: 0.45.1(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(postgres@3.4.8)
+      hono:
+        specifier: ^4.12.9
+        version: 4.12.9
+      inngest:
+        specifier: ^4.1.0
+        version: 4.1.0(@opentelemetry/core@2.6.1(@opentelemetry/api@1.9.1))(hono@4.12.9)(typescript@6.0.2)(zod@4.3.6)
       ioredis:
         specifier: ^5.10.1
         version: 5.10.1
+      pino:
+        specifier: ^10.3.1
+        version: 10.3.1
       postgres:
         specifier: ^3.4.8
         version: 3.4.8
@@ -48,6 +63,9 @@ importers:
       typescript:
         specifier: ^6.0.2
         version: 6.0.2
+      vitest:
+        specifier: ^4.1.1
+        version: 4.1.1(@opentelemetry/api@1.9.1)(@types/node@25.5.0)(vite@8.0.2(@types/node@25.5.0)(esbuild@0.27.4)(tsx@4.21.0)(yaml@2.8.3))
 
   packages/engine:
     dependencies:
@@ -71,7 +89,7 @@ importers:
         version: 0.45.1(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(postgres@3.4.8)
       inngest:
         specifier: ^4.1.0
-        version: 4.1.0(@opentelemetry/core@2.6.1(@opentelemetry/api@1.9.1))(typescript@6.0.2)(zod@4.3.6)
+        version: 4.1.0(@opentelemetry/core@2.6.1(@opentelemetry/api@1.9.1))(hono@4.12.9)(typescript@6.0.2)(zod@4.3.6)
       ioredis:
         specifier: ^5.10.1
         version: 5.10.1
@@ -675,6 +693,12 @@ packages:
     resolution: {integrity: sha512-rc1hOQtjIWGxcxpb9aHAfLpIctjEnsDehj0DAiVfBlmT84uvR0uUtN2hEi/ecvWVjXUGf5qPF4qEgiLOx1YIMQ==}
     engines: {node: '>=6'}
     hasBin: true
+
+  '@hono/node-server@1.19.11':
+    resolution: {integrity: sha512-dr8/3zEaB+p0D2n/IUrlPF1HZm586qgJNXK1a9fhg/PzdtkK7Ksd5l312tJX2yBuALqDYBlG20QEbayqPyxn+g==}
+    engines: {node: '>=18.14.1'}
+    peerDependencies:
+      hono: ^4
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -1924,6 +1948,10 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
+  hono@4.12.9:
+    resolution: {integrity: sha512-wy3T8Zm2bsEvxKZM5w21VdHDDcwVS1yUFFY6i8UobSsKfFceT7TOwhbhfKsDyx7tYQlmRM5FLpIuYvNFyjctiA==}
+    engines: {node: '>=16.9.0'}
+
   https-proxy-agent@7.0.6:
     resolution: {integrity: sha512-vK9P5/iUfdl95AI+JVyUuIcVtd4ofvtrOr3HNtM2yxC9bnMbEdp3x01OhQNnjb8IJYi38VlTE3mBXwcfvywuSw==}
     engines: {node: '>= 14'}
@@ -2941,6 +2969,10 @@ snapshots:
       long: 5.3.2
       protobufjs: 7.5.4
       yargs: 17.7.2
+
+  '@hono/node-server@1.19.11(hono@4.12.9)':
+    dependencies:
+      hono: 4.12.9
 
   '@humanfs/core@0.19.1': {}
 
@@ -4347,6 +4379,8 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
+  hono@4.12.9: {}
+
   https-proxy-agent@7.0.6:
     dependencies:
       agent-base: 7.1.4
@@ -4379,7 +4413,7 @@ snapshots:
 
   inherits@2.0.4: {}
 
-  inngest@4.1.0(@opentelemetry/core@2.6.1(@opentelemetry/api@1.9.1))(typescript@6.0.2)(zod@4.3.6):
+  inngest@4.1.0(@opentelemetry/core@2.6.1(@opentelemetry/api@1.9.1))(hono@4.12.9)(typescript@6.0.2)(zod@4.3.6):
     dependencies:
       '@bufbuild/protobuf': 2.11.0
       '@inngest/ai': 0.1.7
@@ -4406,6 +4440,7 @@ snapshots:
       ulid: 2.4.0
       zod: 4.3.6
     optionalDependencies:
+      hono: 4.12.9
       typescript: 6.0.2
     transitivePeerDependencies:
       - '@opentelemetry/core'
