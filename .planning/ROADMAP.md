@@ -23,6 +23,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 5: DAG Decomposition & Scheduler** - Molecule/bead decomposition, all 4 dependency types, Kahn's cycle detection, Inngest FlowProducer dispatch, atomic claiming
 - [x] **Phase 6: Parallel Execution Engine** - Agent runner, git worktrees, context assembly via Code Intel, merge queue, testing cube, self-healing error loop (completed 2026-03-26)
 - [x] **Phase 6.1: Dogfooding Transition** (INSERTED) - CLI entrypoint, Claude Code skills, GSD context bridging, self-build safety, dry-run validation (completed 2026-03-26)
+- [ ] **Phase 6.2: Testing & Tuning Dogfood Process** (INSERTED) - Interview convergence fixes, pre-generated seed pipeline validation, end-to-end dry run
 - [ ] **Phase 7: Evolutionary Loop** - Post-execution evaluator, evolution FSM, convergence detection, lateral thinking personas, holdout unsealing
 - [ ] **Phase 8: Web Dashboard** - Interview chat, live DAG visualization, SSE log streaming, human approval UX, HZD aesthetic
 - [ ] **Phase 9: CLI** - Full pipeline CLI, git-push trigger, shared tRPC API
@@ -137,6 +138,18 @@ Plans:
 - [x] 06-05-PLAN.md — Inngest handler wiring, barrel exports, schema migration, regression gate
 **UI hint**: no
 
+### Phase 06.2: Testing and Tuning the Dogfood Process (INSERTED)
+
+**Goal:** The full Cauldron pipeline runs end-to-end on an external CLI renamer project: interview converges with calibrated scoring, seed crystallizes, holdouts are generated, decomposition produces beads, and at least one bead executes -- proving the dogfood process works.
+**Requirements**: D-01, D-02, D-03, D-04, D-05, D-06, D-07
+**Depends on:** Phase 6
+**Plans:** 3 plans
+
+Plans:
+- [ ] 06.2-01-PLAN.md — Interview convergence fixes: scorer calibration, recency weighting, dimension-aware perspective activation
+- [ ] 06.2-02-PLAN.md — Pre-generated seed pipeline: CLI renamer fixture, seed injection, downstream pipeline validation (seal/decompose/execute)
+- [ ] 06.2-03-PLAN.md — End-to-end validation: full interview-to-execution pipeline run with fixed engine
+
 ### Phase 06.1: Dogfooding Transition — Bridge Claude Code to Cauldron for Self-Building (INSERTED)
 
 **Goal:** Claude Code can invoke Cauldron's full pipeline (minus evolutionary loop) through project-local skills, with GSD context bridging, file-based human review gates, and self-build safety guards — enabling Phases 7-9 to be built using Cauldron itself.
@@ -192,7 +205,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 6.1 → 7 → 8 → 9
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 6.1 → 6.2 → 7 → 8 → 9
 
 Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (DAG) depends on Phase 3 but not Phase 4. Phase 8 (Dashboard) can begin in parallel once the Phase 4 DAG data model is stable.
 
@@ -205,6 +218,7 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 5. DAG Decomposition & Scheduler | 1/3 | In Progress|  |
 | 6. Parallel Execution Engine | 5/5 | Complete   | 2026-03-26 |
 | 6.1. Dogfooding Transition | 5/5 | Complete   | 2026-03-26 |
+| 6.2. Testing & Tuning Dogfood | 0/3 | Not started | - |
 | 7. Evolutionary Loop | 0/TBD | Not started | - |
 | 8. Web Dashboard | 0/TBD | Not started | - |
 | 9. CLI | 0/TBD | Not started | - |
