@@ -173,6 +173,10 @@ None — no external service configuration required for type contracts and schem
 - Migration 0002_material_ikaris.sql ready to apply when database is running
 - cauldron.config.ts provides system defaults; per-project overrides via projects.settings JSONB
 
+## Self-Check: PASSED
+
+All created files verified present on disk. Both task commits (703ab79, dac1f6b) confirmed in git log. Both typechecks (shared, engine) exit 0.
+
 ---
 *Phase: 02-llm-gateway*
 *Completed: 2026-03-26*
