@@ -1,4 +1,4 @@
-import { pgTable, pgEnum, uuid, text, timestamp, integer } from 'drizzle-orm/pg-core';
+import { pgTable, pgEnum, uuid, text, timestamp, integer, jsonb } from 'drizzle-orm/pg-core';
 import { seeds } from './seed.js';
 
 export const beadStatusEnum = pgEnum('bead_status', [
@@ -27,6 +27,8 @@ export const beads = pgTable('beads', {
   agentAssignment: text('agent_assignment'),
   claimedAt: timestamp('claimed_at', { withTimezone: true }),
   completedAt: timestamp('completed_at', { withTimezone: true }),
+  version: integer('version').notNull().default(1), // DAG-08: optimistic concurrency control
+  coversCriteria: jsonb('covers_criteria').$type<string[]>().notNull().default([]), // DAG-09: acceptance criteria mapping
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });

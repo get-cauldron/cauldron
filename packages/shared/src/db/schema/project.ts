@@ -1,8 +1,9 @@
 import { pgTable, uuid, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
 
 export interface ProjectSettings {
-  models?: Partial<Record<'interview' | 'holdout' | 'implementation' | 'evaluation', string[]>>;
+  models?: Partial<Record<'interview' | 'holdout' | 'implementation' | 'evaluation' | 'decomposition', string[]>>;
   budgetLimitCents?: number;
+  maxConcurrentBeads?: number; // DAG-parallel: limit concurrent agent execution per project
 }
 
 export const projects = pgTable('projects', {
