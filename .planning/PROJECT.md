@@ -18,6 +18,14 @@ The full pipeline works end-to-end: a user describes what they want, and Cauldro
 - Event sourcing with append/replay/snapshot — Phase 1
 - Drizzle migrations infrastructure — Phase 1
 - 13 integration tests against real PostgreSQL (no mocks) — Phase 1
+- Vercel AI SDK multi-provider gateway (Anthropic, OpenAI, Google) with stage-based routing — Phase 2
+- Default model assignments per pipeline stage via cauldron.config.ts — Phase 2
+- Per-project model overrides in DB project settings (JSONB) — Phase 2
+- Provider failover with circuit breaker and ordered fallback chains — Phase 2
+- Token usage tracking per call with cost calculation (llm_usage table + event store) — Phase 2
+- Cross-model diversity enforcement at gateway level for holdout generation — Phase 2
+- Per-project budget kill switch with BudgetExceededError — Phase 2
+- 45 unit tests for gateway modules — Phase 2
 
 ### Active
 
@@ -74,10 +82,10 @@ The full pipeline works end-to-end: a user describes what they want, and Cauldro
 - [ ] Visual identity: Horizon Zero Dawn Cauldron aesthetic (dark metallic, glowing teal/blue energy conduits, hexagonal geometries, industrial-organic)
 
 #### Multi-Model Orchestration
-- [ ] Vercel AI SDK for standardized multi-provider interface
-- [ ] Opinionated default model assignments per pipeline stage
-- [ ] Per-project model configuration overrides
-- [ ] Cross-model diversity enforced for holdout generation (different provider than implementer)
+- [x] Vercel AI SDK for standardized multi-provider interface — Phase 2
+- [x] Opinionated default model assignments per pipeline stage — Phase 2
+- [x] Per-project model configuration overrides — Phase 2
+- [x] Cross-model diversity enforced for holdout generation (different provider than implementer) — Phase 2
 
 #### CLI
 - [ ] CLI interface for all pipeline operations (alternative to web dashboard)
@@ -157,4 +165,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-25 after Phase 1 completion*
+*Last updated: 2026-03-26 after Phase 2 completion*
