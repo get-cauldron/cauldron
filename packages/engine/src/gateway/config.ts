@@ -4,6 +4,8 @@ import path from 'node:path';
 export interface GatewayConfig {
   models: Record<PipelineStage, string[]>;
   budget: { defaultLimitCents: number };
+  perspectiveModels?: Partial<Record<string, string>>; // D-10: PerspectiveName → model ID
+  scoringModel?: string; // D-18: fast/cheap model for ambiguity scoring
 }
 
 export function defineConfig(config: GatewayConfig): GatewayConfig {
