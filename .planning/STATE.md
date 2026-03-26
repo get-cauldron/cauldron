@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 05-02-PLAN.md
-last_updated: "2026-03-26T14:29:19.209Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 05-03-PLAN.md
+last_updated: "2026-03-26T14:48:33.816Z"
 progress:
   total_phases: 9
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 15
-  completed_plans: 14
+  completed_plans: 15
 ---
 
 # Project State
@@ -60,6 +60,7 @@ Plan: 3 of 3
 | Phase 04-holdout-vault PP03 | 5min | 2 tasks | 6 files |
 | Phase 05-dag-decomposition-scheduler P01 | 3min | 2 tasks | 11 files |
 | Phase 05-dag-decomposition-scheduler P02 | 5min | 2 tasks | 5 files |
+| Phase 05-dag-decomposition-scheduler P03 | 14min | 3 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -102,6 +103,9 @@ Recent decisions affecting current work:
 - [Phase 05-dag-decomposition-scheduler]: version column defaults to 1 for optimistic concurrency — first increment yields version 2, making unversioned rows identifiable
 - [Phase 05-dag-decomposition-scheduler]: parent_child edges excluded from Kahn's cycle detection — they track molecule hierarchy, not scheduling order
 - [Phase 05-dag-decomposition-scheduler]: validateDAG priority: cycle > oversized_bead > coverage_gap — structural validity checked before context budget before spec completeness
+- [Phase 05-dag-decomposition-scheduler]: Engine integration tests use vitest.integration.config.ts with DATABASE_URL env to prevent @cauldron/shared client.ts from throwing at import time
+- [Phase 05-dag-decomposition-scheduler]: conditional_blocks NOT in ready-bead SQL query filter -- conditional skip is dispatch-time logic in beadDispatchHandler, not scheduling concern
+- [Phase 05-dag-decomposition-scheduler]: _journal.json was missing migration 0005 entry -- auto-fixed; drizzle-orm migrate() requires journal to discover migrations
 
 ### Pending Todos
 
@@ -116,6 +120,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T14:29:19.207Z
-Stopped at: Completed 05-02-PLAN.md
+Last session: 2026-03-26T14:48:33.813Z
+Stopped at: Completed 05-03-PLAN.md
 Resume file: None

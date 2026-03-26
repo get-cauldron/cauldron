@@ -56,8 +56,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **DAG-02**: Each bead sized to fit in one fresh context window of a commercial model (~200k tokens target, Opus 1M excluded)
 - [x] **DAG-03**: Bead size validated at decomposition time (not assumed)
 - [x] **DAG-04**: Four dependency types supported: blocks/blocked-by, parent-child, conditional-blocks, waits-for
-- [ ] **DAG-05**: Parallel-by-default: beads execute concurrently unless explicit dependency edges exist
-- [ ] **DAG-06**: Synchronization gates (waits-for) fire when all upstream beads complete
+- [x] **DAG-05**: Parallel-by-default: beads execute concurrently unless explicit dependency edges exist
+- [x] **DAG-06**: Synchronization gates (waits-for) fire when all upstream beads complete
 - [x] **DAG-07**: Cycle detection runs at DAG construction time and rejects cyclic graphs with clear error
 - [x] **DAG-08**: Atomic bead claiming prevents race conditions when multiple agents request work
 - [x] **DAG-09**: DAG state persisted: bead status (pending, claimed, active, completed, failed), dependency edges, agent assignments
@@ -206,8 +206,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DAG-02 | Phase 5 | Complete |
 | DAG-03 | Phase 5 | Complete |
 | DAG-04 | Phase 5 | Complete |
-| DAG-05 | Phase 5 | Pending |
-| DAG-06 | Phase 5 | Pending |
+| DAG-05 | Phase 5 | Complete |
+| DAG-06 | Phase 5 | Complete |
 | DAG-07 | Phase 5 | Complete |
 | DAG-08 | Phase 5 | Complete |
 | DAG-09 | Phase 5 | Complete |

@@ -108,7 +108,7 @@ Plans:
 Plans:
 - [x] 05-01-PLAN.md — Schema migration, domain types, and gateway config extension
 - [x] 05-02-PLAN.md — Two-pass LLM decomposition agent and DAG validator
-- [ ] 05-03-PLAN.md — Scheduler (ready-bead query, atomic claiming, Inngest dispatch, fan-in)
+- [x] 05-03-PLAN.md — Scheduler (ready-bead query, atomic claiming, Inngest dispatch, fan-in)
 
 ### Phase 6: Parallel Execution Engine
 **Goal**: Multiple agents execute independent beads concurrently in isolated git worktrees, assembling surgical context from the code knowledge graph, self-healing on errors, and merging back to main through a sequential queue — while generating unit, integration, and E2E tests as a first-class part of every bead.
