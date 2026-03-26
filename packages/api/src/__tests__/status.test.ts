@@ -2,13 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock @cauldron/shared to prevent DATABASE_URL error at import time
 vi.mock('@cauldron/shared', () => {
-  const selectFn = vi.fn();
-  const fromFn = vi.fn();
-  const whereFn = vi.fn();
-  const orderByFn = vi.fn();
-  const updateFn = vi.fn();
-  const setFn = vi.fn();
-
   return {
     db: {},
     beads: {
@@ -35,12 +28,10 @@ vi.mock('@cauldron/shared', () => {
       createdAt: 'createdAt',
     },
     beadStatusEnum: {},
-    selectFn,
-    fromFn,
-    whereFn,
-    orderByFn,
-    updateFn,
-    setFn,
+    appendEvent: vi.fn().mockResolvedValue(undefined),
+    eq: vi.fn((col, val) => ({ col, val, __op: 'eq' })),
+    desc: vi.fn((col) => ({ col, __op: 'desc' })),
+    inArray: vi.fn((col, vals) => ({ col, vals, __op: 'inArray' })),
   };
 });
 

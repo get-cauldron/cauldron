@@ -1,5 +1,6 @@
 import { parseArgs } from 'node:util';
 import { healthCheck } from './health.js';
+import { bootstrap } from './bootstrap.js';
 import { statusCommand } from './commands/status.js';
 import { interviewCommand } from './commands/interview.js';
 import { crystallizeCommand } from './commands/crystallize.js';
@@ -43,7 +44,7 @@ Commands:
 }
 
 async function main(): Promise<void> {
-  const { positionals } = parseArgs({
+  const { positionals, values } = parseArgs({
     args: process.argv.slice(2),
     allowPositionals: true,
     options: {},
@@ -65,13 +66,18 @@ async function main(): Promise<void> {
     await healthCheck();
   }
 
+  // Args to pass downstream (everything after the command name)
+  const commandArgs = process.argv.slice(3);
+
   switch (command) {
     case 'health':
       await healthCheck();
       break;
-    case 'status':
-      await statusCommand();
+    case 'status': {
+      const deps = await bootstrap(process.cwd());
+      await statusCommand(deps, commandArgs);
       break;
+    }
     case 'interview':
       await interviewCommand();
       break;
@@ -84,9 +90,16 @@ async function main(): Promise<void> {
     case 'execute':
       await executeCommand();
       break;
-    case 'kill':
-      await killCommand();
+    case 'kill': {
+      const deps = await bootstrap(process.cwd());
+      const projectId = process.env['CAULDRON_PROJECT_ID'] ?? '';
+      if (!projectId) {
+        console.error('CAULDRON_PROJECT_ID environment variable is required for kill command');
+        process.exit(1);
+      }
+      await killCommand({ db: deps.db, projectId }, commandArgs);
       break;
+    }
     case 'seal':
       await sealCommand();
       break;
