@@ -145,7 +145,7 @@ Plans:
 **Plans:** 5 plans
 
 Plans:
-- [ ] 06.1-01-PLAN.md — Package setup, bootstrap, health check, CLI router, selfBuild config
+- [x] 06.1-01-PLAN.md — Package setup, bootstrap, health check, CLI router, selfBuild config
 - [ ] 06.1-02-PLAN.md — Status command, kill command, file-based review writers
 - [ ] 06.1-03-PLAN.md — Interview command with GSD context bridging, crystallize command
 - [ ] 06.1-04-PLAN.md — Decompose, execute (Inngest serve), seal, resolve commands, self-build safety
@@ -204,7 +204,7 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 4. Holdout Vault | 3/3 | Complete   | 2026-03-26 |
 | 5. DAG Decomposition & Scheduler | 1/3 | In Progress|  |
 | 6. Parallel Execution Engine | 5/5 | Complete   | 2026-03-26 |
-| 6.1. Dogfooding Transition | 0/5 | Not started | - |
+| 6.1. Dogfooding Transition | 1/5 | In Progress|  |
 | 7. Evolutionary Loop | 0/TBD | Not started | - |
 | 8. Web Dashboard | 0/TBD | Not started | - |
 | 9. CLI | 0/TBD | Not started | - |
