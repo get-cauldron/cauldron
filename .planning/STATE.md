@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 04-02-PLAN.md
-last_updated: "2026-03-26T03:09:26.840Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 04-03-PLAN.md
+last_updated: "2026-03-26T03:17:27.722Z"
 progress:
   total_phases: 9
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 12
-  completed_plans: 11
+  completed_plans: 12
 ---
 
 # Project State
@@ -57,6 +57,7 @@ Plan: 3 of 3
 | Phase 03-interview-seed-pipeline P03 | 8min | 3 tasks | 9 files |
 | Phase 04-holdout-vault P01 | 4min | 2 tasks | 6 files |
 | Phase 04-holdout-vault P02 | 7min | 2 tasks | 6 files |
+| Phase 04-holdout-vault PP03 | 5min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -92,6 +93,9 @@ Recent decisions affecting current work:
 - [Phase 04-holdout-vault]: Compound encryptedDek field (dekIv:dekAuthTag:dekCiphertext) instead of separate DB columns — avoids extra migration complexity
 - [Phase 04-holdout-vault]: Encryption columns made nullable in holdout_vault: pending_review/approved rows have no ciphertext until sealed
 - [Phase 04-holdout-vault]: tsx used for key isolation child process test — runs TypeScript source without compiled dist, avoiding build dependency in test suite
+- [Phase 04-holdout-vault]: Inngest v4 createFunction API: triggers belong in the first argument object — createFunction({ id, triggers: [{ event }] }, handler)
+- [Phase 04-holdout-vault]: convergenceHandler() extracted from Inngest wrapper for testability — tests call it directly with a fake step object
+- [Phase 04-holdout-vault]: InngestFunction<any> explicit type annotation required to avoid TS2883 non-portable inferred type errors from deep Inngest generics
 
 ### Pending Todos
 
@@ -106,6 +110,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T03:09:26.837Z
-Stopped at: Completed 04-02-PLAN.md
+Last session: 2026-03-26T03:17:27.719Z
+Stopped at: Completed 04-03-PLAN.md
 Resume file: None

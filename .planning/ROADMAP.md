@@ -19,7 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Persistence Foundation** - PostgreSQL event store, Redis, Drizzle schema, Docker Compose dev environment (completed 2026-03-25)
 - [x] **Phase 2: LLM Gateway** - Vercel AI SDK multi-provider routing, per-stage model assignments, provider failover, token tracking (completed 2026-03-26)
 - [x] **Phase 3: Interview & Seed Pipeline** - Socratic interview FSM, ambiguity scoring, seed crystallization, human approval gates (completed 2026-03-26)
-- [ ] **Phase 4: Holdout Vault** - Cross-model holdout generation, AES-256-GCM encryption, key isolation, unsealing protocol
+- [x] **Phase 4: Holdout Vault** - Cross-model holdout generation, AES-256-GCM encryption, key isolation, unsealing protocol (completed 2026-03-26)
 - [ ] **Phase 5: DAG Decomposition & Scheduler** - Molecule/bead decomposition, all 4 dependency types, Kahn's cycle detection, Inngest FlowProducer dispatch, atomic claiming
 - [ ] **Phase 6: Parallel Execution Engine** - Agent runner, git worktrees, context assembly via Code Intel, merge queue, testing cube, self-healing error loop
 - [ ] **Phase 7: Evolutionary Loop** - Post-execution evaluator, evolution FSM, convergence detection, lateral thinking personas, holdout unsealing
@@ -91,7 +91,7 @@ Plans:
 Plans:
 - [x] 04-01-PLAN.md — Schema migration, extended holdout table, domain types, and AES-256-GCM envelope encryption
 - [x] 04-02-PLAN.md — Holdout scenario generator with adversarial LLM call, vault service with review state machine and sealing
-- [ ] 04-03-PLAN.md — Holdout evaluator, unseal protocol, and Inngest convergence event handler
+- [x] 04-03-PLAN.md — Holdout evaluator, unseal protocol, and Inngest convergence event handler
 
 ### Phase 5: DAG Decomposition & Scheduler
 **Goal**: A seed's acceptance criteria decompose into a valid, acyclic bead DAG with atomic claiming and durable job dispatch — so parallel execution is safe before the first agent runs.
@@ -176,7 +176,7 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 1. Persistence Foundation | 3/3 | Complete   | 2026-03-25 |
 | 2. LLM Gateway | 3/3 | Complete   | 2026-03-26 |
 | 3. Interview & Seed Pipeline | 3/3 | Complete   | 2026-03-26 |
-| 4. Holdout Vault | 2/3 | In Progress|  |
+| 4. Holdout Vault | 3/3 | Complete   | 2026-03-26 |
 | 5. DAG Decomposition & Scheduler | 0/TBD | Not started | - |
 | 6. Parallel Execution Engine | 0/TBD | Not started | - |
 | 7. Evolutionary Loop | 0/TBD | Not started | - |
