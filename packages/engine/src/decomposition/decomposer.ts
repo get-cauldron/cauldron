@@ -51,8 +51,8 @@ const DecompositionOutputSchema = z.object({
         .describe('Bead IDs whose output is needed (waits_for edges)'),
       conditionalOn: z
         .string()
-        .optional()
-        .describe('Bead ID — only run if that bead succeeded'),
+        .nullable()
+        .describe('Bead ID — only run if that bead succeeded; null if not conditional'),
     })
   ),
 });

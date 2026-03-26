@@ -16,7 +16,7 @@ export interface BeadSpec {
   coversCriteria: string[];  // AC IDs this bead directly implements (D-09)
   dependsOn: string[];       // Bead IDs that block this (blocks edges)
   waitsFor: string[];        // Bead IDs whose output is needed (waits_for edges)
-  conditionalOn?: string;    // Bead ID this runs only if that succeeded (conditional_blocks)
+  conditionalOn?: string | null;    // Bead ID this runs only if that succeeded (conditional_blocks)
 }
 
 /** Result of the two-pass decomposition (D-01) */
