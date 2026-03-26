@@ -23,3 +23,12 @@ export {
   SCORER_SYSTEM_PROMPT,
 } from './scorer.js';
 export type { ScoreValidationResult } from './scorer.js';
+
+export {
+  PERSPECTIVE_PROMPTS,
+  perspectiveCandidateSchema,
+  selectActivePerspectives,
+  runActivePerspectives,
+} from './perspectives.js';
+
+export { rankCandidates, RANKER_SYSTEM_PROMPT, serializeTranscript } from './ranker.js';
