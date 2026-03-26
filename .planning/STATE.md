@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-03-26T03:01:03.296Z"
+stopped_at: Completed 04-02-PLAN.md
+last_updated: "2026-03-26T03:09:26.840Z"
 progress:
   total_phases: 9
   completed_phases: 3
   total_plans: 12
-  completed_plans: 10
+  completed_plans: 11
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 04 (holdout-vault) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Plan: 2 of 3
 | Phase 03-interview-seed-pipeline P02 | 7min | 2 tasks | 6 files |
 | Phase 03-interview-seed-pipeline P03 | 8min | 3 tasks | 9 files |
 | Phase 04-holdout-vault P01 | 4min | 2 tasks | 6 files |
+| Phase 04-holdout-vault P02 | 7min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -90,6 +91,7 @@ Recent decisions affecting current work:
 - [Phase 03-interview-seed-pipeline]: FSM CLARITY_THRESHOLD=0.8 matches ambiguity <= 0.2 (D-05); VALID_TRANSITIONS enforces gathering->reviewing->approved->crystallized with no skipping
 - [Phase 04-holdout-vault]: Compound encryptedDek field (dekIv:dekAuthTag:dekCiphertext) instead of separate DB columns — avoids extra migration complexity
 - [Phase 04-holdout-vault]: Encryption columns made nullable in holdout_vault: pending_review/approved rows have no ciphertext until sealed
+- [Phase 04-holdout-vault]: tsx used for key isolation child process test — runs TypeScript source without compiled dist, avoiding build dependency in test suite
 
 ### Pending Todos
 
@@ -104,6 +106,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T03:01:03.294Z
-Stopped at: Completed 04-01-PLAN.md
+Last session: 2026-03-26T03:09:26.837Z
+Stopped at: Completed 04-02-PLAN.md
 Resume file: None
