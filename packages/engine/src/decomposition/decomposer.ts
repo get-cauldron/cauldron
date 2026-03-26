@@ -35,13 +35,13 @@ const DecompositionOutputSchema = z.object({
       spec: z.string().describe('Precise implementation specification'),
       estimatedTokens: z
         .number()
-        .int()
+        // Note: .int() removed — Anthropic structured output rejects 'integer' type constraints
         .describe(
           'Estimated total context: spec + seed excerpt + code + deps + tests. Budget generously.'
         ),
       coversCriteria: z
         .array(z.string())
-        .min(1)
+        // Note: .min(1) removed — providers reject minItems JSON Schema constraint
         .describe('Acceptance criterion IDs this bead implements'),
       dependsOn: z
         .array(z.string())
