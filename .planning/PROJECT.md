@@ -47,6 +47,14 @@ The full pipeline works end-to-end: a user describes what they want, and Cauldro
 - Inngest dispatch with fan-in via Promise.all(step.waitForEvent()), configurable per-project concurrency — Phase 5
 - runDecomposition pipeline entry point chaining decompose -> validate -> persist -> dispatch — Phase 5
 - 200 engine unit tests + 30 shared tests — Phase 5
+- KnowledgeGraphAdapter wrapping codebase-memory-mcp with TypeScript API (shell-injection safe) — Phase 6
+- WorktreeManager for git worktree isolation per bead (create, commit, cleanup) — Phase 6
+- ContextAssembler with knowledge graph queries, LLM pruning, 180k token budget trimming — Phase 6
+- AgentRunner TDD loop (tests first, max 5 self-healing iterations, path traversal protection) — Phase 6
+- TimeoutSupervisor with idle/soft/hard graduated timeouts — Phase 6
+- MergeQueue with DAG topological ordering, LLM conflict resolution, post-merge test re-run — Phase 6
+- Full Inngest handler wiring: beadDispatchHandler → worktree → context → TDD → merge — Phase 6
+- 268 engine unit tests — Phase 6
 
 ### Active
 
@@ -58,8 +66,8 @@ The full pipeline works end-to-end: a user describes what they want, and Cauldro
 - [x] Synchronization gates (waits-for) for fan-out/fan-in patterns — Phase 5
 
 #### Parallel Execution
-- [ ] Multiple agents executing independent beads concurrently
-- [ ] Fresh context window per bead (context rot prevention)
+- [x] Multiple agents executing independent beads concurrently — Phase 6
+- [x] Fresh context window per bead (context rot prevention) — Phase 6
 - [x] Agents claim beads atomically to prevent race conditions — Phase 5
 - [ ] Real-time progress tracking and visualization of active agents
 
@@ -72,14 +80,14 @@ The full pipeline works end-to-end: a user describes what they want, and Cauldro
 - [ ] At least one evolutionary cycle must be demonstrable in v1
 
 #### Testing Cube
-- [ ] Unit tests, integration tests, and E2E tests are all first-class with equal depth of coverage
-- [ ] AI agents generate thorough tests at all three levels for every feature
+- [x] Unit tests, integration tests, and E2E tests are all first-class with equal depth of coverage — Phase 6
+- [x] AI agents generate thorough tests at all three levels for every feature — Phase 6
 - [ ] Encrypted holdout tests provide an additional adversarial verification layer
 
 #### Code Intelligence
-- [ ] Brownfield codebase mapping via knowledge graph (codebase-memory-mcp or equivalent)
-- [ ] Sub-millisecond code queries for agent context loading
-- [ ] Incremental re-indexing as agents modify code
+- [x] Brownfield codebase mapping via knowledge graph (codebase-memory-mcp or equivalent) — Phase 6
+- [x] Sub-millisecond code queries for agent context loading — Phase 6
+- [x] Incremental re-indexing as agents modify code — Phase 6
 
 #### Web Dashboard
 - [ ] Chat-like interface for the Socratic interview
