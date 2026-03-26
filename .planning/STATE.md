@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 02-llm-gateway 02-01-PLAN.md
-last_updated: "2026-03-26T00:13:40.745Z"
+stopped_at: Completed 02-llm-gateway 02-02-PLAN.md
+last_updated: "2026-03-26T00:22:44.771Z"
 progress:
   total_phases: 9
   completed_phases: 1
   total_plans: 6
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 02 (llm-gateway) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -50,6 +50,7 @@ Plan: 2 of 3
 | Phase 01-persistence-foundation P02 | 3min | 2 tasks | 14 files |
 | Phase 01-persistence-foundation P03 | 9min | 2 tasks | 9 files |
 | Phase 02-llm-gateway P01 | 3min | 2 tasks | 14 files |
+| Phase 02-llm-gateway P02 | 6min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -70,6 +71,8 @@ Recent decisions affecting current work:
 - [Phase 01-persistence-foundation]: Vitest 4 maxWorkers:1 required for integration tests sharing single PostgreSQL — poolOptions.forks.singleFork is Vitest 3 API, silently ignored in v4
 - [Phase 02-llm-gateway]: cauldron.config.ts holdout stage excludes Anthropic by default to enforce cross-model diversity
 - [Phase 02-llm-gateway]: MODEL_FAMILY_MAP covers all 10 models from CLAUDE.md recommended stack across anthropic/openai/google families
+- [Phase 02-llm-gateway]: Promise<any> return type on streaming gateway methods to avoid TS4053 caused by AI SDK v6 'output as Output' namespace export
+- [Phase 02-llm-gateway]: AI SDK v6 maxOutputTokens replaces maxTokens; Prompt type is discriminated union (messages XOR prompt)
 
 ### Pending Todos
 
@@ -84,6 +87,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T00:13:40.742Z
-Stopped at: Completed 02-llm-gateway 02-01-PLAN.md
+Last session: 2026-03-26T00:22:44.768Z
+Stopped at: Completed 02-llm-gateway 02-02-PLAN.md
 Resume file: None
