@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 06.1-04-PLAN.md
-last_updated: "2026-03-26T18:37:49.194Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 06.1-05-PLAN.md
+last_updated: "2026-03-26T18:51:19.724Z"
 progress:
   total_phases: 10
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 25
-  completed_plans: 24
+  completed_plans: 25
 ---
 
 # Project State
@@ -70,6 +70,7 @@ Plan: 5 of 5
 | Phase 06.1 P02 | 5min | 2 tasks | 7 files |
 | Phase 06.1 P03 | 7min | 2 tasks | 6 files |
 | Phase 06.1 P04 | 25min | 2 tasks | 12 files |
+| Phase 06.1-dogfooding-transition P05 | 15min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -140,6 +141,8 @@ Recent decisions affecting current work:
 - [Phase 06.1]: conflict_resolved added to eventTypeEnum with migration 0008 for resolve command appendEvent type correctness
 - [Phase 06.1]: handleMergeRequested exported from decomposition/index.ts to expose full Inngest function set via @cauldron/engine
 - [Phase 06.1]: vi.fn(function(){}) for Hono constructor mock — arrow functions cannot be used as constructors in Vitest
+- [Phase 06.1]: Skill files are plain markdown — Claude Code reads .claude/skills/*.md directly; no manifest or registration needed
+- [Phase 06.1]: Inngest v4 health endpoint is /v1/events (not /v0/envs) — corrected health check probe to POST empty events array for 200 response
 
 ### Pending Todos
 
@@ -154,6 +157,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T18:37:49.191Z
-Stopped at: Completed 06.1-04-PLAN.md
+Last session: 2026-03-26T18:51:19.721Z
+Stopped at: Completed 06.1-05-PLAN.md
 Resume file: None
