@@ -1,19 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { vi } from 'vitest';
 import { randomBytes } from 'node:crypto';
-
-// Import after env is set up in beforeEach (module may cache getKek result)
-let sealPayload: (plaintext: string) => import('../types.js').SealedPayload;
-let unsealPayload: (sealed: import('../types.js').SealedPayload) => string;
+import { sealPayload, unsealPayload } from '../crypto.js';
 
 describe('Holdout Vault Crypto', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     // Provide a valid 256-bit (32-byte) base64 key for each test
     vi.stubEnv('HOLDOUT_ENCRYPTION_KEY', Buffer.from(randomBytes(32)).toString('base64'));
-    // Re-import module fresh to pick up env var (vitest re-executes module-level code per import in unit tests)
-    const mod = await import('../crypto.js?t=' + Date.now().toString());
-    sealPayload = mod.sealPayload;
-    unsealPayload = mod.unsealPayload;
   });
 
   afterEach(() => {
@@ -55,30 +48,28 @@ describe('Holdout Vault Crypto', () => {
 
   it('Test 4: unsealPayload throws with tampered ciphertext (GCM auth tag verification)', () => {
     const sealed = sealPayload('sensitive test data');
-    // Tamper the ciphertext by flipping a byte
-    const tamperedCiphertext = Buffer.from(sealed.ciphertext, 'base64');
-    tamperedCiphertext[0] ^= 0xff;
-    const tampered = { ...sealed, ciphertext: tamperedCiphertext.toString('base64') };
+    // Tamper the ciphertext by flipping bits in the first byte
+    const tamperedBuf = Buffer.from(sealed.ciphertext, 'base64');
+    tamperedBuf[0] ^= 0xff;
+    const tampered = { ...sealed, ciphertext: tamperedBuf.toString('base64') };
     expect(() => unsealPayload(tampered)).toThrow();
   });
 
   it('Test 5: unsealPayload throws with tampered authTag', () => {
     const sealed = sealPayload('sensitive test data');
-    // Replace authTag with a different valid-looking base64 value
+    // Replace authTag with a random-but-valid-looking base64 value
     const fakeAuthTag = Buffer.from(randomBytes(16)).toString('base64');
     const tampered = { ...sealed, authTag: fakeAuthTag };
     expect(() => unsealPayload(tampered)).toThrow();
   });
 
-  it('Test 6: getKek() throws Error with message containing HOLDOUT_ENCRYPTION_KEY when env var absent', async () => {
+  it('Test 6: getKek() throws Error with message containing HOLDOUT_ENCRYPTION_KEY when env var absent', () => {
     vi.unstubAllEnvs();
-    // Stub with empty string to simulate absent key
     vi.stubEnv('HOLDOUT_ENCRYPTION_KEY', '');
-    const freshMod = await import('../crypto.js?t=' + (Date.now() + 1).toString());
-    expect(() => freshMod.sealPayload('test')).toThrow('HOLDOUT_ENCRYPTION_KEY');
+    expect(() => sealPayload('test')).toThrow('HOLDOUT_ENCRYPTION_KEY');
   });
 
-  it('Test 7: encryptedDek field is compound format containing two colon separators', () => {
+  it('Test 7: encryptedDek field is compound format containing two colon separators (dekIv:dekAuthTag:dekCiphertext)', () => {
     const sealed = sealPayload('test payload');
     const parts = sealed.encryptedDek.split(':');
     // Should be exactly 3 parts: dekIv:dekAuthTag:dekCiphertext
@@ -92,10 +83,10 @@ describe('Holdout Vault Crypto', () => {
   it('Test 8: sealPayload works with large payloads (10,000+ character JSON strings)', () => {
     const largeScenarios = Array.from({ length: 50 }, (_, i) => ({
       id: `scenario-${i}`,
-      title: `Test scenario ${i} with a longer title to increase size`,
-      given: `Given a system with state condition ${i} applied`,
-      when: `When user performs action number ${i} with parameters`,
-      then: `Then the system should respond correctly to condition ${i}`,
+      title: `Test scenario ${i} with a longer title to increase overall payload size substantially`,
+      given: `Given a system with specific state condition number ${i} has been applied to it`,
+      when: `When the user performs action number ${i} with the required parameters and context`,
+      then: `Then the system should respond correctly and completely to condition ${i} as specified`,
       category: 'happy_path',
       acceptanceCriterionRef: `AC-${i}`,
       severity: 'major',
