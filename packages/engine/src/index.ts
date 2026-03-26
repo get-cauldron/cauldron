@@ -1,2 +1,2 @@
 // @cauldron/engine entry point
-export {};
+export * from './gateway/index.js';
