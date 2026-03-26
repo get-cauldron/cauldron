@@ -17,7 +17,7 @@ export async function healthCheck(): Promise<void> {
 
   // Check Inngest dev server reachability
   try {
-    const res = await fetch('http://localhost:8288/v0/envs');
+    const res = await fetch('http://localhost:8288/v1/events');
     if (!res.ok) {
       throw new Error(`Inngest returned HTTP ${res.status}`);
     }
