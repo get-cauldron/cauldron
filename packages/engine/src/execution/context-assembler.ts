@@ -7,6 +7,7 @@ import type { Bead, Seed } from '@cauldron/shared';
 
 /** Token estimate: words * 1.3 */
 function estimateTokens(text: string): number {
+  if (!text) return 0;
   const wordCount = text.split(/\s+/).filter(Boolean).length;
   return Math.ceil(wordCount * 1.3);
 }
