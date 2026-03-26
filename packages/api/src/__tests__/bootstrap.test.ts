@@ -5,14 +5,19 @@ vi.mock('@cauldron/shared', () => ({
   db: { insert: vi.fn(), select: vi.fn(), execute: vi.fn() },
 }));
 
-// Mock @cauldron/engine
-vi.mock('@cauldron/engine', () => ({
-  loadConfig: vi.fn(),
-  LLMGateway: vi.fn(),
-  inngest: {},
-  configureSchedulerDeps: vi.fn(),
-  configureVaultDeps: vi.fn(),
-}));
+// Mock @cauldron/engine — LLMGateway must be a class-compatible mock
+vi.mock('@cauldron/engine', () => {
+  const MockLLMGateway = vi.fn(function () {
+    return { streamText: vi.fn() };
+  });
+  return {
+    loadConfig: vi.fn(),
+    LLMGateway: MockLLMGateway,
+    inngest: {},
+    configureSchedulerDeps: vi.fn(),
+    configureVaultDeps: vi.fn(),
+  };
+});
 
 // Mock pino
 vi.mock('pino', () => ({
@@ -32,7 +37,6 @@ describe('bootstrap', () => {
     const mockGateway = { streamText: vi.fn() };
 
     (loadConfig as ReturnType<typeof vi.fn>).mockResolvedValueOnce(mockConfig);
-    (LLMGateway as ReturnType<typeof vi.fn>).mockImplementationOnce(() => mockGateway);
 
     const { bootstrap } = await import('../bootstrap.js');
     const result = await bootstrap('/fake/root');
