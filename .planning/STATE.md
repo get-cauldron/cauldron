@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 06.1-02-PLAN.md
-last_updated: "2026-03-26T18:20:03.501Z"
+stopped_at: Completed 06.1-03-PLAN.md
+last_updated: "2026-03-26T18:22:00.799Z"
 progress:
   total_phases: 10
   completed_phases: 6
   total_plans: 25
-  completed_plans: 22
+  completed_plans: 23
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 06.1 (dogfooding-transition-bridge-claude-code-to-cauldron-for-self-building) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 
 ## Performance Metrics
 
@@ -68,6 +68,7 @@ Plan: 3 of 5
 | Phase 06-parallel-execution-engine P05 | 3min | 2 tasks | 6 files |
 | Phase 06.1 P01 | 3min | 2 tasks | 20 files |
 | Phase 06.1 P02 | 5min | 2 tasks | 7 files |
+| Phase 06.1 P03 | 7min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -132,6 +133,9 @@ Recent decisions affecting current work:
 - [Phase 06.1]: StatusDeps/KillDeps minimal interfaces instead of full BootstrapDeps — keeps unit tests lean and avoids engine import overhead
 - [Phase 06.1]: review writers use JSON with .json extension instead of YAML — reliable round-trip without hand-rolling a YAML parser
 - [Phase 06.1]: cli.ts bootstraps deps only for status/kill — stub commands remain no-arg until their respective plans implement them
+- [Phase 06.1]: Commands self-contained (bootstrap + parseArgs internally): cli.ts calls them with no args, keeps routing simple
+- [Phase 06.1]: Prior context injected as first-answer preamble (not DB transcript injection): works with FSM scoring without DB surgery
+- [Phase 06.1]: Brownfield mode auto-selected when priorContext is non-empty: ties D-07 to D-04 naturally
 
 ### Pending Todos
 
@@ -146,6 +150,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T18:20:03.499Z
-Stopped at: Completed 06.1-02-PLAN.md
+Last session: 2026-03-26T18:22:00.796Z
+Stopped at: Completed 06.1-03-PLAN.md
 Resume file: None

@@ -142,12 +142,12 @@ Plans:
 **Goal:** Claude Code can invoke Cauldron's full pipeline (minus evolutionary loop) through project-local skills, with GSD context bridging, file-based human review gates, and self-build safety guards — enabling Phases 7-9 to be built using Cauldron itself.
 **Requirements**: D-01 through D-21 (from CONTEXT.md decisions)
 **Depends on:** Phase 6
-**Plans:** 2/5 plans executed
+**Plans:** 3/5 plans executed
 
 Plans:
 - [x] 06.1-01-PLAN.md — Package setup, bootstrap, health check, CLI router, selfBuild config
 - [x] 06.1-02-PLAN.md — Status command, kill command, file-based review writers
-- [ ] 06.1-03-PLAN.md — Interview command with GSD context bridging, crystallize command
+- [x] 06.1-03-PLAN.md — Interview command with GSD context bridging, crystallize command
 - [ ] 06.1-04-PLAN.md — Decompose, execute (Inngest serve), seal, resolve commands, self-build safety
 - [ ] 06.1-05-PLAN.md — Claude Code skills (all 8) and dry-run pipeline validation
 
