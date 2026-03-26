@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-03-26T14:23:24.727Z"
+stopped_at: Completed 05-02-PLAN.md
+last_updated: "2026-03-26T14:29:19.209Z"
 progress:
   total_phases: 9
   completed_phases: 4
   total_plans: 15
-  completed_plans: 13
+  completed_plans: 14
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 05 (dag-decomposition-scheduler) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -59,6 +59,7 @@ Plan: 2 of 3
 | Phase 04-holdout-vault P02 | 7min | 2 tasks | 6 files |
 | Phase 04-holdout-vault PP03 | 5min | 2 tasks | 6 files |
 | Phase 05-dag-decomposition-scheduler P01 | 3min | 2 tasks | 11 files |
+| Phase 05-dag-decomposition-scheduler P02 | 5min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -99,6 +100,8 @@ Recent decisions affecting current work:
 - [Phase 04-holdout-vault]: InngestFunction<any> explicit type annotation required to avoid TS2883 non-portable inferred type errors from deep Inngest generics
 - [Phase 05-dag-decomposition-scheduler]: decomposition PipelineStage requires all 5 stages in Record<PipelineStage, string[]> — test fixtures must include decomposition key
 - [Phase 05-dag-decomposition-scheduler]: version column defaults to 1 for optimistic concurrency — first increment yields version 2, making unversioned rows identifiable
+- [Phase 05-dag-decomposition-scheduler]: parent_child edges excluded from Kahn's cycle detection — they track molecule hierarchy, not scheduling order
+- [Phase 05-dag-decomposition-scheduler]: validateDAG priority: cycle > oversized_bead > coverage_gap — structural validity checked before context budget before spec completeness
 
 ### Pending Todos
 
@@ -113,6 +116,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T14:23:24.725Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-03-26T14:29:19.207Z
+Stopped at: Completed 05-02-PLAN.md
 Resume file: None

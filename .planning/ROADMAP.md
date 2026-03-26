@@ -107,7 +107,7 @@ Plans:
 **Plans**: 3 plans
 Plans:
 - [x] 05-01-PLAN.md — Schema migration, domain types, and gateway config extension
-- [ ] 05-02-PLAN.md — Two-pass LLM decomposition agent and DAG validator
+- [x] 05-02-PLAN.md — Two-pass LLM decomposition agent and DAG validator
 - [ ] 05-03-PLAN.md — Scheduler (ready-bead query, atomic claiming, Inngest dispatch, fan-in)
 
 ### Phase 6: Parallel Execution Engine

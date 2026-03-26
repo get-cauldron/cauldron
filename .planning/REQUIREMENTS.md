@@ -52,13 +52,13 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Task Decomposition & DAG Coordination
 
-- [ ] **DAG-01**: Seed acceptance criteria decomposed into molecules (non-atomic parent tasks) and beads (atomic leaf tasks)
+- [x] **DAG-01**: Seed acceptance criteria decomposed into molecules (non-atomic parent tasks) and beads (atomic leaf tasks)
 - [x] **DAG-02**: Each bead sized to fit in one fresh context window of a commercial model (~200k tokens target, Opus 1M excluded)
-- [ ] **DAG-03**: Bead size validated at decomposition time (not assumed)
+- [x] **DAG-03**: Bead size validated at decomposition time (not assumed)
 - [x] **DAG-04**: Four dependency types supported: blocks/blocked-by, parent-child, conditional-blocks, waits-for
 - [ ] **DAG-05**: Parallel-by-default: beads execute concurrently unless explicit dependency edges exist
 - [ ] **DAG-06**: Synchronization gates (waits-for) fire when all upstream beads complete
-- [ ] **DAG-07**: Cycle detection runs at DAG construction time and rejects cyclic graphs with clear error
+- [x] **DAG-07**: Cycle detection runs at DAG construction time and rejects cyclic graphs with clear error
 - [x] **DAG-08**: Atomic bead claiming prevents race conditions when multiple agents request work
 - [x] **DAG-09**: DAG state persisted: bead status (pending, claimed, active, completed, failed), dependency edges, agent assignments
 
@@ -202,13 +202,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | HOLD-06 | Phase 4 | Complete |
 | HOLD-07 | Phase 4 | Complete |
 | HOLD-08 | Phase 4 | Complete |
-| DAG-01 | Phase 5 | Pending |
+| DAG-01 | Phase 5 | Complete |
 | DAG-02 | Phase 5 | Complete |
-| DAG-03 | Phase 5 | Pending |
+| DAG-03 | Phase 5 | Complete |
 | DAG-04 | Phase 5 | Complete |
 | DAG-05 | Phase 5 | Pending |
 | DAG-06 | Phase 5 | Pending |
-| DAG-07 | Phase 5 | Pending |
+| DAG-07 | Phase 5 | Complete |
 | DAG-08 | Phase 5 | Complete |
 | DAG-09 | Phase 5 | Complete |
 | EXEC-01 | Phase 6 | Pending |
