@@ -104,7 +104,11 @@ Plans:
   4. Cycle detection runs on every DAG mutation; a graph with a cycle is rejected with a human-readable error before any job is dispatched
   5. Two agents concurrently claiming the same bead results in exactly one claim succeeding — verified by a concurrent-claim stress test
   6. Fan-in synchronization gates fire only after all upstream beads complete, verified against a diamond-shaped test DAG
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 05-01-PLAN.md — Schema migration, domain types, and gateway config extension
+- [ ] 05-02-PLAN.md — Two-pass LLM decomposition agent and DAG validator
+- [ ] 05-03-PLAN.md — Scheduler (ready-bead query, atomic claiming, Inngest dispatch, fan-in)
 
 ### Phase 6: Parallel Execution Engine
 **Goal**: Multiple agents execute independent beads concurrently in isolated git worktrees, assembling surgical context from the code knowledge graph, self-healing on errors, and merging back to main through a sequential queue — while generating unit, integration, and E2E tests as a first-class part of every bead.
@@ -177,7 +181,7 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 2. LLM Gateway | 3/3 | Complete   | 2026-03-26 |
 | 3. Interview & Seed Pipeline | 3/3 | Complete   | 2026-03-26 |
 | 4. Holdout Vault | 3/3 | Complete   | 2026-03-26 |
-| 5. DAG Decomposition & Scheduler | 0/TBD | Not started | - |
+| 5. DAG Decomposition & Scheduler | 0/3 | Not started | - |
 | 6. Parallel Execution Engine | 0/TBD | Not started | - |
 | 7. Evolutionary Loop | 0/TBD | Not started | - |
 | 8. Web Dashboard | 0/TBD | Not started | - |
