@@ -69,8 +69,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **EXEC-03**: Multiple agents execute independent beads concurrently
 - [x] **EXEC-04**: Agent context assembly: seed excerpt + bead spec + relevant code (via knowledge graph) + dependency outputs
 - [ ] **EXEC-05**: Self-healing error loop: agent reads error output, iterates on code, reruns verification
-- [ ] **EXEC-06**: Sequential merge queue resolves completed bead worktrees back to project main
-- [ ] **EXEC-07**: Merge conflict detection with escalation (LLM-assisted resolution or human escalation)
+- [x] **EXEC-06**: Sequential merge queue resolves completed bead worktrees back to project main
+- [x] **EXEC-07**: Merge conflict detection with escalation (LLM-assisted resolution or human escalation)
 - [x] **EXEC-08**: Agent capability scoping: least-privilege access, no destructive operations without approval
 - [ ] **EXEC-09**: Bead timeout supervision (soft warning, idle detection, hard timeout)
 
@@ -102,7 +102,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **CODE-01**: Knowledge graph indexing of project codebase (functions, classes, methods, imports, call graph)
 - [x] **CODE-02**: Sub-millisecond graph queries for agent context loading
-- [ ] **CODE-03**: Incremental re-indexing triggered as agents modify code during execution
+- [x] **CODE-03**: Incremental re-indexing triggered as agents modify code during execution
 - [x] **CODE-04**: Brownfield codebase mapping: one-time full index when onboarding an existing project
 
 ### Web Dashboard
@@ -216,8 +216,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EXEC-03 | Phase 6 | Pending |
 | EXEC-04 | Phase 6 | Complete |
 | EXEC-05 | Phase 6 | Pending |
-| EXEC-06 | Phase 6 | Pending |
-| EXEC-07 | Phase 6 | Pending |
+| EXEC-06 | Phase 6 | Complete |
+| EXEC-07 | Phase 6 | Complete |
 | EXEC-08 | Phase 6 | Complete |
 | EXEC-09 | Phase 6 | Pending |
 | TEST-01 | Phase 6 | Pending |
@@ -228,7 +228,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEST-06 | Phase 6 | Pending |
 | CODE-01 | Phase 6 | Complete |
 | CODE-02 | Phase 6 | Complete |
-| CODE-03 | Phase 6 | Pending |
+| CODE-03 | Phase 6 | Complete |
 | CODE-04 | Phase 6 | Complete |
 | EVOL-01 | Phase 7 | Pending |
 | EVOL-02 | Phase 7 | Pending |

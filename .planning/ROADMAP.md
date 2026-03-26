@@ -132,7 +132,7 @@ Plans:
 - [x] 06-01-PLAN.md — Code Intelligence adapter (codebase-memory-mcp), execution types, gateway stage extensions
 - [x] 06-02-PLAN.md — WorktreeManager (git worktree lifecycle), ContextAssembler (knowledge graph + token budget), TestDetector
 - [ ] 06-03-PLAN.md — AgentRunner (TDD self-healing loop), TimeoutSupervisor (idle/soft/hard timeouts)
-- [ ] 06-04-PLAN.md — MergeQueue (topological ordering, LLM conflict resolution, post-merge verification)
+- [x] 06-04-PLAN.md — MergeQueue (topological ordering, LLM conflict resolution, post-merge verification)
 - [ ] 06-05-PLAN.md — Inngest handler wiring, barrel exports, schema migration, regression gate
 **UI hint**: no
 
@@ -188,7 +188,7 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 3. Interview & Seed Pipeline | 3/3 | Complete   | 2026-03-26 |
 | 4. Holdout Vault | 3/3 | Complete   | 2026-03-26 |
 | 5. DAG Decomposition & Scheduler | 1/3 | In Progress|  |
-| 6. Parallel Execution Engine | 2/5 | In Progress|  |
+| 6. Parallel Execution Engine | 3/5 | In Progress|  |
 | 7. Evolutionary Loop | 0/TBD | Not started | - |
 | 8. Web Dashboard | 0/TBD | Not started | - |
 | 9. CLI | 0/TBD | Not started | - |
