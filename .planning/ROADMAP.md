@@ -56,7 +56,7 @@ Plans:
   5. Cross-model diversity is enforced: a holdout-stage call with the same provider as the implementer stage is rejected at the gateway level
 **Plans**: 3 plans
 Plans:
-- [ ] 02-01-PLAN.md — Schema, types, config, provider factory, and dependencies
+- [x] 02-01-PLAN.md — Schema, types, config, provider factory, and dependencies
 - [ ] 02-02-PLAN.md — LLMGateway class with failover, circuit breaker, and diversity enforcement
 - [ ] 02-03-PLAN.md — Budget enforcement, startup validation, and comprehensive test suite
 

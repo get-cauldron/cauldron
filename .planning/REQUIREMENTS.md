@@ -18,11 +18,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### LLM Gateway & Model Routing
 
-- [ ] **LLM-01**: Vercel AI SDK integrated as unified multi-provider interface (Anthropic, OpenAI, Google at minimum)
-- [ ] **LLM-02**: Default model assignments per pipeline stage (interview, holdout generation, implementation, evaluation)
-- [ ] **LLM-03**: Per-project model configuration overrides stored in project settings
+- [x] **LLM-01**: Vercel AI SDK integrated as unified multi-provider interface (Anthropic, OpenAI, Google at minimum)
+- [x] **LLM-02**: Default model assignments per pipeline stage (interview, holdout generation, implementation, evaluation)
+- [x] **LLM-03**: Per-project model configuration overrides stored in project settings
 - [ ] **LLM-04**: Provider failover: if primary provider fails, fall back to secondary for the same pipeline stage
-- [ ] **LLM-05**: Token usage tracking per bead, per evolution cycle, and per project (cost visibility)
+- [x] **LLM-05**: Token usage tracking per bead, per evolution cycle, and per project (cost visibility)
 - [ ] **LLM-06**: Cross-model diversity enforced: holdout generator must use a different provider than implementer
 
 ### Socratic Interview & Seed Crystallization
@@ -177,11 +177,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INFR-04 | Phase 1 | Complete |
 | INFR-05 | Phase 1 | Complete |
 | INFR-06 | Phase 1 | Complete |
-| LLM-01 | Phase 2 | Pending |
-| LLM-02 | Phase 2 | Pending |
-| LLM-03 | Phase 2 | Pending |
+| LLM-01 | Phase 2 | Complete |
+| LLM-02 | Phase 2 | Complete |
+| LLM-03 | Phase 2 | Complete |
 | LLM-04 | Phase 2 | Pending |
-| LLM-05 | Phase 2 | Pending |
+| LLM-05 | Phase 2 | Complete |
 | LLM-06 | Phase 2 | Pending |
 | INTV-01 | Phase 3 | Pending |
 | INTV-02 | Phase 3 | Pending |
