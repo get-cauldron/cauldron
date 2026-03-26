@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 06-04-PLAN.md
-last_updated: "2026-03-26T16:35:27.643Z"
+stopped_at: Completed 06-03-PLAN.md
+last_updated: "2026-03-26T16:36:20.986Z"
 progress:
   total_phases: 9
   completed_phases: 5
   total_plans: 20
-  completed_plans: 18
+  completed_plans: 19
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 06 (parallel-execution-engine) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 
 ## Performance Metrics
 
@@ -64,6 +64,7 @@ Plan: 4 of 5
 | Phase 06-parallel-execution-engine P01 | 6min | 2 tasks | 9 files |
 | Phase 06-parallel-execution-engine P02 | 4min | 2 tasks | 7 files |
 | Phase 06-parallel-execution-engine P04 | 4min | 1 tasks | 5 files |
+| Phase 06 P03 | 6min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -114,6 +115,9 @@ Recent decisions affecting current work:
 - [Phase 06-parallel-execution-engine]: KnowledgeGraphAdapter tmp-file arg pattern: JSON args written to temp file before exec to prevent shell injection from special characters in repo paths or search patterns
 - [Phase 06-parallel-execution-engine]: simple-git used for worktree operations via .raw() — thin wrapper with TypeScript types; existsSync idempotency prevents duplicate worktrees; LLM pruning fallback returns all candidates if generateObject fails
 - [Phase 06-parallel-execution-engine]: MergeQueue uses topological ordering for deterministic merge serialization; LLM conflict resolution with confidence gating; execPromise(cmd, cwd) pattern consistent with adapter.ts; event_type enum extended for merge lifecycle
+- [Phase 06]: execPromise manual callback wrapper (not promisify) because test mocks don't carry util.promisify.custom — same pattern from Phase 06-01
+- [Phase 06]: vi.hoisted() required for mock variables in vi.mock() factory — Vitest hoists vi.mock() to file top before variable initialization
+- [Phase 06]: exec callback signature is (err, stdout: string, stderr: string) — test mocks must call cb(err, stdoutStr, stderrStr) not cb(err, {stdout, stderr})
 
 ### Pending Todos
 
@@ -128,6 +132,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T16:35:27.640Z
-Stopped at: Completed 06-04-PLAN.md
+Last session: 2026-03-26T16:36:20.983Z
+Stopped at: Completed 06-03-PLAN.md
 Resume file: None

@@ -66,22 +66,22 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **EXEC-01**: Each bead executes in a fresh context window with only relevant context pre-loaded
 - [x] **EXEC-02**: Git worktree isolation: each active bead gets its own worktree branch
-- [ ] **EXEC-03**: Multiple agents execute independent beads concurrently
+- [x] **EXEC-03**: Multiple agents execute independent beads concurrently
 - [x] **EXEC-04**: Agent context assembly: seed excerpt + bead spec + relevant code (via knowledge graph) + dependency outputs
-- [ ] **EXEC-05**: Self-healing error loop: agent reads error output, iterates on code, reruns verification
+- [x] **EXEC-05**: Self-healing error loop: agent reads error output, iterates on code, reruns verification
 - [x] **EXEC-06**: Sequential merge queue resolves completed bead worktrees back to project main
 - [x] **EXEC-07**: Merge conflict detection with escalation (LLM-assisted resolution or human escalation)
 - [x] **EXEC-08**: Agent capability scoping: least-privilege access, no destructive operations without approval
-- [ ] **EXEC-09**: Bead timeout supervision (soft warning, idle detection, hard timeout)
+- [x] **EXEC-09**: Bead timeout supervision (soft warning, idle detection, hard timeout)
 
 ### Testing Cube
 
-- [ ] **TEST-01**: Unit tests generated with thorough coverage for every implemented feature
-- [ ] **TEST-02**: Integration tests generated with thorough coverage — equal depth to unit tests
-- [ ] **TEST-03**: E2E tests generated with thorough coverage — equal depth to unit tests
-- [ ] **TEST-04**: Anti-mocking heuristics: prefer real integrations over mocks where feasible
-- [ ] **TEST-05**: Test generation is part of bead execution (not a separate post-execution step)
-- [ ] **TEST-06**: All three test levels must pass before a bead is marked complete
+- [x] **TEST-01**: Unit tests generated with thorough coverage for every implemented feature
+- [x] **TEST-02**: Integration tests generated with thorough coverage — equal depth to unit tests
+- [x] **TEST-03**: E2E tests generated with thorough coverage — equal depth to unit tests
+- [x] **TEST-04**: Anti-mocking heuristics: prefer real integrations over mocks where feasible
+- [x] **TEST-05**: Test generation is part of bead execution (not a separate post-execution step)
+- [x] **TEST-06**: All three test levels must pass before a bead is marked complete
 
 ### Evolutionary Loop
 
@@ -213,19 +213,19 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DAG-09 | Phase 5 | Complete |
 | EXEC-01 | Phase 6 | Complete |
 | EXEC-02 | Phase 6 | Complete |
-| EXEC-03 | Phase 6 | Pending |
+| EXEC-03 | Phase 6 | Complete |
 | EXEC-04 | Phase 6 | Complete |
-| EXEC-05 | Phase 6 | Pending |
+| EXEC-05 | Phase 6 | Complete |
 | EXEC-06 | Phase 6 | Complete |
 | EXEC-07 | Phase 6 | Complete |
 | EXEC-08 | Phase 6 | Complete |
-| EXEC-09 | Phase 6 | Pending |
-| TEST-01 | Phase 6 | Pending |
-| TEST-02 | Phase 6 | Pending |
-| TEST-03 | Phase 6 | Pending |
-| TEST-04 | Phase 6 | Pending |
-| TEST-05 | Phase 6 | Pending |
-| TEST-06 | Phase 6 | Pending |
+| EXEC-09 | Phase 6 | Complete |
+| TEST-01 | Phase 6 | Complete |
+| TEST-02 | Phase 6 | Complete |
+| TEST-03 | Phase 6 | Complete |
+| TEST-04 | Phase 6 | Complete |
+| TEST-05 | Phase 6 | Complete |
+| TEST-06 | Phase 6 | Complete |
 | CODE-01 | Phase 6 | Complete |
 | CODE-02 | Phase 6 | Complete |
 | CODE-03 | Phase 6 | Complete |
