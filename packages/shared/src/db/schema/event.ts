@@ -24,6 +24,7 @@ export const eventTypeEnum = pgEnum('event_type', [
   'gateway_failover',
   'gateway_exhausted',
   'budget_exceeded',
+  'conflict_resolved',
 ]);
 
 export const events = pgTable('events', {
