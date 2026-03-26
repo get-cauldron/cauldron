@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 06.1-01-PLAN.md
-last_updated: "2026-03-26T18:12:03.534Z"
+stopped_at: Completed 06.1-02-PLAN.md
+last_updated: "2026-03-26T18:20:03.501Z"
 progress:
   total_phases: 10
   completed_phases: 6
   total_plans: 25
-  completed_plans: 21
+  completed_plans: 22
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 06.1 (dogfooding-transition-bridge-claude-code-to-cauldron-for-self-building) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 
 ## Performance Metrics
 
@@ -67,6 +67,7 @@ Plan: 2 of 5
 | Phase 06 P03 | 6min | 2 tasks | 4 files |
 | Phase 06-parallel-execution-engine P05 | 3min | 2 tasks | 6 files |
 | Phase 06.1 P01 | 3min | 2 tasks | 20 files |
+| Phase 06.1 P02 | 5min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -128,6 +129,9 @@ Recent decisions affecting current work:
 - [Phase 06-parallel-execution-engine]: SchedulerDeps extended with optional gateway and projectRoot — backward-compatible, graceful fallback to Phase 5 behavior when execution deps absent
 - [Phase 06.1-01]: Used node:util parseArgs for CLI arg parsing — zero external dependency, sufficient for Cauldron's command surface
 - [Phase 06.1-01]: All commands run healthCheck() first except health itself — prevents commands from hanging silently when services are down
+- [Phase 06.1]: StatusDeps/KillDeps minimal interfaces instead of full BootstrapDeps — keeps unit tests lean and avoids engine import overhead
+- [Phase 06.1]: review writers use JSON with .json extension instead of YAML — reliable round-trip without hand-rolling a YAML parser
+- [Phase 06.1]: cli.ts bootstraps deps only for status/kill — stub commands remain no-arg until their respective plans implement them
 
 ### Pending Todos
 
@@ -142,6 +146,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T18:12:03.532Z
-Stopped at: Completed 06.1-01-PLAN.md
+Last session: 2026-03-26T18:20:03.499Z
+Stopped at: Completed 06.1-02-PLAN.md
 Resume file: None
