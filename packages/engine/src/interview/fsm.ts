@@ -168,10 +168,31 @@ export class InterviewFSM {
     const mode = interview.mode as InterviewMode;
     const turnCount = interview.turnCount;
 
-    // D-21: Run scoring + perspectives in parallel
+    // Build a transcript that includes the current answer so scoring and perspectives see it.
+    // The full turn record (with perspective, model, etc.) is built after scoring completes,
+    // but a partial turn with the user's answer is needed for context-aware question generation.
+    const transcriptWithCurrentAnswer: InterviewTurn[] = [
+      ...currentTranscript,
+      {
+        turnNumber: turnCount + 1,
+        perspective: 'user' as InterviewTurn['perspective'],
+        question: currentTranscript.length > 0
+          ? currentTranscript[currentTranscript.length - 1]!.question
+          : '(opening turn)',
+        mcOptions: [],
+        userAnswer: answer.userAnswer,
+        freeformText: answer.freeformText,
+        ambiguityScoreSnapshot: previousScores ?? { goalClarity: 0, constraintClarity: 0, successCriteriaClarity: 0, overall: 0 },
+        model: 'user-input',
+        allCandidates: [],
+        timestamp: new Date().toISOString(),
+      },
+    ];
+
+    // D-21: Run scoring + perspectives in parallel — using transcript that includes current answer
     const [scores, candidates] = await Promise.all([
-      scoreTranscript(this.gateway, currentTranscript, mode, projectId, previousScores, this.config),
-      runActivePerspectives(this.gateway, currentTranscript, previousScores, projectId, turnCount, this.config),
+      scoreTranscript(this.gateway, transcriptWithCurrentAnswer, mode, projectId, previousScores, this.config),
+      runActivePerspectives(this.gateway, transcriptWithCurrentAnswer, previousScores, projectId, turnCount, this.config),
     ]);
 
     // Rank candidates to get the next question
