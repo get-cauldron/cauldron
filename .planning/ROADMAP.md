@@ -89,7 +89,7 @@ Plans:
   5. After evolutionary convergence is reached, the vault unseals and the holdout tests run; a failure triggers a new evolution cycle with the failure context attached
 **Plans**: 3 plans
 Plans:
-- [ ] 04-01-PLAN.md — Schema migration, extended holdout table, domain types, and AES-256-GCM envelope encryption
+- [x] 04-01-PLAN.md — Schema migration, extended holdout table, domain types, and AES-256-GCM envelope encryption
 - [ ] 04-02-PLAN.md — Holdout scenario generator with adversarial LLM call, vault service with review state machine and sealing
 - [ ] 04-03-PLAN.md — Holdout evaluator, unseal protocol, and Inngest convergence event handler
 
@@ -176,7 +176,7 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 1. Persistence Foundation | 3/3 | Complete   | 2026-03-25 |
 | 2. LLM Gateway | 3/3 | Complete   | 2026-03-26 |
 | 3. Interview & Seed Pipeline | 3/3 | Complete   | 2026-03-26 |
-| 4. Holdout Vault | 0/3 | Not started | - |
+| 4. Holdout Vault | 1/3 | In Progress|  |
 | 5. DAG Decomposition & Scheduler | 0/TBD | Not started | - |
 | 6. Parallel Execution Engine | 0/TBD | Not started | - |
 | 7. Evolutionary Loop | 0/TBD | Not started | - |
