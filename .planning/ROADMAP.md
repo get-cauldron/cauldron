@@ -21,7 +21,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Interview & Seed Pipeline** - Socratic interview FSM, ambiguity scoring, seed crystallization, human approval gates (completed 2026-03-26)
 - [x] **Phase 4: Holdout Vault** - Cross-model holdout generation, AES-256-GCM encryption, key isolation, unsealing protocol (completed 2026-03-26)
 - [ ] **Phase 5: DAG Decomposition & Scheduler** - Molecule/bead decomposition, all 4 dependency types, Kahn's cycle detection, Inngest FlowProducer dispatch, atomic claiming
-- [ ] **Phase 6: Parallel Execution Engine** - Agent runner, git worktrees, context assembly via Code Intel, merge queue, testing cube, self-healing error loop
+- [x] **Phase 6: Parallel Execution Engine** - Agent runner, git worktrees, context assembly via Code Intel, merge queue, testing cube, self-healing error loop (completed 2026-03-26)
 - [ ] **Phase 7: Evolutionary Loop** - Post-execution evaluator, evolution FSM, convergence detection, lateral thinking personas, holdout unsealing
 - [ ] **Phase 8: Web Dashboard** - Interview chat, live DAG visualization, SSE log streaming, human approval UX, HZD aesthetic
 - [ ] **Phase 9: CLI** - Full pipeline CLI, git-push trigger, shared tRPC API
@@ -133,7 +133,7 @@ Plans:
 - [x] 06-02-PLAN.md — WorktreeManager (git worktree lifecycle), ContextAssembler (knowledge graph + token budget), TestDetector
 - [x] 06-03-PLAN.md — AgentRunner (TDD self-healing loop), TimeoutSupervisor (idle/soft/hard timeouts)
 - [x] 06-04-PLAN.md — MergeQueue (topological ordering, LLM conflict resolution, post-merge verification)
-- [ ] 06-05-PLAN.md — Inngest handler wiring, barrel exports, schema migration, regression gate
+- [x] 06-05-PLAN.md — Inngest handler wiring, barrel exports, schema migration, regression gate
 **UI hint**: no
 
 ### Phase 7: Evolutionary Loop
@@ -188,7 +188,7 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 3. Interview & Seed Pipeline | 3/3 | Complete   | 2026-03-26 |
 | 4. Holdout Vault | 3/3 | Complete   | 2026-03-26 |
 | 5. DAG Decomposition & Scheduler | 1/3 | In Progress|  |
-| 6. Parallel Execution Engine | 4/5 | In Progress|  |
+| 6. Parallel Execution Engine | 5/5 | Complete   | 2026-03-26 |
 | 7. Evolutionary Loop | 0/TBD | Not started | - |
 | 8. Web Dashboard | 0/TBD | Not started | - |
 | 9. CLI | 0/TBD | Not started | - |
