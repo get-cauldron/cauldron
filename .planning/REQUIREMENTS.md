@@ -64,14 +64,14 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Parallel Execution
 
-- [ ] **EXEC-01**: Each bead executes in a fresh context window with only relevant context pre-loaded
-- [ ] **EXEC-02**: Git worktree isolation: each active bead gets its own worktree branch
+- [x] **EXEC-01**: Each bead executes in a fresh context window with only relevant context pre-loaded
+- [x] **EXEC-02**: Git worktree isolation: each active bead gets its own worktree branch
 - [ ] **EXEC-03**: Multiple agents execute independent beads concurrently
-- [ ] **EXEC-04**: Agent context assembly: seed excerpt + bead spec + relevant code (via knowledge graph) + dependency outputs
+- [x] **EXEC-04**: Agent context assembly: seed excerpt + bead spec + relevant code (via knowledge graph) + dependency outputs
 - [ ] **EXEC-05**: Self-healing error loop: agent reads error output, iterates on code, reruns verification
 - [ ] **EXEC-06**: Sequential merge queue resolves completed bead worktrees back to project main
 - [ ] **EXEC-07**: Merge conflict detection with escalation (LLM-assisted resolution or human escalation)
-- [ ] **EXEC-08**: Agent capability scoping: least-privilege access, no destructive operations without approval
+- [x] **EXEC-08**: Agent capability scoping: least-privilege access, no destructive operations without approval
 - [ ] **EXEC-09**: Bead timeout supervision (soft warning, idle detection, hard timeout)
 
 ### Testing Cube
@@ -211,14 +211,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DAG-07 | Phase 5 | Complete |
 | DAG-08 | Phase 5 | Complete |
 | DAG-09 | Phase 5 | Complete |
-| EXEC-01 | Phase 6 | Pending |
-| EXEC-02 | Phase 6 | Pending |
+| EXEC-01 | Phase 6 | Complete |
+| EXEC-02 | Phase 6 | Complete |
 | EXEC-03 | Phase 6 | Pending |
-| EXEC-04 | Phase 6 | Pending |
+| EXEC-04 | Phase 6 | Complete |
 | EXEC-05 | Phase 6 | Pending |
 | EXEC-06 | Phase 6 | Pending |
 | EXEC-07 | Phase 6 | Pending |
-| EXEC-08 | Phase 6 | Pending |
+| EXEC-08 | Phase 6 | Complete |
 | EXEC-09 | Phase 6 | Pending |
 | TEST-01 | Phase 6 | Pending |
 | TEST-02 | Phase 6 | Pending |
