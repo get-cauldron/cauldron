@@ -1,7 +1,7 @@
-ALTER TYPE "public"."event_type" ADD VALUE 'gateway_call_completed';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'gateway_failover';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'gateway_exhausted';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'budget_exceeded';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'gateway_call_completed';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'gateway_failover';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'gateway_exhausted';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'budget_exceeded';--> statement-breakpoint
 CREATE TABLE "llm_usage" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"project_id" uuid NOT NULL,

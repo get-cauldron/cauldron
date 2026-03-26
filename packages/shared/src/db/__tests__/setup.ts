@@ -17,5 +17,5 @@ export async function runMigrations(db: ReturnType<typeof drizzle>) {
 }
 
 export async function truncateAll(db: ReturnType<typeof drizzle>) {
-  await db.execute(sql`TRUNCATE TABLE project_snapshots, events, holdout_vault, bead_edges, beads, seeds, projects RESTART IDENTITY CASCADE`);
+  await db.execute(sql`TRUNCATE TABLE llm_usage, project_snapshots, events, holdout_vault, bead_edges, beads, seeds, projects RESTART IDENTITY CASCADE`);
 }
