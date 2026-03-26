@@ -100,10 +100,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Code Intelligence
 
-- [ ] **CODE-01**: Knowledge graph indexing of project codebase (functions, classes, methods, imports, call graph)
-- [ ] **CODE-02**: Sub-millisecond graph queries for agent context loading
+- [x] **CODE-01**: Knowledge graph indexing of project codebase (functions, classes, methods, imports, call graph)
+- [x] **CODE-02**: Sub-millisecond graph queries for agent context loading
 - [ ] **CODE-03**: Incremental re-indexing triggered as agents modify code during execution
-- [ ] **CODE-04**: Brownfield codebase mapping: one-time full index when onboarding an existing project
+- [x] **CODE-04**: Brownfield codebase mapping: one-time full index when onboarding an existing project
 
 ### Web Dashboard
 
@@ -226,10 +226,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEST-04 | Phase 6 | Pending |
 | TEST-05 | Phase 6 | Pending |
 | TEST-06 | Phase 6 | Pending |
-| CODE-01 | Phase 6 | Pending |
-| CODE-02 | Phase 6 | Pending |
+| CODE-01 | Phase 6 | Complete |
+| CODE-02 | Phase 6 | Complete |
 | CODE-03 | Phase 6 | Pending |
-| CODE-04 | Phase 6 | Pending |
+| CODE-04 | Phase 6 | Complete |
 | EVOL-01 | Phase 7 | Pending |
 | EVOL-02 | Phase 7 | Pending |
 | EVOL-03 | Phase 7 | Pending |

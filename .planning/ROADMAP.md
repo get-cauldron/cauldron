@@ -129,7 +129,7 @@ Phase 6 completes the end-to-end execution path: interview a project, decompose 
   6. Code Intelligence indexes the project and answers sub-millisecond graph queries; after a bead modifies files, the index reflects those changes without a full re-index
 **Plans**: 5 plans
 Plans:
-- [ ] 06-01-PLAN.md — Code Intelligence adapter (codebase-memory-mcp), execution types, gateway stage extensions
+- [x] 06-01-PLAN.md — Code Intelligence adapter (codebase-memory-mcp), execution types, gateway stage extensions
 - [ ] 06-02-PLAN.md — WorktreeManager (git worktree lifecycle), ContextAssembler (knowledge graph + token budget), TestDetector
 - [ ] 06-03-PLAN.md — AgentRunner (TDD self-healing loop), TimeoutSupervisor (idle/soft/hard timeouts)
 - [ ] 06-04-PLAN.md — MergeQueue (topological ordering, LLM conflict resolution, post-merge verification)
@@ -188,7 +188,7 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 3. Interview & Seed Pipeline | 3/3 | Complete   | 2026-03-26 |
 | 4. Holdout Vault | 3/3 | Complete   | 2026-03-26 |
 | 5. DAG Decomposition & Scheduler | 1/3 | In Progress|  |
-| 6. Parallel Execution Engine | 0/5 | Not started | - |
+| 6. Parallel Execution Engine | 1/5 | In Progress|  |
 | 7. Evolutionary Loop | 0/TBD | Not started | - |
 | 8. Web Dashboard | 0/TBD | Not started | - |
 | 9. CLI | 0/TBD | Not started | - |
