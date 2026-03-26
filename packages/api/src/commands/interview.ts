@@ -66,25 +66,42 @@ export async function interviewCommand(): Promise<void> {
   console.log('\nCauldron Socratic Interview');
   console.log('===========================');
   if (priorContext) {
-    console.log('Prior GSD planning context loaded. Starting in brownfield mode.\n');
+    console.log('Prior GSD planning context loaded. Starting in brownfield mode.');
+  }
+
+  // Generate the first question before entering the loop
+  console.log('\nGenerating first question...');
+  const openingResult = await fsm.submitAnswer(interview.id, projectId, {
+    userAnswer: priorContext
+      ? `[Prior context from .planning/]\n${priorContext}\n\n[User answer]\nHello, I'd like to build this project.`
+      : 'Hello, I would like to build a new project.',
+  });
+
+  let phase_status = interview.phase;
+
+  if (openingResult.thresholdMet) {
+    console.log('\nAmbiguity threshold already met from prior context! Transitioning to review...');
+    phase_status = 'reviewing';
+  } else if (openingResult.nextQuestion) {
+    const q = openingResult.nextQuestion;
+    const scorePercent = (openingResult.scores.overall * 100).toFixed(0);
+    console.log(`\nClarity score: ${scorePercent}% (threshold: 80%)\n`);
+    console.log(`[${q.selectedCandidate.perspective}] ${q.selectedCandidate.question}`);
+    if (q.mcOptions.length > 0) {
+      console.log('\nOptions:');
+      q.mcOptions.forEach((opt: string, i: number) => {
+        console.log(`  ${i + 1}. ${opt}`);
+      });
+      console.log('  (or type a custom answer)');
+    }
   }
 
   // Interview turn loop
-  let firstTurn = true;
-  let phase_status = interview.phase;
-
   while (phase_status === 'gathering') {
     const userAnswer = await askQuestion('\nYour answer: ');
 
-    // On first turn, prepend prior context to the answer so FSM has it in scope
-    const answerWithContext = firstTurn && priorContext
-      ? `[Prior context from .planning/]\n${priorContext}\n\n[User answer]\n${userAnswer}`
-      : userAnswer;
-
-    firstTurn = false;
-
     const result = await fsm.submitAnswer(interview.id, projectId, {
-      userAnswer: answerWithContext,
+      userAnswer,
     });
 
     // Display score progress
@@ -100,7 +117,7 @@ export async function interviewCommand(): Promise<void> {
       console.log(`\n[${q.selectedCandidate.perspective}] ${q.selectedCandidate.question}`);
       if (q.mcOptions.length > 0) {
         console.log('\nOptions:');
-        q.mcOptions.forEach((opt, i) => {
+        q.mcOptions.forEach((opt: string, i: number) => {
           console.log(`  ${i + 1}. ${opt}`);
         });
         console.log('  (or type a custom answer)');

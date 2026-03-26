@@ -16,6 +16,7 @@
   "dependencies": {
     "@cauldron/engine": "workspace:*",
     "@cauldron/shared": "workspace:*",
+    "dotenv": "^16.4.0",
     "@hono/node-server": "^1.13.0",
     "drizzle-orm": "^0.45.1",
     "hono": "^4.12.9",

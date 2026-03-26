@@ -3,13 +3,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // Mock @cauldron/shared to prevent DATABASE_URL error
 vi.mock('@cauldron/shared', () => ({
   db: { insert: vi.fn(), select: vi.fn(), execute: vi.fn() },
+  ensureMigrations: vi.fn().mockResolvedValue(undefined),
 }));
 
 // Mock @cauldron/engine — LLMGateway must be a class-compatible mock
 vi.mock('@cauldron/engine', () => {
+  const mockInstance = { streamText: vi.fn() };
   const MockLLMGateway = vi.fn(function () {
-    return { streamText: vi.fn() };
+    return mockInstance;
   });
+  MockLLMGateway.create = vi.fn().mockResolvedValue(mockInstance);
   return {
     loadConfig: vi.fn(),
     LLMGateway: MockLLMGateway,

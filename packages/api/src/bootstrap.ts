@@ -1,5 +1,11 @@
+import { config as dotenvConfig } from 'dotenv';
+import { resolve } from 'node:path';
+import { homedir } from 'node:os';
 import pino from 'pino';
-import { db } from '@cauldron/shared';
+import { db, ensureMigrations } from '@cauldron/shared';
+
+// Load API keys from ~/.env as fallback (project .env takes precedence via @cauldron/shared)
+dotenvConfig({ path: resolve(homedir(), '.env') });
 import {
   loadConfig,
   LLMGateway,
@@ -23,15 +29,22 @@ export interface BootstrapDeps {
  * Construct all engine dependencies from environment variables.
  * Call this once during application startup before serving any commands.
  *
- * - Loads cauldron.config.ts from projectRoot
+ * - Runs pending DB migrations (safe to call repeatedly)
+ * - Loads cauldron.config.ts from projectRoot (falls back to Cauldron's own config for external projects)
  * - Constructs pino logger (level from LOG_LEVEL env var, default 'info')
  * - Constructs LLMGateway from db + config + logger
  * - Wires configureSchedulerDeps and configureVaultDeps for Inngest handlers
  */
 export async function bootstrap(projectRoot: string): Promise<BootstrapDeps> {
+  // Ensure DB schema is current before any queries
+  await ensureMigrations();
+
   const config = await loadConfig(projectRoot);
-  const logger = pino({ level: process.env['LOG_LEVEL'] ?? 'info' });
-  const gateway = new LLMGateway({ db, config, logger });
+  // Default to 'error' in CLI mode — warn-level failover logs are noise during interactive use
+  const logger = pino({ level: process.env['LOG_LEVEL'] ?? 'error' });
+
+  // Validate API keys at startup and warn about unavailable providers
+  const gateway = await LLMGateway.create({ db, config, logger, validateKeys: true });
 
   configureSchedulerDeps({ db, gateway, projectRoot });
   configureVaultDeps({ db, gateway });

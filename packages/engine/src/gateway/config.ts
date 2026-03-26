@@ -15,6 +15,17 @@ export function defineConfig(config: GatewayConfig): GatewayConfig {
 
 export async function loadConfig(projectRoot: string): Promise<GatewayConfig> {
   const configPath = path.join(projectRoot, 'cauldron.config.ts');
-  const mod = await import(configPath);
-  return mod.default as GatewayConfig;
+  try {
+    const mod = await import(configPath);
+    return mod.default as GatewayConfig;
+  } catch (err: unknown) {
+    if (err && typeof err === 'object' && 'code' in err && err.code === 'ERR_MODULE_NOT_FOUND') {
+      // External projects without cauldron.config.ts — fall back to Cauldron's own config
+      const cauldronRoot = path.resolve(import.meta.dirname, '..', '..', '..', '..');
+      if (cauldronRoot !== projectRoot) {
+        return loadConfig(cauldronRoot);
+      }
+    }
+    throw err;
+  }
 }

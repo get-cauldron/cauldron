@@ -5,6 +5,7 @@ vi.mock('@cauldron/shared', () => ({
   db: {
     execute: vi.fn(),
   },
+  ensureMigrations: vi.fn().mockResolvedValue(undefined),
 }));
 
 // Mock global fetch
@@ -26,7 +27,14 @@ describe('healthCheck', () => {
   });
 
   it('Test 1: succeeds when DB query returns and Inngest endpoint responds 200', async () => {
-    mockDb.execute.mockResolvedValueOnce([{ '?column?': 1 }]);
+    // First call: SELECT 1 (connectivity), second call: pg_tables (schema check)
+    mockDb.execute
+      .mockResolvedValueOnce([{ '?column?': 1 }])
+      .mockResolvedValueOnce([
+        { tablename: 'projects' }, { tablename: 'seeds' }, { tablename: 'interviews' },
+        { tablename: 'beads' }, { tablename: 'bead_edges' }, { tablename: 'events' },
+        { tablename: 'holdout_vault' }, { tablename: 'project_snapshots' },
+      ]);
     mockFetch.mockResolvedValueOnce({ ok: true, status: 200 });
 
     const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});

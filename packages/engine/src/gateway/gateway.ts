@@ -11,7 +11,7 @@ import type { z } from 'zod';
 import { CircuitBreaker } from './circuit-breaker.js';
 import { executeWithFailover } from './failover.js';
 import { enforceDiversity } from './diversity.js';
-import { getProviderFamily } from './providers.js';
+import { getProviderFamily, MODEL_FAMILY_MAP } from './providers.js';
 import { calculateCostCents } from './pricing.js';
 import { checkBudget } from './budget.js';
 import { validateProviderKeys } from './validation.js';
@@ -68,12 +68,34 @@ export class LLMGateway {
   static async create(
     options: LLMGatewayOptions & { validateKeys?: boolean }
   ): Promise<LLMGateway> {
-    const gateway = new LLMGateway(options);
     if (options.validateKeys !== false) {
       const allModels = Object.values(options.config.models).flat();
-      await validateProviderKeys(allModels, options.logger);
+      const results = await validateProviderKeys(allModels, options.logger);
+      const invalidFamilies = new Set(
+        results.filter(r => !r.valid).map(r => r.provider)
+      );
+
+      if (invalidFamilies.size > 0) {
+        // Filter out models from invalid providers so failover doesn't waste time on them
+        const filteredConfig = { ...options.config, models: { ...options.config.models } };
+        for (const [stage, models] of Object.entries(filteredConfig.models)) {
+          const filtered = (models as string[]).filter(m => {
+            const family = MODEL_FAMILY_MAP[m];
+            return !family || !invalidFamilies.has(family);
+          });
+          if (filtered.length > 0) {
+            (filteredConfig.models as Record<string, string[]>)[stage] = filtered;
+          }
+          // If all models filtered out for a stage, keep originals (failover will report the real error)
+        }
+        options.logger.info(
+          { invalidProviders: [...invalidFamilies] },
+          'Removed unavailable providers from routing'
+        );
+        return new LLMGateway({ ...options, config: filteredConfig });
+      }
     }
-    return gateway;
+    return new LLMGateway(options);
   }
 
   private resolveModelChain(stage: PipelineStage): string[] {
