@@ -1,5 +1,6 @@
 import { pgTable, pgEnum, uuid, text, timestamp, jsonb, real, integer } from 'drizzle-orm/pg-core';
 import { projects } from './project.js';
+import { interviews } from './interview.js';
 
 export const seedStatusEnum = pgEnum('seed_status', [
   'draft',
@@ -10,7 +11,7 @@ export const seeds = pgTable('seeds', {
   id: uuid('id').primaryKey().defaultRandom(),
   projectId: uuid('project_id').notNull().references(() => projects.id),
   parentId: uuid('parent_id'), // D-03: self-referencing FK for evolution lineage (recursive CTE traversal)
-  interviewId: uuid('interview_id'),
+  interviewId: uuid('interview_id').references(() => interviews.id),
   version: integer('version').notNull().default(1),
   status: seedStatusEnum('status').notNull().default('draft'),
   // D-01: Structured columns instead of YAML blob

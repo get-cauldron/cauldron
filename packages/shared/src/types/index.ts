@@ -2,6 +2,7 @@
 // Types are defined in each schema file using typeof table.$inferSelect / $inferInsert
 
 export type { Project, NewProject } from '../db/schema/project.js';
+export type { Interview, NewInterview } from '../db/schema/interview.js';
 export type { ProjectSettings } from '../db/schema/project.js';
 export type { Seed, NewSeed } from '../db/schema/seed.js';
 export type {
