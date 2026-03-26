@@ -3,16 +3,19 @@ import type { AmbiguityScores, InterviewMode, InterviewTurn } from './types.js';
 import type { LLMGateway } from '../gateway/gateway.js';
 
 // ─── Zod Schemas (D-15) ───────────────────────────────────────────────────────
+// Note: z.number() without .min()/.max() — Anthropic structured output does not
+// support minimum/maximum constraints in JSON Schema for number types. Range
+// validation is enforced at runtime in validateScoreRules instead.
 
 export const greenfieldScoresSchema = z.object({
-  goalClarity: z.number().min(0).max(1),
-  constraintClarity: z.number().min(0).max(1),
-  successCriteriaClarity: z.number().min(0).max(1),
+  goalClarity: z.number(),
+  constraintClarity: z.number(),
+  successCriteriaClarity: z.number(),
   reasoning: z.string(),
 });
 
 export const brownfieldScoresSchema = greenfieldScoresSchema.extend({
-  contextClarity: z.number().min(0).max(1),
+  contextClarity: z.number(),
 });
 
 export type GreenfieldScores = z.infer<typeof greenfieldScoresSchema>;

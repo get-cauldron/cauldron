@@ -156,19 +156,21 @@ describe('greenfieldScoresSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('rejects goalClarity > 1', () => {
+  it('accepts scores without min/max constraints (Anthropic structured output compat)', () => {
+    // min/max removed from schema to avoid Anthropic "minimum/maximum not supported" error.
+    // Out-of-range values are caught by validateScoreRules at runtime instead.
     const result = greenfieldScoresSchema.safeParse({
       goalClarity: 1.1,
       constraintClarity: 0.6,
       successCriteriaClarity: 0.5,
       reasoning: 'test',
     });
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true); // schema accepts it; runtime validation catches it
   });
 
-  it('rejects goalClarity < 0', () => {
+  it('rejects non-number goalClarity', () => {
     const result = greenfieldScoresSchema.safeParse({
-      goalClarity: -0.1,
+      goalClarity: 'high',
       constraintClarity: 0.6,
       successCriteriaClarity: 0.5,
       reasoning: 'test',
