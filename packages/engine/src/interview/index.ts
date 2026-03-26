@@ -37,3 +37,4 @@ export { synthesizeFromTranscript, seedSummarySchema, SYNTHESIZER_SYSTEM_PROMPT 
 export { crystallizeSeed, ImmutableSeedError, getSeedLineage } from './crystallizer.js';
 export { formatScoreBreakdown } from './format.js';
 export type { ScoreBreakdown } from './format.js';
+export { InterviewFSM, detectInterviewMode } from './fsm.js';
