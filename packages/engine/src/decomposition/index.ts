@@ -29,8 +29,10 @@ export {
   configureSchedulerDeps,
   beadDispatchHandler,
   beadCompletionHandler,
+  mergeRequestedHandler,
   handleBeadDispatchRequested,
   handleBeadCompleted,
+  handleMergeRequested,
 } from './events.js';
 
 export {
