@@ -2,4 +2,5 @@ export * from './types.js';
 export * from './crypto.js';
 export * from './generator.js';
 export * from './vault.js';
-// Evaluator and events will be added in later plans
+export * from './evaluator.js';
+// Events will be added in the next plan

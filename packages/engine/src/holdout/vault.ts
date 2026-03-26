@@ -1,8 +1,8 @@
 import { eq } from 'drizzle-orm';
 import { holdoutVault, appendEvent } from '@cauldron/shared';
 import type { DbClient } from '@cauldron/shared';
-import { sealPayload } from './crypto.js';
-import type { HoldoutScenario } from './types.js';
+import { sealPayload, unsealPayload } from './crypto.js';
+import type { HoldoutScenario, HoldoutEvalResult } from './types.js';
 
 /**
  * Valid state machine transitions for holdout vault lifecycle per D-16.
@@ -193,6 +193,101 @@ export async function sealVault(
       scenarioCount: scenariosToSeal.length,
     },
   });
+}
+
+/**
+ * Unseals a sealed vault: decrypts scenarios, transitions to 'unsealed',
+ * and emits a holdouts_unsealed audit event.
+ *
+ * Requires HOLDOUT_ENCRYPTION_KEY env var accessible to the unsealing process.
+ * Implementation agents never have access to this key (per D-13 / key isolation).
+ *
+ * @returns The decrypted HoldoutScenario[] array
+ * @throws if vault status is not 'sealed'
+ */
+export async function unsealVault(
+  db: DbClient,
+  params: { vaultId: string; projectId: string }
+): Promise<HoldoutScenario[]> {
+  const { vaultId, projectId } = params;
+
+  const [vault] = await db
+    .select()
+    .from(holdoutVault)
+    .where(eq(holdoutVault.id, vaultId));
+
+  if (!vault) {
+    throw new Error(`Vault not found: ${vaultId}`);
+  }
+
+  assertValidTransition(vault.status, 'unsealed');
+
+  // All four encryption columns must be present on a sealed vault
+  if (!vault.ciphertext || !vault.encryptedDek || !vault.iv || !vault.authTag) {
+    throw new Error(`Vault ${vaultId} is missing encryption columns — seal was incomplete`);
+  }
+
+  const plaintext = unsealPayload({
+    ciphertext: vault.ciphertext,
+    encryptedDek: vault.encryptedDek,
+    iv: vault.iv,
+    authTag: vault.authTag,
+  });
+
+  const scenarios = JSON.parse(plaintext) as HoldoutScenario[];
+
+  await db
+    .update(holdoutVault)
+    .set({
+      status: 'unsealed',
+      unsealedAt: new Date(),
+    })
+    .where(eq(holdoutVault.id, vaultId));
+
+  await appendEvent(db, {
+    projectId,
+    seedId: vault.seedId,
+    type: 'holdouts_unsealed',
+    payload: {
+      vaultId,
+      scenarioCount: scenarios.length,
+    },
+  });
+
+  return scenarios;
+}
+
+/**
+ * Stores evaluation results as JSONB and transitions vault to 'evaluated'.
+ * Called after LLM evaluation is complete.
+ *
+ * @throws if vault status is not 'unsealed'
+ */
+export async function storeEvalResults(
+  db: DbClient,
+  params: { vaultId: string; results: HoldoutEvalResult }
+): Promise<void> {
+  const { vaultId, results } = params;
+
+  const [vault] = await db
+    .select()
+    .from(holdoutVault)
+    .where(eq(holdoutVault.id, vaultId));
+
+  if (!vault) {
+    throw new Error(`Vault not found: ${vaultId}`);
+  }
+
+  assertValidTransition(vault.status, 'evaluated');
+
+  await db
+    .update(holdoutVault)
+    .set({
+      status: 'evaluated',
+      results: results as unknown as Record<string, unknown>,
+      evaluatedAt: new Date(),
+    })
+    .where(eq(holdoutVault.id, vaultId));
 }
 
 /**
