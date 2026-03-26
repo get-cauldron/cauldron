@@ -32,3 +32,8 @@ export {
 } from './perspectives.js';
 
 export { rankCandidates, RANKER_SYSTEM_PROMPT, serializeTranscript } from './ranker.js';
+
+export { synthesizeFromTranscript, seedSummarySchema, SYNTHESIZER_SYSTEM_PROMPT } from './synthesizer.js';
+export { crystallizeSeed, ImmutableSeedError, getSeedLineage } from './crystallizer.js';
+export { formatScoreBreakdown } from './format.js';
+export type { ScoreBreakdown } from './format.js';
