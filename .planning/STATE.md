@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 03-interview-seed-pipeline 03-02-PLAN.md
-last_updated: "2026-03-26T01:56:27.020Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 03-interview-seed-pipeline 03-03-PLAN.md
+last_updated: "2026-03-26T02:07:19.523Z"
 progress:
   total_phases: 9
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 9
-  completed_plans: 8
+  completed_plans: 9
 ---
 
 # Project State
@@ -54,6 +54,7 @@ Plan: 3 of 3
 | Phase 02-llm-gateway P03 | 4min | 2 tasks | 12 files |
 | Phase 03-interview-seed-pipeline P01 | 12min | 2 tasks | 11 files |
 | Phase 03-interview-seed-pipeline P02 | 7min | 2 tasks | 6 files |
+| Phase 03-interview-seed-pipeline P03 | 8min | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -83,6 +84,9 @@ Recent decisions affecting current work:
 - [Phase 03-interview-seed-pipeline]: perspectiveModels typed as Partial<Record<string, string>> to keep GatewayConfig free from engine-layer type leakage
 - [Phase 03-interview-seed-pipeline]: validateScoreRules uses strict > 0.3 threshold — floating point means 0.8-0.5=0.30000000000000004 triggers anomaly; tests use unambiguous values to avoid precision traps
 - [Phase 03-interview-seed-pipeline]: selectActivePerspectives returns 2 perspectives in late turns (overall >= 0.7), 3 in early/mid turns per D-12 spec
+- [Phase 03-interview-seed-pipeline]: crystallizer.ts getSeedLineage returns result as unknown as Seed[] (no .rows property) — matches drizzle-orm postgres-js execute pattern in existing schema-invariants tests
+- [Phase 03-interview-seed-pipeline]: vi.mock('@cauldron/shared') required in engine unit tests that import modules with @cauldron/shared dependencies — prevents DATABASE_URL error at import time
+- [Phase 03-interview-seed-pipeline]: FSM CLARITY_THRESHOLD=0.8 matches ambiguity <= 0.2 (D-05); VALID_TRANSITIONS enforces gathering->reviewing->approved->crystallized with no skipping
 
 ### Pending Todos
 
@@ -97,6 +101,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T01:56:27.017Z
-Stopped at: Completed 03-interview-seed-pipeline 03-02-PLAN.md
+Last session: 2026-03-26T02:07:19.521Z
+Stopped at: Completed 03-interview-seed-pipeline 03-03-PLAN.md
 Resume file: None

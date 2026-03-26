@@ -32,12 +32,12 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **INTV-03**: Deterministic ambiguity scoring matrix computed after each response (greenfield: goal 40%, constraint 30%, success criteria 30%)
 - [x] **INTV-04**: Interview continues until ambiguity score <= 0.2 (weighted clarity >= 80%)
 - [x] **INTV-05**: Brownfield variant adds context clarity dimension (15%) and adjusts other weights
-- [ ] **INTV-06**: Structured summary presented to user for review before seed crystallization
-- [ ] **INTV-07**: User explicitly approves summary before seed generation proceeds
-- [ ] **SEED-01**: Immutable Seed spec generated in YAML format (goal, constraints, acceptance criteria, ontology schema, evaluation principles, exit conditions)
+- [x] **INTV-06**: Structured summary presented to user for review before seed crystallization
+- [x] **INTV-07**: User explicitly approves summary before seed generation proceeds
+- [x] **SEED-01**: Immutable Seed spec generated in YAML format (goal, constraints, acceptance criteria, ontology schema, evaluation principles, exit conditions)
 - [x] **SEED-02**: Seeds are frozen after crystallization — no mutation, only evolution creates new seeds
 - [x] **SEED-03**: Each seed has a unique ID, version, creation timestamp, parent seed reference (if evolved), and interview ID
-- [ ] **SEED-04**: Seed lineage trackable: given any seed, user can trace back to original interview through all evolutionary ancestors
+- [x] **SEED-04**: Seed lineage trackable: given any seed, user can trace back to original interview through all evolutionary ancestors
 
 ### Holdout Testing
 
@@ -188,12 +188,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INTV-03 | Phase 3 | Complete |
 | INTV-04 | Phase 3 | Complete |
 | INTV-05 | Phase 3 | Complete |
-| INTV-06 | Phase 3 | Pending |
-| INTV-07 | Phase 3 | Pending |
-| SEED-01 | Phase 3 | Pending |
+| INTV-06 | Phase 3 | Complete |
+| INTV-07 | Phase 3 | Complete |
+| SEED-01 | Phase 3 | Complete |
 | SEED-02 | Phase 3 | Complete |
 | SEED-03 | Phase 3 | Complete |
-| SEED-04 | Phase 3 | Pending |
+| SEED-04 | Phase 3 | Complete |
 | HOLD-01 | Phase 4 | Pending |
 | HOLD-02 | Phase 4 | Pending |
 | HOLD-03 | Phase 4 | Pending |
