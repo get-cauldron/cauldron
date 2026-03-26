@@ -71,7 +71,11 @@ Plans:
   4. The user sees a structured summary and must explicitly approve it before a seed is generated
   5. A crystallized seed is immutable: any attempt to mutate it returns an error; evolution must create a new seed with a parent reference
   6. Given any seed ID, the full lineage (interview → seed → evolved seeds) is traceable in a single query
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 03-01-PLAN.md — Interviews table schema, seed immutability trigger, domain types, and gateway config extension
+- [ ] 03-02-PLAN.md — Ambiguity scoring engine, multi-perspective panel, and question ranker
+- [ ] 03-03-PLAN.md — InterviewFSM service class, synthesizer, crystallizer, and seed lineage
 
 ### Phase 4: Holdout Vault
 **Goal**: Cross-model adversarial tests are generated, encrypted at rest with keys inaccessible to agent processes, and remain sealed through all execution until convergence — making it structurally impossible for the implementation agents to see or game the tests they will be evaluated against.
@@ -167,7 +171,7 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 |-------|----------------|--------|-----------|
 | 1. Persistence Foundation | 3/3 | Complete   | 2026-03-25 |
 | 2. LLM Gateway | 3/3 | Complete   | 2026-03-26 |
-| 3. Interview & Seed Pipeline | 0/TBD | Not started | - |
+| 3. Interview & Seed Pipeline | 0/3 | Not started | - |
 | 4. Holdout Vault | 0/TBD | Not started | - |
 | 5. DAG Decomposition & Scheduler | 0/TBD | Not started | - |
 | 6. Parallel Execution Engine | 0/TBD | Not started | - |
