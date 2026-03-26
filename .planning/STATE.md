@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 02-llm-gateway 02-02-PLAN.md
-last_updated: "2026-03-26T00:22:44.771Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 02-llm-gateway 02-03-PLAN.md
+last_updated: "2026-03-26T00:29:39.214Z"
 progress:
   total_phases: 9
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 6
-  completed_plans: 5
+  completed_plans: 6
 ---
 
 # Project State
@@ -51,6 +51,7 @@ Plan: 3 of 3
 | Phase 01-persistence-foundation P03 | 9min | 2 tasks | 9 files |
 | Phase 02-llm-gateway P01 | 3min | 2 tasks | 14 files |
 | Phase 02-llm-gateway P02 | 6min | 2 tasks | 6 files |
+| Phase 02-llm-gateway P03 | 4min | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -73,6 +74,8 @@ Recent decisions affecting current work:
 - [Phase 02-llm-gateway]: MODEL_FAMILY_MAP covers all 10 models from CLAUDE.md recommended stack across anthropic/openai/google families
 - [Phase 02-llm-gateway]: Promise<any> return type on streaming gateway methods to avoid TS4053 caused by AI SDK v6 'output as Output' namespace export
 - [Phase 02-llm-gateway]: AI SDK v6 maxOutputTokens replaces maxTokens; Prompt type is discriminated union (messages XOR prompt)
+- [Phase 02-llm-gateway]: drizzle-orm added to engine package as direct dependency for budget.ts eq/sql operators; override resolution stays in gateway.ts, checkBudget accepts limitCents parameter
+- [Phase 02-llm-gateway]: validateProviderKeys treats non-401/403 errors as inconclusive: network timeouts during startup should not block gateway construction
 
 ### Pending Todos
 
@@ -87,6 +90,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T00:22:44.768Z
-Stopped at: Completed 02-llm-gateway 02-02-PLAN.md
+Last session: 2026-03-26T00:29:39.211Z
+Stopped at: Completed 02-llm-gateway 02-03-PLAN.md
 Resume file: None

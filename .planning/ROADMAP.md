@@ -17,7 +17,7 @@ The v1 test case — a CLI bulk file renaming tool — drives at least one evolu
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Persistence Foundation** - PostgreSQL event store, Redis, Drizzle schema, Docker Compose dev environment (completed 2026-03-25)
-- [ ] **Phase 2: LLM Gateway** - Vercel AI SDK multi-provider routing, per-stage model assignments, provider failover, token tracking
+- [x] **Phase 2: LLM Gateway** - Vercel AI SDK multi-provider routing, per-stage model assignments, provider failover, token tracking (completed 2026-03-26)
 - [ ] **Phase 3: Interview & Seed Pipeline** - Socratic interview FSM, ambiguity scoring, seed crystallization, human approval gates
 - [ ] **Phase 4: Holdout Vault** - Cross-model holdout generation, AES-256-GCM encryption, key isolation, unsealing protocol
 - [ ] **Phase 5: DAG Decomposition & Scheduler** - Molecule/bead decomposition, all 4 dependency types, Kahn's cycle detection, Inngest FlowProducer dispatch, atomic claiming
@@ -58,7 +58,7 @@ Plans:
 Plans:
 - [x] 02-01-PLAN.md — Schema, types, config, provider factory, and dependencies
 - [x] 02-02-PLAN.md — LLMGateway class with failover, circuit breaker, and diversity enforcement
-- [ ] 02-03-PLAN.md — Budget enforcement, startup validation, and comprehensive test suite
+- [x] 02-03-PLAN.md — Budget enforcement, startup validation, and comprehensive test suite
 
 ### Phase 3: Interview & Seed Pipeline
 **Goal**: A user can describe what they want through a Socratic interview, receive a deterministic clarity score, and crystallize an immutable seed spec that becomes the sole source of truth for all subsequent execution.
@@ -166,7 +166,7 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Persistence Foundation | 3/3 | Complete   | 2026-03-25 |
-| 2. LLM Gateway | 0/3 | Not started | - |
+| 2. LLM Gateway | 3/3 | Complete   | 2026-03-26 |
 | 3. Interview & Seed Pipeline | 0/TBD | Not started | - |
 | 4. Holdout Vault | 0/TBD | Not started | - |
 | 5. DAG Decomposition & Scheduler | 0/TBD | Not started | - |
