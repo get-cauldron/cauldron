@@ -8,3 +8,10 @@ export type {
   BeadDispatchPayload,
   BeadCompletedPayload,
 } from './types.js';
+
+export {
+  detectCycle,
+  validateBeadSizes,
+  validateCoverage,
+  validateDAG,
+} from './validator.js';
