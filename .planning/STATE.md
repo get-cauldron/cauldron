@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 06.2-01-PLAN.md
-last_updated: "2026-03-26T20:44:14.015Z"
+stopped_at: "Completed 06.2-02-PLAN.md (Task 1 done, Task 2 checkpoint: auth gate - Anthropic key disabled)"
+last_updated: "2026-03-26T20:48:24.386Z"
 progress:
   total_phases: 11
   completed_phases: 7
   total_plans: 28
-  completed_plans: 26
+  completed_plans: 27
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 06.2 (testing-and-tuning-the-dogfood-process) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -72,6 +72,7 @@ Plan: 2 of 3
 | Phase 06.1 P04 | 25min | 2 tasks | 12 files |
 | Phase 06.1-dogfooding-transition P05 | 15min | 2 tasks | 8 files |
 | Phase 06.2 P01 | 4min | 2 tasks | 5 files |
+| Phase 06.2-testing-and-tuning-the-dogfood-process P02 | 7min | 1 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -147,6 +148,7 @@ Recent decisions affecting current work:
 - [Phase 06.1]: Inngest v4 health endpoint is /v1/events (not /v0/envs) — corrected health check probe to POST empty events array for 200 response
 - [Phase 06.2]: Recency weighting via prompt section split (not score weighting): split 3+ turn transcripts into EARLIER CONTEXT / MOST RECENT ANSWERS sections in buildScorerPrompt
 - [Phase 06.2]: Dimension-aware mid-turn routing: successCriteriaClarity -> seed-closer, constraintClarity -> breadth-keeper, goalClarity -> researcher
+- [Phase 06.2]: conditionalOn changed from z.string().optional() to z.string().nullable() for OpenAI structured output compatibility (all schema properties must be in required array)
 
 ### Pending Todos
 
@@ -161,6 +163,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T20:44:14.012Z
-Stopped at: Completed 06.2-01-PLAN.md
+Last session: 2026-03-26T20:48:24.383Z
+Stopped at: Completed 06.2-02-PLAN.md (Task 1 done, Task 2 checkpoint: auth gate - Anthropic key disabled)
 Resume file: None
