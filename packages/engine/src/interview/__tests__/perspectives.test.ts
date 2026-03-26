@@ -122,4 +122,38 @@ describe('selectActivePerspectives', () => {
     const result = selectActivePerspectives(scores, 5);
     expect(result).toHaveLength(3);
   });
+
+  // ─── Dimension-aware convergence pressure tests ────────────────────────────
+
+  it('mid-turn: low constraintClarity targets breadth-keeper', () => {
+    const scores = makeScores(0.5, 0.8, 0.2, 0.7); // constraintClarity=0.2 is lowest and < 0.5
+    const result = selectActivePerspectives(scores, 5);
+    expect(result).toContain('breadth-keeper');
+  });
+
+  it('mid-turn: low successCriteriaClarity targets seed-closer', () => {
+    const scores = makeScores(0.5, 0.7, 0.8, 0.15); // successCriteriaClarity=0.15 is lowest and < 0.5
+    const result = selectActivePerspectives(scores, 5);
+    expect(result).toContain('seed-closer');
+  });
+
+  it('mid-turn: all dimensions above 0.5 defaults to architect+breadth-keeper+simplifier', () => {
+    const scores = makeScores(0.55, 0.6, 0.55, 0.5); // no dimension < 0.5
+    const result = selectActivePerspectives(scores, 5);
+    expect(result).toEqual(['architect', 'breadth-keeper', 'simplifier']);
+  });
+
+  it('late-turn: low constraintClarity adds breadth-keeper as third perspective', () => {
+    const scores = makeScores(0.75, 0.9, 0.3, 0.8); // constraintClarity=0.3 < 0.5
+    const result = selectActivePerspectives(scores, 10);
+    expect(result).toContain('breadth-keeper');
+    expect(result).toContain('seed-closer');
+    expect(result).toContain('architect');
+  });
+
+  it('early-turn unchanged: overall=0.2 still returns researcher+simplifier+breadth-keeper', () => {
+    const scores = makeScores(0.2, 0.2, 0.1, 0.3);
+    const result = selectActivePerspectives(scores, 3);
+    expect(result).toEqual(['researcher', 'simplifier', 'breadth-keeper']);
+  });
 });

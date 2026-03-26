@@ -34,8 +34,8 @@ export const perspectiveCandidateSchema = z.object({
 /**
  * Selects 2-3 active perspectives based on previous ambiguity scores.
  * Early turns (overall < 0.4): broad exploration — researcher, simplifier, breadth-keeper
- * Mid turns (0.4 <= overall < 0.7): structural focus — architect + breadth-keeper + weakest
- * Late turns (overall >= 0.7): closing — seed-closer + architect
+ * Mid turns (0.4 <= overall < 0.7): structural focus — architect + dimension-aware specialists
+ * Late turns (overall >= 0.7): closing — seed-closer + architect + specialist if any dim < 0.5
  */
 export function selectActivePerspectives(
   previousScores: AmbiguityScores | null,
@@ -53,20 +53,54 @@ export function selectActivePerspectives(
     return ['researcher', 'simplifier', 'breadth-keeper'];
   }
 
-  // Mid turns (0.4 <= overall < 0.7): architect + breadth-keeper + weakest dimension perspective
+  // Mid turns (0.4 <= overall < 0.7): architect + dimension-aware specialist perspectives
   if (overall < 0.7) {
-    const active: PerspectiveName[] = ['architect', 'breadth-keeper'];
-    // Add researcher if goal is weakest, simplifier if constraints need work
-    if (goalClarity <= constraintClarity && goalClarity <= successCriteriaClarity) {
-      active.push('researcher');
-    } else {
-      active.push('simplifier');
+    const active: PerspectiveName[] = ['architect'];
+
+    // Find the weakest dimension below 0.5 and add its specialist
+    const weakest = [
+      { dim: 'successCriteriaClarity' as const, value: successCriteriaClarity, perspective: 'seed-closer' as PerspectiveName },
+      { dim: 'constraintClarity' as const, value: constraintClarity, perspective: 'breadth-keeper' as PerspectiveName },
+      { dim: 'goalClarity' as const, value: goalClarity, perspective: 'researcher' as PerspectiveName },
+    ]
+      .filter((d) => d.value < 0.5)
+      .sort((a, b) => a.value - b.value)[0];
+
+    if (weakest) {
+      active.push(weakest.perspective);
     }
+
+    // Fill remaining slot(s) from fallback list, avoiding duplicates
+    const fallbacks: PerspectiveName[] = ['breadth-keeper', 'simplifier'];
+    for (const fb of fallbacks) {
+      if (active.length >= 3) break;
+      if (!active.includes(fb)) {
+        active.push(fb);
+      }
+    }
+
+    // Default if no dimension below 0.5 and no specialists were added
+    if (active.length < 3 && !weakest) {
+      if (!active.includes('breadth-keeper')) active.push('breadth-keeper');
+      if (active.length < 3 && !active.includes('simplifier')) active.push('simplifier');
+    }
+
     return active;
   }
 
-  // Late turns (overall >= 0.7): seed-closer + architect
-  return ['seed-closer', 'architect'];
+  // Late turns (overall >= 0.7): seed-closer + architect, plus specialist if any dimension < 0.5
+  const lateActive: PerspectiveName[] = ['seed-closer', 'architect'];
+
+  // Add a third specialist if any dimension needs attention
+  if (constraintClarity < 0.5 && !lateActive.includes('breadth-keeper')) {
+    lateActive.push('breadth-keeper');
+  } else if (goalClarity < 0.5 && !lateActive.includes('researcher')) {
+    lateActive.push('researcher');
+  } else if (successCriteriaClarity < 0.5 && !lateActive.includes('simplifier')) {
+    lateActive.push('simplifier');
+  }
+
+  return lateActive;
 }
 
 // ─── Prompt Builder ───────────────────────────────────────────────────────────
