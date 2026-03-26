@@ -40,20 +40,27 @@ The full pipeline works end-to-end: a user describes what they want, and Cauldro
 - Holdout unsealing via convergence event, LLM evaluator, failure report packaging for evo loop — Phase 4
 - Key isolation verified: integration test proves agent env lacks decryption key — Phase 4
 - 154 engine unit tests + shared integration tests — Phase 4
+- Two-pass LLM decomposition (molecules then beads) with auto-retry on invalid DAGs — Phase 5
+- Kahn's cycle detection, 200k token size validation, AC coverage checking at decomposition time — Phase 5
+- All 4 dependency types (blocks, parent-child, conditional-blocks, waits-for) persisted and enforced — Phase 5
+- Atomic bead claiming with optimistic concurrency (version column), concurrent-claim stress test verified — Phase 5
+- Inngest dispatch with fan-in via Promise.all(step.waitForEvent()), configurable per-project concurrency — Phase 5
+- runDecomposition pipeline entry point chaining decompose -> validate -> persist -> dispatch — Phase 5
+- 200 engine unit tests + 30 shared tests — Phase 5
 
 ### Active
 
 #### Task Decomposition & Coordination
-- [ ] Seed decomposition into molecules (non-atomic parent tasks) and beads (atomic leaf tasks)
-- [ ] DAG-based dependency coordination with parallel-by-default execution
-- [ ] Four dependency types: blocks, parent-child, conditional-blocks, waits-for
-- [ ] Each bead sized to fit in one fresh context window of a commercial model (Opus 1M excluded)
-- [ ] Synchronization gates (waits-for) for fan-out/fan-in patterns
+- [x] Seed decomposition into molecules (non-atomic parent tasks) and beads (atomic leaf tasks) — Phase 5
+- [x] DAG-based dependency coordination with parallel-by-default execution — Phase 5
+- [x] Four dependency types: blocks, parent-child, conditional-blocks, waits-for — Phase 5
+- [x] Each bead sized to fit in one fresh context window of a commercial model (Opus 1M excluded) — Phase 5
+- [x] Synchronization gates (waits-for) for fan-out/fan-in patterns — Phase 5
 
 #### Parallel Execution
 - [ ] Multiple agents executing independent beads concurrently
 - [ ] Fresh context window per bead (context rot prevention)
-- [ ] Agents claim beads atomically to prevent race conditions
+- [x] Agents claim beads atomically to prevent race conditions — Phase 5
 - [ ] Real-time progress tracking and visualization of active agents
 
 #### Evolutionary Loop
