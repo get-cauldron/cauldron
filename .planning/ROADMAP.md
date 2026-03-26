@@ -22,6 +22,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Holdout Vault** - Cross-model holdout generation, AES-256-GCM encryption, key isolation, unsealing protocol (completed 2026-03-26)
 - [ ] **Phase 5: DAG Decomposition & Scheduler** - Molecule/bead decomposition, all 4 dependency types, Kahn's cycle detection, Inngest FlowProducer dispatch, atomic claiming
 - [x] **Phase 6: Parallel Execution Engine** - Agent runner, git worktrees, context assembly via Code Intel, merge queue, testing cube, self-healing error loop (completed 2026-03-26)
+- [ ] **Phase 6.1: Dogfooding Transition** (INSERTED) - CLI entrypoint, Claude Code skills, GSD context bridging, self-build safety, dry-run validation
 - [ ] **Phase 7: Evolutionary Loop** - Post-execution evaluator, evolution FSM, convergence detection, lateral thinking personas, holdout unsealing
 - [ ] **Phase 8: Web Dashboard** - Interview chat, live DAG visualization, SSE log streaming, human approval UX, HZD aesthetic
 - [ ] **Phase 9: CLI** - Full pipeline CLI, git-push trigger, shared tRPC API
@@ -136,6 +137,20 @@ Plans:
 - [x] 06-05-PLAN.md — Inngest handler wiring, barrel exports, schema migration, regression gate
 **UI hint**: no
 
+### Phase 06.1: Dogfooding Transition — Bridge Claude Code to Cauldron for Self-Building (INSERTED)
+
+**Goal:** Claude Code can invoke Cauldron's full pipeline (minus evolutionary loop) through project-local skills, with GSD context bridging, file-based human review gates, and self-build safety guards — enabling Phases 7-9 to be built using Cauldron itself.
+**Requirements**: D-01 through D-21 (from CONTEXT.md decisions)
+**Depends on:** Phase 6
+**Plans:** 5 plans
+
+Plans:
+- [ ] 06.1-01-PLAN.md — Package setup, bootstrap, health check, CLI router, selfBuild config
+- [ ] 06.1-02-PLAN.md — Status command, kill command, file-based review writers
+- [ ] 06.1-03-PLAN.md — Interview command with GSD context bridging, crystallize command
+- [ ] 06.1-04-PLAN.md — Decompose, execute (Inngest serve), seal, resolve commands, self-build safety
+- [ ] 06.1-05-PLAN.md — Claude Code skills (all 8) and dry-run pipeline validation
+
 ### Phase 7: Evolutionary Loop
 **Goal**: The pipeline evaluates whether the built software actually meets the goal (not just the spec), evolves a new immutable seed when it does not, detects convergence through multiple independent signals, activates lateral thinking on stagnation, escalates to humans when convergence looks unlikely, and unseals holdout tests after convergence — completing the full autonomous loop.
 **Depends on**: Phase 6
@@ -177,7 +192,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 6.1 → 7 → 8 → 9
 
 Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (DAG) depends on Phase 3 but not Phase 4. Phase 8 (Dashboard) can begin in parallel once the Phase 4 DAG data model is stable.
 
@@ -189,6 +204,7 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 4. Holdout Vault | 3/3 | Complete   | 2026-03-26 |
 | 5. DAG Decomposition & Scheduler | 1/3 | In Progress|  |
 | 6. Parallel Execution Engine | 5/5 | Complete   | 2026-03-26 |
+| 6.1. Dogfooding Transition | 0/5 | Not started | - |
 | 7. Evolutionary Loop | 0/TBD | Not started | - |
 | 8. Web Dashboard | 0/TBD | Not started | - |
 | 9. CLI | 0/TBD | Not started | - |
