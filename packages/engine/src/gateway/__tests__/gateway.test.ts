@@ -53,6 +53,8 @@ const testConfig: GatewayConfig = {
     implementation: ['claude-sonnet-4-6'],
     evaluation: ['gemini-2.5-pro'],
     decomposition: ['claude-sonnet-4-6', 'gpt-4.1'],
+    context_assembly: ['gpt-4o-mini', 'gpt-4o'],
+    conflict_resolution: ['claude-sonnet-4-6', 'gpt-4o'],
   },
   budget: { defaultLimitCents: 1000 },
 };

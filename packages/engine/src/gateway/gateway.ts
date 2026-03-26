@@ -33,6 +33,10 @@ const STAGE_PREAMBLES: Record<PipelineStage, string> = {
     'You are evaluating whether built software meets its stated goal. Assess goal attainment separately from spec compliance. Be critical and specific.',
   decomposition:
     'You are a task decomposition agent for Cauldron. Break down software acceptance criteria into atomic implementation tasks (beads) organized under logical groupings (molecules). Each bead must be independently implementable within a single LLM context window. Specify precise dependency relationships between beads.',
+  context_assembly:
+    'You are a code relevance analyst. Given a bead specification and a set of candidate code symbols, identify which symbols are truly relevant and which are noise. Return only symbols directly needed for implementing the bead.',
+  conflict_resolution:
+    'You are resolving a git merge conflict. You have the bead specifications for both sides of the conflict. Produce a resolution that satisfies both bead goals. If you cannot resolve confidently, respond with confidence: "low" to escalate to human review.',
 };
 
 export interface LLMGatewayOptions {

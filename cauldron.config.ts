@@ -7,6 +7,8 @@ export default defineConfig({
     implementation: ['claude-sonnet-4-6', 'gpt-4.1'],
     evaluation: ['gemini-2.5-pro', 'claude-sonnet-4-6'],
     decomposition: ['claude-sonnet-4-6', 'gpt-4.1'], // D-02: strong reasoning models for decomposition
+    context_assembly: ['gpt-4o-mini', 'gpt-4o'],  // lightweight, fast model for pruning per D-07
+    conflict_resolution: ['claude-sonnet-4-6', 'gpt-4o'],  // strong reasoning for merge conflicts per D-14
   },
   budget: {
     defaultLimitCents: 500,
