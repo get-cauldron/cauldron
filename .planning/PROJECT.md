@@ -34,14 +34,14 @@ The full pipeline works end-to-end: a user describes what they want, and Cauldro
 - Immutable seed spec with DB-only storage, app + DB trigger enforcement, recursive CTE lineage — Phase 3
 - Brownfield interview mode with auto-detection from git history — Phase 3
 - 109 engine unit tests + 24 shared integration tests — Phase 3
+- Cross-model holdout test generation with adversarial prompting (gateway diversity enforcement) — Phase 4
+- Per-scenario human review with edit/reject/approve and partial regeneration — Phase 4
+- AES-256-GCM envelope encryption (DEK/KEK) with Inngest process-level key isolation — Phase 4
+- Holdout unsealing via convergence event, LLM evaluator, failure report packaging for evo loop — Phase 4
+- Key isolation verified: integration test proves agent env lacks decryption key — Phase 4
+- 154 engine unit tests + shared integration tests — Phase 4
 
 ### Active
-
-#### Holdout Testing
-- [ ] Cross-model holdout test generation (different LLM family than interviewer)
-- [ ] Human review and approval of holdout tests before encryption
-- [ ] Holdout tests encrypted at rest, inaccessible to implementation agents
-- [ ] Holdout unsealing after evolutionary convergence for final validation
 
 #### Task Decomposition & Coordination
 - [ ] Seed decomposition into molecules (non-atomic parent tasks) and beads (atomic leaf tasks)
@@ -165,4 +165,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-26 after Phase 3 completion*
+*Last updated: 2026-03-26 after Phase 4 completion*
