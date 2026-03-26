@@ -5,7 +5,9 @@ import { z } from 'zod';
  * Given/When/Then format, LLM-evaluable, tests the WHAT not the HOW.
  */
 export const HoldoutScenarioSchema = z.object({
-  id: z.string().uuid(),
+  // id as plain string — LLM providers may reject z.string().uuid() which generates
+  // JSON Schema format:"uuid". IDs are assigned server-side when missing/invalid.
+  id: z.string(),
   title: z.string(),
   given: z.string(),
   when: z.string(),
@@ -17,10 +19,11 @@ export const HoldoutScenarioSchema = z.object({
 
 /**
  * Schema for the full collection of holdout scenarios.
- * Minimum 5 scenarios per D-02.
+ * Minimum 5 scenarios per D-02 (enforced at runtime, not schema level —
+ * LLM providers reject minItems/maxItems JSON Schema constraints).
  */
 export const HoldoutScenariosSchema = z.object({
-  scenarios: z.array(HoldoutScenarioSchema).min(5),
+  scenarios: z.array(HoldoutScenarioSchema),
 });
 
 export type HoldoutScenario = z.infer<typeof HoldoutScenarioSchema>;

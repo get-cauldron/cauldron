@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { randomUUID } from 'node:crypto';
 import type { LLMGateway } from '../gateway/gateway.js';
 import type { Seed } from '@cauldron/shared';
 import { HoldoutScenarioSchema, HoldoutScenariosSchema } from './types.js';
@@ -93,7 +94,13 @@ export async function generateHoldoutScenarios(params: {
     temperature: 0.8,
   });
 
-  return result.object.scenarios;
+  // Normalize IDs: LLM may generate non-UUID strings — assign server-side UUIDs
+  // for any scenario whose id is missing or not a valid UUID.
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  return result.object.scenarios.map((s) => ({
+    ...s,
+    id: uuidRegex.test(s.id) ? s.id : randomUUID(),
+  }));
 }
 
 /**

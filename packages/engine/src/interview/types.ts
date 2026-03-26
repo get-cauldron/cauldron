@@ -49,7 +49,7 @@ export interface SeedSummary {
   acceptanceCriteria: unknown[];
   ontologySchema: OntologySchema; // D-24
   evaluationPrinciples: unknown[];
-  exitConditions: Record<string, unknown>;
+  exitConditions: Array<{ condition: string; description: string }> | Record<string, unknown>;
 }
 
 // D-24: domain entity map

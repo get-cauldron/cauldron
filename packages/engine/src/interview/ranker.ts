@@ -3,10 +3,13 @@ import type { PerspectiveCandidate, RankedQuestion, InterviewTurn } from './type
 import type { LLMGateway } from '../gateway/gateway.js';
 
 // ─── Ranker Output Zod Schema (D-11) ─────────────────────────────────────────
+// Note: no integer min/max or array minItems/maxItems — Anthropic structured
+// output does not support these JSON Schema constraints. The ranker guards
+// out-of-bounds index at runtime (line 60) and takes first 4 mc options.
 
 const rankerOutputSchema = z.object({
-  selectedIndex: z.number().int().min(0),
-  mcOptions: z.array(z.string()).min(3).max(4),
+  selectedIndex: z.number(),
+  mcOptions: z.array(z.string()),
   selectionRationale: z.string(),
 });
 

@@ -15,7 +15,9 @@ export const seedSummarySchema = z.object({
     })),
   }),
   evaluationPrinciples: z.array(z.string()),
-  exitConditions: z.record(z.string(), z.unknown()),
+  // exitConditions as array of named conditions (z.record generates propertyNames which
+  // Anthropic/OpenAI structured output both reject — use explicit array shape instead)
+  exitConditions: z.array(z.object({ condition: z.string(), description: z.string() })),
 });
 
 // D-22: System prompt for synthesis agent
