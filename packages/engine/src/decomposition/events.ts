@@ -1,24 +1,33 @@
 import { type InngestFunction } from 'inngest';
 import { eq, and } from 'drizzle-orm';
-import { appendEvent, beads, beadEdges } from '@cauldron/shared';
+import { appendEvent, beads, beadEdges, seeds as seedsTable } from '@cauldron/shared';
 import type { DbClient } from '@cauldron/shared';
 import { inngest } from '../holdout/events.js';
 import { findReadyBeads, claimBead, completeBead } from './scheduler.js';
 import type { BeadDispatchPayload, BeadCompletedPayload } from './types.js';
+import { WorktreeManager } from '../execution/worktree-manager.js';
+import { ContextAssembler } from '../execution/context-assembler.js';
+import { AgentRunner } from '../execution/agent-runner.js';
+import { MergeQueue, type MergeOutcome } from '../execution/merge-queue.js';
+import { detectTestRunner } from '../execution/test-detector.js';
+import { KnowledgeGraphAdapter } from '../intelligence/adapter.js';
+import type { LLMGateway } from '../gateway/gateway.js';
 
 /**
  * Module-level dependencies for the scheduler event handlers.
  * Configured via configureSchedulerDeps() — must be called before Inngest handlers run.
- * Phase 6 will wire the real db during application startup.
+ * Phase 6 wires the real db, gateway, and projectRoot during application startup.
  */
 interface SchedulerDeps {
   db: DbClient;
+  gateway?: LLMGateway;
+  projectRoot?: string; // target project root for worktree/git operations
 }
 
 let schedulerDeps: SchedulerDeps | null = null;
 
 /**
- * Configure the database dependency used by the Inngest handlers.
+ * Configure the database and execution dependencies used by the Inngest handlers.
  * Call this during application startup before Inngest begins serving functions.
  */
 export function configureSchedulerDeps(deps: SchedulerDeps): void {
@@ -43,8 +52,10 @@ function getSchedulerDeps(): SchedulerDeps {
  * Step 2 — check-conditional: if upstream failed, skip this bead (D-14)
  * Step 3 — claim-bead: atomically claim the bead (optimistic concurrency, D-16)
  * Step 4 — emit-dispatched: record the dispatch event
- *
- * Phase 6 will add the actual execution logic between claim and completion.
+ * Step 5 — create-worktree: isolated git worktree for this bead (EXEC-02)
+ * Step 6 — assemble-context: knowledge graph + token budget (EXEC-01, EXEC-04, CODE-02)
+ * Step 7 — execute-tdd-loop: TDD self-healing loop (EXEC-05, TEST-01 through TEST-06)
+ * Step 8 — handle result: enqueue merge or mark failed
  */
 export async function beadDispatchHandler({
   event,
@@ -151,8 +162,101 @@ export async function beadDispatchHandler({
     });
   });
 
-  // Phase 6 will add the actual LLM execution logic here
-  return { beadId, status: 'dispatched' };
+  // Phase 6: Full execution lifecycle
+  const { gateway, projectRoot } = getSchedulerDeps();
+  if (!gateway || !projectRoot) {
+    // Graceful fallback: if execution deps not configured, return dispatched status (Phase 5 behavior)
+    return { beadId, status: 'dispatched' };
+  }
+
+  // Load bead and seed from DB for context assembly
+  const beadRecord = await step.run('load-bead', async () => {
+    const [bead] = await db.select().from(beads).where(eq(beads.id, beadId));
+    return bead ?? null;
+  });
+  if (!beadRecord) return { beadId, status: 'bead-not-found' };
+
+  const seedRecord = await step.run('load-seed', async () => {
+    const [seed] = await db.select().from(seedsTable).where(eq(seedsTable.id, seedId));
+    return seed ?? null;
+  });
+  if (!seedRecord) return { beadId, status: 'seed-not-found' };
+
+  // Step 5: Create git worktree for isolated execution (EXEC-02)
+  const knowledgeGraph = new KnowledgeGraphAdapter(projectRoot);
+  const worktreeManager = new WorktreeManager(projectRoot);
+  const worktreeInfo = await step.run('create-worktree', async () => {
+    return worktreeManager.createWorktree(beadId);
+  });
+
+  // Step 6: Assemble context (EXEC-01, EXEC-04, CODE-02)
+  const contextAssembler = new ContextAssembler(knowledgeGraph, gateway);
+  const agentContext = await step.run('assemble-context', async () => {
+    return contextAssembler.assemble({
+      bead: beadRecord,
+      seed: seedRecord,
+      projectId,
+      projectRoot,
+    });
+  });
+
+  // Step 7: TDD self-healing loop (EXEC-05, TEST-01 through TEST-06)
+  const agentRunner = new AgentRunner(gateway, worktreeManager);
+  const execResult = await step.run('execute-tdd-loop', async () => {
+    return agentRunner.runWithTddLoop({
+      agentContext,
+      worktreePath: worktreeInfo.path,
+      beadId,
+      projectId,
+      seedId,
+      maxIterations: 5,
+    });
+  });
+
+  // Step 8: Handle execution result
+  if (execResult.success) {
+    // Enqueue merge via event (processed by handleMergeRequested with serialized concurrency)
+    await step.sendEvent('enqueue-merge', {
+      name: 'bead.merge_requested',
+      data: {
+        beadId,
+        seedId,
+        projectId,
+        branch: worktreeInfo.branch,
+        worktreePath: worktreeInfo.path,
+      },
+    });
+
+    // Mark bead as completed
+    await step.run('complete-bead', async () => {
+      await completeBead(db, beadId, 'completed', projectId, seedId);
+    });
+
+    // Emit bead.completed event for fan-out (triggers beadCompletionHandler)
+    await step.sendEvent('emit-completed', {
+      name: 'bead.completed',
+      data: { beadId, seedId, projectId, status: 'completed' },
+    });
+
+    return { beadId, status: 'completed' };
+  } else {
+    // Mark bead as failed after max iterations exhausted
+    await step.run('fail-bead', async () => {
+      await completeBead(db, beadId, 'failed', projectId, seedId);
+      await appendEvent(db, {
+        projectId,
+        seedId,
+        beadId,
+        type: 'bead_failed',
+        payload: {
+          iterations: execResult.iterations,
+          finalErrors: execResult.finalErrors,
+        },
+      });
+    });
+
+    return { beadId, status: 'failed' };
+  }
 }
 
 /**
@@ -161,6 +265,9 @@ export async function beadDispatchHandler({
  *
  * After each bead completes, we re-evaluate which beads are now unblocked
  * and fire dispatch events for each of them.
+ *
+ * Phase 6: Re-indexes the knowledge graph before finding ready beads (D-05, CODE-03)
+ * so downstream beads see updated code from the completed bead's merge.
  */
 export async function beadCompletionHandler({
   event,
@@ -174,6 +281,16 @@ export async function beadCompletionHandler({
 }): Promise<{ dispatched: string[] }> {
   const { db } = getSchedulerDeps();
   const { seedId, projectId } = event.data;
+
+  // Re-index knowledge graph so downstream beads see updated code (D-05, CODE-03)
+  // projectRoot is the single target project root (single-project-per-instance assumption)
+  const { projectRoot: projRoot } = getSchedulerDeps();
+  if (projRoot) {
+    await step.run('reindex-knowledge-graph', async () => {
+      const kg = new KnowledgeGraphAdapter(projRoot);
+      await kg.indexRepository();
+    });
+  }
 
   // Find all beads that are now ready after this completion
   const readyBeads = await step.run('find-ready', async () => {
@@ -196,6 +313,45 @@ export async function beadCompletionHandler({
   }
 
   return { dispatched: dispatchedIds };
+}
+
+/**
+ * Handler for merge requests — processes a single bead merge with LLM conflict resolution.
+ * Extracted for testability; Inngest wrapper is handleMergeRequested below.
+ */
+export async function mergeRequestedHandler({
+  event,
+  step,
+}: {
+  event: { data: { beadId: string; seedId: string; projectId: string; branch: string; worktreePath: string } };
+  step: {
+    run: <T>(name: string, callback: () => Promise<T>) => Promise<T>;
+  };
+}): Promise<MergeOutcome> {
+  const { db, gateway, projectRoot } = getSchedulerDeps();
+  const { beadId, seedId, projectId, branch, worktreePath } = event.data;
+
+  if (!gateway || !projectRoot) {
+    return { beadId, status: 'failed', error: 'Execution deps not configured' };
+  }
+
+  const worktreeManager = new WorktreeManager(projectRoot);
+  const knowledgeGraph = new KnowledgeGraphAdapter(projectRoot);
+  const mergeQueue = new MergeQueue(worktreeManager, knowledgeGraph, gateway, db, projectRoot);
+  const testRunner = detectTestRunner(projectRoot);
+
+  return step.run('process-merge', async () => {
+    mergeQueue.enqueue({
+      beadId,
+      seedId,
+      projectId,
+      branch,
+      worktreePath,
+      topologicalOrder: 0, // single entry processing
+    });
+    const result = await mergeQueue.processNext(testRunner);
+    return result ?? { beadId, status: 'failed' as const, error: 'No merge entry found' };
+  });
 }
 
 /**
@@ -229,4 +385,24 @@ export const handleBeadCompleted: InngestFunction<any, any, any, any> = inngest.
     triggers: [{ event: 'bead.completed' }],
   },
   (ctx) => beadCompletionHandler(ctx as any)
+);
+
+/**
+ * Inngest function for merge requests.
+ * Serialized per project (concurrency limit 1, keyed by projectId) to prevent
+ * concurrent merges from corrupting the main branch (D-15, Research Pitfall 4).
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const handleMergeRequested: InngestFunction<any, any, any, any> = inngest.createFunction(
+  {
+    id: 'execution/merge-bead',
+    triggers: [{ event: 'bead.merge_requested' }],
+    concurrency: {
+      limit: 1, // Serialize merges per project (D-15, Research Pitfall 4)
+      scope: 'fn',
+      key: 'event.data.projectId',
+    },
+    retries: 2,
+  },
+  (ctx) => mergeRequestedHandler(ctx as any)
 );
