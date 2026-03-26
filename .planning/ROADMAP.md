@@ -143,7 +143,7 @@ Plans:
 **Goal:** The full Cauldron pipeline runs end-to-end on an external CLI renamer project: interview converges with calibrated scoring, seed crystallizes, holdouts are generated, decomposition produces beads, and at least one bead executes -- proving the dogfood process works.
 **Requirements**: D-01, D-02, D-03, D-04, D-05, D-06, D-07
 **Depends on:** Phase 6
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [x] 06.2-01-PLAN.md — Interview convergence fixes: scorer calibration, recency weighting, dimension-aware perspective activation
