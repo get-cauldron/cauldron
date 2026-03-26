@@ -106,7 +106,7 @@ Plans:
   6. Fan-in synchronization gates fire only after all upstream beads complete, verified against a diamond-shaped test DAG
 **Plans**: 3 plans
 Plans:
-- [ ] 05-01-PLAN.md — Schema migration, domain types, and gateway config extension
+- [x] 05-01-PLAN.md — Schema migration, domain types, and gateway config extension
 - [ ] 05-02-PLAN.md — Two-pass LLM decomposition agent and DAG validator
 - [ ] 05-03-PLAN.md — Scheduler (ready-bead query, atomic claiming, Inngest dispatch, fan-in)
 
@@ -181,7 +181,7 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 2. LLM Gateway | 3/3 | Complete   | 2026-03-26 |
 | 3. Interview & Seed Pipeline | 3/3 | Complete   | 2026-03-26 |
 | 4. Holdout Vault | 3/3 | Complete   | 2026-03-26 |
-| 5. DAG Decomposition & Scheduler | 0/3 | Not started | - |
+| 5. DAG Decomposition & Scheduler | 1/3 | In Progress|  |
 | 6. Parallel Execution Engine | 0/TBD | Not started | - |
 | 7. Evolutionary Loop | 0/TBD | Not started | - |
 | 8. Web Dashboard | 0/TBD | Not started | - |

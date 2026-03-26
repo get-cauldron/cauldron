@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Phase 5 context gathered
-last_updated: "2026-03-26T13:43:26.574Z"
+status: Ready to execute
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-03-26T14:23:24.727Z"
 progress:
   total_phases: 9
   completed_phases: 4
-  total_plans: 12
-  completed_plans: 12
+  total_plans: 15
+  completed_plans: 13
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** User describes what they want; Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves until goal is met — humans steer at key decision points, not babysitting every step.
-**Current focus:** Phase 04 — holdout-vault
+**Current focus:** Phase 05 — dag-decomposition-scheduler
 
 ## Current Position
 
-Phase: 5
-Plan: Not started
+Phase: 05 (dag-decomposition-scheduler) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -58,6 +58,7 @@ Plan: Not started
 | Phase 04-holdout-vault P01 | 4min | 2 tasks | 6 files |
 | Phase 04-holdout-vault P02 | 7min | 2 tasks | 6 files |
 | Phase 04-holdout-vault PP03 | 5min | 2 tasks | 6 files |
+| Phase 05-dag-decomposition-scheduler P01 | 3min | 2 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -96,6 +97,8 @@ Recent decisions affecting current work:
 - [Phase 04-holdout-vault]: Inngest v4 createFunction API: triggers belong in the first argument object — createFunction({ id, triggers: [{ event }] }, handler)
 - [Phase 04-holdout-vault]: convergenceHandler() extracted from Inngest wrapper for testability — tests call it directly with a fake step object
 - [Phase 04-holdout-vault]: InngestFunction<any> explicit type annotation required to avoid TS2883 non-portable inferred type errors from deep Inngest generics
+- [Phase 05-dag-decomposition-scheduler]: decomposition PipelineStage requires all 5 stages in Record<PipelineStage, string[]> — test fixtures must include decomposition key
+- [Phase 05-dag-decomposition-scheduler]: version column defaults to 1 for optimistic concurrency — first increment yields version 2, making unversioned rows identifiable
 
 ### Pending Todos
 
@@ -110,6 +113,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T13:43:26.571Z
-Stopped at: Phase 5 context gathered
-Resume file: .planning/phases/05-dag-decomposition-scheduler/05-CONTEXT.md
+Last session: 2026-03-26T14:23:24.725Z
+Stopped at: Completed 05-01-PLAN.md
+Resume file: None
