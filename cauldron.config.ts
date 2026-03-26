@@ -6,6 +6,7 @@ export default defineConfig({
     holdout: ['gpt-4o', 'gemini-2.5-pro'],
     implementation: ['claude-sonnet-4-6', 'gpt-4.1'],
     evaluation: ['gemini-2.5-pro', 'claude-sonnet-4-6'],
+    decomposition: ['claude-sonnet-4-6', 'gpt-4.1'], // D-02: strong reasoning models for decomposition
   },
   budget: {
     defaultLimitCents: 500,

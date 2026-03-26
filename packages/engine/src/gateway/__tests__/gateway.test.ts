@@ -52,6 +52,7 @@ const testConfig: GatewayConfig = {
     holdout: ['gpt-4o', 'gemini-2.5-pro'],
     implementation: ['claude-sonnet-4-6'],
     evaluation: ['gemini-2.5-pro'],
+    decomposition: ['claude-sonnet-4-6', 'gpt-4.1'],
   },
   budget: { defaultLimitCents: 1000 },
 };

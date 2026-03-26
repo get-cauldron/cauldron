@@ -1,7 +1,7 @@
 import type { LanguageModelUsage } from 'ai';
 import type { z } from 'zod';
 
-export type PipelineStage = 'interview' | 'holdout' | 'implementation' | 'evaluation';
+export type PipelineStage = 'interview' | 'holdout' | 'implementation' | 'evaluation' | 'decomposition';
 export type ProviderFamily = 'anthropic' | 'openai' | 'google';
 
 export interface GatewayCallOptions {

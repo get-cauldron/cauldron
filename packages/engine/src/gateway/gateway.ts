@@ -31,6 +31,8 @@ const STAGE_PREAMBLES: Record<PipelineStage, string> = {
     "You are a software implementation agent for Cauldron. Write production-quality code that satisfies the bead specification. Follow the project's coding conventions.",
   evaluation:
     'You are evaluating whether built software meets its stated goal. Assess goal attainment separately from spec compliance. Be critical and specific.',
+  decomposition:
+    'You are a task decomposition agent for Cauldron. Break down software acceptance criteria into atomic implementation tasks (beads) organized under logical groupings (molecules). Each bead must be independently implementable within a single LLM context window. Specify precise dependency relationships between beads.',
 };
 
 export interface LLMGatewayOptions {
