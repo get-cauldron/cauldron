@@ -189,6 +189,11 @@ export async function beadDispatchHandler({
     return worktreeManager.createWorktree(beadId);
   });
 
+  // Step 5b: Ensure knowledge graph is indexed before context assembly
+  await step.run('index-knowledge-graph', async () => {
+    await knowledgeGraph.indexRepository();
+  });
+
   // Step 6: Assemble context (EXEC-01, EXEC-04, CODE-02)
   const contextAssembler = new ContextAssembler(knowledgeGraph, gateway);
   const agentContext = await step.run('assemble-context', async () => {

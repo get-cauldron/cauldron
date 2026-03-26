@@ -14,7 +14,7 @@ describe('enforceDiversity', () => {
   });
 
   it('throws DiversityViolationError when both models are google', () => {
-    expect(() => enforceDiversity('gemini-2.5-pro', 'gemini-2.0-flash')).toThrow(
+    expect(() => enforceDiversity('gemini-2.5-pro', 'gemini-2.5-flash')).toThrow(
       DiversityViolationError
     );
   });

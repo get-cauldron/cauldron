@@ -106,6 +106,34 @@ export async function executeCommand(): Promise<void> {
   serve({ fetch: app.fetch, port: 3001 });
   console.log('Inngest handler listening on http://localhost:3001/api/inngest');
 
+  // Wait for Inngest dev server to sync functions before dispatching events.
+  // Without this, events arrive before the dev server discovers our handler,
+  // resulting in events with no matching function runs.
+  // Only poll when running against a real Inngest dev server (INNGEST_DEV=1).
+  if (process.env['INNGEST_DEV']) {
+    console.log('Waiting for Inngest to sync functions...');
+    const syncStart = Date.now();
+    const SYNC_TIMEOUT_MS = 15_000;
+    while (Date.now() - syncStart < SYNC_TIMEOUT_MS) {
+      try {
+        const res = await fetch('http://localhost:8288/v0/gql', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: '{ apps { id connected } }' }),
+        });
+        if (res.ok) {
+          const body = await res.json() as { data?: { apps?: Array<{ connected: boolean }> } };
+          const connected = body.data?.apps?.some(a => a.connected);
+          if (connected) {
+            console.log(`Inngest synced in ${Date.now() - syncStart}ms`);
+            break;
+          }
+        }
+      } catch { /* dev server not yet ready */ }
+      await new Promise(r => setTimeout(r, 500));
+    }
+  }
+
   // Dispatch ready beads
   for (const bead of readyBeads) {
     await deps.inngest.send({
