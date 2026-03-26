@@ -182,7 +182,7 @@ export class InterviewFSM {
         mcOptions: [],
         userAnswer: answer.userAnswer,
         freeformText: answer.freeformText,
-        ambiguityScoreSnapshot: previousScores ?? { goalClarity: 0, constraintClarity: 0, successCriteriaClarity: 0, overall: 0 },
+        ambiguityScoreSnapshot: previousScores ?? { goalClarity: 0, constraintClarity: 0, successCriteriaClarity: 0, overall: 0, reasoning: 'Interview not started' },
         model: 'user-input',
         allCandidates: [],
         timestamp: new Date().toISOString(),

@@ -309,11 +309,24 @@ describe('SCORER_SYSTEM_PROMPT calibration', () => {
 // ─── buildScorerPrompt recency weighting regression tests ────────────────────
 
 function makeTurns(count: number): InterviewTurn[] {
+  const baseScores = {
+    goalClarity: 0.5,
+    constraintClarity: 0.5,
+    successCriteriaClarity: 0.5,
+    overall: 0.5,
+    reasoning: 'test',
+  };
   return Array.from({ length: count }, (_, i) => ({
+    turnNumber: i + 1,
     perspective: 'researcher' as const,
     question: `Question ${i + 1}?`,
+    mcOptions: [],
     userAnswer: `Answer ${i + 1}`,
     freeformText: undefined,
+    ambiguityScoreSnapshot: baseScores,
+    model: 'test-model',
+    allCandidates: [],
+    timestamp: new Date().toISOString(),
   }));
 }
 
