@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 03-interview-seed-pipeline 03-01-PLAN.md
-last_updated: "2026-03-26T01:50:39.585Z"
+stopped_at: Completed 03-interview-seed-pipeline 03-02-PLAN.md
+last_updated: "2026-03-26T01:56:27.020Z"
 progress:
   total_phases: 9
   completed_phases: 2
   total_plans: 9
-  completed_plans: 7
+  completed_plans: 8
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 03 (interview-seed-pipeline) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Plan: 2 of 3
 | Phase 02-llm-gateway P02 | 6min | 2 tasks | 6 files |
 | Phase 02-llm-gateway P03 | 4min | 2 tasks | 12 files |
 | Phase 03-interview-seed-pipeline P01 | 12min | 2 tasks | 11 files |
+| Phase 03-interview-seed-pipeline P02 | 7min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -80,6 +81,8 @@ Recent decisions affecting current work:
 - [Phase 03-interview-seed-pipeline]: Migration 0003 created manually (not via db:generate) — parallel execution has no live DB; SQL follows Drizzle Kit breakpoint format
 - [Phase 03-interview-seed-pipeline]: interview.ts exported before seed.ts in schema/index.ts to avoid circular reference since seed.ts imports from interview.ts
 - [Phase 03-interview-seed-pipeline]: perspectiveModels typed as Partial<Record<string, string>> to keep GatewayConfig free from engine-layer type leakage
+- [Phase 03-interview-seed-pipeline]: validateScoreRules uses strict > 0.3 threshold — floating point means 0.8-0.5=0.30000000000000004 triggers anomaly; tests use unambiguous values to avoid precision traps
+- [Phase 03-interview-seed-pipeline]: selectActivePerspectives returns 2 perspectives in late turns (overall >= 0.7), 3 in early/mid turns per D-12 spec
 
 ### Pending Todos
 
@@ -94,6 +97,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T01:50:39.582Z
-Stopped at: Completed 03-interview-seed-pipeline 03-01-PLAN.md
+Last session: 2026-03-26T01:56:27.017Z
+Stopped at: Completed 03-interview-seed-pipeline 03-02-PLAN.md
 Resume file: None

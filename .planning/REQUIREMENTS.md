@@ -28,9 +28,9 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Socratic Interview & Seed Crystallization
 
 - [x] **INTV-01**: Interview begins with open-ended question generation using multi-perspective panel (researcher, simplifier, architect, breadth-keeper, seed-closer)
-- [ ] **INTV-02**: Multiple-choice answer suggestions generated per question with always-available freeform option
-- [ ] **INTV-03**: Deterministic ambiguity scoring matrix computed after each response (greenfield: goal 40%, constraint 30%, success criteria 30%)
-- [ ] **INTV-04**: Interview continues until ambiguity score <= 0.2 (weighted clarity >= 80%)
+- [x] **INTV-02**: Multiple-choice answer suggestions generated per question with always-available freeform option
+- [x] **INTV-03**: Deterministic ambiguity scoring matrix computed after each response (greenfield: goal 40%, constraint 30%, success criteria 30%)
+- [x] **INTV-04**: Interview continues until ambiguity score <= 0.2 (weighted clarity >= 80%)
 - [x] **INTV-05**: Brownfield variant adds context clarity dimension (15%) and adjusts other weights
 - [ ] **INTV-06**: Structured summary presented to user for review before seed crystallization
 - [ ] **INTV-07**: User explicitly approves summary before seed generation proceeds
@@ -184,9 +184,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LLM-05 | Phase 2 | Complete |
 | LLM-06 | Phase 2 | Complete |
 | INTV-01 | Phase 3 | Complete |
-| INTV-02 | Phase 3 | Pending |
-| INTV-03 | Phase 3 | Pending |
-| INTV-04 | Phase 3 | Pending |
+| INTV-02 | Phase 3 | Complete |
+| INTV-03 | Phase 3 | Complete |
+| INTV-04 | Phase 3 | Complete |
 | INTV-05 | Phase 3 | Complete |
 | INTV-06 | Phase 3 | Pending |
 | INTV-07 | Phase 3 | Pending |

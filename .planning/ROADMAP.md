@@ -74,7 +74,7 @@ Plans:
 **Plans**: 3 plans
 Plans:
 - [x] 03-01-PLAN.md — Interviews table schema, seed immutability trigger, domain types, and gateway config extension
-- [ ] 03-02-PLAN.md — Ambiguity scoring engine, multi-perspective panel, and question ranker
+- [x] 03-02-PLAN.md — Ambiguity scoring engine, multi-perspective panel, and question ranker
 - [ ] 03-03-PLAN.md — InterviewFSM service class, synthesizer, crystallizer, and seed lineage
 
 ### Phase 4: Holdout Vault
@@ -171,7 +171,7 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 |-------|----------------|--------|-----------|
 | 1. Persistence Foundation | 3/3 | Complete   | 2026-03-25 |
 | 2. LLM Gateway | 3/3 | Complete   | 2026-03-26 |
-| 3. Interview & Seed Pipeline | 1/3 | In Progress|  |
+| 3. Interview & Seed Pipeline | 2/3 | In Progress|  |
 | 4. Holdout Vault | 0/TBD | Not started | - |
 | 5. DAG Decomposition & Scheduler | 0/TBD | Not started | - |
 | 6. Parallel Execution Engine | 0/TBD | Not started | - |
