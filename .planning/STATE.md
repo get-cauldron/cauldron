@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Executing Phase 13
-stopped_at: Phase 13 context gathered
-last_updated: "2026-03-27T19:11:15.344Z"
+status: Ready to execute
+stopped_at: Completed 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs-02-PLAN.md
+last_updated: "2026-03-27T19:26:36.350Z"
 progress:
   total_phases: 15
-  completed_phases: 14
+  completed_phases: 15
   total_plans: 54
-  completed_plans: 52
+  completed_plans: 54
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 13 (re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs) — EXECUTING
-Plan: 1 of 2
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -89,6 +89,7 @@ Plan: 1 of 2
 | Phase 10-wire-trpc-mutations-to-engine P01 | 4min | 2 tasks | 4 files |
 | Phase 10-wire-trpc-mutations-to-engine P02 | 4min | 2 tasks | 3 files |
 | Phase 11-engine-inngest-serve-evolution-bootstrap P01 | 5min | 2 tasks | 4 files |
+| Phase 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs P02 | 8min | 2 tasks | 97 files |
 
 ## Accumulated Context
 
@@ -203,6 +204,8 @@ Recent decisions affecting current work:
 - [Phase 10-wire-trpc-mutations-to-engine]: triggerDecomposition preserves appendEvent audit trail and also calls runDecomposition synchronously with engineInngest alias for engine Inngest client
 - [Phase 11-engine-inngest-serve-evolution-bootstrap]: Use inngest/hono adapter for standalone API serve endpoint per CLAUDE.md Hono mandate
 - [Phase 11-engine-inngest-serve-evolution-bootstrap]: pipelineTriggerFunction uses step.sendEvent (durable, inside Inngest function); triggerExecution uses engineInngest.send() (outside Inngest context, tRPC mutation)
+- [Phase 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs]: packages/shared/tsconfig.json excludes trpc-types.ts from rootDir check: the file re-exports from web's router (outside ./src), cross-package re-export shim consumed by web itself
+- [Phase 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs]: TRPCClient<AppRouter> explicit return type required in createCLIClient to avoid TS2883 non-portable type errors when AppRouter traverses shared subpath export boundaries
 
 ### Pending Todos
 
@@ -217,6 +220,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T18:22:34.661Z
-Stopped at: Phase 13 context gathered
-Resume file: .planning/phases/13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs/13-CONTEXT.md
+Last session: 2026-03-27T19:26:36.347Z
+Stopped at: Completed 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs-02-PLAN.md
+Resume file: None

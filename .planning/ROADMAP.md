@@ -30,7 +30,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 10: Wire tRPC Write Mutations to Engine** - Connect stub tRPC mutations to actual engine functions (interview FSM, vault sealing, decomposition) (gap closure) (completed 2026-03-27)
 - [x] **Phase 11: Engine Inngest Serve & Evolution Bootstrap** - Add HTTP serve endpoint for engine Inngest functions, wire configureEvolutionDeps in bootstrap (gap closure) (completed 2026-03-27)
 - [x] **Phase 12: Security & Tech Debt Cleanup** - SSE auth, kill command UX, minor tech debt items (gap closure) (completed 2026-03-27)
-- [ ] **Phase 13: Re-scope to @get-cauldron/*** - Rename npm scope from @get-cauldron/* to @get-cauldron/*, consolidate trpc-types into shared, rename packages/cli to packages/cli
+- [x] **Phase 13: Re-scope to @get-cauldron/*** - Rename npm scope from @get-cauldron/* to @get-cauldron/*, consolidate trpc-types into shared, rename packages/cli to packages/cli (completed 2026-03-27)
 
 ## Phase Details
 
@@ -291,8 +291,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 13-01-PLAN.md — Package restructure: merge trpc-types into shared, rename packages/cli to packages/cli, update all package.json scopes
-- [ ] 13-02-PLAN.md — Bulk import rename (@get-cauldron/* to @get-cauldron/*), update skills/docs, full regression gate
+- [x] 13-01-PLAN.md — Package restructure: merge trpc-types into shared, rename packages/cli to packages/cli, update all package.json scopes
+- [x] 13-02-PLAN.md — Bulk import rename (@get-cauldron/* to @get-cauldron/*), update skills/docs, full regression gate
 
 
 ## Progress
@@ -318,4 +318,4 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 10. Wire tRPC Write Mutations | 2/3 | Complete    | 2026-03-27 |
 | 11. Engine Inngest Serve & Bootstrap | 2/3 | Complete    | 2026-03-27 |
 | 12. Security & Tech Debt | 0/? | Complete    | 2026-03-27 |
-| 13. Re-scope to @get-cauldron/* | 0/2 | In Progress | - |
+| 13. Re-scope to @get-cauldron/* | 2/2 | Complete   | 2026-03-27 |
