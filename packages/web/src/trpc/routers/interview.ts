@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { eq, desc } from 'drizzle-orm';
 import { router, publicProcedure } from '../init';
 import { interviews, seeds, holdoutVault } from '@get-cauldron/shared';
-import { InterviewFSM, approveScenarios, sealVault, crystallizeSeed, ImmutableSeedError } from '@get-cauldron/engine';
+import { InterviewFSM, approveScenarios, sealVault, crystallizeSeed, ImmutableSeedError, generateHoldoutScenarios, createVault } from '@get-cauldron/engine';
 import { TRPCError } from '@trpc/server';
 import type {
   InterviewTurn,
@@ -276,6 +276,24 @@ export const interviewRouter = router({
           summary,
           ambiguityScore,
         );
+
+        // Generate holdout scenarios and create vault entry.
+        // Gateway diversity enforcement (LLM-06) is active for stage: 'holdout'.
+        // This is a separate try/catch: if holdout generation fails (LLM error,
+        // budget exceeded), the seed is already crystallized and should remain.
+        // The mutation still returns seedId. The user can retry holdout generation.
+        try {
+          const { gateway } = await ctx.getEngineDeps();
+          const scenarios = await generateHoldoutScenarios({
+            gateway,
+            seed,
+            projectId,
+          });
+          await createVault(ctx.db, { seedId: seed.id, scenarios });
+        } catch (holdoutErr) {
+          console.error('[approveSummary] Holdout generation failed:', holdoutErr);
+        }
+
         return { seedId: seed.id, version: seed.version };
       } catch (e) {
         if (e instanceof ImmutableSeedError) {
