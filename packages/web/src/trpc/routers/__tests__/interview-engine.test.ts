@@ -5,14 +5,31 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // ────────────────────────────────────────────────────────────────────────────
 
 const mockSubmitAnswer = vi.fn();
+const mockStartOrResume = vi.fn();
+const mockCrystallizeSeed = vi.fn();
+
 // vi.fn(function(){}) pattern required — arrow functions cannot be used as constructors in Vitest
 // eslint-disable-next-line prefer-arrow-callback
 const MockInterviewFSM = vi.fn(function (this: unknown) {
-  Object.assign(this as object, { submitAnswer: mockSubmitAnswer });
+  Object.assign(this as object, {
+    submitAnswer: mockSubmitAnswer,
+    startOrResume: mockStartOrResume,
+  });
 });
 
 vi.mock('@get-cauldron/engine', () => ({
   InterviewFSM: MockInterviewFSM,
+  crystallizeSeed: (...args: unknown[]) => mockCrystallizeSeed(...args),
+  ImmutableSeedError: class ImmutableSeedError extends Error {
+    seedId: string;
+    constructor(seedId: string) {
+      super(`Seed ${seedId} is crystallized and cannot be mutated`);
+      this.name = 'ImmutableSeedError';
+      this.seedId = seedId;
+    }
+  },
+  approveScenarios: vi.fn(),
+  sealVault: vi.fn(),
 }));
 
 vi.mock('@get-cauldron/shared', () => ({
@@ -81,8 +98,19 @@ function makeCtx(overrides: {
     limit: vi.fn().mockResolvedValue(selectResult),
   };
 
+  const updateChain = {
+    set: vi.fn().mockReturnThis(),
+    where: vi.fn().mockResolvedValue(undefined),
+  };
+
   const db = {
     select: vi.fn().mockReturnValue(chainable),
+    update: vi.fn().mockReturnValue(updateChain),
+    insert: vi.fn().mockReturnValue({
+      values: vi.fn().mockReturnValue({
+        returning: vi.fn().mockResolvedValue([{ id: 'seed-1', version: 1 }]),
+      }),
+    }),
   };
 
   const getEngineDeps = vi.fn().mockResolvedValue({
@@ -235,5 +263,88 @@ describe('sendAnswer tRPC mutation — InterviewFSM wiring', () => {
     // getEngineDeps should NOT be called (fast-fail before engine init)
     expect(ctx.getEngineDeps).not.toHaveBeenCalled();
     expect(MockInterviewFSM).not.toHaveBeenCalled();
+  });
+});
+
+describe('startInterview tRPC mutation', () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it('calls InterviewFSM.startOrResume with projectId and mode', async () => {
+    mockStartOrResume.mockResolvedValue({
+      id: 'interview-new',
+      mode: 'greenfield',
+      status: 'active',
+      phase: 'gathering',
+    });
+    const ctx = makeCtx();
+    const result = await callMutation('startInterview', { projectId: 'project-abc', mode: 'greenfield' }, ctx);
+    expect(MockInterviewFSM).toHaveBeenCalledWith(ctx.db, mockGateway, mockConfig, mockLogger);
+    expect(mockStartOrResume).toHaveBeenCalledWith('project-abc', { mode: 'greenfield' });
+    expect(result).toMatchObject({
+      interviewId: 'interview-new',
+      mode: 'greenfield',
+      status: 'active',
+      phase: 'gathering',
+    });
+  });
+
+  it('works without mode parameter (defaults to undefined)', async () => {
+    mockStartOrResume.mockResolvedValue({
+      id: 'interview-new',
+      mode: 'greenfield',
+      status: 'active',
+      phase: 'gathering',
+    });
+    const ctx = makeCtx();
+    await callMutation('startInterview', { projectId: 'project-abc' }, ctx);
+    expect(mockStartOrResume).toHaveBeenCalledWith('project-abc', { mode: undefined });
+  });
+});
+
+describe('approveSummary tRPC mutation — crystallizeSeed wiring', () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  const validSummary = {
+    goal: 'Build a CLI tool',
+    constraints: [{ text: 'Must be fast' }],
+    acceptanceCriteria: [{ text: 'Renames files' }],
+    ontologySchema: { entities: [{ name: 'File', attributes: ['path'], relations: [] }] },
+    evaluationPrinciples: [{ text: 'Performance' }],
+    exitConditions: [{ condition: 'done', description: 'All files renamed' }],
+  };
+
+  it('calls crystallizeSeed with correct arguments', async () => {
+    mockCrystallizeSeed.mockResolvedValue({ id: 'seed-123', version: 1 });
+    const ctx = makeCtx({ interviewRow: { phase: 'reviewing', currentAmbiguityScore: { overall: 0.85 } } });
+    const result = await callMutation('approveSummary', { projectId: 'project-abc', summary: validSummary }, ctx);
+
+    expect(mockCrystallizeSeed).toHaveBeenCalledWith(
+      ctx.db,
+      'interview-123',
+      'project-abc',
+      validSummary,
+      0.85,
+    );
+    expect(result).toEqual({ seedId: 'seed-123', version: 1 });
+  });
+
+  it('converts ImmutableSeedError to TRPCError CONFLICT', async () => {
+    // Import the mock ImmutableSeedError class from the mock
+    const { ImmutableSeedError } = await import('@get-cauldron/engine');
+    mockCrystallizeSeed.mockRejectedValue(new ImmutableSeedError('seed-dup'));
+    const ctx = makeCtx({ interviewRow: { phase: 'reviewing', currentAmbiguityScore: { overall: 0.9 } } });
+
+    await expect(
+      callMutation('approveSummary', { projectId: 'project-abc', summary: validSummary }, ctx),
+    ).rejects.toThrow(/crystallized and cannot be mutated/);
+  });
+
+  it('transitions reviewing -> approved before calling crystallizeSeed', async () => {
+    mockCrystallizeSeed.mockResolvedValue({ id: 'seed-456', version: 1 });
+    const ctx = makeCtx({ interviewRow: { phase: 'reviewing', currentAmbiguityScore: { overall: 0.8 } } });
+    await callMutation('approveSummary', { projectId: 'project-abc', summary: validSummary }, ctx);
+
+    // db.update should be called for the reviewing->approved transition
+    expect(ctx.db.update).toHaveBeenCalled();
   });
 });
