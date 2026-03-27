@@ -3,7 +3,6 @@ import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
 import { Providers } from '@/trpc/client';
 import { HexBackground } from '@/components/shell/HexBackground';
-import { NavSidebar } from '@/components/shell/NavSidebar';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -22,8 +21,9 @@ export default function RootLayout({
         <HexBackground />
         <Providers>
           <div className="flex min-h-screen" style={{ position: 'relative', zIndex: 1 }}>
-            <NavSidebar />
-            <main className="flex-1 overflow-auto">{children}</main>
+            {/* NavSidebar is rendered per-layout (projects list and project detail)
+                so it can carry project context and escalation badge counts */}
+            {children}
           </div>
         </Providers>
       </body>
