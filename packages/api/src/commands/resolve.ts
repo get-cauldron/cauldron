@@ -1,93 +1,81 @@
-import { parseArgs } from 'node:util';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
-import { eq } from 'drizzle-orm';
-import { beads, seeds, appendEvent } from '@cauldron/shared';
-import { bootstrap } from '../bootstrap.js';
+import chalk from 'chalk';
+import type { CLIClient } from '../trpc-client.js';
+import { createSpinner, formatJson } from '../output.js';
+
+interface Flags {
+  json: boolean;
+  projectId?: string;
+}
 
 /**
- * Resolve command — manually resolves a stalled or failed bead after merge conflict.
+ * Resolve command — manually resolves a stalled or failed bead (D-04).
  *
- * Usage:
- *   cauldron resolve <beadId> [--project-root <path>]
+ * Uses tRPC client exclusively via execution.respondToEscalation mutation.
+ * No direct DB imports.
  *
- * Expects the user to have edited the conflict file at:
- *   {projectRoot}/.cauldron/review/conflict-{beadId}.diff
+ * Usage: cauldron resolve <beadId> --project <id> [--action retry|skip|guidance] [--guidance <text>] [--json]
  */
-export async function resolveCommand(): Promise<void> {
-  const { positionals, values } = parseArgs({
-    args: process.argv.slice(3),
-    allowPositionals: true,
-    options: {
-      'project-root': { type: 'string' },
-    },
-    strict: false,
-  });
+export async function resolveCommand(
+  client: CLIClient,
+  args: string[],
+  flags: Flags
+): Promise<void> {
+  const projectId = flags.projectId;
 
+  // First positional arg is beadId
+  const positionals = args.filter(a => !a.startsWith('--') && !args[args.indexOf(a) - 1]?.startsWith('--'));
   const beadId = positionals[0];
-  const projectRoot = (values['project-root'] as string | undefined) ?? process.cwd();
+
+  // Parse action from args (default: retry)
+  const actionIdx = args.indexOf('--action');
+  const action = (actionIdx !== -1 ? args[actionIdx + 1] : 'retry') as 'retry' | 'skip' | 'guidance' | 'abort';
+
+  // Parse guidance from args
+  const guidanceIdx = args.indexOf('--guidance');
+  const guidance = guidanceIdx !== -1 ? args[guidanceIdx + 1] : undefined;
 
   if (!beadId) {
-    console.error('Error: beadId is required as first positional argument');
+    console.error(chalk.red('Error: beadId is required as first positional argument'));
+    console.error('Usage: cauldron resolve <beadId> --project <id> [--action retry|skip|guidance]');
     process.exit(1);
     return;
   }
 
-  const conflictFilePath = join(projectRoot, '.cauldron', 'review', `conflict-${beadId}.diff`);
-
-  if (!existsSync(conflictFilePath)) {
-    console.error(`No conflict file found for bead ${beadId}`);
-    process.exit(1);
-    return;
-  }
-
-  const deps = await bootstrap(projectRoot);
-
-  // Load the bead to get projectId and seedId
-  const beadRows = await deps.db
-    .select()
-    .from(beads)
-    .where(eq(beads.id, beadId))
-    .limit(1);
-
-  const bead = beadRows[0];
-  if (!bead) {
-    console.error(`Error: Bead ${beadId} not found`);
-    process.exit(1);
-    return;
-  }
-
-  const seedId = bead.seedId;
-
-  // Lookup projectId via seed (beads don't store projectId directly)
-  const seedRows = await deps.db
-    .select({ projectId: seeds.projectId })
-    .from(seeds)
-    .where(eq(seeds.id, seedId))
-    .limit(1);
-
-  const projectId = seedRows[0]?.projectId;
   if (!projectId) {
-    console.error(`Error: Could not resolve projectId for bead ${beadId}`);
+    console.error(chalk.red('Error: --project <id> is required (or set CAULDRON_PROJECT_ID)'));
     process.exit(1);
     return;
   }
 
-  // Update bead status from 'failed' back to 'pending' so it can be re-dispatched
-  await deps.db
-    .update(beads)
-    .set({ status: 'pending' })
-    .where(eq(beads.id, beadId));
+  const validActions = ['retry', 'skip', 'guidance', 'abort'] as const;
+  if (!validActions.includes(action)) {
+    console.error(chalk.red(`Error: Invalid action "${action}". Must be one of: retry, skip, guidance, abort`));
+    process.exit(1);
+    return;
+  }
 
-  // Append conflict_resolved event
-  await appendEvent(deps.db, {
-    projectId,
-    seedId,
-    beadId,
-    type: 'conflict_resolved',
-    payload: { beadId },
-  });
+  const spinner = createSpinner(`Resolving bead (action: ${action})...`).start();
+  let result;
+  try {
+    result = await client.execution.respondToEscalation.mutate({
+      projectId,
+      beadId,
+      action,
+      guidance,
+    });
+    spinner.succeed('Bead resolved');
+  } catch (err) {
+    spinner.fail('Resolve failed');
+    throw err;
+  }
 
-  console.log(`Conflict resolved for bead ${beadId}. Merge will be retried.`);
-  process.exit(0);
+  if (flags.json) {
+    console.log(formatJson(result));
+    return;
+  }
+
+  console.log(chalk.green(`Resolved bead ${beadId} with action: ${action}`));
+  if (action === 'retry') {
+    console.log(chalk.gray('Bead will be re-dispatched on next execution cycle.'));
+  }
 }

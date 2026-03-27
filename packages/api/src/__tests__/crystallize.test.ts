@@ -1,261 +1,97 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock @cauldron/shared to prevent DATABASE_URL error at import time
-vi.mock('@cauldron/shared', () => ({
-  db: {
-    select: vi.fn(),
-    insert: vi.fn(),
-    update: vi.fn(),
-    execute: vi.fn(),
-  },
-  interviews: {},
-  eq: vi.fn(),
-  desc: vi.fn(),
-}));
-
-// Mock @cauldron/engine — InterviewFSM must be a class-compatible mock
-vi.mock('@cauldron/engine', () => {
-  const MockInterviewFSM = vi.fn(function () {
-    return {
-      approveAndCrystallize: vi.fn(),
-    };
-  });
-  return {
-    InterviewFSM: MockInterviewFSM,
-    loadConfig: vi.fn(),
-    LLMGateway: vi.fn(function () { return { streamText: vi.fn() }; }),
-    inngest: {},
-    configureSchedulerDeps: vi.fn(),
-    configureVaultDeps: vi.fn(),
-  };
-});
-
-// Mock pino
-vi.mock('pino', () => ({
-  default: vi.fn(() => ({ level: 'info', info: vi.fn(), error: vi.fn(), warn: vi.fn() })),
-}));
-
-// Mock seed-writer
-vi.mock('../review/seed-writer.js', () => ({
-  readSeedDraft: vi.fn(),
-}));
-
-// Mock bootstrap
-vi.mock('../bootstrap.js', () => ({
-  bootstrap: vi.fn(),
-}));
-
+// crystallize.ts now uses tRPC client exclusively — no @cauldron/engine or @cauldron/shared imports
 describe('crystallizeCommand', () => {
-  beforeEach(() => {
+  let crystallizeCommand: typeof import('../commands/crystallize.js').crystallizeCommand;
+
+  beforeEach(async () => {
     vi.clearAllMocks();
-    process.argv = ['node', 'cli.ts', 'crystallize', '--project-id', 'test-project-123'];
+    const mod = await import('../commands/crystallize.js');
+    crystallizeCommand = mod.crystallizeCommand;
   });
 
-  it('Test 1: reads seed draft file via readSeedDraft', async () => {
-    const { InterviewFSM } = await import('@cauldron/engine');
-    const { bootstrap } = await import('../bootstrap.js');
-    const { readSeedDraft } = await import('../review/seed-writer.js');
+  function makeClient(overrides?: {
+    getSummaryResult?: unknown;
+    approveSummaryResult?: unknown;
+  }) {
+    return {
+      interview: {
+        getSummary: {
+          query: vi.fn().mockResolvedValue(
+            overrides?.getSummaryResult ?? {
+              phase: 'reviewing',
+              summary: 'Build a file renamer CLI',
+              interviewId: 'interview-1',
+            }
+          ),
+        },
+        approveSummary: {
+          mutate: vi.fn().mockResolvedValue(
+            overrides?.approveSummaryResult ?? { seedId: 'seed-new', version: 1 }
+          ),
+        },
+      },
+    } as unknown as Parameters<typeof crystallizeCommand>[0];
+  }
 
-    const mockSeedSummary = {
-      goal: 'Build a rename tool',
-      constraints: [],
-      acceptanceCriteria: [],
-      ontologySchema: { entities: [] },
-      evaluationPrinciples: [],
-      exitConditions: {},
-    };
+  it('Test 1: calls getSummary then approveSummary when phase is reviewing', async () => {
+    const approveFn = vi.fn().mockResolvedValue({ seedId: 'seed-123', version: 1 });
+    const client = {
+      interview: {
+        getSummary: { query: vi.fn().mockResolvedValue({ phase: 'reviewing', summary: 'My seed spec', interviewId: 'iv-1' }) },
+        approveSummary: { mutate: approveFn },
+      },
+    } as unknown as Parameters<typeof crystallizeCommand>[0];
+    const logspy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
-    (readSeedDraft as ReturnType<typeof vi.fn>).mockResolvedValue(mockSeedSummary);
+    await crystallizeCommand(client, [], { json: false, projectId: 'project-123' });
 
-    const mockInterview = { id: 'interview-id-abc', phase: 'reviewing', projectId: 'test-project-123' };
-    const mockDbQuery = {
-      select: vi.fn().mockReturnThis(),
-      from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockReturnThis(),
-      orderBy: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockResolvedValue([mockInterview]),
-    };
+    expect(approveFn).toHaveBeenCalledWith({ projectId: 'project-123', summary: 'My seed spec' });
 
-    const mockDb = {
-      select: vi.fn().mockReturnValue(mockDbQuery),
-    };
-
-    (bootstrap as ReturnType<typeof vi.fn>).mockResolvedValue({
-      db: mockDb,
-      gateway: {},
-      config: {},
-      logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn() },
-      inngest: {},
-    });
-
-    const mockFsmInstance = {
-      approveAndCrystallize: vi.fn().mockResolvedValue({ id: 'seed-id-xyz' }),
-    };
-    (InterviewFSM as ReturnType<typeof vi.fn>).mockImplementation(function () {
-      return mockFsmInstance;
-    });
-
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as () => never);
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
-    const { crystallizeCommand } = await import('../commands/crystallize.js');
-    await crystallizeCommand();
-
-    expect(readSeedDraft).toHaveBeenCalledWith(
-      expect.any(String), // projectRoot (cwd)
-      'test-project-123',
-    );
-
-    exitSpy.mockRestore();
-    consoleSpy.mockRestore();
+    logspy.mockRestore();
   });
 
-  it('Test 2: calls fsm.approveAndCrystallize with interview and project IDs', async () => {
-    const { InterviewFSM } = await import('@cauldron/engine');
-    const { bootstrap } = await import('../bootstrap.js');
-    const { readSeedDraft } = await import('../review/seed-writer.js');
+  it('Test 2: outputs JSON when json flag is set', async () => {
+    const result = { seedId: 'seed-abc', version: 2 };
+    const client = makeClient({ approveSummaryResult: result });
+    const logspy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
-    const mockSeedSummary = {
-      goal: 'AI dev platform',
-      constraints: ['TypeScript only'],
-      acceptanceCriteria: ['End-to-end pipeline works'],
-      ontologySchema: { entities: [] },
-      evaluationPrinciples: [],
-      exitConditions: {},
-    };
+    await crystallizeCommand(client, [], { json: true, projectId: 'project-123' });
 
-    (readSeedDraft as ReturnType<typeof vi.fn>).mockResolvedValue(mockSeedSummary);
+    const output = logspy.mock.calls[0]?.[0] as string;
+    const parsed = JSON.parse(output) as typeof result;
+    expect(parsed.seedId).toBe('seed-abc');
 
-    const mockInterview = { id: 'interview-reviewing-123', phase: 'reviewing', projectId: 'test-project-123' };
-    const mockDbQuery = {
-      select: vi.fn().mockReturnThis(),
-      from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockReturnThis(),
-      orderBy: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockResolvedValue([mockInterview]),
-    };
-
-    const mockDb = {
-      select: vi.fn().mockReturnValue(mockDbQuery),
-    };
-
-    (bootstrap as ReturnType<typeof vi.fn>).mockResolvedValue({
-      db: mockDb,
-      gateway: {},
-      config: {},
-      logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn() },
-      inngest: {},
-    });
-
-    const mockFsmInstance = {
-      approveAndCrystallize: vi.fn().mockResolvedValue({ id: 'crystallized-seed-456' }),
-    };
-    (InterviewFSM as ReturnType<typeof vi.fn>).mockImplementation(function () {
-      return mockFsmInstance;
-    });
-
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as () => never);
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
-    const { crystallizeCommand } = await import('../commands/crystallize.js');
-    await crystallizeCommand();
-
-    expect(mockFsmInstance.approveAndCrystallize).toHaveBeenCalledWith(
-      'interview-reviewing-123',
-      'test-project-123',
-      mockSeedSummary,
-    );
-
-    exitSpy.mockRestore();
-    consoleSpy.mockRestore();
+    logspy.mockRestore();
   });
 
-  it('Test 3: exits with error when seed draft file does not exist', async () => {
-    const { bootstrap } = await import('../bootstrap.js');
-    const { readSeedDraft } = await import('../review/seed-writer.js');
+  it('Test 3: exits when phase is not reviewing', async () => {
+    const client = makeClient({ getSummaryResult: { phase: 'gathering', summary: null } });
+    const errspy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const exitspy = vi.spyOn(process, 'exit').mockImplementation((() => {
+      throw new Error('process.exit called');
+    }) as () => never);
 
-    // readSeedDraft throws when file not found
-    (readSeedDraft as ReturnType<typeof vi.fn>).mockRejectedValue(
-      new Error("ENOENT: no such file or directory, open '/path/to/seed-draft.json'"),
-    );
+    await expect(
+      crystallizeCommand(client, [], { json: false, projectId: 'project-123' })
+    ).rejects.toThrow('process.exit called');
 
-    (bootstrap as ReturnType<typeof vi.fn>).mockResolvedValue({
-      db: { select: vi.fn() },
-      gateway: {},
-      config: {},
-      logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn() },
-      inngest: {},
-    });
-
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as () => never);
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-    const { crystallizeCommand } = await import('../commands/crystallize.js');
-    await crystallizeCommand();
-
-    expect(console.error).toHaveBeenCalledWith(
-      expect.stringContaining('No seed draft found'),
-    );
-    expect(process.exit).toHaveBeenCalledWith(1);
-
-    exitSpy.mockRestore();
-    errorSpy.mockRestore();
+    errspy.mockRestore();
+    exitspy.mockRestore();
   });
 
-  it('Test 4: prints crystallized seed ID on success', async () => {
-    const { InterviewFSM } = await import('@cauldron/engine');
-    const { bootstrap } = await import('../bootstrap.js');
-    const { readSeedDraft } = await import('../review/seed-writer.js');
+  it('Test 4: exits when no projectId', async () => {
+    const client = makeClient();
+    const errspy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const exitspy = vi.spyOn(process, 'exit').mockImplementation((() => {
+      throw new Error('process.exit called');
+    }) as () => never);
 
-    const mockSeedSummary = {
-      goal: 'Build renaming tool',
-      constraints: [],
-      acceptanceCriteria: [],
-      ontologySchema: { entities: [] },
-      evaluationPrinciples: [],
-      exitConditions: {},
-    };
+    await expect(
+      crystallizeCommand(client, [], { json: false })
+    ).rejects.toThrow('process.exit called');
 
-    (readSeedDraft as ReturnType<typeof vi.fn>).mockResolvedValue(mockSeedSummary);
-
-    const mockInterview = { id: 'interview-final-789', phase: 'reviewing', projectId: 'test-project-123' };
-    const mockDbQuery = {
-      select: vi.fn().mockReturnThis(),
-      from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockReturnThis(),
-      orderBy: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockResolvedValue([mockInterview]),
-    };
-
-    const mockDb = {
-      select: vi.fn().mockReturnValue(mockDbQuery),
-    };
-
-    (bootstrap as ReturnType<typeof vi.fn>).mockResolvedValue({
-      db: mockDb,
-      gateway: {},
-      config: {},
-      logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn() },
-      inngest: {},
-    });
-
-    const mockFsmInstance = {
-      approveAndCrystallize: vi.fn().mockResolvedValue({ id: 'SEED-final-999' }),
-    };
-    (InterviewFSM as ReturnType<typeof vi.fn>).mockImplementation(function () {
-      return mockFsmInstance;
-    });
-
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as () => never);
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
-    const { crystallizeCommand } = await import('../commands/crystallize.js');
-    await crystallizeCommand();
-
-    const logCalls = (consoleSpy.mock.calls as string[][]).map(c => String(c[0]));
-    expect(logCalls.some(line => line.includes('SEED-final-999'))).toBe(true);
-
-    exitSpy.mockRestore();
-    consoleSpy.mockRestore();
+    errspy.mockRestore();
+    exitspy.mockRestore();
   });
 });

@@ -1,49 +1,58 @@
-import { eq } from 'drizzle-orm';
-import { beads, appendEvent } from '@cauldron/shared';
-import type { DbClient } from '@cauldron/shared';
+import chalk from 'chalk';
+import type { CLIClient } from '../trpc-client.js';
+import { createSpinner, formatJson } from '../output.js';
 
-export interface KillDeps {
-  db: DbClient;
-  projectId: string;
+interface Flags {
+  json: boolean;
+  projectId?: string;
 }
 
 /**
- * Kill command — marks a bead as failed and appends a bead_failed event.
+ * Kill command — stops a running pipeline for a project (D-04).
  *
- * Usage: cauldron kill <beadId>
+ * Uses tRPC client exclusively via execution.respondToEscalation mutation.
+ * No direct DB imports.
+ *
+ * Usage: cauldron kill --project <id> [--bead-id <id>] [--json]
  */
-export async function killCommand(deps: KillDeps, args: string[]): Promise<void> {
-  const beadId = args[0];
+export async function killCommand(
+  client: CLIClient,
+  args: string[],
+  flags: Flags
+): Promise<void> {
+  const projectId = flags.projectId;
 
-  if (!beadId) {
-    console.error('Usage: cauldron kill <beadId>');
+  // Parse optional bead-id from args
+  const beadIdIdx = args.indexOf('--bead-id');
+  const beadId = beadIdIdx !== -1 ? args[beadIdIdx + 1] : undefined;
+
+  if (!projectId) {
+    console.error(chalk.red('Error: --project <id> is required (or set CAULDRON_PROJECT_ID)'));
     process.exit(1);
+    return;
   }
 
-  // Verify bead exists
-  const existingBeads = await deps.db
-    .select({ id: beads.id, seedId: beads.seedId, status: beads.status })
-    .from(beads)
-    .where(eq(beads.id, beadId));
-
-  if (existingBeads.length === 0) {
-    console.error(`Bead not found: ${beadId}`);
-    process.exit(1);
+  const spinner = createSpinner('Killing pipeline...').start();
+  let result;
+  try {
+    result = await client.execution.respondToEscalation.mutate({
+      projectId,
+      beadId,
+      action: 'abort',
+    });
+    spinner.succeed('Pipeline killed');
+  } catch (err) {
+    spinner.fail('Kill failed');
+    throw err;
   }
 
-  // Update bead status to 'failed'
-  await deps.db
-    .update(beads)
-    .set({ status: 'failed' })
-    .where(eq(beads.id, beadId));
+  if (flags.json) {
+    console.log(formatJson(result));
+    return;
+  }
 
-  // Append bead_failed event
-  await appendEvent(deps.db, {
-    projectId: deps.projectId,
-    type: 'bead_failed',
-    beadId,
-    payload: { beadId, reason: 'manual_kill' },
-  });
-
-  console.log(`Killed bead: ${beadId}`);
+  console.log(chalk.green('Pipeline killed for project:'), chalk.gray(projectId));
+  if (beadId) {
+    console.log(chalk.gray(`  Bead: ${beadId}`));
+  }
 }

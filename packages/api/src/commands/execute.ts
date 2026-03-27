@@ -1,164 +1,81 @@
-import { parseArgs } from 'node:util';
-import { desc, eq, and } from 'drizzle-orm';
-import { seeds, beads } from '@cauldron/shared';
-import {
-  findReadyBeads,
-  handleBeadDispatchRequested,
-  handleBeadCompleted,
-  handleMergeRequested,
-  handleEvolutionConverged,
-} from '@cauldron/engine';
-import { Hono } from 'hono';
-import { serve } from '@hono/node-server';
-import { serve as inngestServe } from 'inngest/hono';
-import { captureEngineSnapshot, detectEngineChange } from '../self-build.js';
-import { bootstrap } from '../bootstrap.js';
+import chalk from 'chalk';
+import type { CLIClient } from '../trpc-client.js';
+import { createSpinner, formatJson } from '../output.js';
+
+interface Flags {
+  json: boolean;
+  projectId?: string;
+}
 
 /**
- * Execute command — dispatches a decomposed DAG for parallel bead execution.
+ * Execute command — triggers async bead execution for a decomposed DAG (D-04).
  *
- * Usage:
- *   cauldron execute --project-id <id> [--seed-id <id>] [--project-root <path>] [--resume]
+ * Uses tRPC client exclusively via execution.triggerExecution mutation.
+ * No engine-direct calls — Inngest handles the actual dispatch.
  *
- * Starts an Inngest HTTP server on port 3001 and dispatches all ready beads.
- * --resume: re-dispatches beads that are in 'failed' or 'pending' state.
+ * Usage: cauldron execute --project <id> [--seed-id <id>] [--json]
  */
-export async function executeCommand(): Promise<void> {
-  const { values } = parseArgs({
-    args: process.argv.slice(3),
-    options: {
-      'project-id': { type: 'string' },
-      'seed-id': { type: 'string' },
-      'project-root': { type: 'string' },
-      'resume': { type: 'boolean', default: false },
-    },
-    strict: false,
-  });
+export async function executeCommand(
+  client: CLIClient,
+  args: string[],
+  flags: Flags
+): Promise<void> {
+  const projectId = flags.projectId;
 
-  const projectId = values['project-id'] as string | undefined;
-  const seedId = values['seed-id'] as string | undefined;
-  const projectRoot = (values['project-root'] as string | undefined) ?? process.cwd();
-  const resume = values['resume'] as boolean | undefined ?? false;
+  // Parse seed-id from args
+  const seedIdIdx = args.indexOf('--seed-id');
+  const seedId = seedIdIdx !== -1 ? args[seedIdIdx + 1] : undefined;
 
   if (!projectId) {
-    console.error('Error: --project-id is required');
+    console.error(chalk.red('Error: --project <id> is required (or set CAULDRON_PROJECT_ID)'));
     process.exit(1);
     return;
   }
 
-  const deps = await bootstrap(projectRoot);
-
-  // Capture engine snapshot if running in self-build mode (D-12, D-15)
-  let engineSnapshot: string | null = null;
-  if (deps.config.selfBuild === true) {
-    engineSnapshot = captureEngineSnapshot(projectRoot);
-    console.log(`Self-build mode: engine snapshot captured (${engineSnapshot.slice(0, 8)}...)`);
-  }
-
-  // Find seed: by id or most recent crystallized for the project
+  // If no seedId, get the latest from the DAG query
   let resolvedSeedId: string;
   if (seedId) {
     resolvedSeedId = seedId;
   } else {
-    const rows = await deps.db
-      .select({ id: seeds.id })
-      .from(seeds)
-      .where(eq(seeds.projectId, projectId))
-      .orderBy(desc(seeds.createdAt))
-      .limit(1);
+    const dagSpinner = createSpinner('Finding latest seed...').start();
+    let dag;
+    try {
+      dag = await client.execution.getProjectDAG.query({ projectId });
+      dagSpinner.stop();
+    } catch (err) {
+      dagSpinner.fail('Failed to find seed');
+      throw err;
+    }
 
-    const seed = rows[0];
-    if (!seed) {
-      console.error(`Error: No crystallized seed found for project ${projectId}`);
+    if (!dag.seedId) {
+      console.error(chalk.red('Error: No seed found for this project'));
+      console.error(chalk.gray('Run: cauldron decompose --project ' + projectId));
       process.exit(1);
       return;
     }
-    resolvedSeedId = seed.id;
+    resolvedSeedId = dag.seedId;
   }
 
-  // --resume: reset failed beads back to pending so they can be re-dispatched
-  if (resume) {
-    await deps.db
-      .update(beads)
-      .set({ status: 'pending' })
-      .where(
-        and(
-          eq(beads.seedId, resolvedSeedId),
-          eq(beads.status, 'failed')
-        )
-      );
-  }
-
-  // Find all ready beads for dispatch
-  const readyBeads = await findReadyBeads(deps.db, resolvedSeedId);
-
-  // Collect all Inngest functions from engine
-  const functions = [
-    handleBeadDispatchRequested,
-    handleBeadCompleted,
-    handleMergeRequested,
-    handleEvolutionConverged,
-  ];
-
-  // Start Hono server with Inngest handler
-  const app = new Hono();
-  app.on(['GET', 'PUT', 'POST'], '/api/inngest', inngestServe({ client: deps.inngest, functions }));
-  serve({ fetch: app.fetch, port: 3001 });
-  console.log('Inngest handler listening on http://localhost:3001/api/inngest');
-
-  // Wait for Inngest dev server to sync functions before dispatching events.
-  // Without this, events arrive before the dev server discovers our handler,
-  // resulting in events with no matching function runs.
-  // Only poll when running against a real Inngest dev server (INNGEST_DEV=1).
-  if (process.env['INNGEST_DEV']) {
-    console.log('Waiting for Inngest to sync functions...');
-    const syncStart = Date.now();
-    const SYNC_TIMEOUT_MS = 15_000;
-    while (Date.now() - syncStart < SYNC_TIMEOUT_MS) {
-      try {
-        const res = await fetch('http://localhost:8288/v0/gql', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: '{ apps { id connected } }' }),
-        });
-        if (res.ok) {
-          const body = await res.json() as { data?: { apps?: Array<{ connected: boolean }> } };
-          const connected = body.data?.apps?.some(a => a.connected);
-          if (connected) {
-            console.log(`Inngest synced in ${Date.now() - syncStart}ms`);
-            break;
-          }
-        }
-      } catch { /* dev server not yet ready */ }
-      await new Promise(r => setTimeout(r, 500));
-    }
-  }
-
-  // Dispatch ready beads
-  for (const bead of readyBeads) {
-    await deps.inngest.send({
-      name: 'bead.dispatch_requested',
-      data: {
-        beadId: bead.id,
-        seedId: resolvedSeedId,
-        projectId,
-      },
+  // Trigger execution via tRPC mutation
+  const spinner = createSpinner('Triggering execution...').start();
+  let result;
+  try {
+    result = await client.execution.triggerExecution.mutate({
+      projectId,
+      seedId: resolvedSeedId,
     });
+    spinner.succeed('Execution triggered');
+  } catch (err) {
+    spinner.fail('Execution trigger failed');
+    throw err;
   }
 
-  const count = readyBeads.length;
-  console.log(`Dispatched ${count} beads. Listening for Inngest events... (Ctrl-C to stop)`);
-
-  // Self-build: register SIGINT handler to warn if engine changed during run (D-12)
-  if (engineSnapshot && deps.config.selfBuild === true) {
-    const snapshot = engineSnapshot;
-    process.on('SIGINT', () => {
-      if (detectEngineChange(snapshot, projectRoot)) {
-        console.warn('WARNING: Engine changed during self-build run. Restart the execute command to use the new engine code.');
-      }
-      process.exit(0);
-    });
+  if (flags.json) {
+    console.log(formatJson(result));
+    return;
   }
 
-  // Keep process alive (Hono server keeps it alive naturally)
+  console.log(chalk.green(result.message));
+  console.log(chalk.gray('\nExecution is running asynchronously via Inngest.'));
+  console.log(chalk.gray('Monitor progress with:'), chalk.white(`cauldron status --project ${projectId}`));
 }

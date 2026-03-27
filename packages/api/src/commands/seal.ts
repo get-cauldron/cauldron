@@ -1,128 +1,121 @@
-import { parseArgs } from 'node:util';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
-import { eq } from 'drizzle-orm';
-import { seeds, holdoutVault } from '@cauldron/shared';
-import { generateHoldoutScenarios, createVault, approveScenarios, sealVault } from '@cauldron/engine';
-import { writeHoldoutDraft, readHoldoutDraft } from '../review/holdout-writer.js';
-import { bootstrap } from '../bootstrap.js';
+import chalk from 'chalk';
+import type { CLIClient } from '../trpc-client.js';
+import { createSpinner, createTable, formatJson } from '../output.js';
+
+interface Flags {
+  json: boolean;
+  projectId?: string;
+}
 
 /**
- * Seal command — seals holdout vault scenarios for a project.
+ * Seal command — reviews and seals holdout vault scenarios (D-04).
  *
- * Usage:
- *   cauldron seal --seed-id <id> [--project-root <path>] [--generate]
+ * Uses tRPC client exclusively via interview router procedures.
  *
- * Two modes:
- *   --generate: Generates holdout scenarios from the seed and writes draft for review.
- *   (no flag): Reads the draft, approves marked scenarios, and seals the vault.
+ * Usage: cauldron seal --project <id> [--seed-id <id>] [--approve-all] [--json]
  */
-export async function sealCommand(): Promise<void> {
-  const { values } = parseArgs({
-    args: process.argv.slice(3),
-    options: {
-      'seed-id': { type: 'string' },
-      'project-root': { type: 'string' },
-      'generate': { type: 'boolean', default: false },
-    },
-    strict: false,
-  });
-
-  const seedId = values['seed-id'] as string | undefined;
-  const projectRoot = (values['project-root'] as string | undefined) ?? process.cwd();
-  const generate = values['generate'] as boolean | undefined ?? false;
+export async function sealCommand(
+  client: CLIClient,
+  args: string[],
+  flags: Flags
+): Promise<void> {
+  // Parse seed-id from args
+  const seedIdIdx = args.indexOf('--seed-id');
+  const seedId = seedIdIdx !== -1 ? args[seedIdIdx + 1] : undefined;
+  const approveAll = args.includes('--approve-all');
 
   if (!seedId) {
-    console.error('Error: --seed-id is required');
+    console.error(chalk.red('Error: --seed-id is required'));
+    console.error('Usage: cauldron seal --seed-id <id> [--approve-all]');
     process.exit(1);
     return;
   }
 
-  const deps = await bootstrap(projectRoot);
+  // Get holdout scenarios
+  const spinner = createSpinner('Loading holdout scenarios...').start();
+  let holdouts;
+  try {
+    holdouts = await client.interview.getHoldouts.query({ seedId });
+    spinner.stop();
+  } catch (err) {
+    spinner.fail('Failed to load holdouts');
+    throw err;
+  }
 
-  // Check if draft file exists
-  const draftPath = join(projectRoot, '.cauldron', 'review', `holdout-draft-${seedId}.json`);
-  const draftExists = existsSync(draftPath);
+  if (holdouts.scenarios.length === 0) {
+    console.log(chalk.yellow('No holdout scenarios found for this seed.'));
+    return;
+  }
 
-  if (generate || !draftExists) {
-    // Generate mode: create scenarios, persist vault, write draft for review
-    const seedRows = await deps.db
-      .select()
-      .from(seeds)
-      .where(eq(seeds.id, seedId))
-      .limit(1);
+  if (flags.json) {
+    console.log(formatJson(holdouts));
+    return;
+  }
 
-    const seed = seedRows[0];
-    if (!seed) {
-      console.error(`Error: Seed ${seedId} not found`);
-      process.exit(1);
-      return;
+  // Display scenarios
+  console.log(chalk.cyan(`\nHoldout Scenarios (${holdouts.scenarios.length} total):`));
+  const table = createTable(['#', 'ID', 'Description', 'Status']);
+  holdouts.scenarios.forEach((s, i) => {
+    const desc = String(s.description ?? '').slice(0, 60);
+    table.push([
+      chalk.gray(String(i + 1)),
+      chalk.gray(String(s.id).slice(0, 8) + '...'),
+      chalk.white(desc),
+      chalk.yellow(String(s.status ?? 'pending_review')),
+    ]);
+  });
+  console.log(table.toString());
+
+  // Approve scenarios
+  let toApprove = holdouts.scenarios;
+  if (!approveAll) {
+    // Interactive approval — for each scenario, prompt for approval
+    const { createInterface } = await import('node:readline');
+    const rl = createInterface({ input: process.stdin, output: process.stdout });
+    const ask = (prompt: string): Promise<string> =>
+      new Promise(resolve => rl.question(prompt, resolve));
+
+    toApprove = [];
+    for (const scenario of holdouts.scenarios) {
+      const desc = String(scenario.description ?? '').slice(0, 80);
+      const answer = await ask(chalk.cyan(`\nApprove scenario "${desc}"? [y/N] `));
+      if (answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes') {
+        toApprove.push(scenario);
+      }
     }
-
-    const projectId = seed.projectId;
-    const scenarios = await generateHoldoutScenarios({
-      gateway: deps.gateway,
-      seed,
-      projectId,
-    });
-
-    await createVault(deps.db, { seedId, scenarios });
-    const filePath = await writeHoldoutDraft(projectRoot, seedId, scenarios);
-
-    console.log(`Holdout draft written to ${filePath}. Review scenarios, then re-run without --generate to seal.`);
-    process.exit(0);
-    return;
+    rl.close();
   }
 
-  // Seal mode: read draft, approve, seal vault
-  const draft = await readHoldoutDraft(projectRoot, seedId);
-  const approvedScenarios = draft.filter(s => s.approved);
-
-  if (approvedScenarios.length === 0) {
-    console.error('No scenarios approved. Edit the draft file.');
+  if (toApprove.length === 0) {
+    console.log(chalk.yellow('No scenarios approved.'));
     process.exit(1);
     return;
   }
 
-  // Find vault ID from DB
-  const vaultRows = await deps.db
-    .select()
-    .from(holdoutVault)
-    .where(eq(holdoutVault.seedId, seedId))
-    .limit(1);
+  // Approve each selected scenario
+  console.log(chalk.cyan(`\nApproving ${toApprove.length} scenarios...`));
+  for (const scenario of toApprove) {
+    await client.interview.approveHoldout.mutate({ holdoutId: String(scenario.id) });
+  }
 
-  const vault = vaultRows[0];
-  if (!vault) {
-    console.error(`Error: No holdout vault found for seed ${seedId}. Run with --generate first.`);
-    process.exit(1);
+  // Seal the vault
+  const sealSpinner = createSpinner('Sealing holdout vault...').start();
+  let sealResult;
+  try {
+    sealResult = await client.interview.sealHoldouts.mutate({ seedId });
+    sealSpinner.succeed(`Vault sealed with ${sealResult.sealedCount} scenarios`);
+  } catch (err) {
+    sealSpinner.fail('Seal failed');
+    throw err;
+  }
+
+  if (flags.json) {
+    console.log(formatJson(sealResult));
     return;
   }
 
-  const vaultId = vault.id;
-  const approvedIds = approvedScenarios.map(s => s.id);
-
-  // Skip approval if vault is already approved (idempotent re-run)
-  if (vault.status !== 'approved') {
-    await approveScenarios(deps.db, { vaultId, approvedIds });
-  }
-
-  // Find the projectId from the seed
-  const seedRows = await deps.db
-    .select()
-    .from(seeds)
-    .where(eq(seeds.id, seedId))
-    .limit(1);
-
-  const seed = seedRows[0];
-  if (!seed) {
-    console.error(`Error: Seed ${seedId} not found`);
-    process.exit(1);
-    return;
-  }
-
-  await sealVault(deps.db, { vaultId, projectId: seed.projectId });
-
-  const approvedCount = approvedIds.length;
-  console.log(`Vault sealed with ${approvedCount} holdout scenarios.`);
-  process.exit(0);
+  console.log(chalk.green('Holdout vault sealed:'), chalk.cyan(sealResult.seedId));
+  console.log(chalk.gray(`  Sealed: ${sealResult.sealedCount} scenarios`));
+  console.log(chalk.gray('\nNext step:'));
+  console.log(chalk.white(`  cauldron decompose --project ${flags.projectId ?? '<project-id>'}`));
 }

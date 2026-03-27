@@ -1,54 +1,101 @@
 import { createInterface } from 'node:readline';
-import { parseArgs } from 'node:util';
-import { bootstrap } from '../bootstrap.js';
-import { readPlanningArtifacts } from '../context-bridge.js';
-import { writeSeedDraft } from '../review/seed-writer.js';
-import { InterviewFSM } from '@cauldron/engine';
+import chalk from 'chalk';
+import type { CLIClient } from '../trpc-client.js';
+import { createSpinner, colorStatus, formatJson } from '../output.js';
+
+interface Flags {
+  json: boolean;
+  projectId?: string;
+}
 
 /**
  * Interview command — starts or resumes a Socratic interview session (D-06, D-07).
  *
- * GSD bridging (D-07): reads .planning/ artifacts and injects them as prior context
- * before the FSM starts asking questions.
+ * Uses tRPC client exclusively — no direct engine imports.
  *
- * Usage: cauldron interview --project-id <id> [--project-root <path>] [--phase <id>]
+ * Usage: cauldron interview --project <id> [--browser] [--json]
  */
-export async function interviewCommand(): Promise<void> {
-  const { values } = parseArgs({
-    args: process.argv.slice(3), // skip 'node', 'cli.ts', 'interview'
-    options: {
-      'project-id': { type: 'string' },
-      'project-root': { type: 'string' },
-      phase: { type: 'string' },
-    },
-    allowPositionals: false,
-    strict: false,
-  });
-
-  const projectId = values['project-id'] as string | undefined;
-  const projectRoot = (values['project-root'] as string | undefined) ?? process.cwd();
-  const phase = values['phase'] as string | undefined;
+export async function interviewCommand(
+  client: CLIClient,
+  args: string[],
+  flags: Flags
+): Promise<void> {
+  const projectId = flags.projectId;
+  const browserMode = args.includes('--browser');
 
   if (!projectId) {
-    console.error('Error: --project-id is required');
-    console.error('Usage: cauldron interview --project-id <id> [--project-root <path>] [--phase <id>]');
+    console.error(chalk.red('Error: --project <id> is required (or set CAULDRON_PROJECT_ID)'));
     process.exit(1);
+    return;
   }
 
-  // Bootstrap all engine dependencies
-  const deps = await bootstrap(projectRoot);
+  if (browserMode) {
+    const { execSync } = await import('node:child_process');
+    const url = `http://localhost:3000/projects/${projectId}/interview`;
+    console.log(chalk.cyan('Opening interview in browser:'), url);
+    try {
+      execSync(`open "${url}"`);
+    } catch {
+      console.log(chalk.gray('Could not auto-open browser. Visit:'), url);
+    }
+    return;
+  }
 
-  // D-07: Read GSD planning artifacts for prior context
-  const priorContext = await readPlanningArtifacts(projectRoot, phase);
+  // Get current transcript/state
+  const spinner = createSpinner('Loading interview state...').start();
+  let state;
+  try {
+    state = await client.interview.getTranscript.query({ projectId });
+    spinner.stop();
+  } catch (err) {
+    spinner.fail('Failed to load interview state');
+    throw err;
+  }
 
-  // D-04: Use brownfield mode when prior context exists (project has prior decisions)
-  const mode = priorContext ? 'brownfield' : 'greenfield';
+  if (flags.json) {
+    console.log(formatJson(state));
+    return;
+  }
 
-  // Create and start the interview FSM
-  const fsm = new InterviewFSM(deps.db, deps.gateway, deps.config, deps.logger);
-  const interview = await fsm.startOrResume(projectId, { mode, projectPath: projectRoot });
+  console.log(chalk.cyan('\nCauldron Socratic Interview'));
+  console.log(chalk.gray('==========================='));
+  console.log(chalk.gray(`Status: ${colorStatus(state.status ?? 'gathering')}`));
 
-  deps.logger.info({ projectId, interviewId: interview.id, mode }, 'Interview started/resumed');
+  // If already past gathering phase, show summary
+  if (state.phase !== 'gathering') {
+    console.log(chalk.yellow(`\nInterview is in "${state.phase}" phase.`));
+    if (state.phase === 'reviewing') {
+      console.log(chalk.gray('Run: cauldron crystallize to finalize the seed.'));
+    }
+    return;
+  }
+
+  // Display current scores if available
+  if (state.currentScores) {
+    const score = (state.currentScores.overall * 100).toFixed(0);
+    console.log(chalk.gray(`Clarity: ${score}% (threshold: 80%)\n`));
+  }
+
+  // Get transcript to display last question context
+  const transcript = state.transcript;
+  if (Array.isArray(transcript) && transcript.length > 0) {
+    const lastEntry = transcript[transcript.length - 1];
+    if (lastEntry && typeof lastEntry === 'object' && 'question' in lastEntry) {
+      const q = lastEntry as { question: string; perspective?: string; mcOptions?: string[] };
+      if (q.perspective) {
+        console.log(chalk.cyan(`[${q.perspective}]`), chalk.white(q.question));
+      } else {
+        console.log(chalk.white(q.question));
+      }
+      if (Array.isArray(q.mcOptions) && q.mcOptions.length > 0) {
+        console.log(chalk.gray('\nOptions:'));
+        q.mcOptions.forEach((opt: string, i: number) => {
+          console.log(chalk.gray(`  ${i + 1}.`), opt);
+        });
+        console.log(chalk.gray('  (or type a custom answer)'));
+      }
+    }
+  }
 
   // Set up readline for interactive input
   const rl = createInterface({
@@ -63,83 +110,84 @@ export async function interviewCommand(): Promise<void> {
       });
     });
 
-  console.log('\nCauldron Socratic Interview');
-  console.log('===========================');
-  if (priorContext) {
-    console.log('Prior GSD planning context loaded. Starting in brownfield mode.');
-  }
-
-  // Generate the first question before entering the loop
-  console.log('\nGenerating first question...');
-  const openingResult = await fsm.submitAnswer(interview.id, projectId, {
-    userAnswer: priorContext
-      ? `[Prior context from .planning/]\n${priorContext}\n\n[User answer]\nHello, I'd like to build this project.`
-      : 'Hello, I would like to build a new project.',
-  });
-
-  let phase_status = interview.phase;
-
-  if (openingResult.thresholdMet) {
-    console.log('\nAmbiguity threshold already met from prior context! Transitioning to review...');
-    phase_status = 'reviewing';
-  } else if (openingResult.nextQuestion) {
-    const q = openingResult.nextQuestion;
-    const scorePercent = (openingResult.scores.overall * 100).toFixed(0);
-    console.log(`\nClarity score: ${scorePercent}% (threshold: 80%)\n`);
-    console.log(`[${q.selectedCandidate.perspective}] ${q.selectedCandidate.question}`);
-    if (q.mcOptions.length > 0) {
-      console.log('\nOptions:');
-      q.mcOptions.forEach((opt: string, i: number) => {
-        console.log(`  ${i + 1}. ${opt}`);
-      });
-      console.log('  (or type a custom answer)');
-    }
-  }
-
   // Interview turn loop
-  while (phase_status === 'gathering') {
-    const userAnswer = await askQuestion('\nYour answer: ');
+  let currentPhase: string = state.phase;
+  while (currentPhase === 'gathering') {
+    const userAnswer = await askQuestion(chalk.cyan('\nYour answer: '));
 
-    const result = await fsm.submitAnswer(interview.id, projectId, {
-      userAnswer,
-    });
+    const answerSpinner = createSpinner('Processing answer...').start();
+    let result;
+    try {
+      result = await client.interview.sendAnswer.mutate({ projectId, answer: userAnswer });
+      answerSpinner.stop();
+    } catch (err) {
+      answerSpinner.fail('Failed to send answer');
+      rl.close();
+      throw err;
+    }
 
     // Display score progress
-    const score = result.scores.overall;
-    const scorePercent = (score * 100).toFixed(0);
-    console.log(`\nClarity score: ${scorePercent}% (threshold: 80%)`);
+    const score = ((result.currentScores?.overall ?? 0) * 100).toFixed(0);
+    console.log(chalk.gray(`\nClarity: ${score}% (threshold: 80%)`));
 
     if (result.thresholdMet) {
-      console.log('\nAmbiguity threshold met! Transitioning to review...');
-      phase_status = 'reviewing';
-    } else if (result.nextQuestion) {
-      const q = result.nextQuestion;
-      console.log(`\n[${q.selectedCandidate.perspective}] ${q.selectedCandidate.question}`);
-      if (q.mcOptions.length > 0) {
-        console.log('\nOptions:');
-        q.mcOptions.forEach((opt: string, i: number) => {
-          console.log(`  ${i + 1}. ${opt}`);
-        });
-        console.log('  (or type a custom answer)');
-      }
+      console.log(chalk.green('\nAmbiguity threshold met! Transitioning to review...'));
+      currentPhase = 'reviewing';
     } else {
-      // No next question and threshold not met — shouldn't happen, but exit gracefully
-      phase_status = 'reviewing';
+      // Get updated transcript for next question
+      const updatedState = await client.interview.getTranscript.query({ projectId });
+      currentPhase = updatedState.phase;
+
+      if (currentPhase === 'gathering') {
+        // Display next question from transcript
+        const updatedTranscript = updatedState.transcript;
+        if (Array.isArray(updatedTranscript) && updatedTranscript.length > 0) {
+          const lastEntry = updatedTranscript[updatedTranscript.length - 1];
+          if (lastEntry && typeof lastEntry === 'object' && 'question' in lastEntry) {
+            const q = lastEntry as { question: string; perspective?: string; mcOptions?: string[] };
+            console.log('');
+            if (q.perspective) {
+              console.log(chalk.cyan(`[${q.perspective}]`), chalk.white(q.question));
+            } else {
+              console.log(chalk.white(q.question));
+            }
+            if (Array.isArray(q.mcOptions) && q.mcOptions.length > 0) {
+              console.log(chalk.gray('\nOptions:'));
+              q.mcOptions.forEach((opt: string, i: number) => {
+                console.log(chalk.gray(`  ${i + 1}.`), opt);
+              });
+              console.log(chalk.gray('  (or type a custom answer)'));
+            }
+          }
+        }
+      }
     }
   }
 
   rl.close();
 
-  // Generate seed summary
-  console.log('\nGenerating seed summary...');
-  const summary = await fsm.generateSummary(interview.id, projectId);
+  // Show summary after threshold met
+  console.log(chalk.cyan('\nGenerating seed summary...'));
+  const summarySpinner = createSpinner('Generating summary...').start();
+  // eslint-disable-next-line prefer-const
+  let summaryResult: { summary: unknown; phase: string; interviewId: string } | null = null;
+  try {
+    summaryResult = await client.interview.getSummary.query({ projectId }) as { summary: unknown; phase: string; interviewId: string };
+    summarySpinner.succeed('Summary generated');
+  } catch (err) {
+    summarySpinner.fail('Failed to generate summary');
+    throw err;
+  }
+  if (!summaryResult) return;
 
-  // Write seed draft file for review
-  const draftPath = await writeSeedDraft(projectRoot, projectId, summary);
+  const summaryText = typeof summaryResult.summary === 'string'
+    ? summaryResult.summary
+    : JSON.stringify(summaryResult.summary, null, 2);
 
-  console.log(`\nSeed draft written to: ${draftPath}`);
-  console.log(`Review and edit the file, then run:`);
-  console.log(`  pnpm exec tsx packages/api/src/cli.ts crystallize --project-id ${projectId}`);
-
-  process.exit(0);
+  console.log(chalk.cyan('\nSeed Summary:'));
+  console.log(chalk.gray('\u2500'.repeat(60)));
+  console.log(summaryText);
+  console.log(chalk.gray('\u2500'.repeat(60)));
+  console.log(chalk.gray('\nReview the summary, then run:'));
+  console.log(chalk.white(`  cauldron crystallize --project ${projectId}`));
 }

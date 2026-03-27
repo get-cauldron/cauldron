@@ -1,76 +1,78 @@
-import { parseArgs } from 'node:util';
-import { eq, desc } from 'drizzle-orm';
-import { bootstrap } from '../bootstrap.js';
-import { readSeedDraft } from '../review/seed-writer.js';
-import { InterviewFSM } from '@cauldron/engine';
-import { interviews } from '@cauldron/shared';
+import chalk from 'chalk';
+import type { CLIClient } from '../trpc-client.js';
+import { createSpinner, formatJson } from '../output.js';
+
+interface Flags {
+  json: boolean;
+  projectId?: string;
+}
 
 /**
- * Crystallize command — finalizes a seed spec from a reviewed seed draft (D-16).
+ * Crystallize command — finalizes a seed spec from a completed interview (D-16).
  *
- * Reads the seed draft JSON file (written by interview command), looks up the
- * most recent interview in 'reviewing' state, and calls approveAndCrystallize
- * to produce an immutable seed record.
+ * Uses tRPC client exclusively — calls interview.getSummary then approveSummary.
  *
- * Usage: cauldron crystallize --project-id <id> [--project-root <path>]
+ * Usage: cauldron crystallize --project <id> [--json]
  */
-export async function crystallizeCommand(): Promise<void> {
-  const { values } = parseArgs({
-    args: process.argv.slice(3), // skip 'node', 'cli.ts', 'crystallize'
-    options: {
-      'project-id': { type: 'string' },
-      'project-root': { type: 'string' },
-    },
-    allowPositionals: false,
-    strict: false,
-  });
-
-  const projectId = values['project-id'] as string | undefined;
-  const projectRoot = (values['project-root'] as string | undefined) ?? process.cwd();
+export async function crystallizeCommand(
+  client: CLIClient,
+  args: string[],
+  flags: Flags
+): Promise<void> {
+  const projectId = flags.projectId;
 
   if (!projectId) {
-    console.error('Error: --project-id is required');
-    console.error('Usage: cauldron crystallize --project-id <id> [--project-root <path>]');
-    process.exit(1);
-  }
-
-  // Bootstrap all engine dependencies
-  const deps = await bootstrap(projectRoot);
-
-  // Read the seed draft file (edited by human after interview)
-  let summary: Awaited<ReturnType<typeof readSeedDraft>>;
-  try {
-    summary = await readSeedDraft(projectRoot, projectId);
-  } catch {
-    console.error(
-      `No seed draft found for project ${projectId}. Run /cauldron:interview first.`,
-    );
+    console.error(chalk.red('Error: --project <id> is required (or set CAULDRON_PROJECT_ID)'));
     process.exit(1);
     return;
   }
 
-  // Find the most recent interview in reviewing state
-  const interviewRows = await deps.db
-    .select()
-    .from(interviews)
-    .where(eq(interviews.projectId, projectId))
-    .orderBy(desc(interviews.createdAt))
-    .limit(1);
-
-  const interview = interviewRows.find((i) => i.phase === 'reviewing') ?? null;
-
-  if (!interview) {
-    console.error(
-      `No interview in reviewing state for project ${projectId}. Run /cauldron:interview first.`,
-    );
-    process.exit(1);
+  // Get current summary
+  const spinner = createSpinner('Loading seed summary...').start();
+  let summaryResult;
+  try {
+    summaryResult = await client.interview.getSummary.query({ projectId });
+    spinner.stop();
+  } catch (err) {
+    spinner.fail('Failed to load summary');
+    throw err;
   }
 
-  // Create FSM and crystallize the seed
-  const fsm = new InterviewFSM(deps.db, deps.gateway, deps.config, deps.logger);
-  const seed = await fsm.approveAndCrystallize(interview.id, projectId, summary);
+  if (summaryResult.phase !== 'reviewing') {
+    console.error(chalk.red(`Error: Interview is in "${summaryResult.phase}" phase, not "reviewing"`));
+    console.error(chalk.gray('Run: cauldron interview --project ' + projectId));
+    process.exit(1);
+    return;
+  }
 
-  console.log(`Seed crystallized: ${seed.id}`);
+  if (!summaryResult.summary) {
+    console.error(chalk.red('Error: No summary found. Complete the interview first.'));
+    process.exit(1);
+    return;
+  }
 
-  process.exit(0);
+  // Approve and crystallize
+  const crystallizeSpinner = createSpinner('Crystallizing seed...').start();
+  let result;
+  try {
+    result = await client.interview.approveSummary.mutate({
+      projectId,
+      summary: summaryResult.summary,
+    });
+    crystallizeSpinner.succeed('Seed crystallized');
+  } catch (err) {
+    crystallizeSpinner.fail('Crystallization failed');
+    throw err;
+  }
+
+  if (flags.json) {
+    console.log(formatJson(result));
+    return;
+  }
+
+  console.log(chalk.green('Seed crystallized:'), chalk.cyan(result.seedId));
+  console.log(chalk.gray(`  Version: ${result.version}`));
+  console.log(chalk.gray('\nNext steps:'));
+  console.log(chalk.white(`  cauldron seal --project ${projectId}`));
+  console.log(chalk.white(`  cauldron decompose --project ${projectId}`));
 }

@@ -1,81 +1,81 @@
-import { parseArgs } from 'node:util';
-import { desc, eq } from 'drizzle-orm';
-import { seeds } from '@cauldron/shared';
-import { runDecomposition } from '@cauldron/engine';
-import { bootstrap } from '../bootstrap.js';
+import chalk from 'chalk';
+import type { CLIClient } from '../trpc-client.js';
+import { createSpinner, formatJson } from '../output.js';
+
+interface Flags {
+  json: boolean;
+  projectId?: string;
+}
 
 /**
- * Decompose command — runs two-pass LLM decomposition on a crystallized seed.
+ * Decompose command — triggers async decomposition of a crystallized seed (D-04).
  *
- * Usage:
- *   cauldron decompose --project-id <id> [--seed-id <id>] [--project-root <path>]
+ * Uses tRPC client exclusively via execution.triggerDecomposition mutation.
+ * No engine-direct calls.
  *
- * If --seed-id is not provided, uses the most recent crystallized seed for the project.
+ * Usage: cauldron decompose --project <id> [--seed-id <id>] [--json]
  */
-export async function decomposeCommand(): Promise<void> {
-  const { values } = parseArgs({
-    args: process.argv.slice(3),
-    options: {
-      'project-id': { type: 'string' },
-      'seed-id': { type: 'string' },
-      'project-root': { type: 'string' },
-    },
-    strict: false,
-  });
+export async function decomposeCommand(
+  client: CLIClient,
+  args: string[],
+  flags: Flags
+): Promise<void> {
+  const projectId = flags.projectId;
 
-  const projectId = values['project-id'] as string | undefined;
-  const seedId = values['seed-id'] as string | undefined;
-  const projectRoot = (values['project-root'] as string | undefined) ?? process.cwd();
+  // Parse seed-id from args
+  const seedIdIdx = args.indexOf('--seed-id');
+  const seedId = seedIdIdx !== -1 ? args[seedIdIdx + 1] : undefined;
 
   if (!projectId) {
-    console.error('Error: --project-id is required');
+    console.error(chalk.red('Error: --project <id> is required (or set CAULDRON_PROJECT_ID)'));
     process.exit(1);
     return;
   }
 
-  const deps = await bootstrap(projectRoot);
-
-  // Find seed: by id or most recent crystallized for the project
-  let seed;
+  // If no seedId, get the latest from the DAG query
+  let resolvedSeedId: string;
   if (seedId) {
-    const rows = await deps.db
-      .select()
-      .from(seeds)
-      .where(eq(seeds.id, seedId))
-      .limit(1);
-    seed = rows[0];
+    resolvedSeedId = seedId;
   } else {
-    const rows = await deps.db
-      .select()
-      .from(seeds)
-      .where(eq(seeds.projectId, projectId))
-      .orderBy(desc(seeds.createdAt))
-      .limit(1);
-    seed = rows[0];
+    const dagSpinner = createSpinner('Finding latest seed...').start();
+    let dag;
+    try {
+      dag = await client.execution.getProjectDAG.query({ projectId });
+      dagSpinner.stop();
+    } catch (err) {
+      dagSpinner.fail('Failed to find seed');
+      throw err;
+    }
+
+    if (!dag.seedId) {
+      console.error(chalk.red('Error: No crystallized seed found for this project'));
+      console.error(chalk.gray('Run: cauldron crystallize --project ' + projectId));
+      process.exit(1);
+      return;
+    }
+    resolvedSeedId = dag.seedId;
   }
 
-  if (!seed) {
-    console.error(`Error: No crystallized seed found for project ${projectId}`);
-    process.exit(1);
+  // Trigger decomposition via tRPC mutation
+  const spinner = createSpinner('Triggering decomposition...').start();
+  let result;
+  try {
+    result = await client.execution.triggerDecomposition.mutate({
+      projectId,
+      seedId: resolvedSeedId,
+    });
+    spinner.succeed('Decomposition triggered');
+  } catch (err) {
+    spinner.fail('Decomposition trigger failed');
+    throw err;
+  }
+
+  if (flags.json) {
+    console.log(formatJson(result));
     return;
   }
 
-  if (seed.status !== 'crystallized') {
-    console.error(`Error: Seed ${seed.id} is not crystallized (status: ${seed.status})`);
-    process.exit(1);
-    return;
-  }
-
-  const result = await runDecomposition({
-    db: deps.db,
-    gateway: deps.gateway,
-    inngest: deps.inngest,
-    seed,
-    projectId,
-    tokenBudget: 180_000,
-  });
-
-  const count = result.dispatchedBeadIds.length;
-  console.log(`Decomposed into ${count} beads. Run: pnpm exec tsx packages/api/src/cli.ts execute --project-id ${projectId}`);
-  process.exit(0);
+  console.log(chalk.green(result.message));
+  console.log(chalk.gray('\nDecomposition is running asynchronously via Inngest.'));
+  console.log(chalk.gray('Monitor progress with:'), chalk.white(`cauldron status --project ${projectId}`));
 }

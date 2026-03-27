@@ -1,206 +1,122 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock @cauldron/shared to prevent DATABASE_URL error at import time
-vi.mock('@cauldron/shared', () => ({
-  db: {
-    select: vi.fn(),
-    insert: vi.fn(),
-    update: vi.fn(),
-    execute: vi.fn(),
-  },
-  interviews: {},
-  eq: vi.fn(),
-  desc: vi.fn(),
-}));
-
-// Mock @cauldron/engine
-vi.mock('@cauldron/engine', () => {
-  const MockInterviewFSM = vi.fn(function () {
-    return {
-      startOrResume: vi.fn(),
-      submitAnswer: vi.fn(),
-      generateSummary: vi.fn(),
-      approveAndCrystallize: vi.fn(),
-    };
-  });
-  return {
-    InterviewFSM: MockInterviewFSM,
-    loadConfig: vi.fn(),
-    LLMGateway: vi.fn(function () { return { streamText: vi.fn() }; }),
-    inngest: {},
-    configureSchedulerDeps: vi.fn(),
-    configureVaultDeps: vi.fn(),
-  };
-});
-
-// Mock pino
-vi.mock('pino', () => ({
-  default: vi.fn(() => ({ level: 'info', info: vi.fn(), error: vi.fn(), warn: vi.fn() })),
-}));
-
-// Mock context-bridge
-vi.mock('../context-bridge.js', () => ({
-  readPlanningArtifacts: vi.fn(),
-  extractRequirementIds: vi.fn(),
-}));
-
-// Mock seed-writer
-vi.mock('../review/seed-writer.js', () => ({
-  writeSeedDraft: vi.fn(),
-  readSeedDraft: vi.fn(),
-}));
-
-// Mock bootstrap
-vi.mock('../bootstrap.js', () => ({
-  bootstrap: vi.fn(),
-}));
-
-// Mock readline
-vi.mock('node:readline', () => ({
-  createInterface: vi.fn(),
-}));
-
+// interview.ts now uses tRPC client exclusively — no @cauldron/engine or @cauldron/shared imports
 describe('interviewCommand', () => {
-  beforeEach(() => {
+  let interviewCommand: typeof import('../commands/interview.js').interviewCommand;
+
+  beforeEach(async () => {
     vi.clearAllMocks();
-    // Reset process.argv
-    process.argv = ['node', 'cli.ts', 'interview', '--project-id', 'test-project-123'];
+    const mod = await import('../commands/interview.js');
+    interviewCommand = mod.interviewCommand;
   });
 
-  it('Test 4: creates InterviewFSM and calls startOrResume with brownfield mode when .planning/ exists', async () => {
-    const { InterviewFSM } = await import('@cauldron/engine');
-    const { bootstrap } = await import('../bootstrap.js');
-    const { readPlanningArtifacts } = await import('../context-bridge.js');
-    const { writeSeedDraft } = await import('../review/seed-writer.js');
+  function makeClient(overrides?: {
+    transcriptResult?: unknown;
+    sendAnswerResult?: unknown;
+    summaryResult?: unknown;
+  }) {
+    return {
+      interview: {
+        getTranscript: {
+          query: vi.fn().mockResolvedValue(
+            overrides?.transcriptResult ?? {
+              interview: null,
+              transcript: [],
+              currentScores: null,
+              status: 'not_started',
+              phase: 'gathering',
+              suggestions: [],
+              activePerspective: null,
+              thresholdMet: false,
+            }
+          ),
+        },
+        sendAnswer: {
+          mutate: vi.fn().mockResolvedValue(
+            overrides?.sendAnswerResult ?? {
+              interviewId: 'iv-1',
+              turnNumber: 1,
+              currentScores: { overall: 0.5, goalClarity: 0.5, successCriteriaClarity: 0.5, constraintClarity: 0.5 },
+              thresholdMet: false,
+              phase: 'gathering',
+            }
+          ),
+        },
+        getSummary: {
+          query: vi.fn().mockResolvedValue(
+            overrides?.summaryResult ?? {
+              summary: 'Build a file renamer',
+              phase: 'reviewing',
+              interviewId: 'iv-1',
+            }
+          ),
+        },
+      },
+    } as unknown as Parameters<typeof interviewCommand>[0];
+  }
 
-    const mockFsmInstance = {
-      startOrResume: vi.fn().mockResolvedValue({ id: 'interview-id-1', phase: 'gathering' }),
-      submitAnswer: vi.fn().mockResolvedValue({
-        turn: { question: 'What is the goal?' },
-        scores: { overall: 0.9 },
-        thresholdMet: true,
-        nextQuestion: null,
-      }),
-      generateSummary: vi.fn().mockResolvedValue({
-        goal: 'Build a renaming tool',
-        constraints: [],
-        acceptanceCriteria: [],
-        ontologySchema: { entities: [] },
-        evaluationPrinciples: [],
-        exitConditions: {},
-      }),
-    };
+  it('Test 1: exits with error when no projectId provided', async () => {
+    const client = makeClient();
+    const errspy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const exitspy = vi.spyOn(process, 'exit').mockImplementation((() => {
+      throw new Error('process.exit called');
+    }) as () => never);
 
-    (InterviewFSM as ReturnType<typeof vi.fn>).mockImplementation(function () {
-      return mockFsmInstance;
-    });
+    await expect(
+      interviewCommand(client, [], { json: false })
+    ).rejects.toThrow('process.exit called');
 
-    (bootstrap as ReturnType<typeof vi.fn>).mockResolvedValue({
-      db: { select: vi.fn(), insert: vi.fn(), update: vi.fn() },
-      gateway: {},
-      config: {},
-      logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn() },
-      inngest: {},
-    });
-
-    // Simulate prior context existing (brownfield)
-    (readPlanningArtifacts as ReturnType<typeof vi.fn>).mockResolvedValue('## Project Context\nExisting project data');
-    (writeSeedDraft as ReturnType<typeof vi.fn>).mockResolvedValue('/path/to/seed-draft.json');
-
-    // Mock readline to return one answer then close
-    const { createInterface } = await import('node:readline');
-    const mockRl = {
-      question: vi.fn((prompt: string, cb: (answer: string) => void) => {
-        cb('My answer to the question');
-      }),
-      close: vi.fn(),
-      [Symbol.asyncIterator]: vi.fn(),
-    };
-    (createInterface as ReturnType<typeof vi.fn>).mockReturnValue(mockRl);
-
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as () => never);
-
-    const { interviewCommand } = await import('../commands/interview.js');
-    await interviewCommand();
-
-    expect(bootstrap).toHaveBeenCalled();
-    expect(readPlanningArtifacts).toHaveBeenCalled();
-    expect(mockFsmInstance.startOrResume).toHaveBeenCalledWith(
-      'test-project-123',
-      expect.objectContaining({ mode: 'brownfield' }),
-    );
-
-    exitSpy.mockRestore();
+    expect(console.error).toHaveBeenCalled();
+    errspy.mockRestore();
+    exitspy.mockRestore();
   });
 
-  it('Test 5: injects prior context before interview loop when .planning/ has content', async () => {
-    const { InterviewFSM } = await import('@cauldron/engine');
-    const { bootstrap } = await import('../bootstrap.js');
-    const { readPlanningArtifacts } = await import('../context-bridge.js');
-    const { writeSeedDraft } = await import('../review/seed-writer.js');
-
-    const mockDb = {
-      select: vi.fn().mockReturnValue({ from: vi.fn().mockReturnValue({ where: vi.fn().mockReturnValue({ orderBy: vi.fn().mockReturnValue({ limit: vi.fn().mockResolvedValue([]) }) }) }) }),
-      update: vi.fn().mockReturnValue({ set: vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue(undefined) }) }),
-      insert: vi.fn(),
-    };
-
-    (bootstrap as ReturnType<typeof vi.fn>).mockResolvedValue({
-      db: mockDb,
-      gateway: {},
-      config: {},
-      logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn() },
-      inngest: {},
+  it('Test 2: calls getTranscript on start', async () => {
+    const transcriptFn = vi.fn().mockResolvedValue({
+      interview: null,
+      transcript: [],
+      currentScores: null,
+      status: 'not_started',
+      phase: 'reviewing', // already past gathering — exits early
+      suggestions: [],
+      activePerspective: null,
+      thresholdMet: false,
     });
+    const client = {
+      interview: {
+        getTranscript: { query: transcriptFn },
+        sendAnswer: { mutate: vi.fn() },
+        getSummary: { query: vi.fn().mockResolvedValue({ summary: 'x', phase: 'reviewing', interviewId: 'iv-1' }) },
+      },
+    } as unknown as Parameters<typeof interviewCommand>[0];
+    const logspy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
-    const priorContext = '## Project Context\nCauldron AI platform decisions';
-    (readPlanningArtifacts as ReturnType<typeof vi.fn>).mockResolvedValue(priorContext);
-    (writeSeedDraft as ReturnType<typeof vi.fn>).mockResolvedValue('/path/to/draft.json');
+    await interviewCommand(client, [], { json: false, projectId: 'project-123' });
 
-    const mockFsmInstance = {
-      startOrResume: vi.fn().mockResolvedValue({ id: 'interview-id-2', phase: 'gathering' }),
-      submitAnswer: vi.fn().mockResolvedValue({
-        turn: { question: 'What constraints apply?' },
-        scores: { overall: 0.85 },
-        thresholdMet: true,
-        nextQuestion: null,
-      }),
-      generateSummary: vi.fn().mockResolvedValue({
-        goal: 'AI development platform',
-        constraints: [],
-        acceptanceCriteria: [],
-        ontologySchema: { entities: [] },
-        evaluationPrinciples: [],
-        exitConditions: {},
-      }),
+    expect(transcriptFn).toHaveBeenCalledWith({ projectId: 'project-123' });
+
+    logspy.mockRestore();
+  });
+
+  it('Test 3: outputs JSON transcript state when json flag set', async () => {
+    const state = {
+      interview: null,
+      transcript: [],
+      currentScores: null,
+      status: 'not_started',
+      phase: 'gathering',
+      suggestions: [],
+      activePerspective: null,
+      thresholdMet: false,
     };
-    (InterviewFSM as ReturnType<typeof vi.fn>).mockImplementation(function () {
-      return mockFsmInstance;
-    });
+    const client = makeClient({ transcriptResult: state });
+    const logspy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
-    const { createInterface } = await import('node:readline');
-    const mockRl = {
-      question: vi.fn((prompt: string, cb: (answer: string) => void) => cb('Context answer')),
-      close: vi.fn(),
-    };
-    (createInterface as ReturnType<typeof vi.fn>).mockReturnValue(mockRl);
+    await interviewCommand(client, [], { json: true, projectId: 'project-123' });
 
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as () => never);
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const output = logspy.mock.calls[0]?.[0] as string;
+    expect(() => JSON.parse(output)).not.toThrow();
 
-    const { interviewCommand } = await import('../commands/interview.js');
-    await interviewCommand();
-
-    // Verify prior context was used (brownfield mode when context exists)
-    expect(mockFsmInstance.startOrResume).toHaveBeenCalledWith(
-      'test-project-123',
-      expect.objectContaining({ mode: 'brownfield' }),
-    );
-
-    // Verify writeSeedDraft was called after threshold met
-    expect(writeSeedDraft).toHaveBeenCalled();
-
-    exitSpy.mockRestore();
-    consoleSpy.mockRestore();
+    logspy.mockRestore();
   });
 });

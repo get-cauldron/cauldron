@@ -1,69 +1,49 @@
-import { eq, desc, inArray } from 'drizzle-orm';
-import { beads, events, seeds } from '@cauldron/shared';
-import type { DbClient } from '@cauldron/shared';
+import chalk from 'chalk';
+import type { CLIClient } from '../trpc-client.js';
+import { createTable, colorStatus, formatJson } from '../output.js';
 
-export interface StatusDeps {
-  db: DbClient;
+interface Flags {
+  json: boolean;
+  projectId?: string;
 }
 
 /**
- * Status command — shows running and queued beads for a project.
+ * Status command — shows running and queued beads for a project (D-04).
  *
- * Usage: cauldron status [seedId] [--logs]
+ * Uses tRPC client exclusively via execution.getProjectDAG query.
+ * No direct DB imports.
  *
- * If seedId is omitted, uses the most recent seed.
- * --logs flag tails recent events (last 20).
+ * Usage: cauldron status --project <id> [--logs] [--json]
  */
-export async function statusCommand(deps: StatusDeps, args: string[]): Promise<void> {
-  const flags = args.filter(a => a.startsWith('--'));
-  const positionals = args.filter(a => !a.startsWith('--'));
+export async function statusCommand(
+  client: CLIClient,
+  args: string[],
+  flags: Flags
+): Promise<void> {
+  const projectId = flags.projectId;
+  const showLogs = args.includes('--logs');
 
-  const showLogs = flags.includes('--logs');
-  let seedId = positionals[0];
-
-  // If no seedId provided, use the most recent seed
-  if (!seedId) {
-    const recentSeeds = await deps.db
-      .select({ id: seeds.id })
-      .from(seeds)
-      .orderBy(desc(seeds.createdAt))
-      .limit(1);
-    if (recentSeeds.length === 0) {
-      console.log('No seeds found. Run: cauldron interview');
-      return;
-    }
-    seedId = recentSeeds[0]!.id;
+  if (!projectId) {
+    console.error(chalk.red('Error: --project <id> is required (or set CAULDRON_PROJECT_ID)'));
+    process.exit(1);
+    return;
   }
 
-  // Query beads for this seed
-  const beadRows = await deps.db
-    .select({
-      id: beads.id,
-      title: beads.title,
-      status: beads.status,
-      agent: beads.agentAssignment,
-      claimedAt: beads.claimedAt,
-      completedAt: beads.completedAt,
-    })
-    .from(beads)
-    .where(eq(beads.seedId, seedId))
-    .orderBy(beads.createdAt);
+  // Query DAG via tRPC
+  const dag = await client.execution.getProjectDAG.query({ projectId });
 
-  // Query escalation events to detect NEEDS REVIEW status
-  const escalationEvents = await deps.db
-    .select({ beadId: events.beadId, type: events.type })
-    .from(events)
-    .where(eq(events.type, 'merge_escalation_needed'));
+  if (dag.beads.length === 0) {
+    console.log(chalk.gray('No beads found for this project. Run: cauldron decompose'));
+    return;
+  }
 
-  const escalatedBeadIds = new Set(
-    escalationEvents
-      .map(e => e.beadId)
-      .filter((id): id is string => id !== null)
-  );
+  if (flags.json) {
+    console.log(formatJson(dag));
+    return;
+  }
 
-  // Build display rows with computed duration
+  // Calculate duration
   const now = Date.now();
-
   function formatDuration(ms: number): string {
     const totalSec = Math.floor(ms / 1000);
     const min = Math.floor(totalSec / 60);
@@ -71,63 +51,57 @@ export async function statusCommand(deps: StatusDeps, args: string[]): Promise<v
     return min > 0 ? `${min}m ${sec}s` : `${sec}s`;
   }
 
-  const tableRows = beadRows.map(row => {
+  // Render bead table
+  const table = createTable(['Title', 'Status', 'Agent', 'Duration']);
+  for (const bead of dag.beads) {
     let duration = '-';
-    if (row.completedAt && row.claimedAt) {
-      duration = formatDuration(row.completedAt.getTime() - row.claimedAt.getTime());
-    } else if (row.claimedAt) {
-      duration = formatDuration(now - row.claimedAt.getTime()) + ' (running)';
+    const completedAt = bead.completedAt ? new Date(bead.completedAt).getTime() : null;
+    const claimedAt = bead.claimedAt ? new Date(bead.claimedAt).getTime() : null;
+
+    if (completedAt && claimedAt) {
+      duration = formatDuration(completedAt - claimedAt);
+    } else if (claimedAt) {
+      duration = formatDuration(now - claimedAt) + ' (running)';
     }
 
-    // Override status display if escalation event exists for this bead
-    let displayStatus: string = row.status;
-    if (row.id && escalatedBeadIds.has(row.id)) {
-      displayStatus = 'NEEDS REVIEW';
-    }
-
-    return {
-      Title: row.title,
-      Status: displayStatus,
-      Agent: row.agent ?? '-',
-      Duration: duration,
-    };
-  });
-
-  console.table(tableRows);
+    table.push([
+      chalk.white(bead.title ?? 'Untitled'),
+      colorStatus(bead.status ?? 'pending'),
+      chalk.gray(bead.agentAssignment ?? '-'),
+      chalk.gray(duration),
+    ]);
+  }
+  console.log(table.toString());
 
   // Summary line
   const counts = {
-    completed: beadRows.filter(r => r.status === 'completed').length,
-    active: beadRows.filter(r => r.status === 'active' || r.status === 'claimed').length,
-    pending: beadRows.filter(r => r.status === 'pending').length,
-    failed: beadRows.filter(r => r.status === 'failed').length,
+    completed: dag.beads.filter(b => b.status === 'completed').length,
+    active: dag.beads.filter(b => b.status === 'active' || b.status === 'claimed').length,
+    pending: dag.beads.filter(b => b.status === 'pending').length,
+    failed: dag.beads.filter(b => b.status === 'failed').length,
   };
   console.log(
-    `${counts.completed} completed, ${counts.active} active, ${counts.pending} pending, ${counts.failed} failed`
+    chalk.gray(`${counts.completed} completed, ${counts.active} active, ${counts.pending} pending, ${counts.failed} failed`)
   );
 
-  // --logs flag: tail last 20 events for this seed
-  if (showLogs) {
-    console.log('\n--- Recent Events ---');
-    const recentEvents = await deps.db
-      .select({
-        occurredAt: events.occurredAt,
-        type: events.type,
-        payload: events.payload,
-        beadId: events.beadId,
-      })
-      .from(events)
-      .where(eq(events.seedId, seedId))
-      .orderBy(desc(events.occurredAt))
-      .limit(20);
+  // --logs flag: show bead events
+  if (showLogs && dag.beads.length > 0) {
+    console.log(chalk.cyan('\n--- Recent Events ---'));
+    // Show events for the first few active/failed beads
+    const interestingBeads = dag.beads
+      .filter(b => b.status === 'active' || b.status === 'failed' || b.status === 'claimed')
+      .slice(0, 3);
 
-    for (const evt of recentEvents) {
-      const ts = evt.occurredAt?.toISOString() ?? 'unknown';
-      const payloadSummary = evt.payload
-        ? JSON.stringify(evt.payload).slice(0, 80)
-        : '{}';
-      const beadRef = evt.beadId ? ` [bead:${evt.beadId.slice(0, 8)}]` : '';
-      console.log(`[${ts}] ${evt.type}${beadRef}: ${payloadSummary}`);
+    for (const bead of interestingBeads) {
+      const detail = await client.execution.getBeadDetail.query({ beadId: bead.id });
+      console.log(chalk.cyan(`\nBead: ${bead.title ?? bead.id}`));
+      for (const evt of detail.events.slice(-10)) {
+        const ts = evt.occurredAt ? new Date(evt.occurredAt).toISOString() : 'unknown';
+        const payloadSummary = evt.payload
+          ? JSON.stringify(evt.payload).slice(0, 80)
+          : '{}';
+        console.log(chalk.gray(`  [${ts}] ${evt.type}: ${payloadSummary}`));
+      }
     }
   }
 }

@@ -1,227 +1,112 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { join } from 'node:path';
-import { mkdirSync, writeFileSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { randomBytes } from 'node:crypto';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock @cauldron/shared to prevent DATABASE_URL error at import time
-vi.mock('@cauldron/shared', () => ({
-  db: {
-    select: vi.fn(),
-    insert: vi.fn(),
-    update: vi.fn(),
-  },
-  holdoutVault: {},
-  eq: vi.fn(),
-  seeds: {},
-}));
-
-// Mock @cauldron/engine
-vi.mock('@cauldron/engine', () => ({
-  generateHoldoutScenarios: vi.fn(),
-  createVault: vi.fn(),
-  approveScenarios: vi.fn(),
-  sealVault: vi.fn(),
-  loadConfig: vi.fn(),
-  LLMGateway: vi.fn(function () { return {}; }),
-  inngest: {},
-  configureSchedulerDeps: vi.fn(),
-  configureVaultDeps: vi.fn(),
-}));
-
-// Mock pino
-vi.mock('pino', () => ({
-  default: vi.fn(() => ({ level: 'info', info: vi.fn(), error: vi.fn(), warn: vi.fn() })),
-}));
-
-// Mock bootstrap
-vi.mock('../bootstrap.js', () => ({
-  bootstrap: vi.fn(),
-}));
-
-// Do NOT mock holdout-writer — let it use real fs via tempDir
-
+// seal.ts now uses tRPC client exclusively — no @cauldron/engine or @cauldron/shared imports
 describe('sealCommand', () => {
-  let tempDir: string;
+  let sealCommand: typeof import('../commands/seal.js').sealCommand;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
-    process.env['HOLDOUT_ENCRYPTION_KEY'] = Buffer.alloc(32).toString('base64');
-    tempDir = join(tmpdir(), `cauldron-seal-test-${randomBytes(8).toString('hex')}`);
-    mkdirSync(tempDir, { recursive: true });
-    process.argv = ['node', 'cli.ts', 'seal', '--seed-id', 'seed-111', '--project-root', tempDir];
+    const mod = await import('../commands/seal.js');
+    sealCommand = mod.sealCommand;
   });
 
-  afterEach(() => {
-    rmSync(tempDir, { recursive: true, force: true });
+  function makeClient(overrides?: {
+    holdoutsResult?: unknown;
+    approveResult?: unknown;
+    sealResult?: unknown;
+  }) {
+    return {
+      interview: {
+        getHoldouts: {
+          query: vi.fn().mockResolvedValue(
+            overrides?.holdoutsResult ?? {
+              scenarios: [
+                { id: 'h-1', description: 'Test file renaming', status: 'pending_review' },
+                { id: 'h-2', description: 'Test error handling', status: 'pending_review' },
+              ],
+            }
+          ),
+        },
+        approveHoldout: {
+          mutate: vi.fn().mockResolvedValue(overrides?.approveResult ?? { holdoutId: 'h-1', status: 'approved' }),
+        },
+        sealHoldouts: {
+          mutate: vi.fn().mockResolvedValue(overrides?.sealResult ?? { seedId: 'seed-1', sealedCount: 2 }),
+        },
+      },
+    } as unknown as Parameters<typeof sealCommand>[0];
+  }
+
+  it('Test 1: exits when --seed-id not provided', async () => {
+    const client = makeClient();
+    const errspy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const exitspy = vi.spyOn(process, 'exit').mockImplementation((() => {
+      throw new Error('process.exit called');
+    }) as () => never);
+
+    await expect(
+      sealCommand(client, [], { json: false })
+    ).rejects.toThrow('process.exit called');
+
+    errspy.mockRestore();
+    exitspy.mockRestore();
   });
 
-  it('Test 2: reads holdout draft and calls approveScenarios then sealVault when draft exists', async () => {
-    const { approveScenarios, sealVault } = await import('@cauldron/engine');
-    const { bootstrap } = await import('../bootstrap.js');
+  it('Test 2: calls getHoldouts with seedId', async () => {
+    const holdoutsFn = vi.fn().mockResolvedValue({ scenarios: [] });
+    const client = {
+      interview: {
+        getHoldouts: { query: holdoutsFn },
+        approveHoldout: { mutate: vi.fn() },
+        sealHoldouts: { mutate: vi.fn() },
+      },
+    } as unknown as Parameters<typeof sealCommand>[0];
+    const logspy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
-    // Create the draft file in the temp directory
-    const reviewDir = join(tempDir, '.cauldron', 'review');
-    mkdirSync(reviewDir, { recursive: true });
-    const draftScenarios = [
-      { id: 'sc-1', title: 'Scenario 1', given: 'G', when: 'W', then: 'T', category: 'happy_path', acceptanceCriterionRef: 'AC-01', severity: 'critical', approved: true },
-      { id: 'sc-2', title: 'Scenario 2', given: 'G', when: 'W', then: 'T', category: 'happy_path', acceptanceCriterionRef: 'AC-02', severity: 'major', approved: true },
-      { id: 'sc-3', title: 'Scenario 3', given: 'G', when: 'W', then: 'T', category: 'edge_case', acceptanceCriterionRef: 'AC-01', severity: 'minor', approved: true },
-      { id: 'sc-4', title: 'Scenario 4', given: 'G', when: 'W', then: 'T', category: 'error_handling', acceptanceCriterionRef: 'AC-03', severity: 'major', approved: true },
-      { id: 'sc-5', title: 'Scenario 5', given: 'G', when: 'W', then: 'T', category: 'error_handling', acceptanceCriterionRef: 'AC-04', severity: 'major', approved: true },
-    ];
-    writeFileSync(join(reviewDir, 'holdout-draft-seed-111.json'), JSON.stringify(draftScenarios), 'utf-8');
+    await sealCommand(client, ['--seed-id', 'seed-xyz'], { json: false });
 
-    const mockVault = { id: 'vault-xyz-789', seedId: 'seed-111', status: 'pending_review' };
-    const mockSeed = { id: 'seed-111', projectId: 'project-xyz' };
+    expect(holdoutsFn).toHaveBeenCalledWith({ seedId: 'seed-xyz' });
 
-    const mockVaultDbQuery = {
-      select: vi.fn().mockReturnThis(),
-      from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockResolvedValue([mockVault]),
-    };
+    logspy.mockRestore();
+  });
 
-    const mockSeedDbQuery = {
-      select: vi.fn().mockReturnThis(),
-      from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockResolvedValue([mockSeed]),
-    };
+  it('Test 3: calls approveHoldout and sealHoldouts when --approve-all is set', async () => {
+    const approveFn = vi.fn().mockResolvedValue({ holdoutId: 'h-1', status: 'approved' });
+    const sealFn = vi.fn().mockResolvedValue({ seedId: 'seed-1', sealedCount: 2 });
+    const client = {
+      interview: {
+        getHoldouts: { query: vi.fn().mockResolvedValue({ scenarios: [
+          { id: 'h-1', description: 'Test 1', status: 'pending_review' },
+          { id: 'h-2', description: 'Test 2', status: 'pending_review' },
+        ] }) },
+        approveHoldout: { mutate: approveFn },
+        sealHoldouts: { mutate: sealFn },
+      },
+    } as unknown as Parameters<typeof sealCommand>[0];
+    const logspy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
-    const mockDb = {
-      select: vi.fn()
-        .mockReturnValueOnce(mockVaultDbQuery)
-        .mockReturnValueOnce(mockSeedDbQuery),
-    };
+    await sealCommand(client, ['--seed-id', 'seed-1', '--approve-all'], { json: false });
 
-    (bootstrap as ReturnType<typeof vi.fn>).mockResolvedValue({
-      db: mockDb,
-      gateway: {},
-      config: {},
-      logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn() },
-      inngest: {},
+    expect(approveFn).toHaveBeenCalledTimes(2);
+    expect(sealFn).toHaveBeenCalledWith({ seedId: 'seed-1' });
+
+    logspy.mockRestore();
+  });
+
+  it('Test 4: outputs JSON when json flag is set', async () => {
+    const sealResult = { seedId: 'seed-1', sealedCount: 1 };
+    const client = makeClient({ sealResult });
+    const logspy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+
+    await sealCommand(client, ['--seed-id', 'seed-1', '--approve-all'], { json: true });
+
+    // JSON output should include the seal result
+    const outputs = logspy.mock.calls.flat().map(String);
+    const jsonOutput = outputs.find(o => {
+      try { JSON.parse(o); return true; } catch { return false; }
     });
+    expect(jsonOutput).toBeDefined();
 
-    (approveScenarios as ReturnType<typeof vi.fn>).mockResolvedValue({ approved: 5 });
-    (sealVault as ReturnType<typeof vi.fn>).mockResolvedValue(undefined);
-
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as () => never);
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
-    const { sealCommand } = await import('../commands/seal.js');
-    await sealCommand();
-
-    expect(approveScenarios).toHaveBeenCalledWith(
-      mockDb,
-      expect.objectContaining({ vaultId: 'vault-xyz-789' })
-    );
-    expect(sealVault).toHaveBeenCalledWith(
-      mockDb,
-      expect.objectContaining({ vaultId: 'vault-xyz-789' })
-    );
-
-    exitSpy.mockRestore();
-    consoleSpy.mockRestore();
-  });
-
-  it('Test 3: generates holdout scenarios and writes draft when --generate flag is set', async () => {
-    process.argv = ['node', 'cli.ts', 'seal', '--seed-id', 'seed-222', '--generate', '--project-root', tempDir];
-
-    const { generateHoldoutScenarios, createVault } = await import('@cauldron/engine');
-    const { bootstrap } = await import('../bootstrap.js');
-
-    const mockSeed = {
-      id: 'seed-222',
-      projectId: 'project-abc',
-      goal: 'Build a rename tool',
-      status: 'crystallized',
-    };
-
-    const mockSeedDbQuery = {
-      select: vi.fn().mockReturnThis(),
-      from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockResolvedValue([mockSeed]),
-    };
-
-    const mockDb = {
-      select: vi.fn().mockReturnValue(mockSeedDbQuery),
-    };
-
-    const mockScenarios = [
-      { id: 'sc-a', title: 'Scenario A', given: 'G', when: 'W', then: 'T', category: 'happy_path', acceptanceCriterionRef: 'AC-01', severity: 'critical' },
-      { id: 'sc-b', title: 'Scenario B', given: 'G', when: 'W', then: 'T', category: 'edge_case', acceptanceCriterionRef: 'AC-02', severity: 'major' },
-    ];
-
-    (generateHoldoutScenarios as ReturnType<typeof vi.fn>).mockResolvedValue(mockScenarios);
-    (createVault as ReturnType<typeof vi.fn>).mockResolvedValue('vault-new-123');
-
-    (bootstrap as ReturnType<typeof vi.fn>).mockResolvedValue({
-      db: mockDb,
-      gateway: { generateObject: vi.fn() },
-      config: {},
-      logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn() },
-      inngest: {},
-    });
-
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as () => never);
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
-    const { sealCommand } = await import('../commands/seal.js');
-    await sealCommand();
-
-    expect(generateHoldoutScenarios).toHaveBeenCalled();
-    expect(createVault).toHaveBeenCalled();
-
-    const logCalls = (consoleSpy.mock.calls as string[][]).map(c => String(c[0]));
-    expect(logCalls.some(line => line.toLowerCase().includes('draft') || line.includes('review'))).toBe(true);
-
-    exitSpy.mockRestore();
-    consoleSpy.mockRestore();
-  });
-
-  it('Test 4: exits with error when no scenarios are approved', async () => {
-    const { bootstrap } = await import('../bootstrap.js');
-
-    // Create draft with all-rejected scenarios
-    const reviewDir = join(tempDir, '.cauldron', 'review');
-    mkdirSync(reviewDir, { recursive: true });
-    const rejectedScenarios = [
-      { id: 'sc-1', title: 'Scenario 1', approved: false },
-      { id: 'sc-2', title: 'Scenario 2', approved: false },
-    ];
-    writeFileSync(join(reviewDir, 'holdout-draft-seed-111.json'), JSON.stringify(rejectedScenarios), 'utf-8');
-
-    const mockVault = { id: 'vault-rejected', seedId: 'seed-111', status: 'pending_review' };
-    const mockDbQuery = {
-      select: vi.fn().mockReturnThis(),
-      from: vi.fn().mockReturnThis(),
-      where: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockResolvedValue([mockVault]),
-    };
-
-    const mockDb = {
-      select: vi.fn().mockReturnValue(mockDbQuery),
-    };
-
-    (bootstrap as ReturnType<typeof vi.fn>).mockResolvedValue({
-      db: mockDb,
-      gateway: {},
-      config: {},
-      logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn() },
-      inngest: {},
-    });
-
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as () => never);
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-    const { sealCommand } = await import('../commands/seal.js');
-    await sealCommand();
-
-    expect(process.exit).toHaveBeenCalledWith(1);
-
-    exitSpy.mockRestore();
-    errorSpy.mockRestore();
+    logspy.mockRestore();
   });
 });
