@@ -1,11 +1,13 @@
 import { pgTable, uuid, text, integer, timestamp, index } from 'drizzle-orm/pg-core';
 import { projects } from './project.js';
 import { beads } from './bead.js';
+import { seeds } from './seed.js';
 
 export const llmUsage = pgTable('llm_usage', {
   id: uuid('id').primaryKey().defaultRandom(),
   projectId: uuid('project_id').notNull().references(() => projects.id),
   beadId: uuid('bead_id').references(() => beads.id),
+  seedId: uuid('seed_id').references(() => seeds.id),
   evolutionCycle: integer('evolution_cycle'),
   stage: text('stage').notNull(),
   model: text('model').notNull(),
@@ -18,6 +20,7 @@ export const llmUsage = pgTable('llm_usage', {
   index('llm_usage_project_created_idx').on(table.projectId, table.createdAt),
   index('llm_usage_bead_idx').on(table.beadId),
   index('llm_usage_project_cycle_idx').on(table.projectId, table.evolutionCycle),
+  index('llm_usage_seed_id_idx').on(table.seedId),
 ]);
 
 export type LlmUsage = typeof llmUsage.$inferSelect;

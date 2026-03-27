@@ -64,6 +64,13 @@
       "when": 1774990800000,
       "tag": "0008_conflict_resolved_event",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1775077200000,
+      "tag": "0009_evolutionary_loop",
+      "breakpoints": true
     }
   ]
 }

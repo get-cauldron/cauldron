@@ -25,6 +25,8 @@ const fakeSeed: Seed = {
   ambiguityScore: 0.1,
   crystallizedAt: new Date('2026-01-01'),
   createdAt: new Date('2026-01-01'),
+  generation: 0,
+  evolutionContext: null,
 };
 
 const MOLECULES = [

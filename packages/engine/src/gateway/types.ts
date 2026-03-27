@@ -11,6 +11,7 @@ export interface GatewayCallOptions {
   prompt?: string;
   system?: string;
   beadId?: string;
+  seedId?: string;
   evolutionCycle?: number;
   tools?: Record<string, unknown>;
   toolChoice?: 'auto' | 'none' | 'required' | { type: 'tool'; toolName: string };

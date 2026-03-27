@@ -25,6 +25,8 @@ export const seeds = pgTable('seeds', {
   crystallizedAt: timestamp('crystallized_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   // NO updatedAt — immutability enforced at application level; seeds never mutate after crystallization
+  generation: integer('generation').notNull().default(0),
+  evolutionContext: jsonb('evolution_context'),
 });
 
 export type Seed = typeof seeds.$inferSelect;

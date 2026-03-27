@@ -131,7 +131,7 @@ export class LLMGateway {
     const modelChain = this.resolveModelChain(options.stage);
     const systemPrompt = this.buildSystemPrompt(options.stage, options.system);
 
-    if (options.stage === 'holdout') {
+    if (options.stage === 'holdout' || options.stage === 'evaluation') {
       const implementerChain = this.resolveModelChain('implementation');
       enforceDiversity(modelChain[0]!, implementerChain[0]!);
     }
@@ -145,7 +145,7 @@ export class LLMGateway {
       modelChain,
       stage: options.stage,
       circuitBreaker: this.circuitBreaker,
-      implementerFamily: options.stage === 'holdout' ? this.getImplementerFamily() : undefined,
+      implementerFamily: (options.stage === 'holdout' || options.stage === 'evaluation') ? this.getImplementerFamily() : undefined,
       execute: (model, modelId) => {
         const onFinish = ({ usage }: { usage: LanguageModelUsage }) => {
           this.recordUsageAsync(options, modelId, usage);
@@ -168,7 +168,7 @@ export class LLMGateway {
     const modelChain = this.resolveModelChain(options.stage);
     const systemPrompt = this.buildSystemPrompt(options.stage, options.system);
 
-    if (options.stage === 'holdout') {
+    if (options.stage === 'holdout' || options.stage === 'evaluation') {
       const implementerChain = this.resolveModelChain('implementation');
       enforceDiversity(modelChain[0]!, implementerChain[0]!);
     }
@@ -182,7 +182,7 @@ export class LLMGateway {
       modelChain,
       stage: options.stage,
       circuitBreaker: this.circuitBreaker,
-      implementerFamily: options.stage === 'holdout' ? this.getImplementerFamily() : undefined,
+      implementerFamily: (options.stage === 'holdout' || options.stage === 'evaluation') ? this.getImplementerFamily() : undefined,
       execute: async (model, modelId) => {
         const common = { model, system: systemPrompt, tools, toolChoice, maxOutputTokens: options.maxTokens, temperature: options.temperature, maxRetries: 0 as const };
         const result = options.messages && options.messages.length > 0
@@ -202,7 +202,7 @@ export class LLMGateway {
     const modelChain = this.resolveModelChain(options.stage);
     const systemPrompt = this.buildSystemPrompt(options.stage, options.system);
 
-    if (options.stage === 'holdout') {
+    if (options.stage === 'holdout' || options.stage === 'evaluation') {
       const implementerChain = this.resolveModelChain('implementation');
       enforceDiversity(modelChain[0]!, implementerChain[0]!);
     }
@@ -211,7 +211,7 @@ export class LLMGateway {
       modelChain,
       stage: options.stage,
       circuitBreaker: this.circuitBreaker,
-      implementerFamily: options.stage === 'holdout' ? this.getImplementerFamily() : undefined,
+      implementerFamily: (options.stage === 'holdout' || options.stage === 'evaluation') ? this.getImplementerFamily() : undefined,
       execute: async (model, modelId) => {
         const common = { model, schema: options.schema, schemaName: options.schemaName, schemaDescription: options.schemaDescription, system: systemPrompt, maxOutputTokens: options.maxTokens, temperature: options.temperature, maxRetries: 0 as const };
         const result = options.messages && options.messages.length > 0
@@ -232,7 +232,7 @@ export class LLMGateway {
     const modelChain = this.resolveModelChain(options.stage);
     const systemPrompt = this.buildSystemPrompt(options.stage, options.system);
 
-    if (options.stage === 'holdout') {
+    if (options.stage === 'holdout' || options.stage === 'evaluation') {
       const implementerChain = this.resolveModelChain('implementation');
       enforceDiversity(modelChain[0]!, implementerChain[0]!);
     }
@@ -241,7 +241,7 @@ export class LLMGateway {
       modelChain,
       stage: options.stage,
       circuitBreaker: this.circuitBreaker,
-      implementerFamily: options.stage === 'holdout' ? this.getImplementerFamily() : undefined,
+      implementerFamily: (options.stage === 'holdout' || options.stage === 'evaluation') ? this.getImplementerFamily() : undefined,
       execute: (model, modelId) => {
         const onFinish = ({ usage }: { usage: LanguageModelUsage }) => {
           this.recordUsageAsync(options, modelId, usage);
@@ -278,6 +278,7 @@ export class LLMGateway {
     await this.db.insert(llmUsage).values({
       projectId: options.projectId,
       beadId: options.beadId,
+      seedId: options.seedId,
       evolutionCycle: options.evolutionCycle,
       stage: options.stage,
       model: modelId,
