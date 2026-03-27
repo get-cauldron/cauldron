@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 11-engine-inngest-serve-evolution-bootstrap-02-PLAN.md
-last_updated: "2026-03-27T17:31:00.000Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs-01-PLAN.md
+last_updated: "2026-03-27T19:15:13.276Z"
 progress:
   total_phases: 15
-  completed_phases: 12
+  completed_phases: 13
   total_plans: 50
-  completed_plans: 49
+  completed_plans: 51
 ---
 
 # Project State
@@ -89,6 +89,7 @@ Plan: 2 of 2
 | Phase 10-wire-trpc-mutations-to-engine P01 | 4min | 2 tasks | 4 files |
 | Phase 10-wire-trpc-mutations-to-engine P02 | 4min | 2 tasks | 3 files |
 | Phase 11-engine-inngest-serve-evolution-bootstrap P01 | 5min | 2 tasks | 4 files |
+| Phase 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs P01 | 2min | 1 tasks | 55 files |
 
 ## Accumulated Context
 
@@ -203,6 +204,8 @@ Recent decisions affecting current work:
 - [Phase 10-wire-trpc-mutations-to-engine]: triggerDecomposition preserves appendEvent audit trail and also calls runDecomposition synchronously with engineInngest alias for engine Inngest client
 - [Phase 11-engine-inngest-serve-evolution-bootstrap]: Use inngest/hono adapter for standalone API serve endpoint per CLAUDE.md Hono mandate
 - [Phase 11-engine-inngest-serve-evolution-bootstrap]: pipelineTriggerFunction uses step.sendEvent (durable, inside Inngest function); triggerExecution uses engineInngest.send() (outside Inngest context, tRPC mutation)
+- [Phase 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs]: packages/trpc-types eliminated: AppRouter re-export merged into @get-cauldron/shared as ./trpc-types subpath export
+- [Phase 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs]: All packages renamed to @get-cauldron/* scope; packages/api renamed to packages/cli via git mv
 
 ### Pending Todos
 
@@ -217,6 +220,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T17:31:00.000Z
-Stopped at: Completed 11-engine-inngest-serve-evolution-bootstrap-02-PLAN.md
+Last session: 2026-03-27T19:15:13.273Z
+Stopped at: Completed 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs-01-PLAN.md
 Resume file: None
