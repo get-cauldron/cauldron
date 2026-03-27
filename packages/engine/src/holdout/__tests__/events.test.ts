@@ -112,8 +112,12 @@ describe('handleEvolutionConverged handler logic', () => {
       failureReport: evalResult.failureReport as any,
     });
 
-    const { configureVaultDeps, convergenceHandler } = await import('../events.js');
+    const eventsModule = await import('../events.js');
+    const { configureVaultDeps, convergenceHandler } = eventsModule;
     configureVaultDeps({ db: mockDb as any, gateway: mockGateway as any });
+
+    // Spy on inngest.send to verify Inngest event dispatch (Gap 1 bridge)
+    const sendSpy = vi.spyOn(eventsModule.inngest, 'send').mockResolvedValue({ ids: [] } as any);
 
     const fakeStep = makeFakeStep();
     const fakeEvent = {
@@ -129,7 +133,7 @@ describe('handleEvolutionConverged handler logic', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await convergenceHandler({ event: fakeEvent, step: fakeStep as any });
 
-    return { vaultModule, evaluatorModule, sharedModule, fakeStep };
+    return { vaultModule, evaluatorModule, sharedModule, fakeStep, sendSpy };
   }
 
   it('Test 3: On convergence, step 1 calls unsealVault with correct seedId/vaultId', async () => {
@@ -207,5 +211,32 @@ describe('handleEvolutionConverged handler logic', () => {
     expect(evolutionStartedCall![1].payload).toMatchObject({
       triggeredBy: 'holdout_failure',
     });
+  });
+
+  it('Test 9: When evaluation fails, inngest.send fires evolution_started Inngest event with correct data', async () => {
+    const failureReport = {
+      seedId: SEED_ID,
+      failedScenarios: [{ scenarioId: FIVE_SCENARIOS[0]!.id, title: 'Scenario 1', category: 'edge_case', reasoning: 'Failed' }],
+      evaluationModel: 'evaluation-stage',
+      triggeredBy: 'holdout_failure' as const,
+    };
+
+    const { sendSpy } = await runHandler({ passed: false, failureReport });
+
+    expect(sendSpy).toHaveBeenCalledWith({
+      name: 'evolution_started',
+      data: expect.objectContaining({
+        seedId: SEED_ID,
+        projectId: PROJECT_ID,
+        codeSummary: 'function rename() {}',
+        failureReport: expect.anything(),
+      }),
+    });
+  });
+
+  it('Test 10: When evaluation passes, inngest.send is NOT called', async () => {
+    const { sendSpy } = await runHandler({ passed: true });
+
+    expect(sendSpy).not.toHaveBeenCalled();
   });
 });
