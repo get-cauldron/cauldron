@@ -23,8 +23,12 @@ export function useSSE<T>(
     // Close existing connection
     esRef.current?.close();
 
-    const fullUrl =
-      lastIdRef.current > 0 ? `${url}?lastEventId=${lastIdRef.current}` : url;
+    const apiKey = process.env['NEXT_PUBLIC_CAULDRON_API_KEY'];
+    const params = new URLSearchParams();
+    if (lastIdRef.current > 0) params.set('lastEventId', String(lastIdRef.current));
+    if (apiKey) params.set('token', apiKey);
+    const queryString = params.toString();
+    const fullUrl = queryString ? `${url}?${queryString}` : url;
 
     const es = new EventSource(fullUrl);
     esRef.current = es;

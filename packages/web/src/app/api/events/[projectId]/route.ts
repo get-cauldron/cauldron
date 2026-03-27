@@ -10,6 +10,7 @@ export async function GET(
   { params }: { params: Promise<{ projectId: string }> }
 ) {
   const { projectId } = await params; // Next.js 16: params is async
+  const url = new URL(request.url);
 
   // Auth gate — must come before stream construction (SC-1)
   const expectedKey = process.env['CAULDRON_API_KEY'];
@@ -17,7 +18,7 @@ export async function GET(
     const authHeader = request.headers.get('Authorization');
     const providedKey = authHeader?.startsWith('Bearer ')
       ? authHeader.slice('Bearer '.length)
-      : null;
+      : url.searchParams.get('token'); // query param fallback for browser EventSource
     if (providedKey !== expectedKey) {
       return new Response('Unauthorized', { status: 401 });
     }
@@ -25,7 +26,6 @@ export async function GET(
 
   // Support Last-Event-ID from header OR query param (EventSource reconnect)
   const lastEventIdHeader = request.headers.get('last-event-id');
-  const url = new URL(request.url);
   const lastEventIdParam = url.searchParams.get('lastEventId');
   const since = parseInt(lastEventIdHeader ?? lastEventIdParam ?? '0', 10) || 0;
 

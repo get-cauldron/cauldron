@@ -4,6 +4,7 @@ import { db } from '@get-cauldron/shared';
 import { beads, seeds, events } from '@get-cauldron/shared';
 import { appendEvent } from '@get-cauldron/shared';
 import { eq, desc } from 'drizzle-orm';
+import { findReadyBeads } from '@get-cauldron/engine';
 
 /**
  * Inngest function that handles pipeline trigger events from GitHub pushes.
@@ -146,16 +147,23 @@ export const pipelineTriggerFunction: InngestFunction<any, any, any, any> = inng
       return { status: 'no_seed', projectId };
     }
 
-    // Dispatch bead execution to engine Inngest functions.
-    // The engine's handleBeadDispatchRequested (and evolution bootstrap) picks up this event.
-    await step.sendEvent('dispatch-bead-execution', {
-      name: 'bead.dispatch_requested',
-      data: {
-        seedId: latestSeed.id,
-        projectId,
-      },
+    // Find ready beads and dispatch each with beadId
+    const readyBeads = await step.run('find-ready-beads', async () => {
+      return findReadyBeads(db, latestSeed.id);
     });
 
-    return { status: 'triggered', projectId, commitSha };
+    for (const bead of readyBeads) {
+      await step.sendEvent(`dispatch-bead-${bead.id}`, {
+        name: 'bead.dispatch_requested',
+        data: {
+          beadId: bead.id,
+          seedId: latestSeed.id,
+          projectId,
+          moleculeId: bead.moleculeId,
+        },
+      });
+    }
+
+    return { status: 'triggered', projectId, commitSha, beadsDispatched: readyBeads.length };
   }
 );
