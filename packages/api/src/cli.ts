@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { parseArgs } from 'node:util';
 import chalk from 'chalk';
 import { loadCLIConfig, saveCLIConfig, generateApiKey } from './config-io.js';

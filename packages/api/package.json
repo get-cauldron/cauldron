@@ -1,10 +1,20 @@
 {
-  "name": "@cauldron/api",
-  "version": "0.0.1",
-  "private": true,
+  "name": "@cauldron/cli",
+  "version": "0.1.0",
   "type": "module",
+  "description": "CLI for the Cauldron AI-powered software development platform",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
+  "bin": {
+    "cauldron": "./dist/cli.js"
+  },
+  "files": [
+    "dist/"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
