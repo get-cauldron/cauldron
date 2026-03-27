@@ -245,7 +245,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WEB-01 | Phase 14 | Complete |
 | WEB-02 | Phase 8 | Complete |
 | WEB-03 | Phase 16 | Complete |
-| WEB-04 | Phase 16 | Pending |
+| WEB-04 | Phase 16 | Complete |
 | WEB-05 | Phase 15 | Complete |
 | WEB-06 | Phase 8 | Complete |
 | WEB-07 | Phase 8 | Complete |
