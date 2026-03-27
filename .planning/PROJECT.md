@@ -185,4 +185,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-27 after Phase 11 completion — engine Inngest functions served via HTTP (Hono on port 3001), evolution deps bootstrapped, pipeline/execution triggers wired to bead dispatch*
+*Last updated: 2026-03-27 after Phase 12 completion — SSE endpoint auth-gated, CLI --project-id flag added, Phase 09 verification doc corrected. All v1.0 milestone audit findings resolved.*
