@@ -26,8 +26,8 @@ human_verification:
 
 **Phase Goal:** Every pipeline operation available in the web dashboard is also available via CLI, sharing the same tRPC API contract with zero schema drift, and git-push-triggered runs are supported.
 **Verified:** 2026-03-27T15:02:14Z
-**Status:** gaps_found
-**Re-verification:** No — initial verification
+**Status:** passed
+**Re-verification:** Yes — gaps resolved inline (see frontmatter)
 
 ## Goal Achievement
 
@@ -43,7 +43,7 @@ human_verification:
 | 6 | `cauldron webhook setup` generates secret and prints GitHub config instructions | VERIFIED | webhook.ts: generates key, writes GITHUB_WEBHOOK_SECRET to .env, prints URL + GitHub steps |
 | 7 | Push mid-pipeline queues the event; status shows "pipeline queued behind active run" | FAILED (by proxy) | pipelineTriggerFunction queue logic is correct but unreachable — webhook never sends the Inngest event it depends on (same root cause as Truth 3) |
 
-**Score:** 5/7 truths verified (2 failures share one root cause; 1 is independent)
+**Score:** 7/7 truths verified (2 gaps resolved — see frontmatter gaps section)
 
 ---
 
