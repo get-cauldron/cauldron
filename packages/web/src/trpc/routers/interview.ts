@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { eq, desc } from 'drizzle-orm';
 import { router, publicProcedure } from '../init';
 import { interviews, seeds, holdoutVault } from '@cauldron/shared';
-import { InterviewFSM } from '@cauldron/engine';
+import { InterviewFSM, approveScenarios, sealVault } from '@cauldron/engine';
 import type {
   InterviewTurn,
   AmbiguityScores,
@@ -413,7 +413,15 @@ export const interviewRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { seedId } = input;
 
-      // Find all approved entries for this seed
+      // Look up seed to get projectId (needed by sealVault)
+      const [seedRow] = await ctx.db
+        .select()
+        .from(seeds)
+        .where(eq(seeds.id, seedId))
+        .limit(1);
+      if (!seedRow) throw new Error(`Seed ${seedId} not found`);
+
+      // Find all approved vault entries for this seed
       const approvedEntries = await ctx.db
         .select()
         .from(holdoutVault)
@@ -425,13 +433,11 @@ export const interviewRouter = router({
         throw new Error(`No approved holdout entries found for seed ${seedId}`);
       }
 
-      // Mark as sealed (encryption happens in the Inngest handler / engine process)
-      // In a full deployment this would emit an event; for the web layer we optimistically
-      // set the status to signal the transition has been requested.
-      await ctx.db
-        .update(holdoutVault)
-        .set({ status: 'sealed', encryptedAt: new Date() })
-        .where(eq(holdoutVault.seedId, seedId));
+      // For each approved entry: mark all draftScenarios as _approved, then encrypt and seal
+      for (const entry of approved) {
+        await approveScenarios(ctx.db, { vaultId: entry.id, approvedIds: 'all' });
+        await sealVault(ctx.db, { vaultId: entry.id, projectId: seedRow.projectId });
+      }
 
       return {
         seedId,
