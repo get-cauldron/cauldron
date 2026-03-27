@@ -1,40 +1,37 @@
 ---
 phase: 11-engine-inngest-serve-evolution-bootstrap
-verified: 2026-03-27T17:45:00Z
-status: gaps_found
-score: 5/7 must-haves verified
-gaps:
-  - truth: "Inngest dev server can discover and invoke all 5 engine functions (handleBeadDispatchRequested, handleBeadCompleted, handleMergeRequested, handleEvolutionConverged, handleEvolutionStarted)"
-    status: partial
-    reason: "createInngestApp() factory exists with all 5 functions correctly wired, but the function is never imported or mounted anywhere outside its own test. No server actually calls createInngestApp() and serves the resulting Hono app over HTTP, so the Inngest broker cannot reach the engine functions."
-    artifacts:
-      - path: "packages/api/src/inngest-serve.ts"
-        issue: "ORPHANED — createInngestApp() defined but never mounted on any HTTP server outside of test"
-    missing:
-      - "A CLI command or server entry point must import createInngestApp() from inngest-serve.ts and mount it on a running HTTP server (e.g., via @hono/node-server) so the Inngest dev server can reach /api/inngest"
-  - truth: "Pipeline trigger webhook reaches downstream bead dispatch through engine Inngest functions"
-    status: partial
-    reason: "pipelineTriggerFunction correctly sends bead.dispatch_requested. However, for the engine's handleBeadDispatchRequested to receive this event, the createInngestApp() Hono serve endpoint must be mounted and reachable by the Inngest broker — which it currently is not."
-    artifacts:
-      - path: "packages/api/src/inngest-serve.ts"
-        issue: "ORPHANED — serve endpoint exists but is not mounted; Inngest broker cannot route bead.dispatch_requested to engine handlers"
-    missing:
-      - "Same fix as above: mount createInngestApp() on a running HTTP server so Inngest can deliver bead.dispatch_requested events to engine functions"
+verified: 2026-03-27T18:00:00Z
+status: passed
+score: 7/7 must-haves verified
+re_verification:
+  previous_status: gaps_found
+  previous_score: 5/7
+  gaps_closed:
+    - "Inngest dev server can discover and invoke all 5 engine functions — createInngestApp() is now mounted via engine-server.ts on port 3001"
+    - "Pipeline trigger webhook reaches downstream bead dispatch through engine Inngest functions — engine serve endpoint is no longer orphaned"
+  gaps_remaining: []
+  regressions: []
 human_verification:
-  - test: "Inngest dev server discovers and invokes engine functions"
-    expected: "All 5 engine functions (handleBeadDispatchRequested, handleBeadCompleted, handleMergeRequested, handleEvolutionConverged, handleEvolutionStarted) appear in the Inngest dashboard at http://localhost:8288 after mounting createInngestApp() and starting the server"
-    why_human: "Requires running Docker Compose stack with Inngest dev server, a live HTTP server serving createInngestApp(), and visual inspection of Inngest dashboard"
+  - test: "Inngest dev server discovers all 6 functions from both endpoints"
+    expected: "All 5 engine functions and pipelineTriggerFunction appear in the Inngest dashboard at http://localhost:8288 after running docker-compose up and pnpm serve:engine"
+    why_human: "Requires running Docker Compose stack with Inngest dev server, a live engine server, and visual inspection of the Inngest dashboard"
   - test: "End-to-end pipeline trigger dispatches to engine bead execution"
-    expected: "A GitHub push webhook event triggers pipelineTriggerFunction, which sends bead.dispatch_requested, which is received and processed by handleBeadDispatchRequested in the engine"
-    why_human: "Requires full stack (Docker, Inngest dev server, mounted engine serve endpoint, real project with seed)"
+    expected: "A cauldron/pipeline.trigger event triggers pipelineTriggerFunction, which sends bead.dispatch_requested, which is received by handleBeadDispatchRequested and begins dispatching beads"
+    why_human: "Requires full stack (Docker, Inngest dev server, running engine server on port 3001, real project with crystallized seed)"
 ---
 
 # Phase 11: Engine Inngest Serve & Evolution Bootstrap Verification Report
 
 **Phase Goal:** Engine Inngest functions are reachable via HTTP so Inngest can deliver events, and evolution dependencies are configured at bootstrap — making bead execution, merge queue, and evolutionary loop operational in production.
-**Verified:** 2026-03-27T17:45:00Z
-**Status:** gaps_found
-**Re-verification:** No — initial verification
+**Verified:** 2026-03-27T18:00:00Z
+**Status:** passed
+**Re-verification:** Yes — after gap closure (Plan 11-03 executed)
+
+## Re-Verification Summary
+
+Previous verification (gaps_found, 5/7) identified one blocking gap: `createInngestApp()` was defined in `packages/api/src/inngest-serve.ts` but never imported or mounted on any HTTP server, making all 5 engine functions unreachable by the Inngest broker.
+
+Plan 11-03 closed this gap by creating `packages/api/src/engine-server.ts` — a startup entry point that calls `bootstrap()` then `createInngestApp()` then `serve()` via `@hono/node-server` on port 3001. `docker-compose.yml` was also updated to poll both port 3001 (engine) and port 3000 (web) for Inngest function discovery.
 
 ## Goal Achievement
 
@@ -42,35 +39,42 @@ human_verification:
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | Inngest dev server can discover and invoke all 5 engine functions | PARTIAL | `createInngestApp()` correctly wires all 5 functions via `inngest/hono` adapter at `/api/inngest`, but the factory is orphaned — never mounted on any running HTTP server |
-| 2 | Engine function dependencies (scheduler, vault, evolution) are initialized before any event handler runs | VERIFIED | `bootstrap.ts` calls `configureSchedulerDeps`, `configureVaultDeps`, `configureEvolutionDeps` in sequence before returning |
-| 3 | `configureEvolutionDeps` is called at CLI bootstrap alongside configureSchedulerDeps and configureVaultDeps | VERIFIED | `packages/api/src/bootstrap.ts` line 60: `configureEvolutionDeps({ db, gateway })` called after `configureVaultDeps` |
-| 4 | pipelineTriggerFunction sends a bead.dispatch_requested Inngest event after recording the DB trigger event | VERIFIED | `packages/web/src/inngest/pipeline-trigger.ts` lines 151-157: `step.sendEvent('dispatch-bead-execution', { name: 'bead.dispatch_requested', data: { seedId, projectId } })` |
-| 5 | triggerExecution mutation sends a bead.dispatch_requested Inngest event so beads are dispatched to agents | VERIFIED | `packages/web/src/trpc/routers/execution.ts` lines 114-120: `engineInngest.send({ name: 'bead.dispatch_requested', data: { seedId, projectId } })` |
-| 6 | Pipeline trigger webhook reaches downstream bead dispatch through engine Inngest functions | PARTIAL | Events are sent correctly but engine handlers are unreachable because `createInngestApp()` is not mounted on any server the Inngest broker can reach |
+| 1 | Inngest dev server can discover and invoke all 5 engine functions at http://localhost:3001/api/inngest | VERIFIED | `engine-server.ts` imports `createInngestApp`, calls `serve({ fetch: app.fetch, port: 3001 })` — no longer orphaned; commit 4d8fb87 |
+| 2 | Engine function dependencies (scheduler, vault, evolution) are initialized before any event handler runs | VERIFIED | `startEngineServer` calls `await bootstrap(projectRoot)` before `createInngestApp()` — ordering enforced at lines 17-19 |
+| 3 | `configureEvolutionDeps` is called at CLI bootstrap alongside configureSchedulerDeps and configureVaultDeps | VERIFIED | `packages/api/src/bootstrap.ts` line 60: `configureEvolutionDeps({ db, gateway })` |
+| 4 | pipelineTriggerFunction sends a bead.dispatch_requested Inngest event after recording the DB trigger event | VERIFIED | `packages/web/src/inngest/pipeline-trigger.ts` lines 151-157: `step.sendEvent('dispatch-bead-execution', { name: 'bead.dispatch_requested', ... })` |
+| 5 | triggerExecution mutation sends a bead.dispatch_requested Inngest event so beads are dispatched to agents | VERIFIED | `packages/web/src/trpc/routers/execution.ts` lines 114-120: `engineInngest.send({ name: 'bead.dispatch_requested', ... })` |
+| 6 | Pipeline trigger webhook reaches downstream bead dispatch through engine Inngest functions | VERIFIED | Events are sent correctly; engine handlers are now reachable via `startEngineServer` serving on port 3001 that Inngest dev server polls |
 | 7 | pipelineTriggerFunction returns a distinct status when no seed exists for the project | VERIFIED | `packages/web/src/inngest/pipeline-trigger.ts` lines 143-147: returns `{ status: 'no_seed', projectId }` when `latestSeed` is null |
 
-**Score:** 5/7 truths verified
+**Score:** 7/7 truths verified
 
 ### Required Artifacts
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `packages/api/src/inngest-serve.ts` | Hono app serving cauldron-engine client with all 5 functions | ORPHANED | File exists, all 5 functions registered, mounts at `/api/inngest` — but `createInngestApp()` is never imported or called outside test context |
-| `packages/api/src/__tests__/inngest-serve.test.ts` | Smoke test confirming serve() is called with all 5 engine functions | VERIFIED | 1 test, passes, asserts `ENGINE_FUNCTIONS.length === 5` and all 5 function IDs in `serve()` call |
+| `packages/api/src/engine-server.ts` | HTTP entry point importing createInngestApp and serving via @hono/node-server on port 3001 | VERIFIED | Exports `startEngineServer`; imports `bootstrap` and `createInngestApp`; calls `serve({ fetch: app.fetch, port })`; direct execution guard present |
+| `packages/api/src/__tests__/engine-server.test.ts` | Test verifying bootstrap->createInngestApp->serve call chain | VERIFIED | 2 tests: default port 3001 and custom port; all assertions pass |
+| `packages/api/src/inngest-serve.ts` | Hono app serving cauldron-engine client with all 5 functions | VERIFIED | Previously ORPHANED — now imported and called by engine-server.ts |
+| `packages/api/src/__tests__/inngest-serve.test.ts` | Smoke test confirming ENGINE_FUNCTIONS has 5 entries | VERIFIED | Passes; asserts ENGINE_FUNCTIONS.length === 5 and all 5 function IDs |
 | `packages/api/src/bootstrap.ts` | configureEvolutionDeps call during CLI startup | VERIFIED | Line 60 calls `configureEvolutionDeps({ db, gateway })` |
-| `packages/web/src/inngest/pipeline-trigger.ts` | Inngest event dispatch to engine after pipeline trigger | VERIFIED | `step.sendEvent` with `bead.dispatch_requested` added after `trigger-pipeline` step |
-| `packages/web/src/trpc/routers/execution.ts` | Inngest event dispatch from triggerExecution mutation | VERIFIED | `engineInngest.send()` call with `bead.dispatch_requested` after audit `appendEvent` |
+| `packages/web/src/inngest/pipeline-trigger.ts` | Inngest event dispatch to engine after pipeline trigger | VERIFIED | `step.sendEvent` with `bead.dispatch_requested` |
+| `packages/web/src/trpc/routers/execution.ts` | Inngest event dispatch from triggerExecution mutation | VERIFIED | `engineInngest.send()` with `bead.dispatch_requested` |
+| `docker-compose.yml` | Inngest dev server polls both port 3001 and port 3000 | VERIFIED | Single command: `inngest dev -u http://host.docker.internal:3001/api/inngest -u http://host.docker.internal:3000/api/inngest` |
+| `packages/api/package.json` | serve:engine script | VERIFIED | `"serve:engine": "tsx src/engine-server.ts"` present |
 
 ### Key Link Verification
 
 | From | To | Via | Status | Details |
 |------|----|-----|--------|---------|
-| `packages/api/src/inngest-serve.ts` | `@cauldron/engine` barrel | `import { inngest as engineInngest, handle* }` | WIRED | All 5 handler imports confirmed in file |
-| `packages/api/src/bootstrap.ts` | `packages/engine/src/evolution/events.ts` | `configureEvolutionDeps({ db, gateway })` | WIRED | Import on line 23, call on line 60 |
-| `packages/web/src/inngest/pipeline-trigger.ts` | engine `handleBeadDispatchRequested` | `step.sendEvent` with name `bead.dispatch_requested` | PARTIAL | Event sent correctly, but engine listener unreachable (serve endpoint not mounted) |
-| `packages/web/src/trpc/routers/execution.ts` | engine `handleBeadDispatchRequested` | `engineInngest.send` with name `bead.dispatch_requested` | PARTIAL | Event sent correctly, but engine listener unreachable (serve endpoint not mounted) |
-| `packages/api/src/inngest-serve.ts` | any HTTP server | `createInngestApp()` imported and mounted | NOT_WIRED | `createInngestApp` only referenced in its own test — no production code imports or mounts it |
+| `packages/api/src/engine-server.ts` | `packages/api/src/inngest-serve.ts` | `import { createInngestApp } from './inngest-serve.js'` | WIRED | Line 3: import; line 19: `const app = createInngestApp()` — previously NOT_WIRED, now closed |
+| `packages/api/src/engine-server.ts` | `packages/api/src/bootstrap.ts` | `import { bootstrap } from './bootstrap.js'` | WIRED | Line 2: import; line 17: `await bootstrap(projectRoot)` before serve |
+| `packages/api/src/engine-server.ts` | `@hono/node-server` | `import { serve } from '@hono/node-server'` | WIRED | Line 1: import; line 21: `serve({ fetch: app.fetch, port })` |
+| `packages/api/src/inngest-serve.ts` | `@cauldron/engine` barrel | `import { inngest as engineInngest, handle* }` | WIRED | All 5 handler imports confirmed |
+| `packages/api/src/bootstrap.ts` | `packages/engine/src/evolution/events.ts` | `configureEvolutionDeps({ db, gateway })` | WIRED | Import line 23, call line 60 |
+| `packages/web/src/inngest/pipeline-trigger.ts` | engine `handleBeadDispatchRequested` | `step.sendEvent` with `bead.dispatch_requested` | WIRED | Event sent correctly; engine handlers now reachable |
+| `packages/web/src/trpc/routers/execution.ts` | engine `handleBeadDispatchRequested` | `engineInngest.send` with `bead.dispatch_requested` | WIRED | Event sent correctly; engine handlers now reachable |
+| `docker-compose.yml` inngest service | port 3001 and port 3000 | `-u` flags in inngest dev command | WIRED | Both URLs present in single command line |
 
 ### Data-Flow Trace (Level 4)
 
@@ -80,64 +84,64 @@ Not applicable — phase produces API/orchestration wiring, not data-rendering c
 
 | Behavior | Command | Result | Status |
 |----------|---------|--------|--------|
-| ENGINE_FUNCTIONS has 5 items | `grep -c "handle" packages/api/src/inngest-serve.ts` | 5 handle* identifiers | PASS |
-| `configureEvolutionDeps` called in bootstrap | `grep 'configureEvolutionDeps' packages/api/src/bootstrap.ts` | Line 23 (import), Line 60 (call) | PASS |
-| `bead.dispatch_requested` sent in pipeline-trigger | `grep 'bead.dispatch_requested' packages/web/src/inngest/pipeline-trigger.ts` | Line 152 | PASS |
-| `bead.dispatch_requested` sent in execution.ts | `grep 'bead.dispatch_requested' packages/web/src/trpc/routers/execution.ts` | Line 115 | PASS |
-| inngest/hono adapter used (not inngest/next) | `grep 'inngest/hono' packages/api/src/inngest-serve.ts` | Line 1 confirmed | PASS |
-| Full test suite green | `pnpm turbo test` | 103 tests pass (81 cli + 22 web) | PASS |
-| TypeScript compiles cleanly | `pnpm --filter @cauldron/cli exec tsc --noEmit` | No errors | PASS |
-| TypeScript compiles cleanly (web) | `pnpm --filter @cauldron/web exec tsc --noEmit` | No errors | PASS |
-| `createInngestApp` mounted in production code | `grep -r 'createInngestApp' packages/api/src --include=*.ts \| grep -v test` | Only definition found, no caller | FAIL |
+| `createInngestApp` imported in engine-server.ts | `grep "createInngestApp" packages/api/src/engine-server.ts` | Lines 3, 19 — import and call | PASS |
+| `bootstrap` called before serve in engine-server.ts | order inspection of engine-server.ts | bootstrap line 17, createInngestApp line 19, serve line 21 | PASS |
+| Default port is 3001 | `grep "3001" packages/api/src/engine-server.ts` | Line 15: `port = 3001` | PASS |
+| Docker-compose polls both endpoints | `grep "host.docker.internal" docker-compose.yml` | Single line with both 3001 and 3000 URLs | PASS |
+| `serve:engine` script present | `grep "serve:engine" packages/api/package.json` | `"serve:engine": "tsx src/engine-server.ts"` | PASS |
+| `configureEvolutionDeps` called in bootstrap | `grep "configureEvolutionDeps" packages/api/src/bootstrap.ts` | Import line 23, call line 60 | PASS |
+| Full API test suite green | `pnpm --filter @cauldron/cli exec vitest run` | 18 test files, 83 tests — all pass | PASS |
+| TypeScript compiles cleanly (API) | `pnpm --filter @cauldron/cli exec tsc --noEmit` | No errors | PASS |
+| Commits exist in git log | `git show --stat 4d8fb87 6e19055` | Both commits confirmed: engine-server.ts + docker-compose update | PASS |
 
 ### Requirements Coverage
 
-All 38 requirement IDs listed in the plan frontmatter are pre-existing requirements completed in earlier phases (Phases 4-7 per REQUIREMENTS.md). This phase provides the HTTP serve endpoint and bootstrap wiring that makes those already-implemented functions *reachable at runtime*.
+All 38 requirement IDs listed across phase 11 plans are pre-existing requirements implemented in earlier phases (Phases 4-7). Phase 11 provides the HTTP serve endpoint and bootstrap wiring that makes those already-implemented functions reachable at runtime.
 
 | Requirement Group | Source Plan | Prior Phase | Status in Phase 11 | Evidence |
 |-------------------|-------------|-------------|---------------------|----------|
-| DAG-06..09 | 11-01 | Phase 5 | REACHABILITY PARTIAL | Engine serve app created but not mounted; handlers still unreachable via Inngest |
-| EXEC-01..09 | 11-01 | Phase 6 | REACHABILITY PARTIAL | Same — bead execution functions exist but unreachable until serve endpoint is mounted |
-| CODE-01..04 | 11-01 | Phase 6 | SATISFIED | No changes needed; code intelligence already implemented |
+| DAG-06..09 | 11-01, 11-03 | Phase 5 | REACHABILITY SATISFIED | Engine serve app mounted on port 3001 via engine-server.ts; Inngest dev server polls it |
+| EXEC-01..09 | 11-01, 11-03 | Phase 6 | REACHABILITY SATISFIED | Bead execution functions reachable via mounted serve endpoint; bootstrap configures deps before serve |
+| CODE-01..04 | 11-01 | Phase 6 | SATISFIED | No changes needed; code intelligence already implemented in earlier phase |
 | TEST-01..06 | 11-01 | Phase 6 | SATISFIED | No changes needed; test generation already in bead execution handlers |
-| EVOL-01..12 | 11-01 | Phase 7 | PARTIAL | configureEvolutionDeps now wired in bootstrap (VERIFIED); evolution functions still unreachable via Inngest |
-| HOLD-05..08 | 11-01 | Phase 4 | REACHABILITY PARTIAL | handleEvolutionConverged registered in serve app but not mounted |
+| EVOL-01..12 | 11-01 | Phase 7 | SATISFIED | configureEvolutionDeps wired in bootstrap; evolution functions reachable via mounted serve endpoint |
+| HOLD-05..08 | 11-01 | Phase 4 | REACHABILITY SATISFIED | handleEvolutionConverged registered and now reachable via mounted serve endpoint |
 
 ### Anti-Patterns Found
 
 | File | Line | Pattern | Severity | Impact |
 |------|------|---------|----------|--------|
-| `packages/api/src/inngest-serve.ts` | 29 | `createInngestApp` function never called outside test | BLOCKER | Inngest dev server cannot discover engine functions; all 5 event handlers are effectively unreachable in production |
-| `packages/web/src/app/api/inngest/route.ts` | 1-12 | Web Inngest route uses `inngest/next` and only serves `pipelineTriggerFunction` — does not include engine functions | WARNING | Engine functions must be served by a separate endpoint, which is not yet mounted |
+| — | — | — | — | None found |
+
+No blockers, no warnings. The previously-flagged ORPHANED artifact (`inngest-serve.ts`) is now fully wired via `engine-server.ts`.
 
 ### Human Verification Required
 
-#### 1. Engine Function Discovery
+#### 1. Inngest Dev Server Discovers All 6 Functions
 
-**Test:** After mounting `createInngestApp()` on a running HTTP server, start Docker Compose and open the Inngest dashboard at `http://localhost:8288`.
-**Expected:** All 5 engine functions (pipeline-dispatch-bead, dag-on-bead-completed, execution-merge-bead, holdout-vault-unseal-on-convergence, evolution-run-cycle) appear as registered functions in the Inngest UI.
-**Why human:** Requires running Inngest dev server, a live HTTP server, and visual inspection of the dashboard.
+**Test:** After running `docker-compose up` and `pnpm --filter @cauldron/cli run serve:engine` (pointing at a project root), open the Inngest dashboard at `http://localhost:8288`.
+**Expected:** All 6 functions appear — 5 engine functions from port 3001 (pipeline-dispatch-bead, dag-on-bead-completed, execution-merge-bead, holdout-vault-unseal-on-convergence, evolution-run-cycle) and 1 web function from port 3000 (pipelineTriggerFunction).
+**Why human:** Requires running Inngest dev server, live HTTP servers on both ports, and visual inspection of the dashboard.
 
-#### 2. End-to-End Pipeline Trigger Chain
+#### 2. End-to-End Pipeline Trigger Dispatches to Engine Bead Execution
 
 **Test:** With the full stack running, send a `cauldron/pipeline.trigger` event via the Inngest dev server. Verify that `pipelineTriggerFunction` runs, finds a seed, sends `bead.dispatch_requested`, and that `handleBeadDispatchRequested` picks it up and begins dispatching beads.
 **Expected:** Bead execution begins; bead status transitions from `pending` to `claimed` to `completed` visible in the database.
-**Why human:** Requires full stack (Docker, Inngest dev server, mounted engine serve endpoint, real project with a crystallized seed).
+**Why human:** Requires full stack (Docker, Inngest dev server, running engine server on port 3001, real project with a crystallized seed).
 
 ### Gaps Summary
 
-Phase 11 successfully delivers:
-- A properly implemented Hono-based `createInngestApp()` factory with all 5 engine functions correctly registered via the `inngest/hono` adapter
-- `configureEvolutionDeps` wired in `bootstrap.ts` alongside scheduler and vault deps — evolution handlers will no longer throw on missing deps
-- `pipelineTriggerFunction` now sends `bead.dispatch_requested` after trigger, with a distinct `no_seed` return path
-- `triggerExecution` tRPC mutation now dispatches `bead.dispatch_requested` via `engineInngest.send()`
-- All 4 commits verified, all 103 tests passing, TypeScript compiles cleanly
+No gaps remain. The single blocking gap from the initial verification has been closed:
 
-**The single blocking gap:** `createInngestApp()` is never mounted on a running HTTP server. It is defined in `packages/api/src/inngest-serve.ts` and used only in its smoke test. No production entry point (CLI command, server startup, or otherwise) imports and serves the resulting Hono app. Until this app is mounted on a live HTTP port that the Inngest dev server knows to poll, the Inngest broker cannot deliver events to any of the 5 engine functions — making bead execution, merge queue, holdout convergence, and evolution all dead code at runtime despite being fully implemented.
+- `createInngestApp()` is no longer orphaned — `engine-server.ts` imports and mounts it via `@hono/node-server` on port 3001
+- `bootstrap()` runs before `createInngestApp()` ensuring all deps (scheduler, vault, evolution) are configured before any handler can be invoked
+- The Inngest dev server is configured via `docker-compose.yml` to discover functions from both port 3001 (5 engine functions) and port 3000 (pipelineTriggerFunction)
+- A `serve:engine` npm script enables running the engine server directly via `pnpm --filter @cauldron/cli run serve:engine`
+- 18 test files, 83 tests — all pass; TypeScript compiles cleanly
 
-The fix is straightforward: import `createInngestApp` in the CLI's execute command or a dedicated server startup path, mount it via `@hono/node-server`, and register the port with the Inngest dev server config. This is the `Plan 02` mounting step referenced in the Plan 01 summary ("Plan 02 can mount `createInngestApp()` on the CLI Hono server alongside existing routes"), but Plan 02 was scoped to pipeline/execution event wiring rather than server mounting, leaving this as an unaddressed gap.
+The two human verification items are integration-level tests that require a running Docker Compose stack and cannot be verified programmatically. All code-level wiring is complete.
 
 ---
 
-_Verified: 2026-03-27T17:45:00Z_
+_Verified: 2026-03-27T18:00:00Z_
 _Verifier: Claude (gsd-verifier)_
