@@ -70,7 +70,7 @@ export default function EvolutionPage() {
     return {
       persona: (payload.persona as string) ?? 'unknown',
       analysis: (payload.analysis as string) ?? '',
-      timestamp: evt.occurredAt instanceof Date ? evt.occurredAt.toISOString() : String(evt.occurredAt),
+      timestamp: String(evt.occurredAt),
     };
   });
 
@@ -100,7 +100,7 @@ export default function EvolutionPage() {
     }
   }, [seedLineageQuery, evolutionHistoryQuery, convergenceQuery, selectedSeed]);
 
-  useSSE<SSEEvent>(`/api/sse/${projectId}`, handleSSEEvent);
+  useSSE<SSEEvent>(`/api/events/${projectId}`, handleSSEEvent);
 
   // Build generation dot data for timeline
   const lateralSeedIds = new Set(
@@ -125,7 +125,7 @@ export default function EvolutionPage() {
     goal: s.goal,
     acceptanceCriteria: s.acceptanceCriteria as unknown[],
     status: s.status,
-    createdAt: s.createdAt instanceof Date ? s.createdAt.toISOString() : String(s.createdAt),
+    createdAt: String(s.createdAt),
   }));
 
   const hasData = seedNodes.length > 0;

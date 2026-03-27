@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { router, publicProcedure } from '../init.js';
-import { seeds, events, llmUsage } from '@cauldron/shared';
+import { seeds, events, llmUsage, eventTypeEnum } from '@cauldron/shared';
 import { eq, desc, asc, and, inArray, sql } from 'drizzle-orm';
 
 export const evolutionRouter = router({
@@ -31,18 +31,18 @@ export const evolutionRouter = router({
   getEvolutionHistory: publicProcedure
     .input(z.object({ projectId: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
-      const evolutionEventTypes = [
+      const evolutionEventTypes: (typeof eventTypeEnum.enumValues)[number][] = [
         'evolution_started',
         'evolution_converged',
         'evolution_lateral_thinking',
         'evolution_escalated',
         'evolution_halted',
         'evolution_goal_met',
-      ] as const;
+      ];
       const eventRows = await ctx.db.select().from(events)
         .where(and(
           eq(events.projectId, input.projectId),
-          inArray(events.type, evolutionEventTypes as unknown as string[])
+          inArray(events.type, evolutionEventTypes)
         ))
         .orderBy(asc(events.occurredAt));
       return eventRows;
@@ -53,16 +53,16 @@ export const evolutionRouter = router({
     .input(z.object({ seedId: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
       // Find evolution events referencing this seed
-      const convergeEventTypes = [
+      const convergeEventTypes: (typeof eventTypeEnum.enumValues)[number][] = [
         'evolution_converged',
         'evolution_halted',
         'evolution_goal_met',
-      ] as const;
+      ];
 
       const convergeEvents = await ctx.db.select().from(events)
         .where(and(
           eq(events.seedId, input.seedId),
-          inArray(events.type, convergeEventTypes as unknown as string[])
+          inArray(events.type, convergeEventTypes)
         ))
         .orderBy(desc(events.occurredAt))
         .limit(1);
