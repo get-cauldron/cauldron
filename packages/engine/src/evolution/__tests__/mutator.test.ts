@@ -40,9 +40,8 @@ const makeGoalResult = (overrides = {}) => ({
 
 describe('mutateSeed - tier ac_only', () => {
   let mockGateway: { generateObject: ReturnType<typeof vi.fn> };
-  let mockDb: {
-    insert: ReturnType<typeof vi.fn>;
-  };
+  let mockDb: { insert: ReturnType<typeof vi.fn> };
+  let valuesMock: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -54,9 +53,9 @@ describe('mutateSeed - tier ac_only', () => {
     };
 
     const returningMock = vi.fn().mockResolvedValue([
-      makeSeed({ id: 'evolved-seed-id', generation: 3, version: 2 })
+      makeSeed({ id: 'evolved-seed-id', generation: 3, version: 2 }),
     ]);
-    const valuesMock = vi.fn().mockReturnValue({ returning: returningMock });
+    valuesMock = vi.fn().mockReturnValue({ returning: returningMock });
     mockDb = {
       insert: vi.fn().mockReturnValue({ values: valuesMock }),
     };
@@ -68,9 +67,7 @@ describe('mutateSeed - tier ac_only', () => {
 
     mockGateway.generateObject.mockResolvedValueOnce({
       object: {
-        acceptanceCriteria: [
-          { criterion: 'Updated AC-1', rationale: 'Addresses gap' },
-        ],
+        acceptanceCriteria: [{ criterion: 'Updated AC-1', rationale: 'Addresses gap' }],
       },
     });
 
@@ -85,7 +82,7 @@ describe('mutateSeed - tier ac_only', () => {
     });
 
     expect(result).toBeDefined();
-    const insertedValues = mockDb.insert().values.mock.calls[0]![0];
+    const insertedValues = valuesMock.mock.calls[0]![0];
     expect(insertedValues.goal).toBe(seed.goal);
     expect(insertedValues.constraints).toBe(seed.constraints);
     expect(insertedValues.generation).toBe(3); // 2 + 1
@@ -109,7 +106,7 @@ describe('mutateSeed - tier ac_only', () => {
       seedId: 'seed-id-1',
     });
 
-    const insertedValues = mockDb.insert().values.mock.calls[0]![0];
+    const insertedValues = valuesMock.mock.calls[0]![0];
     expect(insertedValues.evolutionContext).toMatchObject({
       score: 0.68,
       tier: 'ac_only',
@@ -120,9 +117,8 @@ describe('mutateSeed - tier ac_only', () => {
 
 describe('mutateSeed - tier full', () => {
   let mockGateway: { generateObject: ReturnType<typeof vi.fn> };
-  let mockDb: {
-    insert: ReturnType<typeof vi.fn>;
-  };
+  let mockDb: { insert: ReturnType<typeof vi.fn> };
+  let valuesMock: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -134,9 +130,9 @@ describe('mutateSeed - tier full', () => {
     };
 
     const returningMock = vi.fn().mockResolvedValue([
-      makeSeed({ id: 'evolved-seed-id', generation: 3, version: 2 })
+      makeSeed({ id: 'evolved-seed-id', generation: 3, version: 2 }),
     ]);
-    const valuesMock = vi.fn().mockReturnValue({ returning: returningMock });
+    valuesMock = vi.fn().mockReturnValue({ returning: returningMock });
     mockDb = {
       insert: vi.fn().mockReturnValue({ values: valuesMock }),
     };
@@ -165,7 +161,7 @@ describe('mutateSeed - tier full', () => {
       seedId: 'seed-id-1',
     });
 
-    const insertedValues = mockDb.insert().values.mock.calls[0]![0];
+    const insertedValues = valuesMock.mock.calls[0]![0];
     expect(insertedValues.goal).toBe('Rewritten goal');
     expect(insertedValues.generation).toBe(3);
     expect(insertedValues.evolutionContext).toMatchObject({
@@ -176,9 +172,8 @@ describe('mutateSeed - tier full', () => {
 });
 
 describe('mutateSeedFromProposal', () => {
-  let mockDb: {
-    insert: ReturnType<typeof vi.fn>;
-  };
+  let mockDb: { insert: ReturnType<typeof vi.fn> };
+  let valuesMock: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -186,9 +181,9 @@ describe('mutateSeedFromProposal', () => {
     vi.mocked(appendEvent).mockResolvedValue(undefined as any);
 
     const returningMock = vi.fn().mockResolvedValue([
-      makeSeed({ id: 'lateral-evolved-id', generation: 3, version: 2 })
+      makeSeed({ id: 'lateral-evolved-id', generation: 3, version: 2 }),
     ]);
-    const valuesMock = vi.fn().mockReturnValue({ returning: returningMock });
+    valuesMock = vi.fn().mockReturnValue({ returning: returningMock });
     mockDb = {
       insert: vi.fn().mockReturnValue({ values: valuesMock }),
     };
@@ -216,7 +211,7 @@ describe('mutateSeedFromProposal', () => {
     });
 
     expect(result).toBeDefined();
-    const insertedValues = mockDb.insert().values.mock.calls[0]![0];
+    const insertedValues = valuesMock.mock.calls[0]![0];
     expect(insertedValues.goal).toBe('Lateral goal from contrarian');
     expect(insertedValues.constraints).toEqual([{ constraint: 'Contrarian constraint' }]);
     expect(insertedValues.acceptanceCriteria).toEqual([{ criterion: 'Contrarian AC' }]);
@@ -243,7 +238,7 @@ describe('mutateSeedFromProposal', () => {
       lastGapAnalysis: [],
     });
 
-    const insertedValues = mockDb.insert().values.mock.calls[0]![0];
+    const insertedValues = valuesMock.mock.calls[0]![0];
     expect(insertedValues.evolutionContext).toMatchObject({
       tier: 'full',
       score: 0.3,
@@ -272,7 +267,7 @@ describe('mutateSeedFromProposal', () => {
       lastGapAnalysis: [],
     });
 
-    const insertedValues = mockDb.insert().values.mock.calls[0]![0];
+    const insertedValues = valuesMock.mock.calls[0]![0];
     expect(insertedValues.generation).toBe(3); // 2 + 1
   });
 
