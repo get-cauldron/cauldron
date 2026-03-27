@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 09-cli-03-PLAN.md
-last_updated: "2026-03-27T14:35:43.338Z"
+stopped_at: Completed 09-cli-02-PLAN.md
+last_updated: "2026-03-27T14:42:51.710Z"
 progress:
   total_phases: 11
   completed_phases: 10
   total_plans: 45
-  completed_plans: 43
+  completed_plans: 44
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 09 (cli) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 
 ## Performance Metrics
 
@@ -84,6 +84,7 @@ Plan: 3 of 4
 | Phase 08-web-dashboard P08 | 5min | 2 tasks | 3 files |
 | Phase 09-cli P01 | 6min | 2 tasks | 16 files |
 | Phase 09-cli P03 | 4min | 1 tasks | 2 files |
+| Phase 09-cli P02 | 10min | 2 tasks | 22 files |
 
 ## Accumulated Context
 
@@ -188,6 +189,7 @@ Recent decisions affecting current work:
 - [Phase 09-cli]: trpc-types and api packages use Bundler moduleResolution to allow type traversal into web package without .js extension collisions
 - [Phase 09-cli]: createTRPCContext accepts optional Request parameter; CAULDRON_API_KEY unset = dev mode (allow all); authenticatedProcedure exported for protected routes
 - [Phase 09-cli]: eventsource v4 uses custom fetch function (not headers init option) for auth injection in logsCommand
+- [Phase 09-cli]: All CLI commands use (client, args, flags) tRPC signature — zero @cauldron/engine imports in command layer; triggerDecomposition/triggerExecution mutations use events for async Inngest dispatch
 
 ### Pending Todos
 
@@ -202,6 +204,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T14:35:43.335Z
-Stopped at: Completed 09-cli-03-PLAN.md
+Last session: 2026-03-27T14:42:51.707Z
+Stopped at: Completed 09-cli-02-PLAN.md
 Resume file: None
