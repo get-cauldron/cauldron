@@ -1,6 +1,10 @@
 import { notFound } from 'next/navigation';
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 import { getQueryClient, trpc } from '@/trpc/server';
+
+// Force dynamic rendering — layout fetches live tRPC data and should not be
+// statically pre-rendered during next build (no DATABASE_URL at build time).
+export const dynamic = 'force-dynamic';
 import { ProjectHeader } from '@/components/shell/ProjectHeader';
 import { EscalationBanner } from '@/components/shell/EscalationBanner';
 import { TabLinkClient } from './TabLinkClient';

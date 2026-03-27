@@ -1,9 +1,13 @@
-import { db } from '@get-cauldron/shared';
-import { events } from '@get-cauldron/shared';
 import { eq, gt, and, asc } from 'drizzle-orm';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+
+// Lazy DB access — prevents DATABASE_URL check during next build static analysis
+async function getDb() {
+  const { db, events } = await import('@get-cauldron/shared');
+  return { db, events };
+}
 
 export async function GET(
   request: Request,
@@ -39,6 +43,7 @@ export async function GET(
 
       // 1. Replay missed events from sequence number
       try {
+        const { db, events } = await getDb();
         const missed = await db
           .select()
           .from(events)
@@ -76,6 +81,7 @@ export async function GET(
 
       const pollInterval = setInterval(async () => {
         try {
+          const { db, events } = await getDb();
           const newEvents = await db
             .select()
             .from(events)
