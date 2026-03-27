@@ -180,8 +180,8 @@ Plans:
 
 Plans:
 - [x] 07-01-PLAN.md — DB migration, domain types, goal evaluator, and seed mutator
-- [ ] 07-02-PLAN.md — Convergence detector (5 signals) and lineage budget enforcement
-- [ ] 07-03-PLAN.md — Lateral thinking personas engine and meta-judge
+- [x] 07-02-PLAN.md — Convergence detector (5 signals) and lineage budget enforcement
+- [x] 07-03-PLAN.md — Lateral thinking personas engine and meta-judge
 - [ ] 07-04-PLAN.md — Evolution FSM Inngest function, barrel exports, and integration wiring
 
 ### Phase 8: Web Dashboard
