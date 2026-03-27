@@ -20,6 +20,7 @@ import { costsCommand } from './commands/costs.js';
 import { evolutionCommand } from './commands/evolution.js';
 import { runCommand } from './commands/run.js';
 import { webhookCommand } from './commands/webhook.js';
+import { logsCommand } from './commands/logs.js';
 
 const COMMANDS = [
   'health',
@@ -149,6 +150,7 @@ async function main(): Promise<void> {
   }
 
   // Bootstrap tRPC client for all other commands
+  const config = await loadCLIConfig(process.cwd());
   const client = await bootstrapClient(process.cwd());
 
   switch (command) {
@@ -174,8 +176,11 @@ async function main(): Promise<void> {
       await statusCommand(client, commandArgs, flags);
       break;
     case 'logs':
-      // logs is an alias for status --logs
-      await statusCommand(client, [...commandArgs, '--logs'], flags);
+      logsCommand(client, commandArgs, {
+        ...flags,
+        serverUrl: config.serverUrl,
+        apiKey: config.apiKey ?? '',
+      });
       break;
     case 'costs':
       await costsCommand(client, commandArgs, flags);

@@ -2,6 +2,7 @@ import { verify } from '@octokit/webhooks-methods';
 import { db } from '@cauldron/shared';
 import { projects } from '@cauldron/shared';
 import { appendEvent } from '@cauldron/shared';
+import { inngest } from '../../../../inngest/client.js';
 
 export const runtime = 'nodejs';
 
@@ -66,8 +67,7 @@ export async function POST(req: Request) {
     });
   }
 
-  // Append pipeline_trigger event — the Inngest consumer handles active-pipeline
-  // detection and queuing per D-11
+  // Append pipeline_trigger event for audit trail
   await appendEvent(db, {
     projectId: matchingProject.id,
     beadId: null,
@@ -78,6 +78,18 @@ export async function POST(req: Request) {
       branch,
       commitSha,
       pusher: payload.pusher.name,
+    },
+  });
+
+  // Dispatch to Inngest — the consumer handles active-pipeline detection and queuing per D-11
+  await inngest.send({
+    name: 'cauldron/pipeline.trigger',
+    data: {
+      projectId: matchingProject.id,
+      source: 'github_push',
+      repo: repoFullName,
+      branch,
+      commitSha,
     },
   });
 

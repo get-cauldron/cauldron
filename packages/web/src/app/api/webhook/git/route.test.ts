@@ -5,6 +5,8 @@ import { sign } from '@octokit/webhooks-methods';
 const mockProjectRows: Array<{ id: string; name: string; settings: Record<string, unknown> | null }> = [];
 const mockAppendEvent = vi.fn();
 
+const mockInngestSend = vi.fn().mockResolvedValue({ ids: [] });
+
 vi.mock('@cauldron/shared', () => {
   const fromFn = vi.fn().mockImplementation(() => mockProjectRows);
   const selectFn = vi.fn().mockReturnValue({ from: fromFn });
@@ -15,6 +17,10 @@ vi.mock('@cauldron/shared', () => {
     appendEvent: mockAppendEvent,
   };
 });
+
+vi.mock('../../../../inngest/client.js', () => ({
+  inngest: { send: mockInngestSend },
+}));
 
 // Dynamic import after mocks are set up
 const { POST } = await import('./route.js');
@@ -62,8 +68,9 @@ describe('POST /api/webhook/git', () => {
     vi.clearAllMocks();
     process.env['GITHUB_WEBHOOK_SECRET'] = WEBHOOK_SECRET;
     mockProjectRows.length = 0;
-    // Reset appendEvent mock
+    // Reset mocks
     mockAppendEvent.mockResolvedValue(undefined);
+    mockInngestSend.mockResolvedValue({ ids: [] });
   });
 
   it('returns 500 when GITHUB_WEBHOOK_SECRET is not configured', async () => {
@@ -165,6 +172,17 @@ describe('POST /api/webhook/git', () => {
         payload: expect.objectContaining({
           source: 'github_push',
           repo: 'acme/my-app',
+          commitSha: 'abc123def456',
+        }),
+      })
+    );
+    // Verify Inngest event dispatched for pipeline queue logic
+    expect(mockInngestSend).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: 'cauldron/pipeline.trigger',
+        data: expect.objectContaining({
+          projectId: 'project-uuid-5678',
+          source: 'github_push',
           commitSha: 'abc123def456',
         }),
       })
