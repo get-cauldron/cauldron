@@ -236,7 +236,7 @@ export const interviewRouter = router({
           evaluationPrinciples: z.array(z.unknown()),
           exitConditions: z.union([
             z.array(z.object({ condition: z.string(), description: z.string() })),
-            z.record(z.unknown()),
+            z.record(z.string(), z.unknown()),
           ]),
         }),
       }),
