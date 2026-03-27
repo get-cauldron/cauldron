@@ -21,7 +21,8 @@
     "test": "vitest run --passWithNoTests",
     "test:integration": "vitest run --config vitest.integration.config.ts --passWithNoTests",
     "cauldron": "tsx src/cli.ts",
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "serve:engine": "tsx src/engine-server.ts"
   },
   "dependencies": {
     "@cauldron/engine": "workspace:*",
