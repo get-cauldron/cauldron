@@ -27,7 +27,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 7: Evolutionary Loop** - Post-execution evaluator, evolution FSM, convergence detection, lateral thinking personas, holdout unsealing (completed 2026-03-27)
 - [x] **Phase 8: Web Dashboard** - Interview chat, live DAG visualization, SSE log streaming, human approval UX, HZD aesthetic (completed 2026-03-27)
 - [x] **Phase 9: CLI** - Full pipeline CLI, git-push trigger, shared tRPC API (completed 2026-03-27)
-- [ ] **Phase 10: Wire tRPC Write Mutations to Engine** - Connect stub tRPC mutations to actual engine functions (interview FSM, vault sealing, decomposition) (gap closure)
+- [x] **Phase 10: Wire tRPC Write Mutations to Engine** - Connect stub tRPC mutations to actual engine functions (interview FSM, vault sealing, decomposition) (gap closure) (completed 2026-03-27)
 - [ ] **Phase 11: Engine Inngest Serve & Evolution Bootstrap** - Add HTTP serve endpoint for engine Inngest functions, wire configureEvolutionDeps in bootstrap (gap closure)
 - [ ] **Phase 12: Security & Tech Debt Cleanup** - SSE auth, kill command UX, minor tech debt items (gap closure)
 
@@ -294,6 +294,6 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 7. Evolutionary Loop | 4/4 | Complete   | 2026-03-27 |
 | 8. Web Dashboard | 9/9 | Complete   | 2026-03-27 |
 | 9. CLI | 4/4 | Complete   | 2026-03-27 |
-| 10. Wire tRPC Write Mutations | 2/3 | Gap closure | 2026-03-27 |
+| 10. Wire tRPC Write Mutations | 2/3 | Complete    | 2026-03-27 |
 | 11. Engine Inngest Serve & Bootstrap | 0/? | Not started | - |
 | 12. Security & Tech Debt | 0/? | Not started | - |
