@@ -235,5 +235,5 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 6.1. Dogfooding Transition | 5/5 | Complete   | 2026-03-26 |
 | 6.2. Testing & Tuning Dogfood | 3/3 | Complete   | 2026-03-26 |
 | 7. Evolutionary Loop | 0/4 | Not started | - |
-| 8. Web Dashboard | 8/8 | Complete   | 2026-03-27 |
+| 8. Web Dashboard | 9/9 | Complete   | 2026-03-27 |
 | 9. CLI | 0/TBD | Not started | - |

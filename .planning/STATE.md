@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 08-web-dashboard-06-PLAN.md
-last_updated: "2026-03-27T02:51:54.651Z"
+stopped_at: Completed 08-web-dashboard-08-PLAN.md
+last_updated: "2026-03-27T13:16:20.748Z"
 progress:
   total_phases: 11
   completed_phases: 10
-  total_plans: 40
-  completed_plans: 40
+  total_plans: 41
+  completed_plans: 41
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 08 (web-dashboard) — EXECUTING
-Plan: 6 of 8
+Plan: 7 of 8
 
 ## Performance Metrics
 
@@ -81,6 +81,7 @@ Plan: 6 of 8
 | Phase 08-web-dashboard P04 | 6min | 2 tasks | 9 files |
 | Phase 08-web-dashboard P05 | 6 | 3 tasks | 11 files |
 | Phase 08-web-dashboard P06 | 4min | 2 tasks | 7 files |
+| Phase 08-web-dashboard P08 | 5min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -180,6 +181,8 @@ Recent decisions affecting current work:
 - [Phase 08-web-dashboard]: GenerationStatus derived from evolutionContext.terminalReason and convergenceSignal in seed row — no separate DB status enum needed
 - [Phase 08-web-dashboard]: Convergence signals stored in evolution_converged event payload.signals array — ConvergencePanel reads from convergenceEvent.payload
 - [Phase 08-web-dashboard]: tRPC inArray with const-asserted evolution event types: inArray(events.type, [...] as unknown as string[]) to satisfy eventTypeEnum column type
+- [Phase 08-web-dashboard]: Use (typeof eventTypeEnum.enumValues)[number][] for Drizzle inArray on pgEnum columns
+- [Phase 08-web-dashboard]: String() coercion for Drizzle timestamp fields avoids instanceof Date fragility in TypeScript
 
 ### Pending Todos
 
@@ -194,6 +197,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T02:51:54.649Z
-Stopped at: Completed 08-web-dashboard-06-PLAN.md
+Last session: 2026-03-27T13:16:20.745Z
+Stopped at: Completed 08-web-dashboard-08-PLAN.md
 Resume file: None
