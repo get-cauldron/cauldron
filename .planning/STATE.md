@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 08-web-dashboard-05-PLAN.md
-last_updated: "2026-03-27T02:44:54.656Z"
+stopped_at: Completed 08-web-dashboard-06-PLAN.md
+last_updated: "2026-03-27T02:51:54.651Z"
 progress:
   total_phases: 11
-  completed_phases: 9
+  completed_phases: 10
   total_plans: 40
-  completed_plans: 39
+  completed_plans: 40
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 08 (web-dashboard) — EXECUTING
-Plan: 5 of 8
+Plan: 6 of 8
 
 ## Performance Metrics
 
@@ -80,6 +80,7 @@ Plan: 5 of 8
 | Phase 08-web-dashboard P07 | 3min | 2 tasks | 4 files |
 | Phase 08-web-dashboard P04 | 6min | 2 tasks | 9 files |
 | Phase 08-web-dashboard P05 | 6 | 3 tasks | 11 files |
+| Phase 08-web-dashboard P06 | 4min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -176,6 +177,9 @@ Recent decisions affecting current work:
 - [Phase 08-web-dashboard]: ReactFlowProvider wraps DAGCanvas inner component so useReactFlow hook has context
 - [Phase 08-web-dashboard]: CollapsibleTrigger (base-ui) has no asChild prop — style props applied directly
 - [Phase 08-web-dashboard]: Evolution timeline stub deferred to Plan 08-06 per plan spec — 48px div placeholder
+- [Phase 08-web-dashboard]: GenerationStatus derived from evolutionContext.terminalReason and convergenceSignal in seed row — no separate DB status enum needed
+- [Phase 08-web-dashboard]: Convergence signals stored in evolution_converged event payload.signals array — ConvergencePanel reads from convergenceEvent.payload
+- [Phase 08-web-dashboard]: tRPC inArray with const-asserted evolution event types: inArray(events.type, [...] as unknown as string[]) to satisfy eventTypeEnum column type
 
 ### Pending Todos
 
@@ -190,6 +194,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T02:44:54.653Z
-Stopped at: Completed 08-web-dashboard-05-PLAN.md
+Last session: 2026-03-27T02:51:54.649Z
+Stopped at: Completed 08-web-dashboard-06-PLAN.md
 Resume file: None

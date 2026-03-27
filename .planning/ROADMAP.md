@@ -25,7 +25,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 6.1: Dogfooding Transition** (INSERTED) - CLI entrypoint, Claude Code skills, GSD context bridging, self-build safety, dry-run validation (completed 2026-03-26)
 - [x] **Phase 6.2: Testing & Tuning Dogfood Process** (INSERTED) - Interview convergence fixes, pre-generated seed pipeline validation, end-to-end dry run (completed 2026-03-26)
 - [ ] **Phase 7: Evolutionary Loop** - Post-execution evaluator, evolution FSM, convergence detection, lateral thinking personas, holdout unsealing
-- [ ] **Phase 8: Web Dashboard** - Interview chat, live DAG visualization, SSE log streaming, human approval UX, HZD aesthetic
+- [x] **Phase 8: Web Dashboard** - Interview chat, live DAG visualization, SSE log streaming, human approval UX, HZD aesthetic (completed 2026-03-27)
 - [ ] **Phase 9: CLI** - Full pipeline CLI, git-push trigger, shared tRPC API
 
 ## Phase Details
@@ -203,7 +203,7 @@ Plans:
 - [x] 08-03-PLAN.md — SSE streaming infrastructure (Route Handler, useSSE, useBeadStatus, useEscalation hooks)
 - [x] 08-04-PLAN.md — Interview chat UI with MC chips, ambiguity sidebar, and approval gates
 - [x] 08-05-PLAN.md — Live DAG execution visualization with React Flow, bead detail panel, terminal logs, code diffs
-- [ ] 08-06-PLAN.md — Evolution cycle visualization (seed lineage, convergence signals, lateral thinking history)
+- [x] 08-06-PLAN.md — Evolution cycle visualization (seed lineage, convergence signals, lateral thinking history)
 - [x] 08-07-PLAN.md — Token usage and cost dashboard, project settings page
 **UI hint**: yes
 
@@ -235,5 +235,5 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 6.1. Dogfooding Transition | 5/5 | Complete   | 2026-03-26 |
 | 6.2. Testing & Tuning Dogfood | 3/3 | Complete   | 2026-03-26 |
 | 7. Evolutionary Loop | 0/4 | Not started | - |
-| 8. Web Dashboard | 7/8 | In Progress|  |
+| 8. Web Dashboard | 8/8 | Complete   | 2026-03-27 |
 | 9. CLI | 0/TBD | Not started | - |
