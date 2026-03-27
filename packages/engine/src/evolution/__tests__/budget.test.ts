@@ -72,9 +72,8 @@ describe('checkLineageBudget', () => {
     mockGetSeedLineage.mockResolvedValue(lineage);
     const db = makeMockDb(1000);
 
-    await expect(
-      checkLineageBudget(db as never, 's2', 1000)
-    ).rejects.toThrow('BudgetExceededError');
+    const error = await checkLineageBudget(db as never, 's2', 1000).catch((e: unknown) => e);
+    expect((error as Error).name).toBe('BudgetExceededError');
   });
 
   it('throws BudgetExceededError when lineage total exceeds limit (1500 > 1000)', async () => {

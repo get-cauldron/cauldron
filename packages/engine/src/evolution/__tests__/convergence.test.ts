@@ -31,7 +31,9 @@ import { getSeedLineage } from '../../interview/crystallizer.js';
 import type { Seed } from '@cauldron/shared';
 import type { GapAnalysis, EvolutionContext } from '../types.js';
 
-const mockComputeEmbedding = computeEmbedding as ReturnType<typeof vi.fn>;
+type EmbeddingFn = (text: string) => Promise<number[]>;
+
+const mockComputeEmbedding = computeEmbedding as unknown as ReturnType<typeof vi.fn> & EmbeddingFn;
 const mockCosineSimilarity = cosineSimilarity as ReturnType<typeof vi.fn>;
 const mockJaccardSimilarity = jaccardSimilarity as ReturnType<typeof vi.fn>;
 const mockGetSeedLineage = getSeedLineage as ReturnType<typeof vi.fn>;
