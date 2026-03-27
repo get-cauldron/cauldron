@@ -236,6 +236,12 @@ Plans:
   2. `interview.sealHoldouts` tRPC mutation calls `sealVault()` — ciphertext/iv/authTag columns populated after sealing
   3. `execution.triggerDecomposition` tRPC mutation invokes `runDecomposition()` or sends the correct Inngest event
   4. Integration test demonstrates: answer submitted → FSM scores → next question generated
+**Plans**: 2 plans
+
+Plans:
+- [ ] 10-01-PLAN.md — Extend tRPC context with engine deps, wire sendAnswer to InterviewFSM
+- [ ] 10-02-PLAN.md — Wire sealHoldouts to vault encryption, triggerDecomposition to runDecomposition
+
 
 ### Phase 11: Engine Inngest Serve & Evolution Bootstrap
 **Goal**: Engine Inngest functions are reachable via HTTP so Inngest can deliver events, and evolution dependencies are configured at bootstrap — making bead execution, merge queue, and evolutionary loop operational in production.
@@ -277,6 +283,6 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 7. Evolutionary Loop | 4/4 | Complete   | 2026-03-27 |
 | 8. Web Dashboard | 9/9 | Complete   | 2026-03-27 |
 | 9. CLI | 4/4 | Complete   | 2026-03-27 |
-| 10. Wire tRPC Write Mutations | 0/? | Not started | - |
+| 10. Wire tRPC Write Mutations | 0/2 | Not started | - |
 | 11. Engine Inngest Serve & Bootstrap | 0/? | Not started | - |
 | 12. Security & Tech Debt | 0/? | Not started | - |
