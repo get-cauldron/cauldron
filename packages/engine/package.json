@@ -1,5 +1,5 @@
 {
-  "name": "@cauldron/engine",
+  "name": "@get-cauldron/engine",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -20,7 +20,7 @@
     "@ai-sdk/anthropic": "^3.0.64",
     "@ai-sdk/google": "^3.0.53",
     "@ai-sdk/openai": "^3.0.48",
-    "@cauldron/shared": "workspace:*",
+    "@get-cauldron/shared": "workspace:*",
     "ai": "^6.0.138",
     "drizzle-orm": "^0.45.1",
     "inngest": "^4.1.0",
