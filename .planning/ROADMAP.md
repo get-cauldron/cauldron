@@ -195,7 +195,16 @@ Plans:
   4. Human approval gates (seed crystallization review, holdout test review, escalation notifications) are completable in the UI without switching to another tool
   5. The evolution cycle history — seed lineage, convergence signals, lateral thinking activations — is browsable in the dashboard
   6. The visual identity is unmistakably HZD Cauldron: dark metallic palette, teal/blue energy conduit accents, hexagonal geometry motifs, industrial-organic feel
-**Plans**: TBD
+**Plans**: 7 plans
+
+Plans:
+- [ ] 08-01-PLAN.md — Next.js 16 scaffold, HZD theme, shadcn, tRPC v11 plumbing
+- [ ] 08-02-PLAN.md — Application shell (nav sidebar, branding, hex background) and project CRUD
+- [ ] 08-03-PLAN.md — SSE streaming infrastructure (Route Handler, useSSE, useBeadStatus, useEscalation hooks)
+- [ ] 08-04-PLAN.md — Interview chat UI with MC chips, ambiguity sidebar, and approval gates
+- [ ] 08-05-PLAN.md — Live DAG execution visualization with React Flow, bead detail panel, terminal logs, code diffs
+- [ ] 08-06-PLAN.md — Evolution cycle visualization (seed lineage, convergence signals, lateral thinking history)
+- [ ] 08-07-PLAN.md — Token usage and cost dashboard, project settings page
 **UI hint**: yes
 
 ### Phase 9: CLI
@@ -226,5 +235,5 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 6.1. Dogfooding Transition | 5/5 | Complete   | 2026-03-26 |
 | 6.2. Testing & Tuning Dogfood | 3/3 | Complete   | 2026-03-26 |
 | 7. Evolutionary Loop | 0/4 | Not started | - |
-| 8. Web Dashboard | 0/TBD | Not started | - |
+| 8. Web Dashboard | 0/7 | Not started | - |
 | 9. CLI | 0/TBD | Not started | - |
