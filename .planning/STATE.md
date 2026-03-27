@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Phase 7 context gathered
-last_updated: "2026-03-26T23:53:02.975Z"
+status: Ready to execute
+stopped_at: Completed 07-evolutionary-loop-01-PLAN.md
+last_updated: "2026-03-27T00:34:43.245Z"
 progress:
   total_phases: 11
   completed_phases: 8
-  total_plans: 28
-  completed_plans: 28
+  total_plans: 32
+  completed_plans: 29
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** User describes what they want; Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves until goal is met — humans steer at key decision points, not babysitting every step.
-**Current focus:** Phase 06.2 — testing-and-tuning-the-dogfood-process
+**Current focus:** Phase 07 — evolutionary-loop
 
 ## Current Position
 
-Phase: 7
-Plan: Not started
+Phase: 07 (evolutionary-loop) — EXECUTING
+Plan: 2 of 4
 
 ## Performance Metrics
 
@@ -74,6 +74,7 @@ Plan: Not started
 | Phase 06.2 P01 | 4min | 2 tasks | 5 files |
 | Phase 06.2-testing-and-tuning-the-dogfood-process P02 | 7min | 1 tasks | 4 files |
 | Phase 06.2 P03 | 95min | 1 tasks | 9 files |
+| Phase 07-evolutionary-loop P01 | 18min | 2 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -156,6 +157,9 @@ Recent decisions affecting current work:
 - [Phase 06.2]: codebase-memory-mcp allocates 32GB virtual memory (budget_mb=32768) which can crash Docker Desktop when combined with other heavy processes
 - [Phase 06.2]: Zod schema LLM compatibility: remove all min/max/int/uuid/record constraints from schemas sent to LLM providers — Anthropic and OpenAI both reject minimum, maximum, minItems, propertyNames, format keywords in JSON Schema
 - [Phase 06.2]: cauldron.config.ts model IDs must reference real API-available models — gpt-5.4/gpt-5-mini/gemini-3.1-pro-preview replaced with gpt-4.1/gpt-4.1-mini/gemini-2.5-pro
+- [Phase 07-evolutionary-loop]: Tiered mutation: FULL_REGEN_THRESHOLD=0.4, SUCCESS_THRESHOLD=0.95 — full regen below 0.4, AC-only rewrite above
+- [Phase 07-evolutionary-loop]: mutateSeedFromProposal bypasses GoalAttainmentResult — lateral thinking always treated as full tier evolution
+- [Phase 07-evolutionary-loop]: Evaluation stage diversity enforcement: evaluator model must differ from implementer model family per D-03
 
 ### Pending Todos
 
@@ -170,6 +174,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T23:53:02.972Z
-Stopped at: Phase 7 context gathered
-Resume file: .planning/phases/07-evolutionary-loop/07-CONTEXT.md
+Last session: 2026-03-27T00:34:43.243Z
+Stopped at: Completed 07-evolutionary-loop-01-PLAN.md
+Resume file: None

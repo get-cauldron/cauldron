@@ -179,7 +179,7 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — DB migration, domain types, goal evaluator, and seed mutator
+- [x] 07-01-PLAN.md — DB migration, domain types, goal evaluator, and seed mutator
 - [ ] 07-02-PLAN.md — Convergence detector (5 signals) and lineage budget enforcement
 - [ ] 07-03-PLAN.md — Lateral thinking personas engine and meta-judge
 - [ ] 07-04-PLAN.md — Evolution FSM Inngest function, barrel exports, and integration wiring

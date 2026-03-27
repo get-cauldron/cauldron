@@ -85,10 +85,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Evolutionary Loop
 
-- [ ] **EVOL-01**: Post-execution evaluation assesses goal attainment (not just spec compliance)
-- [ ] **EVOL-02**: Evaluation uses weighted principles from the seed's evaluation_principles field
-- [ ] **EVOL-03**: If goal not met, system generates a new immutable evolved seed with parent reference
-- [ ] **EVOL-04**: Evolution decomposes new/changed acceptance criteria into new beads
+- [x] **EVOL-01**: Post-execution evaluation assesses goal attainment (not just spec compliance)
+- [x] **EVOL-02**: Evaluation uses weighted principles from the seed's evaluation_principles field
+- [x] **EVOL-03**: If goal not met, system generates a new immutable evolved seed with parent reference
+- [x] **EVOL-04**: Evolution decomposes new/changed acceptance criteria into new beads
 - [ ] **EVOL-05**: Convergence detection: ontology stability (similarity >= 0.95 across 2 generations)
 - [ ] **EVOL-06**: Convergence detection: stagnation (unchanged for 3 consecutive generations)
 - [ ] **EVOL-07**: Convergence detection: oscillation (period-2 cycling detected)
@@ -230,10 +230,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CODE-02 | Phase 6 | Complete |
 | CODE-03 | Phase 6 | Complete |
 | CODE-04 | Phase 6 | Complete |
-| EVOL-01 | Phase 7 | Pending |
-| EVOL-02 | Phase 7 | Pending |
-| EVOL-03 | Phase 7 | Pending |
-| EVOL-04 | Phase 7 | Pending |
+| EVOL-01 | Phase 7 | Complete |
+| EVOL-02 | Phase 7 | Complete |
+| EVOL-03 | Phase 7 | Complete |
+| EVOL-04 | Phase 7 | Complete |
 | EVOL-05 | Phase 7 | Pending |
 | EVOL-06 | Phase 7 | Pending |
 | EVOL-07 | Phase 7 | Pending |
