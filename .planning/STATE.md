@@ -125,7 +125,7 @@ Recent decisions affecting current work:
 - [Phase 03-interview-seed-pipeline]: validateScoreRules uses strict > 0.3 threshold — floating point means 0.8-0.5=0.30000000000000004 triggers anomaly; tests use unambiguous values to avoid precision traps
 - [Phase 03-interview-seed-pipeline]: selectActivePerspectives returns 2 perspectives in late turns (overall >= 0.7), 3 in early/mid turns per D-12 spec
 - [Phase 03-interview-seed-pipeline]: crystallizer.ts getSeedLineage returns result as unknown as Seed[] (no .rows property) — matches drizzle-orm postgres-js execute pattern in existing schema-invariants tests
-- [Phase 03-interview-seed-pipeline]: vi.mock('@cauldron/shared') required in engine unit tests that import modules with @cauldron/shared dependencies — prevents DATABASE_URL error at import time
+- [Phase 03-interview-seed-pipeline]: vi.mock('@get-cauldron/shared') required in engine unit tests that import modules with @get-cauldron/shared dependencies — prevents DATABASE_URL error at import time
 - [Phase 03-interview-seed-pipeline]: FSM CLARITY_THRESHOLD=0.8 matches ambiguity <= 0.2 (D-05); VALID_TRANSITIONS enforces gathering->reviewing->approved->crystallized with no skipping
 - [Phase 04-holdout-vault]: Compound encryptedDek field (dekIv:dekAuthTag:dekCiphertext) instead of separate DB columns — avoids extra migration complexity
 - [Phase 04-holdout-vault]: Encryption columns made nullable in holdout_vault: pending_review/approved rows have no ciphertext until sealed
@@ -137,7 +137,7 @@ Recent decisions affecting current work:
 - [Phase 05-dag-decomposition-scheduler]: version column defaults to 1 for optimistic concurrency — first increment yields version 2, making unversioned rows identifiable
 - [Phase 05-dag-decomposition-scheduler]: parent_child edges excluded from Kahn's cycle detection — they track molecule hierarchy, not scheduling order
 - [Phase 05-dag-decomposition-scheduler]: validateDAG priority: cycle > oversized_bead > coverage_gap — structural validity checked before context budget before spec completeness
-- [Phase 05-dag-decomposition-scheduler]: Engine integration tests use vitest.integration.config.ts with DATABASE_URL env to prevent @cauldron/shared client.ts from throwing at import time
+- [Phase 05-dag-decomposition-scheduler]: Engine integration tests use vitest.integration.config.ts with DATABASE_URL env to prevent @get-cauldron/shared client.ts from throwing at import time
 - [Phase 05-dag-decomposition-scheduler]: conditional_blocks NOT in ready-bead SQL query filter -- conditional skip is dispatch-time logic in beadDispatchHandler, not scheduling concern
 - [Phase 05-dag-decomposition-scheduler]: _journal.json was missing migration 0005 entry -- auto-fixed; drizzle-orm migrate() requires journal to discover migrations
 - [Phase 06-parallel-execution-engine]: execPromise() custom wrapper instead of promisify(exec): real exec has util.promisify.custom resolving {stdout,stderr} but mocked exec does not, causing destructuring to yield undefined
@@ -159,7 +159,7 @@ Recent decisions affecting current work:
 - [Phase 06.1]: Prior context injected as first-answer preamble (not DB transcript injection): works with FSM scoring without DB surgery
 - [Phase 06.1]: Brownfield mode auto-selected when priorContext is non-empty: ties D-07 to D-04 naturally
 - [Phase 06.1]: conflict_resolved added to eventTypeEnum with migration 0008 for resolve command appendEvent type correctness
-- [Phase 06.1]: handleMergeRequested exported from decomposition/index.ts to expose full Inngest function set via @cauldron/engine
+- [Phase 06.1]: handleMergeRequested exported from decomposition/index.ts to expose full Inngest function set via @get-cauldron/engine
 - [Phase 06.1]: vi.fn(function(){}) for Hono constructor mock — arrow functions cannot be used as constructors in Vitest
 - [Phase 06.1]: Skill files are plain markdown — Claude Code reads .claude/skills/*.md directly; no manifest or registration needed
 - [Phase 06.1]: Inngest v4 health endpoint is /v1/events (not /v0/envs) — corrected health check probe to POST empty events array for 200 response
@@ -194,7 +194,7 @@ Recent decisions affecting current work:
 - [Phase 09-cli]: trpc-types and api packages use Bundler moduleResolution to allow type traversal into web package without .js extension collisions
 - [Phase 09-cli]: createTRPCContext accepts optional Request parameter; CAULDRON_API_KEY unset = dev mode (allow all); authenticatedProcedure exported for protected routes
 - [Phase 09-cli]: eventsource v4 uses custom fetch function (not headers init option) for auth injection in logsCommand
-- [Phase 09-cli]: All CLI commands use (client, args, flags) tRPC signature — zero @cauldron/engine imports in command layer; triggerDecomposition/triggerExecution mutations use events for async Inngest dispatch
+- [Phase 09-cli]: All CLI commands use (client, args, flags) tRPC signature — zero @get-cauldron/engine imports in command layer; triggerDecomposition/triggerExecution mutations use events for async Inngest dispatch
 - [Phase 09-cli]: pipeline_trigger added to eventTypeEnum (not reused pipeline_started) — semantically distinct: trigger is inbound event, started is post-queue
 - [Phase 09-cli]: Inngest client in web package separate from engine package (cauldron-web vs cauldron-engine) — web layer owns its own functions
 - [Phase 10-wire-trpc-mutations-to-engine]: Local Logger structural type in engine-deps.ts avoids adding pino as direct web dep; cast to any at LLMGateway.create boundary

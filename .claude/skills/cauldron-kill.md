@@ -3,9 +3,9 @@
 Abort a stuck or misbehaving bead. Marks it as failed.
 
 ## Usage
-1. Health check: `pnpm exec tsx packages/api/src/cli.ts health`
+1. Health check: `pnpm exec tsx packages/cli/src/cli.ts health`
    - If this fails, run `docker compose up -d` and retry
-2. Run: `pnpm exec tsx packages/api/src/cli.ts kill <BEAD_ID>`
+2. Run: `pnpm exec tsx packages/cli/src/cli.ts kill <BEAD_ID>`
 3. Confirms the bead was marked as failed
 
 ## Next Steps

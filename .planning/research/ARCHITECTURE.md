@@ -155,7 +155,7 @@ cauldron/
 ### Structure Rationale
 
 - **apps/ vs packages/:** Apps are deployable surfaces (Next.js, CLI). Packages are reusable logic with no deployment concern. The `core/` package has zero framework dependencies, enabling unit testing without mocking HTTP.
-- **packages/api/:** tRPC router lives here — not inside `apps/web/` — so the CLI can import the same types and call procedures. Single contract, no drift.
+- **packages/cli/:** tRPC router lives here — not inside `apps/web/` — so the CLI can import the same types and call procedures. Single contract, no drift.
 - **packages/core/:** All domain state machines (interview FSM, evolution loop) are pure TypeScript with no framework deps. This is the most testable code in the system.
 - **services/:** Long-running worker processes that are not HTTP servers. The scheduler worker runs BullMQ job processing independently of the web server.
 
@@ -503,7 +503,7 @@ Phase 8: CLI
 | Boundary | Communication | Notes |
 |----------|---------------|-------|
 | Web UI ↔ API Server | tRPC HTTP + WebSocket subscriptions | Type-safe, no manual schema maintenance |
-| CLI ↔ API Server | tRPC HTTP (same router as web UI) | CLI imports `@cauldron/api` types directly |
+| CLI ↔ API Server | tRPC HTTP (same router as web UI) | CLI imports `@get-cauldron/api` types directly |
 | API Server ↔ Bead Scheduler | BullMQ job enqueue via Redis | Fire-and-forget enqueue; progress via Event Bus |
 | Bead Scheduler ↔ Agent Runner | BullMQ job processor (same process or separate worker) | Worker process separation for v1 scaling |
 | Agent Runner ↔ Code Intel MCP | MCP client protocol (stdio JSON-RPC) | Spawn one MCP server per project, reuse across beads |

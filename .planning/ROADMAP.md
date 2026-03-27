@@ -30,7 +30,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 10: Wire tRPC Write Mutations to Engine** - Connect stub tRPC mutations to actual engine functions (interview FSM, vault sealing, decomposition) (gap closure) (completed 2026-03-27)
 - [x] **Phase 11: Engine Inngest Serve & Evolution Bootstrap** - Add HTTP serve endpoint for engine Inngest functions, wire configureEvolutionDeps in bootstrap (gap closure) (completed 2026-03-27)
 - [x] **Phase 12: Security & Tech Debt Cleanup** - SSE auth, kill command UX, minor tech debt items (gap closure) (completed 2026-03-27)
-- [ ] **Phase 13: Re-scope to @get-cauldron/*** - Rename npm scope from @cauldron/* to @get-cauldron/*, consolidate trpc-types into shared, rename packages/api to packages/cli
+- [ ] **Phase 13: Re-scope to @get-cauldron/*** - Rename npm scope from @get-cauldron/* to @get-cauldron/*, consolidate trpc-types into shared, rename packages/cli to packages/cli
 
 ## Phase Details
 
@@ -278,21 +278,21 @@ Plans:
 
 ### Phase 13: Re-scope to @get-cauldron/* -- already have the github and npm orgs
 
-**Goal:** Rename npm scope from @cauldron/* to @get-cauldron/*, consolidate trpc-types into shared, rename packages/api to packages/cli, and update all references project-wide.
+**Goal:** Rename npm scope from @get-cauldron/* to @get-cauldron/*, consolidate trpc-types into shared, rename packages/cli to packages/cli, and update all references project-wide.
 **Requirements**: SC-1, SC-2, SC-3, SC-4, SC-5, SC-6
 **Depends on:** Phase 12
 **Success Criteria** (what must be TRUE):
   1. All package.json `name` fields use `@get-cauldron/*` scope
-  2. `@cauldron/trpc-types` package no longer exists — its exports live in `@get-cauldron/shared`
-  3. `packages/api` directory renamed to `packages/cli`
-  4. Zero occurrences of `@cauldron/` in source files, imports, or workspace deps
+  2. `@get-cauldron/trpc-types` package no longer exists — its exports live in `@get-cauldron/shared`
+  3. `packages/cli` directory renamed to `packages/cli`
+  4. Zero occurrences of `@get-cauldron/` in source files, imports, or workspace deps
   5. All tests pass, typecheck passes, build succeeds after rename
   6. CLAUDE.md and planning docs updated to reference new scope
 **Plans**: 2 plans
 
 Plans:
-- [ ] 13-01-PLAN.md — Package restructure: merge trpc-types into shared, rename packages/api to packages/cli, update all package.json scopes
-- [ ] 13-02-PLAN.md — Bulk import rename (@cauldron/* to @get-cauldron/*), update skills/docs, full regression gate
+- [ ] 13-01-PLAN.md — Package restructure: merge trpc-types into shared, rename packages/cli to packages/cli, update all package.json scopes
+- [ ] 13-02-PLAN.md — Bulk import rename (@get-cauldron/* to @get-cauldron/*), update skills/docs, full regression gate
 
 
 ## Progress

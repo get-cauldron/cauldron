@@ -1,7 +1,7 @@
-import { createTRPCClient, httpBatchLink } from '@trpc/client';
+import { createTRPCClient, httpBatchLink, type TRPCClient } from '@trpc/client';
 import type { AppRouter } from '@get-cauldron/shared/trpc-types';
 
-export function createCLIClient(serverUrl: string, apiKey: string) {
+export function createCLIClient(serverUrl: string, apiKey: string): TRPCClient<AppRouter> {
   return createTRPCClient<AppRouter>({
     links: [
       httpBatchLink({

@@ -164,7 +164,7 @@ The research converges on a clear 8-phase critical path with strong justificatio
 **Research flag:** Standard patterns for Next.js + tRPC + @xyflow/react. Skip phase research for the dashboard shell. The streaming architecture (SSE vs. WebSocket split) is well-documented.
 
 ### Phase 8: CLI
-**Rationale:** The CLI is the final surface, unblocked after the tRPC API is stable. It imports the same `@cauldron/api` types directly — no new contract is needed. Git-push trigger is a sub-feature of the CLI.
+**Rationale:** The CLI is the final surface, unblocked after the tRPC API is stable. It imports the same `@get-cauldron/api` types directly — no new contract is needed. Git-push trigger is a sub-feature of the CLI.
 **Delivers:** CLI entry point (tsx + commander), `cauldron interview`, `cauldron run`, `cauldron status`, `cauldron logs` commands via the same tRPC API as the web dashboard, git-push trigger hook.
 **Addresses:** CLI interface (table stakes for professional developers), git-push triggered runs (v1.x)
 **Avoids:** CLI as a separate API contract (shares tRPC types, no drift possible)
