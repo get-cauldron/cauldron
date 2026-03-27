@@ -105,6 +105,17 @@ export async function convergenceHandler({
           triggeredBy: 'holdout_failure',
         },
       });
+      // Bridge Gap 1: also send Inngest event so evolution FSM receives it (DB appendEvent alone
+      // does not reach the evolution_started Inngest trigger in handleEvolutionStarted)
+      await inngest.send({
+        name: 'evolution_started',
+        data: {
+          seedId,
+          projectId,
+          codeSummary,
+          failureReport: evalResult.failureReport,
+        },
+      });
     });
   }
 
