@@ -55,6 +55,38 @@ export const executionRouter = router({
       return { bead, events: beadEvents };
     }),
 
+  // Trigger decomposition (emits event for async Inngest processing)
+  triggerDecomposition: publicProcedure
+    .input(z.object({
+      projectId: z.string().uuid(),
+      seedId: z.string().uuid(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      await appendEvent(ctx.db, {
+        projectId: input.projectId,
+        beadId: null,
+        type: 'decomposition_started',
+        payload: { seedId: input.seedId, source: 'cli' },
+      });
+      return { success: true, message: 'Decomposition triggered' };
+    }),
+
+  // Trigger execution (emits event for async Inngest processing)
+  triggerExecution: publicProcedure
+    .input(z.object({
+      projectId: z.string().uuid(),
+      seedId: z.string().uuid(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      await appendEvent(ctx.db, {
+        projectId: input.projectId,
+        beadId: null,
+        type: 'execution_started',
+        payload: { seedId: input.seedId, source: 'cli' },
+      });
+      return { success: true, message: 'Execution triggered' };
+    }),
+
   // Submit escalation response
   respondToEscalation: publicProcedure
     .input(z.object({
