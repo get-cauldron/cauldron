@@ -3,6 +3,7 @@ import { router, publicProcedure } from '../init.js';
 import { beads, beadEdges, events, seeds } from '@cauldron/shared';
 import { appendEvent } from '@cauldron/shared';
 import { eq, desc, inArray } from 'drizzle-orm';
+import { runDecomposition, inngest as engineInngest } from '@cauldron/engine';
 
 
 export const executionRouter = router({
@@ -56,20 +57,41 @@ export const executionRouter = router({
       return { bead, events: beadEvents };
     }),
 
-  // Trigger decomposition (emits event for async Inngest processing)
+  // Trigger decomposition: runs the full decomposition pipeline synchronously
   triggerDecomposition: publicProcedure
     .input(z.object({
       projectId: z.string().uuid(),
       seedId: z.string().uuid(),
     }))
     .mutation(async ({ ctx, input }) => {
+      const { gateway } = await ctx.getEngineDeps();
+
+      const [seed] = await ctx.db
+        .select()
+        .from(seeds)
+        .where(eq(seeds.id, input.seedId))
+        .limit(1);
+
+      if (!seed) throw new Error(`Seed ${input.seedId} not found`);
+
+      // Audit trail event (kept for observability)
       await appendEvent(ctx.db, {
         projectId: input.projectId,
         beadId: null,
         type: 'decomposition_started',
-        payload: { seedId: input.seedId, source: 'cli' },
+        payload: { seedId: input.seedId, source: 'trpc' },
       });
-      return { success: true, message: 'Decomposition triggered' };
+
+      // Call the real decomposition pipeline with the engine Inngest client
+      await runDecomposition({
+        db: ctx.db,
+        gateway,
+        inngest: engineInngest,
+        seed,
+        projectId: input.projectId,
+      });
+
+      return { success: true, message: 'Decomposition completed' };
     }),
 
   // Trigger execution (emits event for async Inngest processing)
