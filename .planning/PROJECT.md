@@ -103,8 +103,8 @@ The full pipeline works end-to-end: a user describes what they want, and Cauldro
 - [x] Cross-model diversity enforced for holdout generation (different provider than implementer) — Phase 2
 
 #### CLI
-- [ ] CLI interface for all pipeline operations (alternative to web dashboard)
-- [ ] Git-push triggered pipeline runs
+- [x] CLI interface for all pipeline operations (alternative to web dashboard) — Phase 9
+- [x] Git-push triggered pipeline runs — Phase 9
 
 ### Out of Scope
 
@@ -180,4 +180,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-26 after Phase 4 completion*
+*Last updated: 2026-03-27 after Phase 9 completion*
