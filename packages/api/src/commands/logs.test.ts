@@ -1,26 +1,45 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import type { MockInstance } from 'vitest';
 
-// ---- Mock eventsource BEFORE importing logs ----
-const mockAddEventListener = vi.fn();
-const mockClose = vi.fn();
-const mockEventSourceInstance = {
-  addEventListener: mockAddEventListener,
-  close: mockClose,
-  onerror: null as ((ev: unknown) => unknown) | null,
-  readyState: 1,
-};
+// ---- Hoisted mocks (vi.hoisted is required for variables used inside vi.mock factories) ----
+const {
+  mockAddEventListener,
+  mockClose,
+  mockEventSourceInstance,
+  MockEventSource,
+  capturedState,
+} = vi.hoisted(() => {
+  const mockAddEventListener = vi.fn();
+  const mockClose = vi.fn();
+  const mockEventSourceInstance = {
+    addEventListener: mockAddEventListener,
+    close: mockClose,
+    onerror: null as ((ev: unknown) => unknown) | null,
+    readyState: 1,
+    CLOSED: 2,
+  };
 
-let capturedUrl: string | undefined;
-let capturedFetch: ((url: string | URL, init: Record<string, unknown>) => Promise<unknown>) | undefined;
+  const capturedState = {
+    url: undefined as string | undefined,
+    fetchFn: undefined as ((url: string | URL, init: Record<string, unknown>) => Promise<unknown>) | undefined,
+  };
 
-const MockEventSource = vi.fn(
-  (url: string | URL, init?: { fetch?: typeof capturedFetch }) => {
-    capturedUrl = typeof url === 'string' ? url : url.toString();
-    capturedFetch = init?.fetch;
-    return mockEventSourceInstance;
-  }
-);
+  const MockEventSource = vi.fn(
+    function (this: unknown, url: string | URL, init?: { fetch?: typeof capturedState.fetchFn }) {
+      capturedState.url = typeof url === 'string' ? url : url.toString();
+      capturedState.fetchFn = init?.fetch;
+      // Assign CLOSED constant on mock instance
+      Object.assign(mockEventSourceInstance, { CLOSED: 2, readyState: 1 });
+      return mockEventSourceInstance;
+    }
+  );
+  // Add static CLOSED constant
+  (MockEventSource as unknown as Record<string, unknown>).CLOSED = 2;
+  (MockEventSource as unknown as Record<string, unknown>).OPEN = 1;
+  (MockEventSource as unknown as Record<string, unknown>).CONNECTING = 0;
+
+  return { mockAddEventListener, mockClose, mockEventSourceInstance, MockEventSource, capturedState };
+});
 
 vi.mock('eventsource', () => ({
   EventSource: MockEventSource,
@@ -32,11 +51,15 @@ vi.mock('../output.js', () => ({
   formatJson: vi.fn((data: unknown) => JSON.stringify(data, null, 2)),
 }));
 
-// ---- Mock chalk to avoid color codes in assertions ----
+// ---- Mock chalk to strip color codes in assertions ----
 vi.mock('chalk', () => {
   const identity = (s: unknown) => String(s);
-  const hexChain = { hex: () => hexChain, gray: identity, red: identity, white: identity };
-  const hexFn = () => identity;
+  const chainable: Record<string, unknown> = {};
+  const hexReturn = identity;
+  chainable.hex = () => identity;
+  chainable.gray = identity;
+  chainable.red = identity;
+  chainable.white = identity;
   const chalk = {
     hex: () => identity,
     gray: identity,
@@ -46,12 +69,11 @@ vi.mock('chalk', () => {
   return { default: chalk };
 });
 
-// Now import after mocks are set up
+// Import after mocks
 import { logsCommand } from './logs.js';
 
 // ---- Helper: dispatch a synthetic pipeline event ----
 function dispatchPipelineEvent(data: Record<string, unknown>) {
-  // Find the 'pipeline' listener registered via addEventListener
   const call = mockAddEventListener.mock.calls.find(
     (c: unknown[]) => c[0] === 'pipeline'
   );
@@ -75,9 +97,13 @@ describe('logsCommand', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    capturedState.url = undefined;
+    capturedState.fetchFn = undefined;
+    mockEventSourceInstance.readyState = 1;
+
     consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    processExitSpy = vi.spyOn(process, 'exit').mockImplementation(() => {
+    processExitSpy = vi.spyOn(process, 'exit').mockImplementation((_code?: string | number | null) => {
       throw new Error('process.exit called');
     });
     processSigintHandlers = [];
@@ -87,7 +113,6 @@ describe('logsCommand', () => {
       }
       return process;
     });
-    mockEventSourceInstance.readyState = 1;
   });
 
   afterEach(() => {
@@ -95,55 +120,22 @@ describe('logsCommand', () => {
   });
 
   it('connects EventSource to the correct URL with projectId', async () => {
-    // Do not await — logsCommand keeps process alive via EventSource
-    logsCommand({ client: null as never } as never, [], BASE_FLAGS);
-    // Allow microtask to run
+    logsCommand(null, [], BASE_FLAGS);
     await Promise.resolve();
 
     expect(MockEventSource).toHaveBeenCalledOnce();
-    expect(capturedUrl).toBe('http://localhost:3000/api/events/proj-123');
+    expect(capturedState.url).toBe('http://localhost:3000/api/events/proj-123');
   });
 
   it('injects Authorization header via custom fetch wrapper', async () => {
-    logsCommand({ client: null as never } as never, [], BASE_FLAGS);
+    logsCommand(null, [], BASE_FLAGS);
     await Promise.resolve();
 
-    // capturedFetch must be defined
-    expect(capturedFetch).toBeDefined();
+    expect(capturedState.fetchFn).toBeDefined();
 
-    // Call it with a mock fetch that records headers
-    let recordedHeaders: Record<string, string> | undefined;
-    const fakeFetch = vi.fn(async (_url: unknown, init: { headers?: Record<string, string> }) => {
-      recordedHeaders = init.headers;
-      // Return a minimal Response-like that satisfies EventSourceFetchInit
-      return {
-        status: 200,
-        url: String(_url),
-        redirected: false,
-        headers: { get: () => 'text/event-stream' },
-        body: { getReader: () => ({ read: async () => ({ done: true }), cancel: async () => {} }) },
-      };
-    });
-
-    // Wrap the captured fetch to verify it injects auth header
-    if (capturedFetch) {
-      await capturedFetch('http://test', {
-        headers: { Accept: 'text/event-stream' },
-        fetch: fakeFetch,
-      }).catch(() => {});
-    }
-
-    // The custom fetch injected into EventSource must pass Authorization header
-    // We verify capturedFetch merges Authorization into the headers
-    // by checking what it would call the underlying fetch with
-    // Instead: call the injected fetch wrapper directly with an inner fakeFetch
-    // The simplest test: the custom fetch takes (url, init) and adds Authorization
-    // We re-invoke with control over the underlying fetch
+    // Call the custom fetch wrapper and verify Authorization is injected
     let injectedHeaders: Record<string, string> | undefined;
 
-    const wrapperFetch = capturedFetch!;
-
-    // Create a fake underlying fetch
     const innerFetch = vi.fn(async (url: unknown, init: Record<string, unknown>) => {
       injectedHeaders = init.headers as Record<string, string>;
       return {
@@ -155,15 +147,11 @@ describe('logsCommand', () => {
       };
     });
 
-    // The wrapper must call inner fetch with the Authorization header
-    // Rebuild logs with a custom innerFetch injected
-    // Since we can't re-inject, we trust the wrapper calls globalThis.fetch with headers
-    // Instead, just test that the wrapper adds the Authorization header by checking
-    // the headers in the init passed to the inner fetch reference
-    // We test this by checking the wrapper's fetch call against a spy on globalThis.fetch
-    const globalFetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(innerFetch as typeof fetch);
+    const globalFetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(innerFetch as unknown as typeof fetch);
 
-    await wrapperFetch('http://test', { headers: { Accept: 'text/event-stream' } }).catch(() => {});
+    await capturedState.fetchFn!('http://test', {
+      headers: { Accept: 'text/event-stream' },
+    } as Record<string, unknown>).catch(() => {});
 
     globalFetchSpy.mockRestore();
 
@@ -172,7 +160,7 @@ describe('logsCommand', () => {
   });
 
   it('renders pipeline event with beadId as [bead-prefix] event_type payload', async () => {
-    logsCommand({ client: null as never } as never, [], BASE_FLAGS);
+    logsCommand(null, [], BASE_FLAGS);
     await Promise.resolve();
 
     dispatchPipelineEvent({
@@ -195,7 +183,7 @@ describe('logsCommand', () => {
   });
 
   it('renders pipeline event without beadId as [system] prefix', async () => {
-    logsCommand({ client: null as never } as never, [], BASE_FLAGS);
+    logsCommand(null, [], BASE_FLAGS);
     await Promise.resolve();
 
     dispatchPipelineEvent({
@@ -215,11 +203,9 @@ describe('logsCommand', () => {
   });
 
   it('--bead filter skips events with non-matching beadId', async () => {
-    const flags = { ...BASE_FLAGS, beadFilter: 'bead-target' };
-    logsCommand({ client: null as never } as never, ['--bead', 'bead-target'], BASE_FLAGS);
+    logsCommand(null, ['--bead', 'bead-target'], BASE_FLAGS);
     await Promise.resolve();
 
-    // Reset console spy to only track calls after setup
     consoleSpy.mockClear();
 
     // Dispatch event with a DIFFERENT beadId — should be skipped
@@ -234,12 +220,10 @@ describe('logsCommand', () => {
       createdAt: new Date().toISOString(),
     });
 
-    // console.log should NOT have been called for this filtered-out event
-    // (no timestamp/prefix log for filtered events)
-    const eventLogs = consoleSpy.mock.calls.filter(
-      args => typeof args[0] === 'string' && args[0].includes('bead_started')
+    const skippedLogs = consoleSpy.mock.calls.filter(
+      (args: unknown[]) => typeof args[0] === 'string' && (args[0] as string).includes('bead_started')
     );
-    expect(eventLogs).toHaveLength(0);
+    expect(skippedLogs).toHaveLength(0);
 
     // Dispatch event with MATCHING beadId — should render
     consoleSpy.mockClear();
@@ -255,25 +239,25 @@ describe('logsCommand', () => {
     });
 
     const matchingLogs = consoleSpy.mock.calls.filter(
-      args => typeof args[0] === 'string' && args[0].includes('bead_completed')
+      (args: unknown[]) => typeof args[0] === 'string' && (args[0] as string).includes('bead_completed')
     );
     expect(matchingLogs.length).toBeGreaterThan(0);
   });
 
   it('SIGINT handler calls es.close()', async () => {
-    logsCommand({ client: null as never } as never, [], BASE_FLAGS);
+    logsCommand(null, [], BASE_FLAGS);
     await Promise.resolve();
 
     expect(processSigintHandlers.length).toBeGreaterThan(0);
 
-    // Trigger SIGINT
+    // Trigger SIGINT — should call es.close() then process.exit
     expect(() => processSigintHandlers[0]!()).toThrow('process.exit called');
     expect(mockClose).toHaveBeenCalledOnce();
   });
 
-  it('--json flag outputs raw JSON per event', async () => {
+  it('--json flag outputs raw JSON per event via formatJson', async () => {
     const jsonFlags = { ...BASE_FLAGS, json: true };
-    logsCommand({ client: null as never } as never, [], jsonFlags);
+    logsCommand(null, [], jsonFlags);
     await Promise.resolve();
 
     consoleSpy.mockClear();
@@ -291,19 +275,21 @@ describe('logsCommand', () => {
 
     dispatchPipelineEvent(eventData);
 
-    // formatJson should have been called with the event data
     const { formatJson } = await import('../output.js');
-    expect(formatJson).toHaveBeenCalledWith(expect.objectContaining({ type: 'bead_completed' }));
+    expect(formatJson).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'bead_completed' })
+    );
   });
 
-  it('exits with error if no projectId provided', async () => {
+  it('exits with error if no projectId provided', () => {
     const flagsNoProject = { json: false, serverUrl: 'http://localhost:3000', apiKey: 'key' };
 
-    expect(() => logsCommand({ client: null as never } as never, [], flagsNoProject as never)).toThrow(
-      'process.exit called'
-    );
+    expect(() => logsCommand(null, [], flagsNoProject as LogsFlags)).toThrow('process.exit called');
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       expect.stringContaining('Usage')
     );
   });
 });
+
+// Export type used in test
+import type { LogsFlags } from './logs.js';
