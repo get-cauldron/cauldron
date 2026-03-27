@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Executing Phase 15
-stopped_at: Phase 17 context gathered
-last_updated: "2026-03-27T21:13:13.989Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 15-wire-holdout-generation-fix-cli-run-01-PLAN.md
+last_updated: "2026-03-27T21:16:20.443Z"
 progress:
   total_phases: 19
-  completed_phases: 16
+  completed_phases: 17
   total_plans: 57
-  completed_plans: 56
+  completed_plans: 57
 ---
 
 # Project State
@@ -92,6 +92,7 @@ Plan: 1 of 1
 | Phase 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs P02 | 8min | 2 tasks | 97 files |
 | Phase 14-wire-interview-start-fix-seed-crystallization-path P01 | 8min | 2 tasks | 2 files |
 | Phase 14 P02 | 12min | 2 tasks | 3 files |
+| Phase 15-wire-holdout-generation-fix-cli-run P01 | 10min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -213,6 +214,8 @@ Recent decisions affecting current work:
 - [Phase 14-wire-interview-start-fix-seed-crystallization-path]: ImmutableSeedError caught at tRPC boundary and converted to CONFLICT code — lets web clients distinguish duplicate crystallization from other errors
 - [Phase 14]: useEffect guard uses both isPending and isSuccess to prevent infinite mutation loops in web interview auto-start
 - [Phase 14]: CLI startInterview placed before flags.json check so both JSON output and interactive mode get fresh interview state
+- [Phase 15-wire-holdout-generation-fix-cli-run]: Holdout generation failure is caught and logged separately from ImmutableSeedError — seed crystallization must not be rolled back due to LLM/budget errors in holdout generation
+- [Phase 15-wire-holdout-generation-fix-cli-run]: crystallizeCommand return type changed to Promise<{ seedId: string } | undefined> — both JSON and human-readable success paths return seedId; runCommand Seal stage injects --approve-all automatically for non-interactive pipeline mode
 
 ### Pending Todos
 
@@ -227,6 +230,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T21:13:13.986Z
-Stopped at: Phase 17 context gathered
-Resume file: .planning/phases/17-ui-testing-e2e-testing-and-final-checks/17-CONTEXT.md
+Last session: 2026-03-27T21:16:20.440Z
+Stopped at: Completed 15-wire-holdout-generation-fix-cli-run-01-PLAN.md
+Resume file: None

@@ -32,7 +32,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 12: Security & Tech Debt Cleanup** - SSE auth, kill command UX, minor tech debt items (gap closure) (completed 2026-03-27)
 - [x] **Phase 13: Re-scope to @get-cauldron/*** - Rename npm scope from @get-cauldron/* to @get-cauldron/*, consolidate trpc-types into shared, rename packages/cli to packages/cli (completed 2026-03-27)
 - [x] **Phase 14: Wire Interview Start & Fix Seed Crystallization Path** - Close P0/P1 integration gaps from v1.0 audit (gap closure) (completed 2026-03-27)
-- [ ] **Phase 15: Wire Holdout Generation Pipeline & Fix CLI Run** - Trigger holdout generation after crystallization, fix cauldron run seedId injection (gap closure)
+- [x] **Phase 15: Wire Holdout Generation Pipeline & Fix CLI Run** - Trigger holdout generation after crystallization, fix cauldron run seedId injection (gap closure) (completed 2026-03-27)
 - [ ] **Phase 16: Bridge Evolution Loop & Fix Bead Dispatch** - Bridge evolution event types, fix dispatch payloads, add bead_claimed SSE, fix web SSE auth (gap closure)
 
 ## Phase Details
@@ -327,10 +327,10 @@ Plans:
   4. `cauldron run` passes seedId from crystallize stage to seal stage — full pipeline completes
   5. Cross-model diversity enforcement (LLM-06) is active during holdout generation
   6. Web interview page shows holdout review cards after crystallization
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 15-01-PLAN.md — Wire holdout generation into approveSummary tRPC, fix CLI run seedId propagation
+- [x] 15-01-PLAN.md — Wire holdout generation into approveSummary tRPC, fix CLI run seedId propagation
 
 ### Phase 16: Bridge Evolution Loop & Fix Bead Dispatch
 **Goal:** Make the evolution loop reachable from the pipeline by bridging the DB-event/Inngest-event gap, fix bead dispatch payloads so execution and re-execution work from all trigger paths, and add missing SSE events for live DAG status.
@@ -387,5 +387,5 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 12. Security & Tech Debt | 0/? | Complete    | 2026-03-27 |
 | 13. Re-scope to @get-cauldron/* | 2/2 | Complete    | 2026-03-27 |
 | 14. Wire Interview & Seed Path | 2/2 | Complete    | 2026-03-27 |
-| 15. Wire Holdout Pipeline & CLI Run | 0/1 | In Progress | — |
+| 15. Wire Holdout Pipeline & CLI Run | 1/1 | Complete   | 2026-03-27 |
 | 16. Bridge Evolution & Fix Dispatch | 0/? | Planned | — |
