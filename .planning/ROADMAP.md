@@ -387,5 +387,5 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 12. Security & Tech Debt | 0/? | Complete    | 2026-03-27 |
 | 13. Re-scope to @get-cauldron/* | 2/2 | Complete    | 2026-03-27 |
 | 14. Wire Interview & Seed Path | 2/2 | Complete    | 2026-03-27 |
-| 15. Wire Holdout Pipeline & CLI Run | 1/1 | Complete   | 2026-03-27 |
+| 15. Wire Holdout Pipeline & CLI Run | 1/1 | Complete    | 2026-03-27 |
 | 16. Bridge Evolution & Fix Dispatch | 0/? | Planned | — |
