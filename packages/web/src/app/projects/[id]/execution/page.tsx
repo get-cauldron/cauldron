@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { DAGCanvas } from '@/components/dag/DAGCanvas';
 import { BeadDetailSheet } from '@/components/bead/BeadDetailSheet';
 import { useEscalation } from '@/hooks/useEscalation';
 import { useTRPC } from '@/trpc/client';
-import { useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { EvolutionTimeline, type GenerationDot, type GenerationStatus } from '@/components/evolution/EvolutionTimeline';
 import {
   Dialog,
   DialogContent,
@@ -123,14 +124,42 @@ function EscalationDialog({ projectId, escalation, onClose }: EscalationDialogPr
   );
 }
 
+// Map seed data to GenerationStatus for the timeline
+function deriveSeedStatus(evolutionContext: unknown, status: string): GenerationStatus {
+  const ctx = evolutionContext as Record<string, unknown> | null;
+  if (!ctx) {
+    return status === 'crystallized' ? 'converged' : 'active';
+  }
+  const terminalReason = ctx.terminalReason as string | undefined;
+  if (terminalReason === 'goal_met') return 'goal_met';
+  if (terminalReason === 'hard_cap' || terminalReason === 'budget_exceeded' || terminalReason === 'escalated') return 'halted';
+  const signal = ctx.convergenceSignal as string | undefined;
+  if (signal === 'stagnation') return 'stagnating';
+  return status === 'crystallized' ? 'converged' : 'active';
+}
+
 export default function ExecutionPage() {
   const params = useParams<{ id: string }>();
   const projectId = params.id;
+  const trpc = useTRPC();
 
   const [selectedBeadId, setSelectedBeadId] = useState<string | null>(null);
   const [escalationAcknowledged, setEscalationAcknowledged] = useState(false);
+  const [selectedGeneration, setSelectedGeneration] = useState<number | null>(null);
 
   const { activeEscalation, resolveEscalation } = useEscalation(projectId);
+
+  // Fetch seed lineage for the evolution timeline
+  const seedLineageQuery = useQuery(
+    trpc.evolution.getSeedLineage.queryOptions({ projectId })
+  );
+
+  const generationDots: GenerationDot[] = (seedLineageQuery.data ?? []).map(seed => ({
+    seedId: seed.id,
+    generation: seed.generation,
+    status: deriveSeedStatus(seed.evolutionContext, seed.status),
+    hasLateralThinking: false, // simplified for execution tab — full detail on /evolution
+  }));
 
   const showEscalationDialog = activeEscalation && !escalationAcknowledged;
 
@@ -143,22 +172,12 @@ export default function ExecutionPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#0a0f14' }}>
-      {/* Stub: Evolution timeline placeholder — Plan 08-06 Task 2 will wire the real EvolutionTimeline component */}
-      <div
-        style={{
-          height: 48,
-          background: '#111820',
-          borderBottom: '1px solid #1a2330',
-          display: 'flex',
-          alignItems: 'center',
-          paddingLeft: 16,
-          flexShrink: 0,
-        }}
-      >
-        <span style={{ fontSize: 12, color: '#6b8399', letterSpacing: '0.05em' }}>
-          Generation timeline
-        </span>
-      </div>
+      {/* Evolution timeline strip — real component wired from 08-06 */}
+      <EvolutionTimeline
+        generations={generationDots}
+        selectedGeneration={selectedGeneration}
+        onSelectGeneration={setSelectedGeneration}
+      />
 
       {/* DAG Canvas fills remaining height */}
       <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>
