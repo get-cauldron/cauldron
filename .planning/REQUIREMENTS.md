@@ -107,11 +107,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Web Dashboard
 
-- [ ] **WEB-01**: Chat-like interface for the Socratic interview with MC suggestions and freeform input
+- [x] **WEB-01**: Chat-like interface for the Socratic interview with MC suggestions and freeform input
 - [ ] **WEB-02**: Project workspace management (create, list, open, archive)
 - [ ] **WEB-03**: Live DAG visualization showing bead execution status (pending, active, completed, failed, blocked)
 - [ ] **WEB-04**: Real-time streaming of agent logs and code diffs via SSE
-- [ ] **WEB-05**: Human approval gate UX for seed crystallization and holdout test review
+- [x] **WEB-05**: Human approval gate UX for seed crystallization and holdout test review
 - [ ] **WEB-06**: Evolution cycle visualization: seed lineage, convergence progress, lateral thinking activations
 - [x] **WEB-07**: Token usage and cost dashboard per project and per evolution cycle
 - [x] **WEB-08**: Visual identity: Horizon Zero Dawn Cauldron aesthetic (dark metallic, teal/blue energy conduits, hexagonal geometries, industrial-organic)
@@ -242,11 +242,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EVOL-10 | Phase 7 | Pending |
 | EVOL-11 | Phase 7 | Pending |
 | EVOL-12 | Phase 7 | Complete |
-| WEB-01 | Phase 8 | Pending |
+| WEB-01 | Phase 8 | Complete |
 | WEB-02 | Phase 8 | Pending |
 | WEB-03 | Phase 8 | Pending |
 | WEB-04 | Phase 8 | Pending |
-| WEB-05 | Phase 8 | Pending |
+| WEB-05 | Phase 8 | Complete |
 | WEB-06 | Phase 8 | Pending |
 | WEB-07 | Phase 8 | Complete |
 | WEB-08 | Phase 8 | Complete |

@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 08-web-dashboard-07-PLAN.md
-last_updated: "2026-03-27T02:40:25.691Z"
+stopped_at: Completed 08-web-dashboard-04-PLAN.md
+last_updated: "2026-03-27T02:44:09.839Z"
 progress:
   total_phases: 11
   completed_phases: 9
   total_plans: 40
-  completed_plans: 37
+  completed_plans: 38
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 08 (web-dashboard) — EXECUTING
-Plan: 3 of 8
+Plan: 4 of 8
 
 ## Performance Metrics
 
@@ -78,6 +78,7 @@ Plan: 3 of 8
 | Phase 07-evolutionary-loop P03 | 3min | 1 tasks | 2 files |
 | Phase 08-web-dashboard P00 | 3min | 1 tasks | 5 files |
 | Phase 08-web-dashboard P07 | 3min | 2 tasks | 4 files |
+| Phase 08-web-dashboard P04 | 6min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -168,6 +169,9 @@ Recent decisions affecting current work:
 - [Phase 08-web-dashboard]: Playwright webServer config uses pnpm dev + reuseExistingServer for local E2E development
 - [Phase 08-web-dashboard]: base-ui DialogTrigger uses render prop not asChild — base-ui does not support Radix asChild pattern
 - [Phase 08-web-dashboard]: Settings page uses soft delete via projects.archive mutation — hard delete deferred to v2
+- [Phase 08-web-dashboard]: interview tRPC sendAnswer records to DB immediately; LLM scoring runs async via engine to prevent web request timeouts
+- [Phase 08-web-dashboard]: Base UI Collapsible has no asChild prop — CollapsibleTrigger receives className/style directly unlike Radix Collapsible
+- [Phase 08-web-dashboard]: Zod v4 z.record() requires two arguments: z.record(z.string(), z.unknown()) — z.record(z.unknown()) is Zod v3 API
 
 ### Pending Todos
 
@@ -182,6 +186,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T02:40:25.688Z
-Stopped at: Completed 08-web-dashboard-07-PLAN.md
+Last session: 2026-03-27T02:44:09.836Z
+Stopped at: Completed 08-web-dashboard-04-PLAN.md
 Resume file: None
