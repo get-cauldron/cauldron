@@ -176,7 +176,13 @@ Plans:
   5. On stagnation, lateral thinking personas (contrarian, hacker, simplifier, researcher, architect) activate and produce a measurably different evolved seed
   6. The human escalation path is reachable: when convergence looks unlikely, a notification reaches the operator and the loop pauses for input
   7. The token budget circuit breaker halts evolution before the configured cost ceiling is reached
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — DB migration, domain types, goal evaluator, and seed mutator
+- [ ] 07-02-PLAN.md — Convergence detector (5 signals) and lineage budget enforcement
+- [ ] 07-03-PLAN.md — Lateral thinking personas engine and meta-judge
+- [ ] 07-04-PLAN.md — Evolution FSM Inngest function, barrel exports, and integration wiring
 
 ### Phase 8: Web Dashboard
 **Goal**: The full Cauldron pipeline is observable and operable through a web interface — from Socratic interview to live DAG execution to evolution cycle review — with the HZD Cauldron visual identity.
@@ -219,6 +225,6 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 6. Parallel Execution Engine | 5/5 | Complete   | 2026-03-26 |
 | 6.1. Dogfooding Transition | 5/5 | Complete   | 2026-03-26 |
 | 6.2. Testing & Tuning Dogfood | 3/3 | Complete   | 2026-03-26 |
-| 7. Evolutionary Loop | 0/TBD | Not started | - |
+| 7. Evolutionary Loop | 0/4 | Not started | - |
 | 8. Web Dashboard | 0/TBD | Not started | - |
 | 9. CLI | 0/TBD | Not started | - |
