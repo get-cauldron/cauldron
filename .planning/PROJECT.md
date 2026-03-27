@@ -185,4 +185,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-27 after Phase 12 completion — SSE endpoint auth-gated, CLI --project-id flag added, Phase 09 verification doc corrected. All v1.0 milestone audit findings resolved.*
+*Last updated: 2026-03-27 after Phase 13 completion — npm scope renamed from @cauldron/* to @get-cauldron/*, trpc-types merged into shared, packages/api renamed to packages/cli. 484 tests pass. Last phase of v1.0 milestone.*
