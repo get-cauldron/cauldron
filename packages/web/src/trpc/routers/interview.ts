@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { eq, desc } from 'drizzle-orm';
 import { router, publicProcedure } from '../init';
 import { interviews, seeds, holdoutVault } from '@cauldron/shared';
+import { InterviewFSM } from '@cauldron/engine';
 import type {
   InterviewTurn,
   AmbiguityScores,
@@ -77,11 +78,8 @@ export const interviewRouter = router({
   // ──────────────────────────────────────────────────────────────────────────
   // sendAnswer
   // Mutation: advances the interview FSM with the user's answer.
-  // Note: Full engine call (with LLM gateway) requires the FSM to be
-  // instantiated. In the web layer, this procedure advances the turn via a
-  // DB-only path — the actual LLM scoring runs asynchronously via the engine
-  // CLI / Inngest handler. The web tRPC layer records the answer and returns
-  // the current state; real-time updates arrive via SSE.
+  // Invokes InterviewFSM.submitAnswer() synchronously — LLM scoring runs in
+  // the web request, generating the next question before returning.
   // ──────────────────────────────────────────────────────────────────────────
   sendAnswer: publicProcedure
     .input(
@@ -105,55 +103,30 @@ export const interviewRouter = router({
         throw new Error(`No active interview found for project ${projectId}`);
       }
 
+      // Fast-fail before expensive engine initialization if interview is not in gathering phase.
+      // The FSM also validates this, but guarding here avoids gateway construction.
       if (interview.phase !== 'gathering') {
         throw new Error(
           `Cannot submit answer: interview is in phase '${interview.phase}', expected 'gathering'`,
         );
       }
 
-      const currentTranscript = (interview.transcript as InterviewTurn[]) ?? [];
-      const currentScores = (interview.currentAmbiguityScore as AmbiguityScores | null) ?? null;
-
-      // Append a partial user-turn record so the transcript reflects the answer
-      // immediately. The full turn (with perspective, next question, scoring) is
-      // filled in by the engine worker that processes this answer asynchronously.
-      const userTurn: InterviewTurn = {
-        turnNumber: interview.turnCount + 1,
-        perspective: 'user' as InterviewTurn['perspective'],
-        question: currentTranscript.length > 0
-          ? currentTranscript[currentTranscript.length - 1]!.question
-          : '(opening turn)',
-        mcOptions: [],
-        userAnswer: answer,
-        freeformText,
-        ambiguityScoreSnapshot: currentScores ?? {
-          goalClarity: 0,
-          constraintClarity: 0,
-          successCriteriaClarity: 0,
-          overall: 0,
-          reasoning: 'Pending',
-        },
-        model: 'user-input',
-        allCandidates: [],
-        timestamp: new Date().toISOString(),
-      };
-
-      const updatedTranscript = [...currentTranscript, userTurn];
-
-      await ctx.db
-        .update(interviews)
-        .set({
-          transcript: updatedTranscript,
-          turnCount: interview.turnCount + 1,
-        })
-        .where(eq(interviews.id, interview.id));
+      const { gateway, config, logger } = await ctx.getEngineDeps();
+      const fsm = new InterviewFSM(ctx.db, gateway, config, logger);
+      const result = await fsm.submitAnswer(
+        interview.id,
+        projectId,
+        { userAnswer: answer, freeformText },
+      );
 
       return {
         interviewId: interview.id,
-        turnNumber: userTurn.turnNumber,
-        currentScores,
-        thresholdMet: (currentScores?.overall ?? 0) >= 0.8,
-        phase: interview.phase as 'gathering' | 'reviewing' | 'approved' | 'crystallized',
+        turnNumber: result.turn.turnNumber,
+        currentScores: result.scores,
+        thresholdMet: result.thresholdMet,
+        phase: result.thresholdMet ? 'reviewing' : 'gathering',
+        nextQuestion: result.nextQuestion,
+        turn: result.turn,
       };
     }),
 

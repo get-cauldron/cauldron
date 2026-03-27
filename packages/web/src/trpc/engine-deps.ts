@@ -48,11 +48,16 @@ export function makeConsoleLogger(): Logger {
  * Lazy engine dependency factory.
  * Results are cached at module level — calling it twice returns the same instances.
  * validateKeys: false so the web layer does not fail on missing API keys at startup.
+ *
+ * logger is typed as `any` to avoid pulling pino into the web package's type
+ * surface — the structural shape is compatible, and InterviewFSM accepts it.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function getEngineDeps(): Promise<{
   gateway: LLMGateway;
   config: GatewayConfig;
-  logger: Logger;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  logger: any;
 }> {
   if (_gateway && _config && _logger) {
     return { gateway: _gateway, config: _config, logger: _logger };
