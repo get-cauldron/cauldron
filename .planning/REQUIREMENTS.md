@@ -109,8 +109,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **WEB-01**: Chat-like interface for the Socratic interview with MC suggestions and freeform input
 - [ ] **WEB-02**: Project workspace management (create, list, open, archive)
-- [ ] **WEB-03**: Live DAG visualization showing bead execution status (pending, active, completed, failed, blocked)
-- [ ] **WEB-04**: Real-time streaming of agent logs and code diffs via SSE
+- [x] **WEB-03**: Live DAG visualization showing bead execution status (pending, active, completed, failed, blocked)
+- [x] **WEB-04**: Real-time streaming of agent logs and code diffs via SSE
 - [x] **WEB-05**: Human approval gate UX for seed crystallization and holdout test review
 - [ ] **WEB-06**: Evolution cycle visualization: seed lineage, convergence progress, lateral thinking activations
 - [x] **WEB-07**: Token usage and cost dashboard per project and per evolution cycle
@@ -244,8 +244,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EVOL-12 | Phase 7 | Complete |
 | WEB-01 | Phase 8 | Complete |
 | WEB-02 | Phase 8 | Pending |
-| WEB-03 | Phase 8 | Pending |
-| WEB-04 | Phase 8 | Pending |
+| WEB-03 | Phase 8 | Complete |
+| WEB-04 | Phase 8 | Complete |
 | WEB-05 | Phase 8 | Complete |
 | WEB-06 | Phase 8 | Pending |
 | WEB-07 | Phase 8 | Complete |
