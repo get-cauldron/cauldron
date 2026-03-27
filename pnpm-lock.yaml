@@ -35,15 +35,24 @@ importers:
       '@cauldron/shared':
         specifier: workspace:*
         version: link:../shared
+      '@cauldron/trpc-types':
+        specifier: workspace:*
+        version: link:../trpc-types
       '@hono/node-server':
         specifier: ^1.13.0
         version: 1.19.11(hono@4.12.9)
+      '@trpc/client':
+        specifier: 11.15.1
+        version: 11.15.1(@trpc/server@11.15.1(typescript@6.0.2))(typescript@6.0.2)
       dotenv:
         specifier: ^16.4.0
         version: 16.6.1
       drizzle-orm:
         specifier: ^0.45.1
         version: 0.45.1(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(postgres@3.4.8)
+      eventsource:
+        specifier: ^4.1.0
+        version: 4.1.0
       hono:
         specifier: ^4.12.9
         version: 4.12.9
@@ -140,6 +149,8 @@ importers:
       typescript:
         specifier: ^6.0.2
         version: 6.0.2
+
+  packages/trpc-types: {}
 
   packages/web:
     dependencies:
@@ -3138,6 +3149,10 @@ packages:
   eventsource@3.0.7:
     resolution: {integrity: sha512-CRT1WTyuQoD771GW56XEZFQ/ZoSfWid1alKGDYMmkt2yl8UXrVR4pspqWNEcqKvVIzg6PAltWjxcSSPrboA4iA==}
     engines: {node: '>=18.0.0'}
+
+  eventsource@4.1.0:
+    resolution: {integrity: sha512-2GuF51iuHX6A9xdTccMTsNb7VO0lHZihApxhvQzJB5A03DvHDd2FQepodbMaztPBmBcE/ox7o2gqaxGhYB9LhQ==}
+    engines: {node: '>=20.0.0'}
 
   execa@5.1.1:
     resolution: {integrity: sha512-8uSpZZocAZRBAPIEINJj3Lo9HyGitllczc27Eh5YYojjMFMn8yHMDMaUHE2Jqfq05D/wucwI4JGURyXt1vchyg==}
@@ -7601,6 +7616,10 @@ snapshots:
   eventsource-parser@3.0.6: {}
 
   eventsource@3.0.7:
+    dependencies:
+      eventsource-parser: 3.0.6
+
+  eventsource@4.1.0:
     dependencies:
       eventsource-parser: 3.0.6
 
