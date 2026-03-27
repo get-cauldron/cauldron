@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to plan
-stopped_at: Completed 16-bridge-evolution-loop-fix-bead-dispatch-03-PLAN.md
-last_updated: "2026-03-27T22:13:25.473Z"
+stopped_at: Completed 17-ui-testing-e2e-testing-and-final-checks-01-PLAN.md
+last_updated: "2026-03-27T23:22:19.714Z"
 progress:
   total_phases: 19
-  completed_phases: 18
-  total_plans: 60
-  completed_plans: 60
+  completed_phases: 17
+  total_plans: 59
+  completed_plans: 57
 ---
 
 # Project State
@@ -23,7 +23,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 
 ## Current Position
 
-Phase: 17
+Phase: 16
 Plan: Not started
 
 ## Performance Metrics
@@ -93,8 +93,7 @@ Plan: Not started
 | Phase 14-wire-interview-start-fix-seed-crystallization-path P01 | 8min | 2 tasks | 2 files |
 | Phase 14 P02 | 12min | 2 tasks | 3 files |
 | Phase 15-wire-holdout-generation-fix-cli-run P01 | 10min | 2 tasks | 3 files |
-| Phase 16-bridge-evolution-loop-fix-bead-dispatch P01 | 7 | 2 tasks | 4 files |
-| Phase 16-bridge-evolution-loop-fix-bead-dispatch P03 | 1min | 2 tasks | 2 files |
+| Phase 17-ui-testing-e2e-testing-and-final-checks P01 | 40min | 2 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -218,9 +217,9 @@ Recent decisions affecting current work:
 - [Phase 14]: CLI startInterview placed before flags.json check so both JSON output and interactive mode get fresh interview state
 - [Phase 15-wire-holdout-generation-fix-cli-run]: Holdout generation failure is caught and logged separately from ImmutableSeedError — seed crystallization must not be rolled back due to LLM/budget errors in holdout generation
 - [Phase 15-wire-holdout-generation-fix-cli-run]: crystallizeCommand return type changed to Promise<{ seedId: string } | undefined> — both JSON and human-readable success paths return seedId; runCommand Seal stage injects --approve-all automatically for non-interactive pipeline mode
-- [Phase 16-bridge-evolution-loop-fix-bead-dispatch]: inngest.send() inside step.run block (not step.sendEvent()) for evolution trigger bridge — avoids step parameter type change while maintaining retry idempotency
-- [Phase 16-bridge-evolution-loop-fix-bead-dispatch]: emit-claimed step placed between claim-bead and emit-dispatched in beadDispatchHandler — bead_claimed only emitted after successful claim for correct event ordering
-- [Phase 16-bridge-evolution-loop-fix-bead-dispatch]: appendEvent mock returns undefined in execution tests — execution.ts calls appendEvent before findReadyBeads; mocking prevents DATABASE_URL error at import time
+- [Phase 17-ui-testing-e2e-testing-and-final-checks]: Lazy Proxy for db in shared/client.ts prevents DATABASE_URL throw at import time during Next.js static analysis
+- [Phase 17-ui-testing-e2e-testing-and-final-checks]: Webpack flag (--webpack) for next build/dev: Turbopack lacks extensionAlias; Node16 moduleResolution requires .js→.ts mapping
+- [Phase 17-ui-testing-e2e-testing-and-final-checks]: AxeBuilder API (not injectAxe/checkA11y): @axe-core/playwright exports AxeBuilder class only
 
 ### Pending Todos
 
@@ -235,6 +234,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T22:10:07.923Z
-Stopped at: Completed 16-bridge-evolution-loop-fix-bead-dispatch-03-PLAN.md
+Last session: 2026-03-27T23:22:19.711Z
+Stopped at: Completed 17-ui-testing-e2e-testing-and-final-checks-01-PLAN.md
 Resume file: None

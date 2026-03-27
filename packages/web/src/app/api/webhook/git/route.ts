@@ -1,10 +1,13 @@
 import { verify } from '@octokit/webhooks-methods';
-import { db } from '@get-cauldron/shared';
-import { projects } from '@get-cauldron/shared';
-import { appendEvent } from '@get-cauldron/shared';
-import { inngest } from '@/inngest/client';
+import { inngest } from '../../../../inngest/client.js';
 
 export const runtime = 'nodejs';
+
+// Lazy DB access — prevents DATABASE_URL check during next build static analysis
+async function getShared() {
+  const { db, projects, appendEvent } = await import('@get-cauldron/shared');
+  return { db, projects, appendEvent };
+}
 
 interface GitHubPushPayload {
   ref: string;
@@ -49,6 +52,8 @@ export async function POST(req: Request) {
   const repoFullName = payload.repository.full_name;
   const commitSha = payload.head_commit?.id ?? 'unknown';
   const branch = payload.ref.replace('refs/heads/', '');
+
+  const { db, projects, appendEvent } = await getShared();
 
   // Find project matching this repo
   const allProjects = await db.select().from(projects);
