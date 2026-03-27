@@ -185,4 +185,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-27 after Phase 14 completion — wired startInterview tRPC mutation (P0 gap), replaced inline seed insert with crystallizeSeed() (P1 gap), wired web + CLI consumers. All v1.0 milestone phases complete.*
+*Last updated: 2026-03-27 after Phase 15 completion — wired holdout generation (generateHoldoutScenarios + createVault) into approveSummary tRPC mutation after crystallization, fixed CLI crystallizeCommand to return seedId and runCommand to propagate it to seal stage with --seed-id + --approve-all. Two P0 integration gaps closed.*
