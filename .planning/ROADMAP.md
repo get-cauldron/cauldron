@@ -264,11 +264,12 @@ Plans:
   2. Inngest dev server can discover and invoke engine functions (handleBeadDispatchRequested, handleBeadCompleted, etc.)
   3. `configureEvolutionDeps()` is called in bootstrap.ts alongside existing dependency configurators
   4. Pipeline trigger webhook reaches downstream bead dispatch through the engine functions
-**Plans**: 2 plans
+**Plans**: 3 plans
 
 Plans:
 - [x] 11-01-PLAN.md — Engine Inngest serve endpoint with lazy dep init, configureEvolutionDeps in bootstrap
-- [ ] 11-02-PLAN.md — Wire pipeline trigger and execution trigger to send bead.dispatch_requested events
+- [x] 11-02-PLAN.md — Wire pipeline trigger and execution trigger to send bead.dispatch_requested events
+- [ ] 11-03-PLAN.md — Mount createInngestApp on HTTP server (port 3001) so Inngest can reach engine functions (gap closure)
 
 ### Phase 12: Security & Tech Debt Cleanup
 **Goal**: Address warning-level security issues and minor tech debt items flagged by the milestone audit.
@@ -300,5 +301,5 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 8. Web Dashboard | 9/9 | Complete   | 2026-03-27 |
 | 9. CLI | 4/4 | Complete   | 2026-03-27 |
 | 10. Wire tRPC Write Mutations | 2/3 | Complete    | 2026-03-27 |
-| 11. Engine Inngest Serve & Bootstrap | 1/2 | In Progress|  |
+| 11. Engine Inngest Serve & Bootstrap | 2/3 | In Progress|  |
 | 12. Security & Tech Debt | 0/? | Not started | - |
