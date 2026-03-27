@@ -107,7 +107,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Web Dashboard
 
-- [ ] **WEB-01**: Chat-like interface for the Socratic interview with MC suggestions and freeform input
+- [x] **WEB-01**: Chat-like interface for the Socratic interview with MC suggestions and freeform input
 - [x] **WEB-02**: Project workspace management (create, list, open, archive)
 - [x] **WEB-03**: Live DAG visualization showing bead execution status (pending, active, completed, failed, blocked)
 - [x] **WEB-04**: Real-time streaming of agent logs and code diffs via SSE
@@ -119,7 +119,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### CLI
 
-- [ ] **CLI-01**: All pipeline operations available via CLI (start interview, trigger execution, check status, approve holdouts)
+- [x] **CLI-01**: All pipeline operations available via CLI (start interview, trigger execution, check status, approve holdouts)
 - [x] **CLI-02**: Git-push triggered pipeline runs (webhook listener)
 - [x] **CLI-03**: CLI and web dashboard share the same API layer (tRPC)
 
@@ -242,7 +242,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EVOL-10 | Phase 7 | Complete |
 | EVOL-11 | Phase 7 | Complete |
 | EVOL-12 | Phase 7 | Complete |
-| WEB-01 | Phase 14 | Pending |
+| WEB-01 | Phase 14 | Complete |
 | WEB-02 | Phase 8 | Complete |
 | WEB-03 | Phase 8 | Complete |
 | WEB-04 | Phase 8 | Complete |
@@ -251,7 +251,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WEB-07 | Phase 8 | Complete |
 | WEB-08 | Phase 8 | Complete |
 | WEB-09 | Phase 8 | Complete |
-| CLI-01 | Phase 14 | Pending |
+| CLI-01 | Phase 14 | Complete |
 | CLI-02 | Phase 9 | Complete |
 | CLI-03 | Phase 9 | Complete |
 

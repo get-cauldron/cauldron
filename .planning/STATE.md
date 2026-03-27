@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 14-wire-interview-start-fix-seed-crystallization-path-01-PLAN.md
-last_updated: "2026-03-27T20:20:38.312Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 14-wire-interview-start-fix-seed-crystallization-path-02-PLAN.md
+last_updated: "2026-03-27T20:25:18.067Z"
 progress:
   total_phases: 16
-  completed_phases: 15
+  completed_phases: 16
   total_plans: 56
-  completed_plans: 55
+  completed_plans: 56
 ---
 
 # Project State
@@ -91,6 +91,7 @@ Plan: 2 of 2
 | Phase 11-engine-inngest-serve-evolution-bootstrap P01 | 5min | 2 tasks | 4 files |
 | Phase 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs P02 | 8min | 2 tasks | 97 files |
 | Phase 14-wire-interview-start-fix-seed-crystallization-path P01 | 8min | 2 tasks | 2 files |
+| Phase 14 P02 | 12min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -209,6 +210,8 @@ Recent decisions affecting current work:
 - [Phase 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs]: TRPCClient<AppRouter> explicit return type required in createCLIClient to avoid TS2883 non-portable type errors when AppRouter traverses shared subpath export boundaries
 - [Phase 14-wire-interview-start-fix-seed-crystallization-path]: crystallizeSeed() replaces inline DB insert in approveSummary — routes seed creation through event store, DB trigger enforcement, and immutability guard
 - [Phase 14-wire-interview-start-fix-seed-crystallization-path]: ImmutableSeedError caught at tRPC boundary and converted to CONFLICT code — lets web clients distinguish duplicate crystallization from other errors
+- [Phase 14]: useEffect guard uses both isPending and isSuccess to prevent infinite mutation loops in web interview auto-start
+- [Phase 14]: CLI startInterview placed before flags.json check so both JSON output and interactive mode get fresh interview state
 
 ### Pending Todos
 
@@ -223,6 +226,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T20:20:38.309Z
-Stopped at: Completed 14-wire-interview-start-fix-seed-crystallization-path-01-PLAN.md
+Last session: 2026-03-27T20:25:18.063Z
+Stopped at: Completed 14-wire-interview-start-fix-seed-crystallization-path-02-PLAN.md
 Resume file: None

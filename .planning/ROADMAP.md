@@ -31,7 +31,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 11: Engine Inngest Serve & Evolution Bootstrap** - Add HTTP serve endpoint for engine Inngest functions, wire configureEvolutionDeps in bootstrap (gap closure) (completed 2026-03-27)
 - [x] **Phase 12: Security & Tech Debt Cleanup** - SSE auth, kill command UX, minor tech debt items (gap closure) (completed 2026-03-27)
 - [x] **Phase 13: Re-scope to @get-cauldron/*** - Rename npm scope from @get-cauldron/* to @get-cauldron/*, consolidate trpc-types into shared, rename packages/cli to packages/cli (completed 2026-03-27)
-- [ ] **Phase 14: Wire Interview Start & Fix Seed Crystallization Path** - Close P0/P1 integration gaps from v1.0 audit (gap closure)
+- [x] **Phase 14: Wire Interview Start & Fix Seed Crystallization Path** - Close P0/P1 integration gaps from v1.0 audit (gap closure) (completed 2026-03-27)
 
 ## Phase Details
 
@@ -307,11 +307,11 @@ Plans:
   4. `approveSummary` tRPC mutation calls `crystallizeSeed()` instead of inline raw DB insert
   5. `seed_crystallized` event is written to event store when seed is crystallized via web/CLI
   6. SSE clients receive `seed_crystallized` event after crystallization
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 14-01-PLAN.md — Add startInterview tRPC mutation, fix approveSummary to call crystallizeSeed()
-- [ ] 14-02-PLAN.md — Wire web page and CLI to call startInterview for new projects
+- [x] 14-02-PLAN.md — Wire web page and CLI to call startInterview for new projects
 
 ---
 
@@ -339,4 +339,4 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 11. Engine Inngest Serve & Bootstrap | 2/3 | Complete    | 2026-03-27 |
 | 12. Security & Tech Debt | 0/? | Complete    | 2026-03-27 |
 | 13. Re-scope to @get-cauldron/* | 2/2 | Complete    | 2026-03-27 |
-| 14. Wire Interview & Seed Path | 1/2 | In Progress|  |
+| 14. Wire Interview & Seed Path | 2/2 | Complete   | 2026-03-27 |
