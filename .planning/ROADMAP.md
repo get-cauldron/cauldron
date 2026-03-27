@@ -239,7 +239,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 10-01-PLAN.md — Extend tRPC context with engine deps, wire sendAnswer to InterviewFSM
+- [x] 10-01-PLAN.md — Extend tRPC context with engine deps, wire sendAnswer to InterviewFSM
 - [ ] 10-02-PLAN.md — Wire sealHoldouts to vault encryption, triggerDecomposition to runDecomposition
 
 
@@ -283,6 +283,6 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 7. Evolutionary Loop | 4/4 | Complete   | 2026-03-27 |
 | 8. Web Dashboard | 9/9 | Complete   | 2026-03-27 |
 | 9. CLI | 4/4 | Complete   | 2026-03-27 |
-| 10. Wire tRPC Write Mutations | 0/2 | Not started | - |
+| 10. Wire tRPC Write Mutations | 1/2 | In Progress|  |
 | 11. Engine Inngest Serve & Bootstrap | 0/? | Not started | - |
 | 12. Security & Tech Debt | 0/? | Not started | - |

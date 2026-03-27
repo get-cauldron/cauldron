@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Milestone complete
-stopped_at: Completed 09-cli-04-PLAN.md
-last_updated: "2026-03-27T15:06:49.057Z"
+status: Ready to execute
+stopped_at: Completed 10-wire-trpc-mutations-to-engine-01-PLAN.md
+last_updated: "2026-03-27T16:12:37.879Z"
 progress:
-  total_phases: 11
+  total_phases: 14
   completed_phases: 11
-  total_plans: 45
-  completed_plans: 45
+  total_plans: 47
+  completed_plans: 46
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** User describes what they want; Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves until goal is met — humans steer at key decision points, not babysitting every step.
-**Current focus:** Phase 09 — cli
+**Current focus:** Phase 10 — wire-trpc-mutations-to-engine
 
 ## Current Position
 
-Phase: 09
-Plan: Not started
+Phase: 10 (wire-trpc-mutations-to-engine) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -86,6 +86,7 @@ Plan: Not started
 | Phase 09-cli P03 | 4min | 1 tasks | 2 files |
 | Phase 09-cli P02 | 10min | 2 tasks | 22 files |
 | Phase 09-cli P04 | 7min | 4 tasks | 15 files |
+| Phase 10-wire-trpc-mutations-to-engine P01 | 4min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -193,6 +194,8 @@ Recent decisions affecting current work:
 - [Phase 09-cli]: All CLI commands use (client, args, flags) tRPC signature — zero @cauldron/engine imports in command layer; triggerDecomposition/triggerExecution mutations use events for async Inngest dispatch
 - [Phase 09-cli]: pipeline_trigger added to eventTypeEnum (not reused pipeline_started) — semantically distinct: trigger is inbound event, started is post-queue
 - [Phase 09-cli]: Inngest client in web package separate from engine package (cauldron-web vs cauldron-engine) — web layer owns its own functions
+- [Phase 10-wire-trpc-mutations-to-engine]: Local Logger structural type in engine-deps.ts avoids adding pino as direct web dep; cast to any at LLMGateway.create boundary
+- [Phase 10-wire-trpc-mutations-to-engine]: getEngineDeps returns logger:any to avoid pino BaseLogger.level/silent/msgPrefix requirements without adding pino dep to web
 
 ### Pending Todos
 
@@ -207,6 +210,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T14:52:18.329Z
-Stopped at: Completed 09-cli-04-PLAN.md
+Last session: 2026-03-27T16:12:37.876Z
+Stopped at: Completed 10-wire-trpc-mutations-to-engine-01-PLAN.md
 Resume file: None
