@@ -1,7 +1,19 @@
 {
   "permissions": {
     "allow": [
-      "WebSearch"
+      "WebSearch",
+      "Bash(node:*)",
+      "Bash(ls:*)",
+      "Bash(pnpm exec:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(grep -rn export.*inngest /Users/zakkeown/Code/cauldron/packages/engine/src/holdout/)",
+      "Bash(pnpm --filter @cauldron/api test)",
+      "Bash(pnpm --filter @cauldron/api typecheck)",
+      "Bash(pnpm --filter @cauldron/engine test)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm install:*)"
     ]
   }
 }

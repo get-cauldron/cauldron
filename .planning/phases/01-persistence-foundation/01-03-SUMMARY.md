@@ -136,6 +136,20 @@ None - no external service configuration required beyond Docker being running.
 - Run `pnpm --filter @cauldron/shared test:integration` to verify Docker Postgres is up before any subsequent phase
 - `TEST_DATABASE_URL` defaults to `postgres://cauldron:cauldron@localhost:5433/cauldron_test` — docker compose up postgres-test required
 
+## Self-Check: PASSED
+
+- FOUND: packages/shared/src/db/event-store.ts
+- FOUND: packages/shared/src/db/__tests__/event-sourcing.integration.test.ts
+- FOUND: packages/shared/src/db/__tests__/schema-invariants.integration.test.ts
+- FOUND: packages/shared/src/db/seed-data.ts
+- FOUND: packages/shared/src/db/seed.ts
+- FOUND: packages/shared/vitest.integration.config.ts
+- FOUND: .planning/phases/01-persistence-foundation/01-03-SUMMARY.md
+- FOUND commit: 25b510e (Task 1)
+- FOUND commit: 631dfe5 (Task 2)
+- FOUND commit: 4b892d2 (docs)
+- All 13 integration tests pass against real Docker PostgreSQL
+
 ---
 *Phase: 01-persistence-foundation*
 *Completed: 2026-03-25*

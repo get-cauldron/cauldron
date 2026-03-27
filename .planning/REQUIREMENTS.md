@@ -89,14 +89,14 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **EVOL-02**: Evaluation uses weighted principles from the seed's evaluation_principles field
 - [x] **EVOL-03**: If goal not met, system generates a new immutable evolved seed with parent reference
 - [x] **EVOL-04**: Evolution decomposes new/changed acceptance criteria into new beads
-- [ ] **EVOL-05**: Convergence detection: ontology stability (similarity >= 0.95 across 2 generations)
-- [ ] **EVOL-06**: Convergence detection: stagnation (unchanged for 3 consecutive generations)
-- [ ] **EVOL-07**: Convergence detection: oscillation (period-2 cycling detected)
-- [ ] **EVOL-08**: Convergence detection: repetitive feedback (wonder questions repeat >= 70%)
-- [ ] **EVOL-09**: Hard cap: maximum 30 evolution generations
-- [x] **EVOL-10**: Lateral thinking personas activate on stagnation (contrarian, hacker, simplifier, researcher, architect)
-- [x] **EVOL-11**: Human escalation mechanism triggers when convergence looks unlikely
-- [ ] **EVOL-12**: Token budget circuit breaker: evolution halts if cumulative cost exceeds configurable threshold
+- [x] **EVOL-05**: Convergence detection: ontology stability (similarity >= 0.95 across 2 generations)
+- [x] **EVOL-06**: Convergence detection: stagnation (unchanged for 3 consecutive generations)
+- [x] **EVOL-07**: Convergence detection: oscillation (period-2 cycling detected)
+- [x] **EVOL-08**: Convergence detection: repetitive feedback (wonder questions repeat >= 70%)
+- [x] **EVOL-09**: Hard cap: maximum 30 evolution generations
+- [ ] **EVOL-10**: Lateral thinking personas activate on stagnation (contrarian, hacker, simplifier, researcher, architect)
+- [ ] **EVOL-11**: Human escalation mechanism triggers when convergence looks unlikely
+- [x] **EVOL-12**: Token budget circuit breaker: evolution halts if cumulative cost exceeds configurable threshold
 
 ### Code Intelligence
 
@@ -234,14 +234,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EVOL-02 | Phase 7 | Complete |
 | EVOL-03 | Phase 7 | Complete |
 | EVOL-04 | Phase 7 | Complete |
-| EVOL-05 | Phase 7 | Pending |
-| EVOL-06 | Phase 7 | Pending |
-| EVOL-07 | Phase 7 | Pending |
-| EVOL-08 | Phase 7 | Pending |
-| EVOL-09 | Phase 7 | Pending |
-| EVOL-10 | Phase 7 | Complete |
-| EVOL-11 | Phase 7 | Complete |
-| EVOL-12 | Phase 7 | Pending |
+| EVOL-05 | Phase 7 | Complete |
+| EVOL-06 | Phase 7 | Complete |
+| EVOL-07 | Phase 7 | Complete |
+| EVOL-08 | Phase 7 | Complete |
+| EVOL-09 | Phase 7 | Complete |
+| EVOL-10 | Phase 7 | Pending |
+| EVOL-11 | Phase 7 | Pending |
+| EVOL-12 | Phase 7 | Complete |
 | WEB-01 | Phase 8 | Pending |
 | WEB-02 | Phase 8 | Pending |
 | WEB-03 | Phase 8 | Pending |
