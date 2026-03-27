@@ -19,6 +19,7 @@ vi.mock('@cauldron/engine', () => {
     inngest: {},
     configureSchedulerDeps: vi.fn(),
     configureVaultDeps: vi.fn(),
+    configureEvolutionDeps: vi.fn(),
   };
 });
 
@@ -33,7 +34,7 @@ describe('bootstrap', () => {
   });
 
   it('Test 4: returns object with db, gateway, inngest, logger, config keys', async () => {
-    const { loadConfig, LLMGateway, configureSchedulerDeps, configureVaultDeps } =
+    const { loadConfig, LLMGateway, configureSchedulerDeps, configureVaultDeps, configureEvolutionDeps } =
       await import('@cauldron/engine');
 
     const mockConfig = { models: {}, budget: { defaultLimitCents: 500 } };
@@ -55,6 +56,9 @@ describe('bootstrap', () => {
       expect.objectContaining({ db: expect.anything(), gateway: expect.anything(), projectRoot: '/fake/root' })
     );
     expect(configureVaultDeps).toHaveBeenCalledWith(
+      expect.objectContaining({ db: expect.anything(), gateway: expect.anything() })
+    );
+    expect(configureEvolutionDeps).toHaveBeenCalledWith(
       expect.objectContaining({ db: expect.anything(), gateway: expect.anything() })
     );
   });

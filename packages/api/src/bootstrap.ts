@@ -20,6 +20,7 @@ import {
   inngest,
   configureSchedulerDeps,
   configureVaultDeps,
+  configureEvolutionDeps,
 } from '@cauldron/engine';
 import type { GatewayConfig } from '@cauldron/engine';
 import type { DbClient } from '@cauldron/shared';
@@ -56,6 +57,7 @@ export async function bootstrap(projectRoot: string): Promise<BootstrapDeps> {
 
   configureSchedulerDeps({ db, gateway, projectRoot });
   configureVaultDeps({ db, gateway });
+  configureEvolutionDeps({ db, gateway });
 
   return { db, gateway, inngest, logger, config };
 }
