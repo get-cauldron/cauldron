@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 11-engine-inngest-serve-evolution-bootstrap-01-PLAN.md
-last_updated: "2026-03-27T17:30:26.325Z"
+stopped_at: Completed 11-engine-inngest-serve-evolution-bootstrap-02-PLAN.md
+last_updated: "2026-03-27T17:31:00.000Z"
 progress:
   total_phases: 15
   completed_phases: 12
@@ -202,6 +202,7 @@ Recent decisions affecting current work:
 - [Phase 10-wire-trpc-mutations-to-engine]: sealHoldouts iterates approved vault entries calling approveScenarios then sealVault per entry — matches engine two-step protocol from Phase 4
 - [Phase 10-wire-trpc-mutations-to-engine]: triggerDecomposition preserves appendEvent audit trail and also calls runDecomposition synchronously with engineInngest alias for engine Inngest client
 - [Phase 11-engine-inngest-serve-evolution-bootstrap]: Use inngest/hono adapter for standalone API serve endpoint per CLAUDE.md Hono mandate
+- [Phase 11-engine-inngest-serve-evolution-bootstrap]: pipelineTriggerFunction uses step.sendEvent (durable, inside Inngest function); triggerExecution uses engineInngest.send() (outside Inngest context, tRPC mutation)
 
 ### Pending Todos
 
@@ -216,6 +217,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T17:30:26.322Z
-Stopped at: Completed 11-engine-inngest-serve-evolution-bootstrap-01-PLAN.md
+Last session: 2026-03-27T17:31:00.000Z
+Stopped at: Completed 11-engine-inngest-serve-evolution-bootstrap-02-PLAN.md
 Resume file: None
