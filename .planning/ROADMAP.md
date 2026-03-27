@@ -33,7 +33,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 13: Re-scope to @get-cauldron/*** - Rename npm scope from @get-cauldron/* to @get-cauldron/*, consolidate trpc-types into shared, rename packages/cli to packages/cli (completed 2026-03-27)
 - [x] **Phase 14: Wire Interview Start & Fix Seed Crystallization Path** - Close P0/P1 integration gaps from v1.0 audit (gap closure) (completed 2026-03-27)
 - [x] **Phase 15: Wire Holdout Generation Pipeline & Fix CLI Run** - Trigger holdout generation after crystallization, fix cauldron run seedId injection (gap closure) (completed 2026-03-27)
-- [ ] **Phase 16: Bridge Evolution Loop & Fix Bead Dispatch** - Bridge evolution event types, fix dispatch payloads, add bead_claimed SSE, fix web SSE auth (gap closure)
+- [x] **Phase 16: Bridge Evolution Loop & Fix Bead Dispatch** - Bridge evolution event types, fix dispatch payloads, add bead_claimed SSE, fix web SSE auth (gap closure) (completed 2026-03-27)
 
 ## Phase Details
 
@@ -345,12 +345,12 @@ Plans:
   5. `claimBead` emits `bead_claimed` event — live DAG shows beads in `active` status
   6. Web SSE connections work when `CAULDRON_API_KEY` is set (auth header included)
   7. Git push → pipeline trigger dispatches beads with correct payload
-**Plans:** 3 plans
+**Plans:** 3/3 plans complete
 
 Plans:
 - [x] 16-01-PLAN.md — Bridge evolution trigger (inngest.send in convergenceHandler) and emit bead_claimed event after claim
 - [x] 16-02-PLAN.md — Fix triggerExecution/pipelineTrigger dispatch payloads (beadId) and SSE query-param auth fallback
-- [ ] 16-03-PLAN.md — Gap closure: execution.test.ts for per-bead dispatch tests, WEB-04 tracker update
+- [x] 16-03-PLAN.md — Gap closure: execution.test.ts for per-bead dispatch tests, WEB-04 tracker update
 
 ### Phase 17: UI testing, e2e testing, and final checks
 
@@ -390,4 +390,4 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 13. Re-scope to @get-cauldron/* | 2/2 | Complete    | 2026-03-27 |
 | 14. Wire Interview & Seed Path | 2/2 | Complete    | 2026-03-27 |
 | 15. Wire Holdout Pipeline & CLI Run | 1/1 | Complete    | 2026-03-27 |
-| 16. Bridge Evolution & Fix Dispatch | 2/3 | In Progress|  |
+| 16. Bridge Evolution & Fix Dispatch | 3/3 | Complete   | 2026-03-27 |
