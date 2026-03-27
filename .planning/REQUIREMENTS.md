@@ -48,7 +48,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **HOLD-05**: Holdout tests remain sealed during all execution and evolution cycles
 - [x] **HOLD-06**: Holdout tests unsealed only after evolutionary convergence is reached
 - [x] **HOLD-07**: Unsealed holdout test results determine whether additional evolution cycles are needed
-- [ ] **HOLD-08**: Holdout test failure triggers new evolutionary cycle with the failure context
+- [x] **HOLD-08**: Holdout test failure triggers new evolutionary cycle with the failure context
 
 ### Task Decomposition & DAG Coordination
 
@@ -200,20 +200,20 @@ Which phases cover which requirements. Updated during roadmap creation.
 | HOLD-04 | Phase 4 | Complete |
 | HOLD-05 | Phase 15 | Complete |
 | HOLD-06 | Phase 4 | Complete |
-| HOLD-07 | Phase 16 | Pending |
-| HOLD-08 | Phase 16 | Pending |
+| HOLD-07 | Phase 16 | Complete |
+| HOLD-08 | Phase 16 | Complete |
 | DAG-01 | Phase 5 | Complete |
 | DAG-02 | Phase 5 | Complete |
 | DAG-03 | Phase 5 | Complete |
 | DAG-04 | Phase 5 | Complete |
-| DAG-05 | Phase 16 | Pending |
+| DAG-05 | Phase 16 | Complete |
 | DAG-06 | Phase 5 | Complete |
 | DAG-07 | Phase 5 | Complete |
 | DAG-08 | Phase 5 | Complete |
 | DAG-09 | Phase 5 | Complete |
 | EXEC-01 | Phase 6 | Complete |
 | EXEC-02 | Phase 6 | Complete |
-| EXEC-03 | Phase 16 | Pending |
+| EXEC-03 | Phase 16 | Complete |
 | EXEC-04 | Phase 6 | Complete |
 | EXEC-05 | Phase 6 | Complete |
 | EXEC-06 | Phase 6 | Complete |
@@ -230,21 +230,21 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CODE-02 | Phase 6 | Complete |
 | CODE-03 | Phase 6 | Complete |
 | CODE-04 | Phase 6 | Complete |
-| EVOL-01 | Phase 16 | Pending |
-| EVOL-02 | Phase 16 | Pending |
-| EVOL-03 | Phase 16 | Pending |
-| EVOL-04 | Phase 16 | Pending |
-| EVOL-05 | Phase 16 | Pending |
-| EVOL-06 | Phase 16 | Pending |
-| EVOL-07 | Phase 16 | Pending |
-| EVOL-08 | Phase 16 | Pending |
-| EVOL-09 | Phase 16 | Pending |
-| EVOL-10 | Phase 16 | Pending |
-| EVOL-11 | Phase 16 | Pending |
-| EVOL-12 | Phase 16 | Pending |
+| EVOL-01 | Phase 16 | Complete |
+| EVOL-02 | Phase 16 | Complete |
+| EVOL-03 | Phase 16 | Complete |
+| EVOL-04 | Phase 16 | Complete |
+| EVOL-05 | Phase 16 | Complete |
+| EVOL-06 | Phase 16 | Complete |
+| EVOL-07 | Phase 16 | Complete |
+| EVOL-08 | Phase 16 | Complete |
+| EVOL-09 | Phase 16 | Complete |
+| EVOL-10 | Phase 16 | Complete |
+| EVOL-11 | Phase 16 | Complete |
+| EVOL-12 | Phase 16 | Complete |
 | WEB-01 | Phase 14 | Complete |
 | WEB-02 | Phase 8 | Complete |
-| WEB-03 | Phase 16 | Pending |
+| WEB-03 | Phase 16 | Complete |
 | WEB-04 | Phase 16 | Pending |
 | WEB-05 | Phase 15 | Complete |
 | WEB-06 | Phase 8 | Complete |
