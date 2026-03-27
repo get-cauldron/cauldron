@@ -59,6 +59,12 @@ export default function InterviewPage() {
   const [localHoldoutStatuses, setLocalHoldoutStatuses] = React.useState<
     Record<string, HoldoutStatus>
   >({});
+  const [seedId, setSeedId] = React.useState<string | null>(null);
+
+  const holdoutsQuery = useQuery({
+    ...trpc.interview.getHoldouts.queryOptions({ seedId: seedId ?? '' }),
+    enabled: !!seedId,
+  });
 
   // Auto-scroll ref
   const chatEndRef = React.useRef<HTMLDivElement>(null);
@@ -122,7 +128,7 @@ export default function InterviewPage() {
   async function handleApproveSummary() {
     if (!summaryData?.summary) return;
     const s = summaryData.summary;
-    await approveSummaryMutation.mutateAsync({
+    const result = await approveSummaryMutation.mutateAsync({
       projectId,
       summary: {
         goal: s.goal,
@@ -133,6 +139,7 @@ export default function InterviewPage() {
         exitConditions: (s.exitConditions as Record<string, unknown> | Array<{ condition: string; description: string }>) ?? {},
       },
     });
+    setSeedId(result.seedId);
     await transcriptQuery.refetch();
     await summaryQuery.refetch();
   }
@@ -155,13 +162,17 @@ export default function InterviewPage() {
     await rejectHoldoutMutation.mutateAsync({ holdoutId: vaultId });
   }
 
-  // Derive holdout scenarios from summary — only shown after crystallization triggers holdout generation
-  // For now these come from the engine's holdout vault which is loaded separately.
-  // We represent a placeholder empty array; actual holdouts require a seedId query.
-  const holdoutScenarios: HoldoutScenarioLocal[] = [];
+  // Derive holdout scenarios from tRPC getHoldouts query — populated after seed crystallization
+  const holdoutScenarios: HoldoutScenarioLocal[] = (holdoutsQuery.data?.scenarios ?? []).map(s => ({
+    id: s.id,
+    name: s.name,
+    description: s.description,
+    testCode: s.testCode,
+    status: (localHoldoutStatuses[s.id] ?? s.status) as HoldoutStatus,
+  }));
 
   const showSeedApproval = phase === 'reviewing' && summaryData?.summary != null;
-  const showHoldouts = phase === 'crystallized' && holdoutScenarios.length > 0;
+  const showHoldouts = (phase === 'crystallized' || !!seedId) && holdoutScenarios.length > 0;
   const showClarityBanner = thresholdMet && phase === 'gathering';
   const isLoading = transcriptQuery.isLoading;
 
@@ -288,7 +299,6 @@ export default function InterviewPage() {
                 ))}
                 <Button
                   onClick={() => {
-                    const seedId = summaryData?.summary ? 'placeholder' : '';
                     if (seedId) sealHoldoutsMutation.mutate({ seedId });
                   }}
                   style={{
