@@ -74,8 +74,28 @@ export default function InterviewPage() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [transcriptQuery.data?.transcript]);
 
-  // tRPC mutations
+  // tRPC mutations (startInterviewMutation declared first — used in auto-start effect below)
+  const startInterviewMutation = useMutation(trpc.interview.startInterview.mutationOptions());
   const sendAnswerMutation = useMutation(trpc.interview.sendAnswer.mutationOptions());
+
+  // Auto-start interview when no DB record exists (P0 gap closure)
+  React.useEffect(() => {
+    if (
+      transcriptQuery.data?.status === 'not_started' &&
+      !startInterviewMutation.isPending &&
+      !startInterviewMutation.isSuccess
+    ) {
+      startInterviewMutation.mutate(
+        { projectId },
+        {
+          onSuccess: () => {
+            void transcriptQuery.refetch();
+          },
+        },
+      );
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transcriptQuery.data?.status, startInterviewMutation.isPending, startInterviewMutation.isSuccess, projectId]);
   const approveSummaryMutation = useMutation(trpc.interview.approveSummary.mutationOptions());
   const rejectSummaryMutation = useMutation(trpc.interview.rejectSummary.mutationOptions());
   const approveHoldoutMutation = useMutation(trpc.interview.approveHoldout.mutationOptions());
@@ -217,10 +237,12 @@ export default function InterviewPage() {
                     margin: '0 0 8px',
                   }}
                 >
-                  Interview not started
+                  {startInterviewMutation.isPending ? 'Starting interview...' : 'Interview not started'}
                 </p>
                 <p style={{ fontSize: '14px', color: '#6b8399', margin: 0 }}>
-                  Send your first message to begin the Socratic interview.
+                  {startInterviewMutation.isPending
+                    ? 'Preparing your Socratic interview session.'
+                    : 'Send your first message to begin the Socratic interview.'}
                 </p>
               </div>
             ) : (
