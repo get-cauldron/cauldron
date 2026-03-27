@@ -52,6 +52,20 @@ export async function interviewCommand(
     throw err;
   }
 
+  // Start interview if no DB record exists (P0 gap closure)
+  if (state.status === 'not_started') {
+    const startSpinner = createSpinner('Starting interview...').start();
+    try {
+      await client.interview.startInterview.mutate({ projectId });
+      startSpinner.succeed('Interview started');
+    } catch (err) {
+      startSpinner.fail('Failed to start interview');
+      throw err;
+    }
+    // Re-fetch state with fresh DB record so transcript/phase are current
+    state = await client.interview.getTranscript.query({ projectId });
+  }
+
   if (flags.json) {
     console.log(formatJson(state));
     return;
