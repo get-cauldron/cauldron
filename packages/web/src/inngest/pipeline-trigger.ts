@@ -127,8 +127,33 @@ export const pipelineTriggerFunction: InngestFunction<any, any, any, any> = inng
           pusher,
         },
       });
-      // The existing Inngest pipeline orchestration functions will pick up
-      // pipeline_trigger events with status: 'triggered' and start the pipeline.
+    });
+
+    // Find the latest seed for this project so we can dispatch bead execution
+    const latestSeed = await step.run('find-latest-seed', async () => {
+      const [seed] = await db
+        .select()
+        .from(seeds)
+        .where(eq(seeds.projectId, projectId))
+        .orderBy(desc(seeds.createdAt))
+        .limit(1);
+      return seed ?? null;
+    });
+
+    if (!latestSeed) {
+      // No seed exists for this project — cannot dispatch execution.
+      // Return a distinct status so callers are not misled into thinking execution started.
+      return { status: 'no_seed', projectId };
+    }
+
+    // Dispatch bead execution to engine Inngest functions.
+    // The engine's handleBeadDispatchRequested (and evolution bootstrap) picks up this event.
+    await step.sendEvent('dispatch-bead-execution', {
+      name: 'bead.dispatch_requested',
+      data: {
+        seedId: latestSeed.id,
+        projectId,
+      },
     });
 
     return { status: 'triggered', projectId, commitSha };
