@@ -78,6 +78,13 @@
       "when": 1775163600000,
       "tag": "0010_execution_started_event",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1775250000000,
+      "tag": "0011_pipeline_trigger_event",
+      "breakpoints": true
     }
   ]
 }
