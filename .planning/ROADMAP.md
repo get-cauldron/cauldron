@@ -30,6 +30,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 10: Wire tRPC Write Mutations to Engine** - Connect stub tRPC mutations to actual engine functions (interview FSM, vault sealing, decomposition) (gap closure) (completed 2026-03-27)
 - [x] **Phase 11: Engine Inngest Serve & Evolution Bootstrap** - Add HTTP serve endpoint for engine Inngest functions, wire configureEvolutionDeps in bootstrap (gap closure) (completed 2026-03-27)
 - [x] **Phase 12: Security & Tech Debt Cleanup** - SSE auth, kill command UX, minor tech debt items (gap closure) (completed 2026-03-27)
+- [ ] **Phase 13: Re-scope to @get-cauldron/*** - Rename npm scope from @cauldron/* to @get-cauldron/*, consolidate trpc-types into shared, rename packages/api to packages/cli
 
 ## Phase Details
 
@@ -123,15 +124,6 @@ Plans:
 ---
 **DOGFOOD INFLECTION POINT: After Phase 6, Cauldron can run its own pipeline.**
 Phase 6 completes the end-to-end execution path: interview a project, decompose it, run agents, merge results. Phases 7-9 can be planned and partially executed using Cauldron itself as the build tool. Temporary skills bridge any gaps until the evolutionary loop (Phase 7) is available.
-### Phase 13: Re-scope to @get-cauldron/* -- already have the github and npm orgs
-
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 12
-**Plans:** 0 plans
-
-Plans:
-- [ ] TBD (run /gsd:plan-phase 13 to break down)
 
 ---
 
@@ -284,11 +276,29 @@ Plans:
 Plans:
 - [ ] 12-01-PLAN.md — SSE auth gate, --project-id flag, VERIFICATION.md correction
 
+### Phase 13: Re-scope to @get-cauldron/* -- already have the github and npm orgs
+
+**Goal:** Rename npm scope from @cauldron/* to @get-cauldron/*, consolidate trpc-types into shared, rename packages/api to packages/cli, and update all references project-wide.
+**Requirements**: SC-1, SC-2, SC-3, SC-4, SC-5, SC-6
+**Depends on:** Phase 12
+**Success Criteria** (what must be TRUE):
+  1. All package.json `name` fields use `@get-cauldron/*` scope
+  2. `@cauldron/trpc-types` package no longer exists — its exports live in `@get-cauldron/shared`
+  3. `packages/api` directory renamed to `packages/cli`
+  4. Zero occurrences of `@cauldron/` in source files, imports, or workspace deps
+  5. All tests pass, typecheck passes, build succeeds after rename
+  6. CLAUDE.md and planning docs updated to reference new scope
+**Plans**: 2 plans
+
+Plans:
+- [ ] 13-01-PLAN.md — Package restructure: merge trpc-types into shared, rename packages/api to packages/cli, update all package.json scopes
+- [ ] 13-02-PLAN.md — Bulk import rename (@cauldron/* to @get-cauldron/*), update skills/docs, full regression gate
+
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 6.1 -> 6.2 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 6.1 -> 6.2 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13
 
 Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (DAG) depends on Phase 3 but not Phase 4. Phase 8 (Dashboard) can begin in parallel once the Phase 4 DAG data model is stable. Phases 10-12 are gap closure phases from the v1.0 milestone audit.
 
@@ -308,3 +318,4 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 10. Wire tRPC Write Mutations | 2/3 | Complete    | 2026-03-27 |
 | 11. Engine Inngest Serve & Bootstrap | 2/3 | Complete    | 2026-03-27 |
 | 12. Security & Tech Debt | 0/? | Complete    | 2026-03-27 |
+| 13. Re-scope to @get-cauldron/* | 0/2 | In Progress | - |
