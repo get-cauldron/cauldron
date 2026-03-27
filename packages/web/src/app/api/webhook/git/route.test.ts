@@ -18,7 +18,7 @@ vi.mock('@get-cauldron/shared', () => {
   };
 });
 
-vi.mock('../../../../inngest/client.js', () => ({
+vi.mock('@/inngest/client', () => ({
   inngest: { send: mockInngestSend },
 }));
 

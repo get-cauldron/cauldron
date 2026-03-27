@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
+    "build": "next build --webpack",
     "typecheck": "tsc --noEmit",
-    "dev": "next dev --port 3000",
+    "dev": "next dev --webpack --port 3000",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test"

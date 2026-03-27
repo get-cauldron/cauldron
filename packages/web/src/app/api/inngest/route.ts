@@ -1,6 +1,6 @@
 import { serve } from 'inngest/next';
-import { inngest } from '../../../inngest/client.js';
-import { pipelineTriggerFunction } from '../../../inngest/pipeline-trigger.js';
+import { inngest } from '@/inngest/client';
+import { pipelineTriggerFunction } from '@/inngest/pipeline-trigger';
 
 /**
  * Inngest serve handler for the Cauldron web app.
