@@ -115,7 +115,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **WEB-06**: Evolution cycle visualization: seed lineage, convergence progress, lateral thinking activations
 - [ ] **WEB-07**: Token usage and cost dashboard per project and per evolution cycle
 - [ ] **WEB-08**: Visual identity: Horizon Zero Dawn Cauldron aesthetic (dark metallic, teal/blue energy conduits, hexagonal geometries, industrial-organic)
-- [ ] **WEB-09**: WebSocket for bidirectional flows (human approval confirmations, escalation responses)
+- [x] **WEB-09**: WebSocket for bidirectional flows (human approval confirmations, escalation responses)
 
 ### CLI
 
@@ -250,7 +250,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WEB-06 | Phase 8 | Pending |
 | WEB-07 | Phase 8 | Pending |
 | WEB-08 | Phase 8 | Pending |
-| WEB-09 | Phase 8 | Pending |
+| WEB-09 | Phase 8 | Complete |
 | CLI-01 | Phase 9 | Pending |
 | CLI-02 | Phase 9 | Pending |
 | CLI-03 | Phase 9 | Pending |
