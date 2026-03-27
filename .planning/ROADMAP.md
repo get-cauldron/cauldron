@@ -318,4 +318,4 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 10. Wire tRPC Write Mutations | 2/3 | Complete    | 2026-03-27 |
 | 11. Engine Inngest Serve & Bootstrap | 2/3 | Complete    | 2026-03-27 |
 | 12. Security & Tech Debt | 0/? | Complete    | 2026-03-27 |
-| 13. Re-scope to @get-cauldron/* | 2/2 | Complete   | 2026-03-27 |
+| 13. Re-scope to @get-cauldron/* | 2/2 | Complete    | 2026-03-27 |
