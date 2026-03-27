@@ -26,4 +26,9 @@ export default defineConfig({
   scoringModel: 'gpt-4.1-mini',
   // D-15: this IS the Cauldron project itself — activates engine snapshot + migration review gates
   selfBuild: true,
+  // D-14: CLI connection settings — apiKey written to .env on first-run for web server auth
+  cli: {
+    serverUrl: 'http://localhost:3000',
+    apiKey: '',
+  },
 });
