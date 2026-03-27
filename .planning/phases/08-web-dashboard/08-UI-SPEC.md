@@ -26,6 +26,8 @@ created: 2026-03-27
 
 **shadcn initialization note:** packages/web must be scaffolded into a Next.js 16 app before shadcn can be initialized. Run `npx shadcn init` after scaffold, selecting: dark theme, CSS variables, Tailwind v4, TypeScript. No third-party registries declared. No registry vetting gate required.
 
+**Design contract fallback:** Until shadcn is initialized, this UI-SPEC document IS the declared design system fallback. All tokens (spacing, typography, color), component specifications, and interaction states defined here serve as the authoritative contract for implementation. Executors must implement from this spec directly if shadcn is not yet present.
+
 **Source:** CONTEXT.md D-30, D-33, CLAUDE.md §Recommended Stack
 
 ---
@@ -58,14 +60,18 @@ Exceptions:
 | Role | Size | Weight | Line Height | Font | Usage |
 |------|------|--------|-------------|------|-------|
 | Body | 14px | 400 | 1.5 | Geist Sans | Chat messages, descriptions, panel body text |
-| Label | 12px | 500 | 1.4 | Geist Sans | Status badges, chip labels, metadata, nav items, dimension scores |
+| Code | 14px | 400 | 1.6 | Geist Mono | Terminal log pane, code diffs, bead spec content, inline code — same size as Body, distinguished by font family only |
+| Label | 12px | 600 | 1.4 | Geist Sans | Status badges, chip labels, metadata, nav items, dimension scores |
 | Heading | 16px | 600 | 1.3 | Geist Sans | Panel headers, card titles, section headers (ALL-CAPS + tracked) |
 | Display | 20px | 600 | 1.2 | Geist Sans | Page titles, project name in header, tab labels |
-| Code | 13px | 400 | 1.6 | Geist Mono | Terminal log pane, code diffs, bead spec content, inline code |
+
+**Declared sizes:** 12px (Label), 14px (Body + Code), 16px (Heading), 20px (Display) — 4 sizes total.
+
+**Declared weights:** 400 (regular — Body, Code) and 600 (semibold — Label, Heading, Display) — 2 weights total.
 
 **Section headers styling rule:** Heading role text is rendered ALL-CAPS with `letter-spacing: 0.08em` and a thin (1px) horizontal rule beneath — industrial aesthetic per CONTEXT.md D-30.
 
-**Source:** CONTEXT.md D-30. 4 sizes (14/12/16/20) plus mono variant. 2 weights (400 + 500/600 semi-bold family). Display and Heading both weight 600 but different sizes — this satisfies the "2 weights" contract (regular 400, semibold 600; label uses 500 as a minor intermediate only for legibility at 12px).
+**Source:** CONTEXT.md D-30. 4 sizes (12/14/16/20), 2 weights (400 regular, 600 semibold). Code role inherits 14px Body size; Geist Mono font family is the sole differentiator.
 
 ---
 
@@ -175,7 +181,7 @@ All transitions use a consistent easing curve: `cubic-bezier(0.25, 0.46, 0.45, 0
 | Primary CTA — start project | "Start Building" |
 | Primary CTA — approve seed | "Crystallize Seed" |
 | Primary CTA — approve holdouts | "Seal Holdout Tests" |
-| Primary CTA — send interview answer | "Send" |
+| Primary CTA — send interview answer | "Send Answer" |
 | Primary CTA — escalation response | "Submit Guidance" |
 | Empty state — project list | Heading: "No projects yet" / Body: "Describe what you want to build and Cauldron will take it from there. Start with an interview." / CTA: "Start Building" |
 | Empty state — DAG (no execution started) | Heading: "Execution not started" / Body: "Crystallize a seed to decompose it into tasks and begin execution." |
@@ -256,6 +262,10 @@ Custom components (not in shadcn, built for this phase):
 └──────┴──────────────────────────────────────────────────┘
 ```
 
+### Project List Page (Landing — D-20)
+
+The project list is the primary entry screen. The focal point is a full-width grid of project cards, each displaying project name, status badge, last-activity timestamp, and total cost summary. When no projects exist, the empty state card with "Start Building" CTA is centered in the content area and is the sole visual anchor. When projects exist, the most recently active project card is visually prominent via a teal left-border accent and slightly elevated surface (`#1a2330`) compared to inactive project cards.
+
 ### Interview Tab Layout
 
 ```
@@ -263,7 +273,7 @@ Custom components (not in shadcn, built for this phase):
 │  Chat area (scrollable)             │  Right sidebar   │
 │  [question bubbles]                 │  (320px fixed)   │
 │  [MC chip group]                    │                  │
-│  [text input + Send]                │  AmbiguityMeter  │
+│  [text input + Send Answer]         │  AmbiguityMeter  │
 │                                     │  Dimension scores│
 │                                     │  Live summary    │
 └─────────────────────────────────────┴──────────────────┘
@@ -294,7 +304,7 @@ Custom components (not in shadcn, built for this phase):
 └──────────────────────────────────────────┘
 ```
 
-**Source:** CONTEXT.md D-02, D-07, D-11, D-12, D-13, D-25, D-26, D-27.
+**Source:** CONTEXT.md D-02, D-07, D-11, D-12, D-13, D-20, D-25, D-26, D-27.
 
 ---
 
