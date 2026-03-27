@@ -327,10 +327,10 @@ Plans:
   4. `cauldron run` passes seedId from crystallize stage to seal stage — full pipeline completes
   5. Cross-model diversity enforcement (LLM-06) is active during holdout generation
   6. Web interview page shows holdout review cards after crystallization
-**Plans:** 0/? plans
+**Plans:** 1 plan
 
 Plans:
-- [ ] (to be planned)
+- [ ] 15-01-PLAN.md — Wire holdout generation into approveSummary tRPC, fix CLI run seedId propagation
 
 ### Phase 16: Bridge Evolution Loop & Fix Bead Dispatch
 **Goal:** Make the evolution loop reachable from the pipeline by bridging the DB-event/Inngest-event gap, fix bead dispatch payloads so execution and re-execution work from all trigger paths, and add missing SSE events for live DAG status.
@@ -345,10 +345,20 @@ Plans:
   5. `claimBead` emits `bead_claimed` event — live DAG shows beads in `active` status
   6. Web SSE connections work when `CAULDRON_API_KEY` is set (auth header included)
   7. Git push → pipeline trigger dispatches beads with correct payload
-**Plans:** 0/? plans
+**Plans:** 1 plan
 
 Plans:
-- [ ] (to be planned)
+- [ ] 15-01-PLAN.md — Wire holdout generation into approveSummary tRPC, fix CLI run seedId propagation
+
+### Phase 17: UI testing, e2e testing, and final checks
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 16
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 17 to break down)
 
 ---
 
@@ -377,5 +387,5 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 12. Security & Tech Debt | 0/? | Complete    | 2026-03-27 |
 | 13. Re-scope to @get-cauldron/* | 2/2 | Complete    | 2026-03-27 |
 | 14. Wire Interview & Seed Path | 2/2 | Complete    | 2026-03-27 |
-| 15. Wire Holdout Pipeline & CLI Run | 0/? | Planned | — |
+| 15. Wire Holdout Pipeline & CLI Run | 0/1 | In Progress | — |
 | 16. Bridge Evolution & Fix Dispatch | 0/? | Planned | — |
