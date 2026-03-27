@@ -1,10 +1,11 @@
 import { initTRPC, TRPCError } from '@trpc/server';
 import { cache } from 'react';
 import { db } from '@cauldron/shared';
+import { getEngineDeps } from './engine-deps.js';
 
 export const createTRPCContext = cache(async (req?: Request) => {
   const authenticated = validateApiKey(req);
-  return { db, authenticated };
+  return { db, authenticated, getEngineDeps };
 });
 
 /**
