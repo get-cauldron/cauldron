@@ -267,7 +267,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 11-01-PLAN.md — Engine Inngest serve endpoint with lazy dep init, configureEvolutionDeps in bootstrap
+- [x] 11-01-PLAN.md — Engine Inngest serve endpoint with lazy dep init, configureEvolutionDeps in bootstrap
 - [ ] 11-02-PLAN.md — Wire pipeline trigger and execution trigger to send bead.dispatch_requested events
 
 ### Phase 12: Security & Tech Debt Cleanup
@@ -300,5 +300,5 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 8. Web Dashboard | 9/9 | Complete   | 2026-03-27 |
 | 9. CLI | 4/4 | Complete   | 2026-03-27 |
 | 10. Wire tRPC Write Mutations | 2/3 | Complete    | 2026-03-27 |
-| 11. Engine Inngest Serve & Bootstrap | 0/2 | Planned | - |
+| 11. Engine Inngest Serve & Bootstrap | 1/2 | In Progress|  |
 | 12. Security & Tech Debt | 0/? | Not started | - |
