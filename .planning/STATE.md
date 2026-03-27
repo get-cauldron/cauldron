@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 10-wire-trpc-mutations-to-engine-01-PLAN.md
-last_updated: "2026-03-27T16:12:37.879Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 10-wire-trpc-mutations-to-engine-02-PLAN.md
+last_updated: "2026-03-27T16:18:44.755Z"
 progress:
-  total_phases: 14
-  completed_phases: 11
+  total_phases: 15
+  completed_phases: 12
   total_plans: 47
-  completed_plans: 46
+  completed_plans: 47
 ---
 
 # Project State
@@ -87,6 +87,7 @@ Plan: 2 of 2
 | Phase 09-cli P02 | 10min | 2 tasks | 22 files |
 | Phase 09-cli P04 | 7min | 4 tasks | 15 files |
 | Phase 10-wire-trpc-mutations-to-engine P01 | 4min | 2 tasks | 4 files |
+| Phase 10-wire-trpc-mutations-to-engine P02 | 4min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -94,6 +95,7 @@ Plan: 2 of 2
 
 - Phase 6.1 inserted after Phase 6: Dogfooding Transition — Bridge Claude Code to Cauldron for Self-Building (URGENT)
 - Phase 6.2 inserted after Phase 6: Testing and Tuning the Dogfood Process (URGENT)
+- Phase 13 added: Re-scope to @get-cauldron/* -- already have the github and npm orgs
 
 ### Decisions
 
@@ -196,6 +198,8 @@ Recent decisions affecting current work:
 - [Phase 09-cli]: Inngest client in web package separate from engine package (cauldron-web vs cauldron-engine) — web layer owns its own functions
 - [Phase 10-wire-trpc-mutations-to-engine]: Local Logger structural type in engine-deps.ts avoids adding pino as direct web dep; cast to any at LLMGateway.create boundary
 - [Phase 10-wire-trpc-mutations-to-engine]: getEngineDeps returns logger:any to avoid pino BaseLogger.level/silent/msgPrefix requirements without adding pino dep to web
+- [Phase 10-wire-trpc-mutations-to-engine]: sealHoldouts iterates approved vault entries calling approveScenarios then sealVault per entry — matches engine two-step protocol from Phase 4
+- [Phase 10-wire-trpc-mutations-to-engine]: triggerDecomposition preserves appendEvent audit trail and also calls runDecomposition synchronously with engineInngest alias for engine Inngest client
 
 ### Pending Todos
 
@@ -210,6 +214,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T16:12:37.876Z
-Stopped at: Completed 10-wire-trpc-mutations-to-engine-01-PLAN.md
+Last session: 2026-03-27T16:18:44.752Z
+Stopped at: Completed 10-wire-trpc-mutations-to-engine-02-PLAN.md
 Resume file: None

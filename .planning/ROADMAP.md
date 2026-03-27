@@ -27,7 +27,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 7: Evolutionary Loop** - Post-execution evaluator, evolution FSM, convergence detection, lateral thinking personas, holdout unsealing (completed 2026-03-27)
 - [x] **Phase 8: Web Dashboard** - Interview chat, live DAG visualization, SSE log streaming, human approval UX, HZD aesthetic (completed 2026-03-27)
 - [x] **Phase 9: CLI** - Full pipeline CLI, git-push trigger, shared tRPC API (completed 2026-03-27)
-- [ ] **Phase 10: Wire tRPC Write Mutations to Engine** - Connect stub tRPC mutations to actual engine functions (interview FSM, vault sealing, decomposition) (gap closure)
+- [x] **Phase 10: Wire tRPC Write Mutations to Engine** - Connect stub tRPC mutations to actual engine functions (interview FSM, vault sealing, decomposition) (gap closure) (completed 2026-03-27)
 - [ ] **Phase 11: Engine Inngest Serve & Evolution Bootstrap** - Add HTTP serve endpoint for engine Inngest functions, wire configureEvolutionDeps in bootstrap (gap closure)
 - [ ] **Phase 12: Security & Tech Debt Cleanup** - SSE auth, kill command UX, minor tech debt items (gap closure)
 
@@ -123,6 +123,16 @@ Plans:
 ---
 **DOGFOOD INFLECTION POINT: After Phase 6, Cauldron can run its own pipeline.**
 Phase 6 completes the end-to-end execution path: interview a project, decompose it, run agents, merge results. Phases 7-9 can be planned and partially executed using Cauldron itself as the build tool. Temporary skills bridge any gaps until the evolutionary loop (Phase 7) is available.
+### Phase 13: Re-scope to @get-cauldron/* -- already have the github and npm orgs
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 12
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 13 to break down)
+
 ---
 
 **Success Criteria** (what must be TRUE):
@@ -240,7 +250,7 @@ Plans:
 
 Plans:
 - [x] 10-01-PLAN.md — Extend tRPC context with engine deps, wire sendAnswer to InterviewFSM
-- [ ] 10-02-PLAN.md — Wire sealHoldouts to vault encryption, triggerDecomposition to runDecomposition
+- [x] 10-02-PLAN.md — Wire sealHoldouts to vault encryption, triggerDecomposition to runDecomposition
 
 
 ### Phase 11: Engine Inngest Serve & Evolution Bootstrap
@@ -283,6 +293,6 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 7. Evolutionary Loop | 4/4 | Complete   | 2026-03-27 |
 | 8. Web Dashboard | 9/9 | Complete   | 2026-03-27 |
 | 9. CLI | 4/4 | Complete   | 2026-03-27 |
-| 10. Wire tRPC Write Mutations | 1/2 | In Progress|  |
+| 10. Wire tRPC Write Mutations | 2/2 | Complete   | 2026-03-27 |
 | 11. Engine Inngest Serve & Bootstrap | 0/? | Not started | - |
 | 12. Security & Tech Debt | 0/? | Not started | - |
