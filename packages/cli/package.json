@@ -1,5 +1,5 @@
 {
-  "name": "@cauldron/cli",
+  "name": "@get-cauldron/cli",
   "version": "0.1.0",
   "type": "module",
   "description": "CLI for the Cauldron AI-powered software development platform",
@@ -24,9 +24,8 @@
     "dev": "tsx watch src/index.ts"
   },
   "dependencies": {
-    "@cauldron/engine": "workspace:*",
-    "@cauldron/shared": "workspace:*",
-    "@cauldron/trpc-types": "workspace:*",
+    "@get-cauldron/engine": "workspace:*",
+    "@get-cauldron/shared": "workspace:*",
     "@hono/node-server": "^1.13.0",
     "@trpc/client": "11.15.1",
     "chalk": "^5.6.2",
