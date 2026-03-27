@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
-import type { SeedSummary } from '@cauldron/engine';
+import type { SeedSummary } from '@get-cauldron/engine';
 
 /**
  * Write a seed draft file for human review (D-16).

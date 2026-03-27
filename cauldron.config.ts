@@ -1,4 +1,4 @@
-import { defineConfig } from '@cauldron/engine/gateway';
+import { defineConfig } from '@get-cauldron/engine/gateway';
 
 // Model IDs verified against provider APIs as of 2026-03-26.
 // gpt-5.4 / gpt-5-mini / gemini-3.1-pro-preview are speculative future models —

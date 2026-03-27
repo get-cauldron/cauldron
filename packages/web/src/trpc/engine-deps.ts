@@ -1,6 +1,6 @@
-import { LLMGateway, loadConfig } from '@cauldron/engine';
-import type { GatewayConfig } from '@cauldron/engine';
-import { db } from '@cauldron/shared';
+import { LLMGateway, loadConfig } from '@get-cauldron/engine';
+import type { GatewayConfig } from '@get-cauldron/engine';
+import { db } from '@get-cauldron/shared';
 
 // Minimal structural type compatible with pino.Logger for the web layer.
 // The web package does not run pino transports; this keeps the dep surface lean.

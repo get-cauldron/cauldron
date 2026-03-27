@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock @cauldron/shared to prevent DATABASE_URL error at import time
-vi.mock('@cauldron/shared', () => ({
+// Mock @get-cauldron/shared to prevent DATABASE_URL error at import time
+vi.mock('@get-cauldron/shared', () => ({
   db: {
     execute: vi.fn(),
   },
@@ -22,7 +22,7 @@ describe('healthCheck', () => {
     const mod = await import('../health.js');
     healthCheck = mod.healthCheck;
 
-    const shared = await import('@cauldron/shared');
+    const shared = await import('@get-cauldron/shared');
     mockDb = shared.db as unknown as { execute: ReturnType<typeof vi.fn> };
   });
 

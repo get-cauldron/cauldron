@@ -1,7 +1,7 @@
 import { type InngestFunction } from 'inngest';
 import { eq, and } from 'drizzle-orm';
-import { appendEvent, beads, beadEdges, seeds as seedsTable } from '@cauldron/shared';
-import type { DbClient } from '@cauldron/shared';
+import { appendEvent, beads, beadEdges, seeds as seedsTable } from '@get-cauldron/shared';
+import type { DbClient } from '@get-cauldron/shared';
 import { inngest } from '../holdout/events.js';
 import { findReadyBeads, claimBead, completeBead } from './scheduler.js';
 import type { BeadDispatchPayload, BeadCompletedPayload } from './types.js';

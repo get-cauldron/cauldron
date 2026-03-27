@@ -11,11 +11,11 @@ const MockInterviewFSM = vi.fn(function (this: unknown) {
   Object.assign(this as object, { submitAnswer: mockSubmitAnswer });
 });
 
-vi.mock('@cauldron/engine', () => ({
+vi.mock('@get-cauldron/engine', () => ({
   InterviewFSM: MockInterviewFSM,
 }));
 
-vi.mock('@cauldron/shared', () => ({
+vi.mock('@get-cauldron/shared', () => ({
   db: {},
   interviews: { projectId: 'projectId', id: 'id', createdAt: 'createdAt', phase: 'phase' },
   seeds: {},

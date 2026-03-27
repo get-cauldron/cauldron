@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { router, publicProcedure } from '../init';
-import { projects, events, llmUsage } from '@cauldron/shared';
+import { projects, events, llmUsage } from '@get-cauldron/shared';
 import { eq, desc, sql } from 'drizzle-orm';
 
 export const projectsRouter = router({

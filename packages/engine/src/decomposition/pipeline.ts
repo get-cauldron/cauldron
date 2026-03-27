@@ -1,9 +1,9 @@
 import type { LLMGateway } from '../gateway/gateway.js';
-import type { DbClient, Seed } from '@cauldron/shared';
+import type { DbClient, Seed } from '@get-cauldron/shared';
 import type { Inngest } from 'inngest';
 import { decomposeSeed } from './decomposer.js';
 import { persistDecomposition, findReadyBeads } from './scheduler.js';
-import { appendEvent } from '@cauldron/shared';
+import { appendEvent } from '@get-cauldron/shared';
 import type { DecompositionResult, BeadDispatchPayload } from './types.js';
 
 /**

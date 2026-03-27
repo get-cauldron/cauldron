@@ -1,6 +1,6 @@
 import { Inngest, type InngestFunction } from 'inngest';
-import { appendEvent } from '@cauldron/shared';
-import type { DbClient } from '@cauldron/shared';
+import { appendEvent } from '@get-cauldron/shared';
+import type { DbClient } from '@get-cauldron/shared';
 import { unsealVault, storeEvalResults } from './vault.js';
 import { evaluateHoldouts } from './evaluator.js';
 import type { LLMGateway } from '../gateway/gateway.js';

@@ -34,13 +34,13 @@ vi.mock('node:child_process', () => ({
 }));
 
 // ---------------------------------------------------------------------------
-// Mock @cauldron/shared (prevents DATABASE_URL error at import time)
+// Mock @get-cauldron/shared (prevents DATABASE_URL error at import time)
 // Use vi.hoisted so the variable is available at mock-factory evaluation time.
 // ---------------------------------------------------------------------------
 const { mockAppendEvent } = vi.hoisted(() => ({
   mockAppendEvent: vi.fn().mockResolvedValue(undefined),
 }));
-vi.mock('@cauldron/shared', () => ({
+vi.mock('@get-cauldron/shared', () => ({
   appendEvent: mockAppendEvent,
 }));
 

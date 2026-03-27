@@ -10,8 +10,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock @cauldron/shared to avoid requiring DATABASE_URL at import time
-vi.mock('@cauldron/shared', () => ({
+// Mock @get-cauldron/shared to avoid requiring DATABASE_URL at import time
+vi.mock('@get-cauldron/shared', () => ({
   seeds: {
     projectId: 'project_id',
     interviewId: 'interview_id',

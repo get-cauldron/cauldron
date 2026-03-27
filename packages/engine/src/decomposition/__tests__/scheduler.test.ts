@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { DecompositionResult } from '../types.js';
 
-// Mock @cauldron/shared to avoid DATABASE_URL requirement
-vi.mock('@cauldron/shared', () => ({
+// Mock @get-cauldron/shared to avoid DATABASE_URL requirement
+vi.mock('@get-cauldron/shared', () => ({
   appendEvent: vi.fn().mockResolvedValue({}),
   beads: {},
   beadEdges: {},
@@ -362,7 +362,7 @@ describe('completeBead', () => {
       }),
     });
 
-    const { appendEvent } = await import('@cauldron/shared');
+    const { appendEvent } = await import('@get-cauldron/shared');
     const { completeBead } = await import('../scheduler.js');
     await completeBead(mockDb, 'bead-1', 'completed', 'project-1', 'seed-1');
 
@@ -386,7 +386,7 @@ describe('completeBead', () => {
       }),
     });
 
-    const { appendEvent } = await import('@cauldron/shared');
+    const { appendEvent } = await import('@get-cauldron/shared');
     const { completeBead } = await import('../scheduler.js');
     await completeBead(mockDb, 'bead-1', 'failed', 'project-1', 'seed-1');
 
@@ -418,7 +418,7 @@ describe('completeBead', () => {
         }),
       });
 
-    const { appendEvent } = await import('@cauldron/shared');
+    const { appendEvent } = await import('@get-cauldron/shared');
     const { completeBead } = await import('../scheduler.js');
     await completeBead(mockDb, 'bead-1', 'failed', 'project-1', 'seed-1');
 

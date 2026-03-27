@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { LLMGateway } from '../gateway/gateway.js';
-import type { Seed } from '@cauldron/shared';
+import type { Seed } from '@get-cauldron/shared';
 import type { RubricDimension, DimensionScore, GoalAttainmentResult, GapAnalysis } from './types.js';
 import { FULL_REGEN_THRESHOLD } from './types.js';
 import { hashGapId } from './embeddings.js';

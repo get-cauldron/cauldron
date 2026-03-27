@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
 import type { LLMGateway } from '../gateway/gateway.js';
-import type { Seed } from '@cauldron/shared';
+import type { Seed } from '@get-cauldron/shared';
 import { HoldoutScenarioSchema, HoldoutScenariosSchema } from './types.js';
 import type { HoldoutScenario } from './types.js';
 

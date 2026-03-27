@@ -18,9 +18,9 @@ import { validateProviderKeys } from './validation.js';
 import type { GatewayCallOptions, GatewayObjectOptions, PipelineStage, ProviderFamily } from './types.js';
 import type { GatewayConfig } from './config.js';
 import type { FailoverAttempt } from './errors.js';
-import { llmUsage, type ProjectSettings } from '@cauldron/shared';
-import { appendEvent } from '@cauldron/shared';
-import type { DbClient } from '@cauldron/shared';
+import { llmUsage, type ProjectSettings } from '@get-cauldron/shared';
+import { appendEvent } from '@get-cauldron/shared';
+import type { DbClient } from '@get-cauldron/shared';
 
 const STAGE_PREAMBLES: Record<PipelineStage, string> = {
   interview:

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock @cauldron/shared to avoid DATABASE_URL requirement
-vi.mock('@cauldron/shared', () => ({
+// Mock @get-cauldron/shared to avoid DATABASE_URL requirement
+vi.mock('@get-cauldron/shared', () => ({
   appendEvent: vi.fn().mockResolvedValue({}),
   beads: {},
   beadEdges: {},
@@ -59,7 +59,7 @@ describe('beadDispatchHandler', () => {
 
   it('Test 1: claims and dispatches bead when no waits_for edges exist', async () => {
     const schedulerModule = await import('../scheduler.js');
-    const { appendEvent } = await import('@cauldron/shared');
+    const { appendEvent } = await import('@get-cauldron/shared');
 
     // No waits_for edges, no conditional edges
     vi.mocked(schedulerModule.claimBead).mockResolvedValue({
@@ -145,7 +145,7 @@ describe('beadDispatchHandler', () => {
 
   it('Test 3: skips bead when conditional upstream has failed (D-14)', async () => {
     const schedulerModule = await import('../scheduler.js');
-    const { appendEvent } = await import('@cauldron/shared');
+    const { appendEvent } = await import('@get-cauldron/shared');
 
     vi.mocked(schedulerModule.completeBead).mockResolvedValue(undefined);
 

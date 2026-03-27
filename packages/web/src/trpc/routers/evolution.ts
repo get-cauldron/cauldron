@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { router, publicProcedure } from '../init.js';
-import { seeds, events, llmUsage, eventTypeEnum } from '@cauldron/shared';
+import { seeds, events, llmUsage, eventTypeEnum } from '@get-cauldron/shared';
 import { eq, desc, asc, and, inArray, sql } from 'drizzle-orm';
 
 export const evolutionRouter = router({

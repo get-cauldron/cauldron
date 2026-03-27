@@ -1,6 +1,6 @@
 import { eq, sql } from 'drizzle-orm';
-import type { DbClient } from '@cauldron/shared';
-import { llmUsage } from '@cauldron/shared';
+import type { DbClient } from '@get-cauldron/shared';
+import { llmUsage } from '@get-cauldron/shared';
 import { BudgetExceededError } from './errors.js';
 
 /**

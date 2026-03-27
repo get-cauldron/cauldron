@@ -19,8 +19,8 @@ for (const key of ['OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'GOOGLE_GENERATIVE_AI_
   }
 }
 
-import { db, ensureMigrations } from '@cauldron/shared';
-import { loadConfig, LLMGateway, InterviewFSM } from '@cauldron/engine';
+import { db, ensureMigrations } from '@get-cauldron/shared';
+import { loadConfig, LLMGateway, InterviewFSM } from '@get-cauldron/engine';
 import { writeSeedDraft } from '../packages/api/src/review/seed-writer.js';
 import pino from 'pino';
 

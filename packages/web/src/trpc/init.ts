@@ -1,6 +1,6 @@
 import { initTRPC, TRPCError } from '@trpc/server';
 import { cache } from 'react';
-import { db } from '@cauldron/shared';
+import { db } from '@get-cauldron/shared';
 import { getEngineDeps } from './engine-deps.js';
 
 export const createTRPCContext = cache(async (req?: Request) => {

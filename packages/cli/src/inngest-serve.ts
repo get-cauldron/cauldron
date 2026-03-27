@@ -7,7 +7,7 @@ import {
   handleMergeRequested,
   handleEvolutionConverged,
   handleEvolutionStarted,
-} from '@cauldron/engine';
+} from '@get-cauldron/engine';
 
 /**
  * All 5 engine Inngest functions served via the cauldron-engine client.

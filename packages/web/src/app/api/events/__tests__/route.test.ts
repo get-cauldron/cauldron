@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-// Mock @cauldron/shared to avoid DATABASE_URL errors at import time
-// (Phase 03 decision: vi.mock('@cauldron/shared') required in engine unit tests
-// that import modules with @cauldron/shared dependencies)
-vi.mock('@cauldron/shared', () => ({
+// Mock @get-cauldron/shared to avoid DATABASE_URL errors at import time
+// (Phase 03 decision: vi.mock('@get-cauldron/shared') required in engine unit tests
+// that import modules with @get-cauldron/shared dependencies)
+vi.mock('@get-cauldron/shared', () => ({
   db: {},
   events: {},
 }));

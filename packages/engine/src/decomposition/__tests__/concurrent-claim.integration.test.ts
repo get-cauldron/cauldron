@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeAll, afterEach, afterAll } from 'vitest';
 import { eq } from 'drizzle-orm';
 import { createTestDb, runMigrations, truncateAll } from '../../__tests__/setup.js';
-import * as schema from '@cauldron/shared';
+import * as schema from '@get-cauldron/shared';
 import { claimBead } from '../scheduler.js';
 
 const TEST_DATABASE_URL =

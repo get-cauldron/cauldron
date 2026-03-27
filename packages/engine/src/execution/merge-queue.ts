@@ -6,8 +6,8 @@ import type { MergeQueueEntry, TestRunnerConfig } from './types.js';
 import type { WorktreeManager } from './worktree-manager.js';
 import type { KnowledgeGraphAdapter } from '../intelligence/adapter.js';
 import type { LLMGateway } from '../gateway/gateway.js';
-import type { DbClient } from '@cauldron/shared';
-import { appendEvent } from '@cauldron/shared';
+import type { DbClient } from '@get-cauldron/shared';
+import { appendEvent } from '@get-cauldron/shared';
 
 export type MergeStatus = 'merged' | 'conflict_resolved' | 'escalated' | 'reverted' | 'failed';
 

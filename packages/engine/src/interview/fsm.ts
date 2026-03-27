@@ -1,10 +1,10 @@
 import { execSync } from 'node:child_process';
 import { eq, desc } from 'drizzle-orm';
 import type { Logger } from 'pino';
-import { interviews, seeds } from '@cauldron/shared';
-import { appendEvent } from '@cauldron/shared';
-import type { DbClient } from '@cauldron/shared';
-import type { Interview } from '@cauldron/shared';
+import { interviews, seeds } from '@get-cauldron/shared';
+import { appendEvent } from '@get-cauldron/shared';
+import type { DbClient } from '@get-cauldron/shared';
+import type { Interview } from '@get-cauldron/shared';
 import type { LLMGateway } from '../gateway/gateway.js';
 import type { GatewayConfig } from '../gateway/config.js';
 import { scoreTranscript } from './scorer.js';

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock @cauldron/shared to avoid requiring a DB connection at import time
-vi.mock('@cauldron/shared', () => ({
+// Mock @get-cauldron/shared to avoid requiring a DB connection at import time
+vi.mock('@get-cauldron/shared', () => ({
   interviews: { projectId: 'project_id' },
   seeds: { interviewId: 'interview_id', id: 'id', status: 'status', version: 'version' },
   db: {},

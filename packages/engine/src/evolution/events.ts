@@ -1,8 +1,8 @@
 import { type InngestFunction } from 'inngest';
 import { eq } from 'drizzle-orm';
-import { appendEvent, seeds } from '@cauldron/shared';
-import type { DbClient } from '@cauldron/shared';
-import type { Seed } from '@cauldron/shared';
+import { appendEvent, seeds } from '@get-cauldron/shared';
+import type { DbClient } from '@get-cauldron/shared';
+import type { Seed } from '@get-cauldron/shared';
 import { inngest } from '../holdout/events.js';
 import { evaluateGoalAttainment } from './evaluator.js';
 import { checkConvergence, checkStagnation } from './convergence.js';

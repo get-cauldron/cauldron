@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock @cauldron/shared to prevent DATABASE_URL error at import time
-vi.mock('@cauldron/shared', () => ({
+// Mock @get-cauldron/shared to prevent DATABASE_URL error at import time
+vi.mock('@get-cauldron/shared', () => ({
   seeds: {},
   llmUsage: {},
 }));
@@ -28,7 +28,7 @@ import {
 } from '../convergence.js';
 import { computeEmbedding, cosineSimilarity, jaccardSimilarity } from '../embeddings.js';
 import { getSeedLineage } from '../../interview/crystallizer.js';
-import type { Seed } from '@cauldron/shared';
+import type { Seed } from '@get-cauldron/shared';
 import type { GapAnalysis, EvolutionContext } from '../types.js';
 
 type EmbeddingFn = (text: string) => Promise<number[]>;

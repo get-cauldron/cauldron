@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import { eq, desc } from 'drizzle-orm';
 import { router, publicProcedure } from '../init';
-import { interviews, seeds, holdoutVault } from '@cauldron/shared';
-import { InterviewFSM, approveScenarios, sealVault } from '@cauldron/engine';
+import { interviews, seeds, holdoutVault } from '@get-cauldron/shared';
+import { InterviewFSM, approveScenarios, sealVault } from '@get-cauldron/engine';
 import type {
   InterviewTurn,
   AmbiguityScores,
   SeedSummary,
-} from '@cauldron/engine';
+} from '@get-cauldron/engine';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Interview tRPC router

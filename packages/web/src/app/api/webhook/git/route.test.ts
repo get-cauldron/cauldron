@@ -7,7 +7,7 @@ const mockAppendEvent = vi.fn();
 
 const mockInngestSend = vi.fn().mockResolvedValue({ ids: [] });
 
-vi.mock('@cauldron/shared', () => {
+vi.mock('@get-cauldron/shared', () => {
   const fromFn = vi.fn().mockImplementation(() => mockProjectRows);
   const selectFn = vi.fn().mockReturnValue({ from: fromFn });
   return {

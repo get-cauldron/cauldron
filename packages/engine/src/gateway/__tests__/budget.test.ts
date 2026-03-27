@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { checkBudget } from '../budget.js';
 import { BudgetExceededError } from '../errors.js';
 
-// Mock @cauldron/shared to avoid requiring a DB connection
-vi.mock('@cauldron/shared', () => ({
+// Mock @get-cauldron/shared to avoid requiring a DB connection
+vi.mock('@get-cauldron/shared', () => ({
   llmUsage: { costCents: 'cost_cents', projectId: 'project_id' },
 }));
 

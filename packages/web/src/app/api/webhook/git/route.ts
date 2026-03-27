@@ -1,7 +1,7 @@
 import { verify } from '@octokit/webhooks-methods';
-import { db } from '@cauldron/shared';
-import { projects } from '@cauldron/shared';
-import { appendEvent } from '@cauldron/shared';
+import { db } from '@get-cauldron/shared';
+import { projects } from '@get-cauldron/shared';
+import { appendEvent } from '@get-cauldron/shared';
 import { inngest } from '../../../../inngest/client.js';
 
 export const runtime = 'nodejs';

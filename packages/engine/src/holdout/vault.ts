@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
-import { holdoutVault, appendEvent } from '@cauldron/shared';
-import type { DbClient } from '@cauldron/shared';
+import { holdoutVault, appendEvent } from '@get-cauldron/shared';
+import type { DbClient } from '@get-cauldron/shared';
 import { sealPayload, unsealPayload } from './crypto.js';
 import type { HoldoutScenario, HoldoutEvalResult } from './types.js';
 

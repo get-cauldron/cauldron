@@ -25,8 +25,8 @@ vi.mock('@ai-sdk/google', () => ({
   google: (modelId: string) => ({ provider: 'google', modelId }),
 }));
 
-// Mock @cauldron/shared to avoid DB setup
-vi.mock('@cauldron/shared', () => ({
+// Mock @get-cauldron/shared to avoid DB setup
+vi.mock('@get-cauldron/shared', () => ({
   llmUsage: { costCents: 'cost_cents', projectId: 'project_id' },
   appendEvent: vi.fn().mockResolvedValue(undefined),
 }));

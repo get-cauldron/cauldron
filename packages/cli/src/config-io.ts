@@ -55,7 +55,7 @@ export async function saveCLIConfig(projectRoot: string, config: Partial<CLIConf
     content = await readFile(configPath, 'utf-8');
   } catch {
     // File doesn't exist yet — minimal config
-    content = `import { defineConfig } from '@cauldron/engine/gateway';\nexport default defineConfig({});\n`;
+    content = `import { defineConfig } from '@get-cauldron/engine/gateway';\nexport default defineConfig({});\n`;
   }
 
   // Write api key to .env per D-16 — web server reads from process.env, not cauldron.config.ts

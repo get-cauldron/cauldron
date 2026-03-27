@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { Seed } from '@cauldron/shared';
+import type { Seed } from '@get-cauldron/shared';
 
-// Mock @cauldron/shared to avoid DATABASE_URL requirement
-vi.mock('@cauldron/shared', () => ({
+// Mock @get-cauldron/shared to avoid DATABASE_URL requirement
+vi.mock('@get-cauldron/shared', () => ({
   seeds: {},
   appendEvent: vi.fn(),
 }));
@@ -45,7 +45,7 @@ describe('mutateSeed - tier ac_only', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    const { appendEvent } = await import('@cauldron/shared');
+    const { appendEvent } = await import('@get-cauldron/shared');
     vi.mocked(appendEvent).mockResolvedValue(undefined as any);
 
     mockGateway = {
@@ -122,7 +122,7 @@ describe('mutateSeed - tier full', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    const { appendEvent } = await import('@cauldron/shared');
+    const { appendEvent } = await import('@get-cauldron/shared');
     vi.mocked(appendEvent).mockResolvedValue(undefined as any);
 
     mockGateway = {
@@ -177,7 +177,7 @@ describe('mutateSeedFromProposal', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    const { appendEvent } = await import('@cauldron/shared');
+    const { appendEvent } = await import('@get-cauldron/shared');
     vi.mocked(appendEvent).mockResolvedValue(undefined as any);
 
     const returningMock = vi.fn().mockResolvedValue([
@@ -272,7 +272,7 @@ describe('mutateSeedFromProposal', () => {
   });
 
   it('records persona in event payload', async () => {
-    const { appendEvent } = await import('@cauldron/shared');
+    const { appendEvent } = await import('@get-cauldron/shared');
     const seed = makeSeed({ generation: 2 });
     const proposal = {
       persona: 'architect',

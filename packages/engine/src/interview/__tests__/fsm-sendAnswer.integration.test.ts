@@ -12,7 +12,7 @@
 import { describe, it, expect, vi, beforeAll, afterEach, afterAll } from 'vitest';
 import { eq } from 'drizzle-orm';
 import { createTestDb, runMigrations, truncateAll } from '../../__tests__/setup.js';
-import * as schema from '@cauldron/shared';
+import * as schema from '@get-cauldron/shared';
 import { InterviewFSM } from '../fsm.js';
 import type { LLMGateway } from '../../gateway/gateway.js';
 import type { GatewayConfig } from '../../gateway/config.js';

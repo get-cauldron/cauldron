@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { seeds, appendEvent } from '@cauldron/shared';
-import type { DbClient } from '@cauldron/shared';
-import type { Seed } from '@cauldron/shared';
+import { seeds, appendEvent } from '@get-cauldron/shared';
+import type { DbClient } from '@get-cauldron/shared';
+import type { Seed } from '@get-cauldron/shared';
 import type { LLMGateway } from '../gateway/gateway.js';
 import type { GoalAttainmentResult, EvolutionContext, LateralThinkingProposal, GapAnalysis } from './types.js';
 

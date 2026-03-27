@@ -1,5 +1,5 @@
-import { db } from '@cauldron/shared';
-import { events } from '@cauldron/shared';
+import { db } from '@get-cauldron/shared';
+import { events } from '@get-cauldron/shared';
 import { eq, gt, and, asc } from 'drizzle-orm';
 
 export const runtime = 'nodejs';

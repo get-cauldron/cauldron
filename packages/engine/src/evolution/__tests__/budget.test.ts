@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock @cauldron/shared to prevent DATABASE_URL error at import time
-vi.mock('@cauldron/shared', () => ({
+// Mock @get-cauldron/shared to prevent DATABASE_URL error at import time
+vi.mock('@get-cauldron/shared', () => ({
   llmUsage: { seedId: 'seedId', costCents: 'costCents' },
 }));
 

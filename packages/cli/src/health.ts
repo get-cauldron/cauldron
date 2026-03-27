@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { db, ensureMigrations } from '@cauldron/shared';
+import { db, ensureMigrations } from '@get-cauldron/shared';
 
 const REQUIRED_TABLES = [
   'projects', 'seeds', 'interviews', 'beads', 'bead_edges',

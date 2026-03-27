@@ -2,9 +2,9 @@ import { config as dotenvConfig } from 'dotenv';
 import { resolve } from 'node:path';
 import { homedir } from 'node:os';
 import pino from 'pino';
-import { db, ensureMigrations } from '@cauldron/shared';
+import { db, ensureMigrations } from '@get-cauldron/shared';
 
-// Load API keys from ~/.env as fallback (project .env takes precedence via @cauldron/shared)
+// Load API keys from ~/.env as fallback (project .env takes precedence via @get-cauldron/shared)
 dotenvConfig({ path: resolve(homedir(), '.env') });
 
 // Strip stray quotes from env vars — dotenv may leave them depending on .env formatting
@@ -21,9 +21,9 @@ import {
   configureSchedulerDeps,
   configureVaultDeps,
   configureEvolutionDeps,
-} from '@cauldron/engine';
-import type { GatewayConfig } from '@cauldron/engine';
-import type { DbClient } from '@cauldron/shared';
+} from '@get-cauldron/engine';
+import type { GatewayConfig } from '@get-cauldron/engine';
+import type { DbClient } from '@get-cauldron/shared';
 import type { Logger } from 'pino';
 
 export interface BootstrapDeps {

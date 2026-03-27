@@ -1,7 +1,7 @@
 import { eq, and, sql } from 'drizzle-orm';
-import { beads, beadEdges } from '@cauldron/shared';
-import { appendEvent } from '@cauldron/shared';
-import type { DbClient, Bead } from '@cauldron/shared';
+import { beads, beadEdges } from '@get-cauldron/shared';
+import { appendEvent } from '@get-cauldron/shared';
+import type { DbClient, Bead } from '@get-cauldron/shared';
 import type { DecompositionResult, ClaimResult } from './types.js';
 
 /**

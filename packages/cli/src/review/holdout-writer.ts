@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type { HoldoutScenario } from '@cauldron/engine';
+import type { HoldoutScenario } from '@get-cauldron/engine';
 
 /**
  * A holdout scenario with an approval flag added for the review draft.

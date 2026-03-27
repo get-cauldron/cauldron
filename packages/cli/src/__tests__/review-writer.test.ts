@@ -7,8 +7,8 @@ import { randomBytes } from 'node:crypto';
 // These imports will fail until the modules are created (RED phase)
 import { writeSeedDraft, readSeedDraft } from '../review/seed-writer.js';
 import { writeHoldoutDraft, readHoldoutDraft } from '../review/holdout-writer.js';
-import type { SeedSummary } from '@cauldron/engine';
-import type { HoldoutScenario } from '@cauldron/engine';
+import type { SeedSummary } from '@get-cauldron/engine';
+import type { HoldoutScenario } from '@get-cauldron/engine';
 
 function makeTempDir(): string {
   const dir = join(tmpdir(), `cauldron-test-${randomBytes(8).toString('hex')}`);

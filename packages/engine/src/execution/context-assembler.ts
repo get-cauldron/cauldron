@@ -3,7 +3,7 @@ import type { AgentContext, TestRunnerConfig } from './types.js';
 import { detectTestRunner } from './test-detector.js';
 import type { KnowledgeGraphAdapter } from '../intelligence/adapter.js';
 import type { LLMGateway } from '../gateway/gateway.js';
-import type { Bead, Seed } from '@cauldron/shared';
+import type { Bead, Seed } from '@get-cauldron/shared';
 
 /** Token estimate: words * 1.3 */
 function estimateTokens(text: string): number {

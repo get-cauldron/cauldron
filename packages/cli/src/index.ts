@@ -1,2 +1,2 @@
-// @cauldron/api entry point
+// @get-cauldron/cli entry point
 export {};

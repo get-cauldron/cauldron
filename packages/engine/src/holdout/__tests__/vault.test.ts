@@ -8,8 +8,8 @@ import {
   getVaultStatus,
 } from '../vault.js';
 
-// Mock @cauldron/shared to avoid DATABASE_URL requirement
-vi.mock('@cauldron/shared', () => ({
+// Mock @get-cauldron/shared to avoid DATABASE_URL requirement
+vi.mock('@get-cauldron/shared', () => ({
   holdoutVault: { name: 'holdout_vault' },
   appendEvent: vi.fn().mockResolvedValue({}),
 }));
@@ -193,7 +193,7 @@ describe('sealVault', () => {
   });
 
   it('Test 8: appends holdouts_sealed event via appendEvent', async () => {
-    const { appendEvent } = await import('@cauldron/shared');
+    const { appendEvent } = await import('@get-cauldron/shared');
     vi.mocked(appendEvent).mockClear();
 
     const approvedScenarios = FIVE_SCENARIOS.map(s => ({ ...s, _approved: true }));

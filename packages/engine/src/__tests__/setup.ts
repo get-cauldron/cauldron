@@ -7,14 +7,14 @@
  * The test DB URL overrides any production value for the duration of the test.
  */
 
-// Must set DATABASE_URL before any @cauldron/shared import to prevent client.ts from throwing
+// Must set DATABASE_URL before any @get-cauldron/shared import to prevent client.ts from throwing
 process.env['DATABASE_URL'] =
   process.env['TEST_DATABASE_URL'] ?? 'postgres://cauldron:cauldron@localhost:5433/cauldron_test';
 
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
-import * as schema from '@cauldron/shared';
+import * as schema from '@get-cauldron/shared';
 import { sql } from 'drizzle-orm';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';

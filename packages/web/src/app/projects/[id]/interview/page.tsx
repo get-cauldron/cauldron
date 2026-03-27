@@ -17,7 +17,7 @@ import { HoldoutCard } from '@/components/interview/HoldoutCard';
 import { ClarityBanner } from '@/components/interview/ClarityBanner';
 import type { HoldoutStatus } from '@/components/interview/HoldoutCard';
 import type { SeedSummaryData } from '@/components/interview/SeedApprovalCard';
-import type { InterviewTurn, AmbiguityScores } from '@cauldron/engine';
+import type { InterviewTurn, AmbiguityScores } from '@get-cauldron/engine';
 
 // ────────────────────────────────────────────────────────────────────────────
 // Interview page

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// seal.ts now uses tRPC client exclusively — no @cauldron/engine or @cauldron/shared imports
+// seal.ts now uses tRPC client exclusively — no @get-cauldron/engine or @get-cauldron/shared imports
 describe('sealCommand', () => {
   let sealCommand: typeof import('../commands/seal.js').sealCommand;
 

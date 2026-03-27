@@ -1,4 +1,4 @@
-import type { DbClient, Seed } from '@cauldron/shared';
+import type { DbClient, Seed } from '@get-cauldron/shared';
 import type { ConvergenceSignal, ConvergenceSignalType, GapAnalysis, EvolutionContext } from './types.js';
 import {
   MAX_GENERATIONS,

@@ -3,7 +3,7 @@ import { defineConfig } from 'vitest/config';
 /**
  * Integration test config for engine package.
  * Includes .integration.test.ts files and sets DATABASE_URL to the test DB
- * to prevent @cauldron/shared's client.ts from throwing at import time.
+ * to prevent @get-cauldron/shared's client.ts from throwing at import time.
  */
 export default defineConfig({
   test: {

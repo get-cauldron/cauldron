@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { HoldoutScenario } from '../types.js';
 
-// Mock @cauldron/shared to avoid DATABASE_URL requirement
-vi.mock('@cauldron/shared', () => ({
+// Mock @get-cauldron/shared to avoid DATABASE_URL requirement
+vi.mock('@get-cauldron/shared', () => ({
   holdoutVault: { name: 'holdout_vault' },
   appendEvent: vi.fn().mockResolvedValue({}),
 }));
@@ -84,7 +84,7 @@ describe('unsealVault', () => {
 
   it('Test 1: reads sealed vault, calls unsealPayload, transitions to unsealed, emits holdouts_unsealed event', async () => {
     const { unsealPayload } = await import('../crypto.js');
-    const { appendEvent } = await import('@cauldron/shared');
+    const { appendEvent } = await import('@get-cauldron/shared');
     vi.mocked(unsealPayload).mockReturnValue(JSON.stringify(FIVE_SCENARIOS));
     vi.mocked(appendEvent).mockResolvedValue({} as any);
 

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { HoldoutScenario } from '../types.js';
 
-// Mock @cauldron/shared to avoid DATABASE_URL requirement
-vi.mock('@cauldron/shared', () => ({
+// Mock @get-cauldron/shared to avoid DATABASE_URL requirement
+vi.mock('@get-cauldron/shared', () => ({
   appendEvent: vi.fn().mockResolvedValue({}),
 }));
 
@@ -95,7 +95,7 @@ describe('handleEvolutionConverged handler logic', () => {
   async function runHandler(evalResult: { passed: boolean; failureReport?: object }) {
     const vaultModule = await import('../vault.js');
     const evaluatorModule = await import('../evaluator.js');
-    const sharedModule = await import('@cauldron/shared');
+    const sharedModule = await import('@get-cauldron/shared');
 
     vi.mocked(vaultModule.unsealVault).mockResolvedValue(FIVE_SCENARIOS);
     vi.mocked(vaultModule.storeEvalResults).mockResolvedValue(undefined);

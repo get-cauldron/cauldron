@@ -1,8 +1,8 @@
 import { type InngestFunction } from 'inngest';
 import { inngest } from './client.js';
-import { db } from '@cauldron/shared';
-import { beads, seeds, events } from '@cauldron/shared';
-import { appendEvent } from '@cauldron/shared';
+import { db } from '@get-cauldron/shared';
+import { beads, seeds, events } from '@get-cauldron/shared';
+import { appendEvent } from '@get-cauldron/shared';
 import { eq, desc } from 'drizzle-orm';
 
 /**

@@ -17,8 +17,8 @@ import { config as dotenvConfig } from 'dotenv';
 // Load ~/.env as fallback (same pattern as bootstrap.ts)
 dotenvConfig({ path: resolve(homedir(), '.env') });
 
-import { db } from '@cauldron/shared';
-import { projects, seeds } from '@cauldron/shared';
+import { db } from '@get-cauldron/shared';
+import { projects, seeds } from '@get-cauldron/shared';
 
 async function main(): Promise<void> {
   // Step 1: Insert a project row for CLI Renamer

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock @cauldron/shared to prevent DATABASE_URL import-time error
-vi.mock('@cauldron/shared', () => ({
+// Mock @get-cauldron/shared to prevent DATABASE_URL import-time error
+vi.mock('@get-cauldron/shared', () => ({
   seeds: {},
   beads: {},
 }));
@@ -20,8 +20,8 @@ vi.mock('node:fs', () => ({
 import { ContextAssembler } from '../context-assembler.js';
 import type { KnowledgeGraphAdapter } from '../../intelligence/adapter.js';
 import type { LLMGateway } from '../../gateway/gateway.js';
-import type { Bead } from '@cauldron/shared';
-import type { Seed } from '@cauldron/shared';
+import type { Bead } from '@get-cauldron/shared';
+import type { Seed } from '@get-cauldron/shared';
 
 function makeMockKG(): KnowledgeGraphAdapter {
   return {

@@ -1,4 +1,4 @@
-import type { Bead, Seed } from '@cauldron/shared';
+import type { Bead, Seed } from '@get-cauldron/shared';
 
 // Bead and Seed are imported for documentation purposes; downstream consumers of
 // AgentContext may reference them. Suppress unused-import lint via explicit usage below.

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 
-// Mock @cauldron/engine to avoid DB/network deps
-vi.mock('@cauldron/engine', () => ({
+// Mock @get-cauldron/engine to avoid DB/network deps
+vi.mock('@get-cauldron/engine', () => ({
   inngest: { id: 'cauldron-engine' },
   handleBeadDispatchRequested: { id: 'dag/dispatch-bead' },
   handleBeadCompleted: { id: 'dag/on-bead-completed' },

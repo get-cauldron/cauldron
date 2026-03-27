@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// interview.ts now uses tRPC client exclusively — no @cauldron/engine or @cauldron/shared imports
+// interview.ts now uses tRPC client exclusively — no @get-cauldron/engine or @get-cauldron/shared imports
 describe('interviewCommand', () => {
   let interviewCommand: typeof import('../commands/interview.js').interviewCommand;
 

@@ -7,10 +7,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 const mockApproveScenarios = vi.fn();
 const mockSealVault = vi.fn();
 const mockRunDecomposition = vi.fn();
-// The engine inngest client exported from @cauldron/engine (id: 'cauldron-engine')
+// The engine inngest client exported from @get-cauldron/engine (id: 'cauldron-engine')
 const mockEngineInngest = { id: 'cauldron-engine', send: vi.fn() };
 
-vi.mock('@cauldron/engine', () => ({
+vi.mock('@get-cauldron/engine', () => ({
   approveScenarios: mockApproveScenarios,
   sealVault: mockSealVault,
   runDecomposition: mockRunDecomposition,
@@ -21,7 +21,7 @@ vi.mock('@cauldron/engine', () => ({
   }),
 }));
 
-vi.mock('@cauldron/shared', () => ({
+vi.mock('@get-cauldron/shared', () => ({
   db: {},
   interviews: {},
   seeds: { id: 'id', projectId: 'projectId', interviewId: 'interviewId', createdAt: 'createdAt' },
@@ -281,7 +281,7 @@ describe('triggerDecomposition tRPC mutation — runDecomposition wiring', () =>
   });
 
   it('appends audit event AND calls runDecomposition (both called)', async () => {
-    const { appendEvent } = await import('@cauldron/shared');
+    const { appendEvent } = await import('@get-cauldron/shared');
     const ctx = makeDecomposeCtx({
       seedRow: { id: VALID_SEED_UUID, projectId: VALID_PROJECT_UUID },
     });

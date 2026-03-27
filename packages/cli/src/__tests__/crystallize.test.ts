@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// crystallize.ts now uses tRPC client exclusively — no @cauldron/engine or @cauldron/shared imports
+// crystallize.ts now uses tRPC client exclusively — no @get-cauldron/engine or @get-cauldron/shared imports
 describe('crystallizeCommand', () => {
   let crystallizeCommand: typeof import('../commands/crystallize.js').crystallizeCommand;
 

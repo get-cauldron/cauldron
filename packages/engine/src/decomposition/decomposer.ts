@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { LLMGateway } from '../gateway/gateway.js';
-import type { Seed } from '@cauldron/shared';
+import type { Seed } from '@get-cauldron/shared';
 import type { DecompositionResult, DAGValidationError } from './types.js';
 import { validateDAG } from './validator.js';
 

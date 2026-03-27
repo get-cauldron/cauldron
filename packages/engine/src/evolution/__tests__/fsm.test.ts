@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock all external dependencies before importing the module under test
-vi.mock('@cauldron/shared', () => ({
+vi.mock('@get-cauldron/shared', () => ({
   appendEvent: vi.fn().mockResolvedValue(undefined),
   seeds: {},
   eq: vi.fn(),
@@ -43,7 +43,7 @@ vi.mock('drizzle-orm', () => ({
   eq: vi.fn(),
 }));
 
-import { appendEvent } from '@cauldron/shared';
+import { appendEvent } from '@get-cauldron/shared';
 import { evaluateGoalAttainment } from '../evaluator.js';
 import { checkConvergence, checkStagnation } from '../convergence.js';
 import { mutateSeed, mutateSeedFromProposal } from '../mutator.js';

@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { LLMGateway } from '../../gateway/gateway.js';
-import type { Seed } from '@cauldron/shared';
+import type { Seed } from '@get-cauldron/shared';
 import { decomposeSeed } from '../decomposer.js';
 
-// Mock @cauldron/shared to avoid DATABASE_URL requirement (established pattern)
-vi.mock('@cauldron/shared', () => ({
+// Mock @get-cauldron/shared to avoid DATABASE_URL requirement (established pattern)
+vi.mock('@get-cauldron/shared', () => ({
   db: {},
 }));
 

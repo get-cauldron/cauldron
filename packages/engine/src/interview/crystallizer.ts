@@ -1,8 +1,8 @@
 import { eq, sql } from 'drizzle-orm';
-import { seeds, interviews } from '@cauldron/shared';
-import { appendEvent } from '@cauldron/shared';
-import type { DbClient } from '@cauldron/shared';
-import type { Seed } from '@cauldron/shared';
+import { seeds, interviews } from '@get-cauldron/shared';
+import { appendEvent } from '@get-cauldron/shared';
+import type { DbClient } from '@get-cauldron/shared';
+import type { Seed } from '@get-cauldron/shared';
 import type { SeedSummary } from './types.js';
 
 /**

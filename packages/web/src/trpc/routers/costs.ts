@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { router, publicProcedure } from '../init';
-import { llmUsage, beads } from '@cauldron/shared';
+import { llmUsage, beads } from '@get-cauldron/shared';
 import { eq, sql, desc, inArray } from 'drizzle-orm';
 
 export const costsRouter = router({

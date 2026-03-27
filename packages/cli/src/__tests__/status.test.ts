@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// status.ts now uses tRPC client exclusively — no @cauldron/shared DB imports
+// status.ts now uses tRPC client exclusively — no @get-cauldron/shared DB imports
 describe('statusCommand', () => {
   let statusCommand: typeof import('../commands/status.js').statusCommand;
 

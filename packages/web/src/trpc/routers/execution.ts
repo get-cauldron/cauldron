@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { router, publicProcedure } from '../init.js';
-import { beads, beadEdges, events, seeds } from '@cauldron/shared';
-import { appendEvent } from '@cauldron/shared';
+import { beads, beadEdges, events, seeds } from '@get-cauldron/shared';
+import { appendEvent } from '@get-cauldron/shared';
 import { eq, desc, inArray } from 'drizzle-orm';
-import { runDecomposition, inngest as engineInngest } from '@cauldron/engine';
+import { runDecomposition, inngest as engineInngest } from '@get-cauldron/engine';
 
 
 export const executionRouter = router({

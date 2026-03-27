@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// resolve.ts now uses tRPC client exclusively — no @cauldron/shared imports
+// resolve.ts now uses tRPC client exclusively — no @get-cauldron/shared imports
 describe('resolveCommand', () => {
   let resolveCommand: typeof import('../commands/resolve.js').resolveCommand;
 
