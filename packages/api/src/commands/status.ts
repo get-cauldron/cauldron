@@ -29,8 +29,11 @@ export async function statusCommand(
     return;
   }
 
-  // Query DAG via tRPC
-  const dag = await client.execution.getProjectDAG.query({ projectId });
+  // Query DAG and pipeline status via tRPC
+  const [dag, pipelineStatus] = await Promise.all([
+    client.execution.getProjectDAG.query({ projectId }),
+    client.execution.getPipelineStatus.query({ projectId }),
+  ]);
 
   if (dag.beads.length === 0) {
     console.log(chalk.gray('No beads found for this project. Run: cauldron decompose'));
@@ -38,8 +41,13 @@ export async function statusCommand(
   }
 
   if (flags.json) {
-    console.log(formatJson(dag));
+    console.log(formatJson({ dag, pipelineStatus }));
     return;
+  }
+
+  // Show queue status if applicable
+  if (pipelineStatus.queued) {
+    console.log(chalk.hex('#f59e0b')('Pipeline queued behind active run'));
   }
 
   // Calculate duration

@@ -4,6 +4,7 @@ import { beads, beadEdges, events, seeds } from '@cauldron/shared';
 import { appendEvent } from '@cauldron/shared';
 import { eq, desc, inArray } from 'drizzle-orm';
 
+
 export const executionRouter = router({
   // Get full DAG for a seed (all beads + edges)
   getDAG: publicProcedure
@@ -85,6 +86,47 @@ export const executionRouter = router({
         payload: { seedId: input.seedId, source: 'cli' },
       });
       return { success: true, message: 'Execution triggered' };
+    }),
+
+  // Get pipeline status including active state and queue state
+  getPipelineStatus: publicProcedure
+    .input(z.object({ projectId: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      const [latestSeed] = await ctx.db
+        .select()
+        .from(seeds)
+        .where(eq(seeds.projectId, input.projectId))
+        .orderBy(desc(seeds.createdAt))
+        .limit(1);
+
+      if (!latestSeed) return { active: false, queued: false, seedId: null };
+
+      const beadRows = await ctx.db
+        .select()
+        .from(beads)
+        .where(eq(beads.seedId, latestSeed.id));
+
+      const activeBeads = beadRows.filter(
+        (b) => b.status === 'claimed' || b.status === 'pending'
+      );
+      const active = activeBeads.length > 0;
+
+      // Check for queued pipeline_trigger events
+      const triggerEvents = await ctx.db
+        .select()
+        .from(events)
+        .where(eq(events.projectId, input.projectId))
+        .orderBy(desc(events.occurredAt))
+        .limit(10);
+
+      const queued = triggerEvents.some(
+        (e) =>
+          e.type === 'pipeline_trigger' &&
+          e.payload &&
+          (e.payload as Record<string, unknown>)['status'] === 'queued'
+      );
+
+      return { active, queued, seedId: latestSeed.id };
     }),
 
   // Submit escalation response
