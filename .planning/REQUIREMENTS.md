@@ -206,14 +206,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DAG-02 | Phase 5 | Complete |
 | DAG-03 | Phase 5 | Complete |
 | DAG-04 | Phase 5 | Complete |
-| DAG-05 | Phase 16 | Pending |
+| DAG-05 | Phase 16 | Complete |
 | DAG-06 | Phase 5 | Complete |
 | DAG-07 | Phase 5 | Complete |
 | DAG-08 | Phase 5 | Complete |
 | DAG-09 | Phase 5 | Complete |
 | EXEC-01 | Phase 6 | Complete |
 | EXEC-02 | Phase 6 | Complete |
-| EXEC-03 | Phase 16 | Pending |
+| EXEC-03 | Phase 16 | Complete |
 | EXEC-04 | Phase 6 | Complete |
 | EXEC-05 | Phase 6 | Complete |
 | EXEC-06 | Phase 6 | Complete |
@@ -233,7 +233,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EVOL-01 | Phase 16 | Pending |
 | EVOL-02 | Phase 16 | Pending |
 | EVOL-03 | Phase 16 | Pending |
-| EVOL-04 | Phase 16 | Pending |
+| EVOL-04 | Phase 16 | Complete |
 | EVOL-05 | Phase 16 | Pending |
 | EVOL-06 | Phase 16 | Pending |
 | EVOL-07 | Phase 16 | Pending |
@@ -244,8 +244,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EVOL-12 | Phase 16 | Pending |
 | WEB-01 | Phase 14 | Complete |
 | WEB-02 | Phase 8 | Complete |
-| WEB-03 | Phase 16 | Pending |
-| WEB-04 | Phase 16 | Pending |
+| WEB-03 | Phase 16 | Complete |
+| WEB-04 | Phase 16 | Complete |
 | WEB-05 | Phase 15 | Complete |
 | WEB-06 | Phase 8 | Complete |
 | WEB-07 | Phase 8 | Complete |

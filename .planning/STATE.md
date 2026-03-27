@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to plan
-stopped_at: Completed 15-wire-holdout-generation-fix-cli-run-01-PLAN.md
-last_updated: "2026-03-27T21:21:45.889Z"
+stopped_at: Completed 16-bridge-evolution-loop-fix-bead-dispatch-02-PLAN.md
+last_updated: "2026-03-27T21:48:14.463Z"
 progress:
   total_phases: 19
   completed_phases: 17
-  total_plans: 57
-  completed_plans: 57
+  total_plans: 59
+  completed_plans: 58
 ---
 
 # Project State
@@ -93,6 +93,7 @@ Plan: Not started
 | Phase 14-wire-interview-start-fix-seed-crystallization-path P01 | 8min | 2 tasks | 2 files |
 | Phase 14 P02 | 12min | 2 tasks | 3 files |
 | Phase 15-wire-holdout-generation-fix-cli-run P01 | 10min | 2 tasks | 3 files |
+| Phase 16-bridge-evolution-loop-fix-bead-dispatch P02 | 7min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -216,6 +217,8 @@ Recent decisions affecting current work:
 - [Phase 14]: CLI startInterview placed before flags.json check so both JSON output and interactive mode get fresh interview state
 - [Phase 15-wire-holdout-generation-fix-cli-run]: Holdout generation failure is caught and logged separately from ImmutableSeedError — seed crystallization must not be rolled back due to LLM/budget errors in holdout generation
 - [Phase 15-wire-holdout-generation-fix-cli-run]: crystallizeCommand return type changed to Promise<{ seedId: string } | undefined> — both JSON and human-readable success paths return seedId; runCommand Seal stage injects --approve-all automatically for non-interactive pipeline mode
+- [Phase 16]: triggerExecution and pipelineTriggerFunction now dispatch per-bead bead.dispatch_requested events with full BeadDispatchPayload including beadId
+- [Phase 16]: SSE route accepts ?token= query param as auth fallback; useSSE hook injects NEXT_PUBLIC_CAULDRON_API_KEY as token param
 
 ### Pending Todos
 
@@ -230,6 +233,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T21:16:20.440Z
-Stopped at: Completed 15-wire-holdout-generation-fix-cli-run-01-PLAN.md
+Last session: 2026-03-27T21:48:14.460Z
+Stopped at: Completed 16-bridge-evolution-loop-fix-bead-dispatch-02-PLAN.md
 Resume file: None

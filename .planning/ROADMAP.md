@@ -345,11 +345,11 @@ Plans:
   5. `claimBead` emits `bead_claimed` event — live DAG shows beads in `active` status
   6. Web SSE connections work when `CAULDRON_API_KEY` is set (auth header included)
   7. Git push → pipeline trigger dispatches beads with correct payload
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 16-01-PLAN.md — Bridge evolution trigger (inngest.send in convergenceHandler) and emit bead_claimed event after claim
-- [ ] 16-02-PLAN.md — Fix triggerExecution/pipelineTrigger dispatch payloads (beadId) and SSE query-param auth fallback
+- [x] 16-02-PLAN.md — Fix triggerExecution/pipelineTrigger dispatch payloads (beadId) and SSE query-param auth fallback
 
 ### Phase 17: UI testing, e2e testing, and final checks
 
@@ -389,4 +389,4 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 13. Re-scope to @get-cauldron/* | 2/2 | Complete    | 2026-03-27 |
 | 14. Wire Interview & Seed Path | 2/2 | Complete    | 2026-03-27 |
 | 15. Wire Holdout Pipeline & CLI Run | 1/1 | Complete    | 2026-03-27 |
-| 16. Bridge Evolution & Fix Dispatch | 0/2 | Planned | — |
+| 16. Bridge Evolution & Fix Dispatch | 1/2 | In Progress|  |
