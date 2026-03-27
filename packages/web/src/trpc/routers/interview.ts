@@ -2,7 +2,8 @@ import { z } from 'zod';
 import { eq, desc } from 'drizzle-orm';
 import { router, publicProcedure } from '../init';
 import { interviews, seeds, holdoutVault } from '@get-cauldron/shared';
-import { InterviewFSM, approveScenarios, sealVault } from '@get-cauldron/engine';
+import { InterviewFSM, approveScenarios, sealVault, crystallizeSeed, ImmutableSeedError } from '@get-cauldron/engine';
+import { TRPCError } from '@trpc/server';
 import type {
   InterviewTurn,
   AmbiguityScores,
@@ -11,12 +12,36 @@ import type {
 
 // ────────────────────────────────────────────────────────────────────────────
 // Interview tRPC router
-// Provides 9 procedures covering the full interview lifecycle:
-//   getTranscript, sendAnswer, getSummary, approveSummary, rejectSummary,
-//   getHoldouts, approveHoldout, rejectHoldout, sealHoldouts
+// Provides 10 procedures covering the full interview lifecycle:
+//   startInterview, getTranscript, sendAnswer, getSummary, approveSummary,
+//   rejectSummary, getHoldouts, approveHoldout, rejectHoldout, sealHoldouts
 // ────────────────────────────────────────────────────────────────────────────
 
 export const interviewRouter = router({
+  // ──────────────────────────────────────────────────────────────────────────
+  // startInterview
+  // Mutation: creates or resumes an interview for the given project.
+  // Calls InterviewFSM.startOrResume() to create the DB row and return
+  // interview metadata. Must be called before sendAnswer.
+  // ──────────────────────────────────────────────────────────────────────────
+  startInterview: publicProcedure
+    .input(z.object({
+      projectId: z.string(),
+      mode: z.enum(['greenfield', 'brownfield']).optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const { projectId, mode } = input;
+      const { gateway, config, logger } = await ctx.getEngineDeps();
+      const fsm = new InterviewFSM(ctx.db, gateway, config, logger);
+      const interview = await fsm.startOrResume(projectId, { mode });
+      return {
+        interviewId: interview.id,
+        mode: interview.mode,
+        status: interview.status,
+        phase: interview.phase,
+      };
+    }),
+
   // ──────────────────────────────────────────────────────────────────────────
   // getTranscript
   // Query: returns current interview state for a project.
@@ -243,34 +268,21 @@ export const interviewRouter = router({
         .set({ phase: 'approved' })
         .where(eq(interviews.id, interview.id));
 
-      // Insert the crystallized seed record
-      const [seed] = await ctx.db
-        .insert(seeds)
-        .values({
+      try {
+        const seed = await crystallizeSeed(
+          ctx.db,
+          interview.id,
           projectId,
-          interviewId: interview.id,
-          status: 'crystallized',
-          goal: summary.goal,
-          constraints: summary.constraints,
-          acceptanceCriteria: summary.acceptanceCriteria,
-          ontologySchema: summary.ontologySchema,
-          evaluationPrinciples: summary.evaluationPrinciples,
-          exitConditions: summary.exitConditions as Record<string, unknown>,
+          summary,
           ambiguityScore,
-          crystallizedAt: new Date(),
-        })
-        .returning();
-
-      // Transition approved -> crystallized
-      await ctx.db
-        .update(interviews)
-        .set({ phase: 'crystallized', status: 'completed', completedAt: new Date() })
-        .where(eq(interviews.id, interview.id));
-
-      return {
-        seedId: seed!.id,
-        version: seed!.version,
-      };
+        );
+        return { seedId: seed.id, version: seed.version };
+      } catch (e) {
+        if (e instanceof ImmutableSeedError) {
+          throw new TRPCError({ code: 'CONFLICT', message: e.message });
+        }
+        throw e;
+      }
     }),
 
   // ──────────────────────────────────────────────────────────────────────────
