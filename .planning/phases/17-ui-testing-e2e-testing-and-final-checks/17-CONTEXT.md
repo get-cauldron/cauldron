@@ -18,7 +18,7 @@ Comprehensive test coverage and pre-release quality validation for Cauldron v1. 
 - **D-02:** Functional assertions + Playwright visual snapshot comparisons for key pages
 - **D-03:** axe-core accessibility checks run on every page during E2E
 - **D-04:** Chromium only — no Firefox/WebKit for v1
-- **D-05:** LLM-dependent flows (interview questions) mocked by intercepting AI SDK calls with fixed responses
+- **D-05:** LLM-dependent flows avoided by pre-seeding transcript data in DB (server-side AI SDK calls cannot be intercepted by Playwright — architecture is Browser → tRPC → engine → AI SDK)
 
 ### Test Data Strategy
 - **D-06:** Seed script per test suite — each test file runs setup inserting known data via direct DB calls, with TRUNCATE CASCADE between suites
