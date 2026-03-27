@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to plan
-stopped_at: Completed 17-03-PLAN.md
-last_updated: "2026-03-27T23:30:20.127Z"
+stopped_at: Completed 17-ui-testing-e2e-testing-and-final-checks-04-PLAN.md
+last_updated: "2026-03-27T23:31:30.915Z"
 progress:
   total_phases: 19
   completed_phases: 18
   total_plans: 65
-  completed_plans: 62
+  completed_plans: 63
 ---
 
 # Project State
@@ -95,6 +95,7 @@ Plan: Not started
 | Phase 15-wire-holdout-generation-fix-cli-run P01 | 10min | 2 tasks | 3 files |
 | Phase 17-ui-testing-e2e-testing-and-final-checks P01 | 40min | 2 tasks | 14 files |
 | Phase 17-ui-testing-e2e-testing-and-final-checks P03 | 15min | 2 tasks | 3 files |
+| Phase 17-ui-testing-e2e-testing-and-final-checks P04 | 20min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -222,6 +223,8 @@ Recent decisions affecting current work:
 - [Phase 17-ui-testing-e2e-testing-and-final-checks]: Webpack flag (--webpack) for next build/dev: Turbopack lacks extensionAlias; Node16 moduleResolution requires .js→.ts mapping
 - [Phase 17-ui-testing-e2e-testing-and-final-checks]: AxeBuilder API (not injectAxe/checkA11y): @axe-core/playwright exports AxeBuilder class only
 - [Phase 17-ui-testing-e2e-testing-and-final-checks]: Pre-seeded DB data (not page.route) for D-05: ALL LLM calls are server-side (tRPC->Next.js->engine->AI SDK->Anthropic). Playwright page.route() cannot intercept server-to-server calls; seeding transcript in DB tests real rendering path.
+- [Phase 17-ui-testing-e2e-testing-and-final-checks]: No networkidle in execution spec — SSE keeps network active; use waitForSelector('.react-flow') for DAG readiness
+- [Phase 17-ui-testing-e2e-testing-and-final-checks]: SSE test inserts bead_dispatched event via DB + waitForTimeout(3000) for poll propagation — cannot assert border color change via text locator
 
 ### Pending Todos
 
@@ -236,6 +239,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T23:30:20.124Z
-Stopped at: Completed 17-03-PLAN.md
+Last session: 2026-03-27T23:31:30.911Z
+Stopped at: Completed 17-ui-testing-e2e-testing-and-final-checks-04-PLAN.md
 Resume file: None

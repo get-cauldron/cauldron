@@ -365,13 +365,13 @@ Plans:
   5. GitHub Actions CI pipeline runs lint + typecheck + build + unit + integration + E2E on every PR
   6. pnpm audit reports zero critical/high vulnerabilities
   7. Every any usage in the codebase has a justification comment
-**Plans:** 2/5 plans executed
+**Plans:** 3/5 plans executed
 
 Plans:
 - [x] 17-01-PLAN.md -- Regression gate, build fix, test infrastructure (Docker E2E DB, axe-core, factories, fixtures)
 - [ ] 17-02-PLAN.md -- React component tests for all 16 components and 5 pages
 - [x] 17-03-PLAN.md -- E2E tests: project management, interview, and settings flows
-- [ ] 17-04-PLAN.md -- E2E tests: execution (DAG), evolution, and costs flows
+- [x] 17-04-PLAN.md -- E2E tests: execution (DAG), evolution, and costs flows
 - [ ] 17-05-PLAN.md -- GitHub Actions CI pipeline, TypeScript strict audit, dependency audit, Lighthouse
 
 ---
@@ -403,4 +403,4 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 14. Wire Interview & Seed Path | 2/2 | Complete    | 2026-03-27 |
 | 15. Wire Holdout Pipeline & CLI Run | 1/1 | Complete    | 2026-03-27 |
 | 16. Bridge Evolution & Fix Dispatch | 3/3 | Complete    | 2026-03-27 |
-| 17. UI Testing & E2E & Final Checks | 2/5 | In Progress|  |
+| 17. UI Testing & E2E & Final Checks | 3/5 | In Progress|  |
