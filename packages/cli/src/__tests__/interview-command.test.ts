@@ -14,9 +14,20 @@ describe('interviewCommand', () => {
     transcriptResult?: unknown;
     sendAnswerResult?: unknown;
     summaryResult?: unknown;
+    startInterviewResult?: unknown;
   }) {
     return {
       interview: {
+        startInterview: {
+          mutate: vi.fn().mockResolvedValue(
+            overrides?.startInterviewResult ?? {
+              interviewId: 'iv-1',
+              mode: 'greenfield',
+              status: 'active',
+              phase: 'gathering',
+            }
+          ),
+        },
         getTranscript: {
           query: vi.fn().mockResolvedValue(
             overrides?.transcriptResult ?? {
@@ -84,6 +95,7 @@ describe('interviewCommand', () => {
     });
     const client = {
       interview: {
+        startInterview: { mutate: vi.fn().mockResolvedValue({ interviewId: 'iv-1', mode: 'greenfield', status: 'active', phase: 'gathering' }) },
         getTranscript: { query: transcriptFn },
         sendAnswer: { mutate: vi.fn() },
         getSummary: { query: vi.fn().mockResolvedValue({ summary: 'x', phase: 'reviewing', interviewId: 'iv-1' }) },
