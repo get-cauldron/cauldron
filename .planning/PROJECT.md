@@ -55,6 +55,11 @@ The full pipeline works end-to-end: a user describes what they want, and Cauldro
 - MergeQueue with DAG topological ordering, LLM conflict resolution, post-merge test re-run — Phase 6
 - Full Inngest handler wiring: beadDispatchHandler → worktree → context → TDD → merge — Phase 6
 - 268 engine unit tests — Phase 6
+- Hono-based engine Inngest serve endpoint (all 5 engine functions reachable via HTTP at /api/inngest) — Phase 11
+- configureEvolutionDeps wired in bootstrap alongside scheduler and vault deps — Phase 11
+- Pipeline trigger and execution trigger send bead.dispatch_requested Inngest events — Phase 11
+- Engine server entry point (bootstrap → createInngestApp → @hono/node-server on port 3001) — Phase 11
+- Docker-compose dual-app Inngest discovery (engine:3001 + web:3000) — Phase 11
 
 ### Active
 
@@ -180,4 +185,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-27 after Phase 10 completion — tRPC write mutations wired to engine (sendAnswer→FSM, sealHoldouts→vault, triggerDecomposition→pipeline)*
+*Last updated: 2026-03-27 after Phase 11 completion — engine Inngest functions served via HTTP (Hono on port 3001), evolution deps bootstrapped, pipeline/execution triggers wired to bead dispatch*
