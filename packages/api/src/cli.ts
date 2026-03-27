@@ -75,6 +75,7 @@ function printUsage(): void {
   console.log(chalk.cyan('Options:'));
   console.log('  --json         Output machine-readable JSON');
   console.log('  --project <id> Project ID override (or use CAULDRON_PROJECT_ID env)');
+  console.log('  --project-id <id> Project ID override (alias for --project)');
 }
 
 async function bootstrapClient(projectRoot: string): Promise<CLIClient> {
@@ -114,6 +115,7 @@ async function main(): Promise<void> {
     options: {
       json: { type: 'boolean', default: false },
       project: { type: 'string' },
+      'project-id': { type: 'string' },
     },
     strict: false,
   });
@@ -130,7 +132,10 @@ async function main(): Promise<void> {
 
   const flags = {
     json: (values['json'] as boolean | undefined) ?? false,
-    projectId: (values['project'] as string | undefined) ?? process.env['CAULDRON_PROJECT_ID'],
+    projectId:
+      (values['project-id'] as string | undefined) ??
+      (values['project'] as string | undefined) ??
+      process.env['CAULDRON_PROJECT_ID'],
   };
 
   // Args to pass downstream (everything after the command name)
