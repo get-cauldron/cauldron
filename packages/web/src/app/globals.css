@@ -1,0 +1,92 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* HZD Cauldron theme — dark-only per D-33 */
+:root {
+  --background: #0a0f14;
+  --foreground: #c8d6e5;
+  --card: #111820;
+  --card-foreground: #c8d6e5;
+  --popover: #111820;
+  --popover-foreground: #c8d6e5;
+  --border: #1a2330;
+  --input: #1a2330;
+  --primary: #00d4aa;
+  --primary-foreground: #0a0f14;
+  --secondary: #111820;
+  --secondary-foreground: #c8d6e5;
+  --muted: #111820;
+  --muted-foreground: #6b8399;
+  --accent: #1a2330;
+  --accent-foreground: #c8d6e5;
+  --destructive: #e5484d;
+  --destructive-foreground: #c8d6e5;
+  --ring: #00d4aa;
+  --radius: 0.375rem;
+  --sidebar: #111820;
+  --sidebar-foreground: #c8d6e5;
+  --sidebar-primary: #00d4aa;
+  --sidebar-primary-foreground: #0a0f14;
+  --sidebar-accent: #1a2330;
+  --sidebar-accent-foreground: #c8d6e5;
+  --sidebar-border: #1a2330;
+  --sidebar-ring: #00d4aa;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  /* Cauldron custom tokens */
+  --color-amber: #f5a623;
+  --color-bead-pending: #3d5166;
+  --color-bead-active: #f5a623;
+  --color-bead-completed: #00d4aa;
+  --color-bead-failed: #e5484d;
+  --color-bead-blocked: #8a5c00;
+  --color-surface-raised: #1a2330;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
