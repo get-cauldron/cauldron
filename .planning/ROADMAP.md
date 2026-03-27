@@ -279,6 +279,11 @@ Plans:
   1. SSE endpoint `/api/events/[projectId]` validates project access before streaming events
   2. `kill` command accepts `--project-id` flag (not just env var)
   3. Phase 09 VERIFICATION.md status field updated to reflect resolved gaps
+**Plans**: 1 plan
+
+Plans:
+- [ ] 12-01-PLAN.md — SSE auth gate, --project-id flag, VERIFICATION.md correction
+
 
 ## Progress
 
