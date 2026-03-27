@@ -101,12 +101,24 @@ export const executionRouter = router({
       seedId: z.string().uuid(),
     }))
     .mutation(async ({ ctx, input }) => {
+      // Audit trail
       await appendEvent(ctx.db, {
         projectId: input.projectId,
         beadId: null,
         type: 'execution_started',
         payload: { seedId: input.seedId, source: 'cli' },
       });
+
+      // Dispatch to engine Inngest functions for actual bead execution.
+      // engineInngest.send() routes by event name — cauldron-engine's handleBeadDispatchRequested receives this.
+      await engineInngest.send({
+        name: 'bead.dispatch_requested',
+        data: {
+          seedId: input.seedId,
+          projectId: input.projectId,
+        },
+      });
+
       return { success: true, message: 'Execution triggered' };
     }),
 
