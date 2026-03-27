@@ -187,6 +187,82 @@ describe('beadDispatchHandler', () => {
     expect(appendEvent).toHaveBeenCalledWith(db, expect.objectContaining({ type: 'bead_skipped' }));
   });
 
+  it('Test 9: After successful claim, bead_claimed event is emitted with beadId and agentId', async () => {
+    const schedulerModule = await import('../scheduler.js');
+    const { appendEvent } = await import('@get-cauldron/shared');
+
+    vi.mocked(schedulerModule.claimBead).mockResolvedValue({
+      success: true,
+      beadId: BEAD_ID,
+      agentId: 'inngest-worker',
+      newVersion: 2,
+    });
+
+    const mockSelect = vi.fn()
+      .mockReturnValueOnce({
+        from: vi.fn().mockReturnValue({
+          where: vi.fn().mockResolvedValue([]), // no waits_for edges
+        }),
+      })
+      .mockReturnValueOnce({
+        from: vi.fn().mockReturnValue({
+          where: vi.fn().mockResolvedValue([]), // no conditional edges
+        }),
+      });
+    const db = { ...mockDb, select: mockSelect } as any;
+
+    const { configureSchedulerDeps, beadDispatchHandler } = await import('../events.js');
+    configureSchedulerDeps({ db });
+
+    const fakeStep = makeFakeStep();
+    await beadDispatchHandler({
+      event: { data: { beadId: BEAD_ID, seedId: SEED_ID, projectId: PROJECT_ID, moleculeId: null } },
+      step: fakeStep as any,
+    });
+
+    const calls = vi.mocked(appendEvent).mock.calls;
+    const claimedCall = calls.find(c => c[1]?.type === 'bead_claimed');
+    expect(claimedCall).toBeDefined();
+    expect(claimedCall![1].payload).toMatchObject({ beadId: BEAD_ID, agentId: 'inngest-worker' });
+  });
+
+  it('Test 10: When claim fails, bead_claimed event is NOT emitted', async () => {
+    const schedulerModule = await import('../scheduler.js');
+    const { appendEvent } = await import('@get-cauldron/shared');
+
+    vi.mocked(schedulerModule.claimBead).mockResolvedValue({
+      success: false,
+      beadId: BEAD_ID,
+      agentId: 'inngest-worker',
+    });
+
+    const mockSelect = vi.fn()
+      .mockReturnValueOnce({
+        from: vi.fn().mockReturnValue({
+          where: vi.fn().mockResolvedValue([]), // no waits_for edges
+        }),
+      })
+      .mockReturnValueOnce({
+        from: vi.fn().mockReturnValue({
+          where: vi.fn().mockResolvedValue([]), // no conditional edges
+        }),
+      });
+    const db = { ...mockDb, select: mockSelect } as any;
+
+    const { configureSchedulerDeps, beadDispatchHandler } = await import('../events.js');
+    configureSchedulerDeps({ db });
+
+    const fakeStep = makeFakeStep();
+    await beadDispatchHandler({
+      event: { data: { beadId: BEAD_ID, seedId: SEED_ID, projectId: PROJECT_ID, moleculeId: null } },
+      step: fakeStep as any,
+    });
+
+    const calls = vi.mocked(appendEvent).mock.calls;
+    const claimedCall = calls.find(c => c[1]?.type === 'bead_claimed');
+    expect(claimedCall).toBeUndefined();
+  });
+
   it('Test 4: returns already-claimed when claim fails (another worker got it first)', async () => {
     const schedulerModule = await import('../scheduler.js');
 

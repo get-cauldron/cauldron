@@ -151,6 +151,17 @@ export async function beadDispatchHandler({
     return { beadId, status: 'already-claimed' };
   }
 
+  // Step 3.5: Emit bead_claimed for live DAG active status (WEB-03)
+  await step.run('emit-claimed', async () => {
+    await appendEvent(db, {
+      projectId,
+      seedId,
+      beadId,
+      type: 'bead_claimed',
+      payload: { beadId, agentId: 'inngest-worker' },
+    });
+  });
+
   // Step 4: Record dispatch event
   await step.run('emit-dispatched', async () => {
     await appendEvent(db, {
