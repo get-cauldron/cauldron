@@ -94,8 +94,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **EVOL-07**: Convergence detection: oscillation (period-2 cycling detected)
 - [x] **EVOL-08**: Convergence detection: repetitive feedback (wonder questions repeat >= 70%)
 - [x] **EVOL-09**: Hard cap: maximum 30 evolution generations
-- [ ] **EVOL-10**: Lateral thinking personas activate on stagnation (contrarian, hacker, simplifier, researcher, architect)
-- [ ] **EVOL-11**: Human escalation mechanism triggers when convergence looks unlikely
+- [x] **EVOL-10**: Lateral thinking personas activate on stagnation (contrarian, hacker, simplifier, researcher, architect)
+- [x] **EVOL-11**: Human escalation mechanism triggers when convergence looks unlikely
 - [x] **EVOL-12**: Token budget circuit breaker: evolution halts if cumulative cost exceeds configurable threshold
 
 ### Code Intelligence
@@ -239,8 +239,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EVOL-07 | Phase 7 | Complete |
 | EVOL-08 | Phase 7 | Complete |
 | EVOL-09 | Phase 7 | Complete |
-| EVOL-10 | Phase 7 | Pending |
-| EVOL-11 | Phase 7 | Pending |
+| EVOL-10 | Phase 7 | Complete |
+| EVOL-11 | Phase 7 | Complete |
 | EVOL-12 | Phase 7 | Complete |
 | WEB-01 | Phase 8 | Complete |
 | WEB-02 | Phase 8 | Complete |

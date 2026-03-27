@@ -20,13 +20,16 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: LLM Gateway** - Vercel AI SDK multi-provider routing, per-stage model assignments, provider failover, token tracking (completed 2026-03-26)
 - [x] **Phase 3: Interview & Seed Pipeline** - Socratic interview FSM, ambiguity scoring, seed crystallization, human approval gates (completed 2026-03-26)
 - [x] **Phase 4: Holdout Vault** - Cross-model holdout generation, AES-256-GCM encryption, key isolation, unsealing protocol (completed 2026-03-26)
-- [ ] **Phase 5: DAG Decomposition & Scheduler** - Molecule/bead decomposition, all 4 dependency types, Kahn's cycle detection, Inngest FlowProducer dispatch, atomic claiming
+- [x] **Phase 5: DAG Decomposition & Scheduler** - Molecule/bead decomposition, all 4 dependency types, Kahn's cycle detection, Inngest FlowProducer dispatch, atomic claiming (completed 2026-03-26)
 - [x] **Phase 6: Parallel Execution Engine** - Agent runner, git worktrees, context assembly via Code Intel, merge queue, testing cube, self-healing error loop (completed 2026-03-26)
 - [x] **Phase 6.1: Dogfooding Transition** (INSERTED) - CLI entrypoint, Claude Code skills, GSD context bridging, self-build safety, dry-run validation (completed 2026-03-26)
 - [x] **Phase 6.2: Testing & Tuning Dogfood Process** (INSERTED) - Interview convergence fixes, pre-generated seed pipeline validation, end-to-end dry run (completed 2026-03-26)
-- [ ] **Phase 7: Evolutionary Loop** - Post-execution evaluator, evolution FSM, convergence detection, lateral thinking personas, holdout unsealing
+- [x] **Phase 7: Evolutionary Loop** - Post-execution evaluator, evolution FSM, convergence detection, lateral thinking personas, holdout unsealing (completed 2026-03-27)
 - [x] **Phase 8: Web Dashboard** - Interview chat, live DAG visualization, SSE log streaming, human approval UX, HZD aesthetic (completed 2026-03-27)
 - [x] **Phase 9: CLI** - Full pipeline CLI, git-push trigger, shared tRPC API (completed 2026-03-27)
+- [ ] **Phase 10: Wire tRPC Write Mutations to Engine** - Connect stub tRPC mutations to actual engine functions (interview FSM, vault sealing, decomposition) (gap closure)
+- [ ] **Phase 11: Engine Inngest Serve & Evolution Bootstrap** - Add HTTP serve endpoint for engine Inngest functions, wire configureEvolutionDeps in bootstrap (gap closure)
+- [ ] **Phase 12: Security & Tech Debt Cleanup** - SSE auth, kill command UX, minor tech debt items (gap closure)
 
 ## Phase Details
 
@@ -182,7 +185,7 @@ Plans:
 - [x] 07-01-PLAN.md — DB migration, domain types, goal evaluator, and seed mutator
 - [x] 07-02-PLAN.md — Convergence detector (5 signals) and lineage budget enforcement
 - [x] 07-03-PLAN.md — Lateral thinking personas engine and meta-judge
-- [ ] 07-04-PLAN.md — Evolution FSM Inngest function, barrel exports, and integration wiring
+- [x] 07-04-PLAN.md — Evolution FSM Inngest function, barrel exports, and integration wiring
 
 ### Phase 8: Web Dashboard
 **Goal**: The full Cauldron pipeline is observable and operable through a web interface — from Socratic interview to live DAG execution to evolution cycle review — with the HZD Cauldron visual identity.
@@ -223,12 +226,43 @@ Plans:
 - [x] 09-03-PLAN.md — SSE-backed cauldron logs with per-bead color-coded streaming
 - [x] 09-04-PLAN.md — GitHub push webhook handler and CLI webhook setup command
 
+### Phase 10: Wire tRPC Write Mutations to Engine
+**Goal**: tRPC write mutations actually invoke the engine functions they represent — interview advances, holdouts encrypt, decomposition triggers — restoring the write path that Phase 9 refactoring broke.
+**Depends on**: Phase 9
+**Requirements**: INTV-01, INTV-02, INTV-03, INTV-04, INTV-05, INTV-06, INTV-07, HOLD-03, HOLD-04, HOLD-05, DAG-01, DAG-02, DAG-03, DAG-04, DAG-05
+**Gap Closure:** Closes audit integration gaps 2 (sendAnswer → FSM), 3 (sealHoldouts → vault), 4 (triggerDecomposition → pipeline). Restores Flow 1 (Interview → Seal → Decompose).
+**Success Criteria** (what must be TRUE):
+  1. `interview.sendAnswer` tRPC mutation invokes `InterviewFSM.submitAnswer()` — interview advances past first turn
+  2. `interview.sealHoldouts` tRPC mutation calls `sealVault()` — ciphertext/iv/authTag columns populated after sealing
+  3. `execution.triggerDecomposition` tRPC mutation invokes `runDecomposition()` or sends the correct Inngest event
+  4. Integration test demonstrates: answer submitted → FSM scores → next question generated
+
+### Phase 11: Engine Inngest Serve & Evolution Bootstrap
+**Goal**: Engine Inngest functions are reachable via HTTP so Inngest can deliver events, and evolution dependencies are configured at bootstrap — making bead execution, merge queue, and evolutionary loop operational in production.
+**Depends on**: Phase 10
+**Requirements**: DAG-06, DAG-07, DAG-08, DAG-09, EXEC-01, EXEC-02, EXEC-03, EXEC-04, EXEC-05, EXEC-06, EXEC-07, EXEC-08, EXEC-09, CODE-01, CODE-02, CODE-03, CODE-04, TEST-01, TEST-02, TEST-03, TEST-04, TEST-05, TEST-06, EVOL-01, EVOL-02, EVOL-03, EVOL-04, EVOL-05, EVOL-06, EVOL-07, EVOL-08, EVOL-09, EVOL-10, EVOL-11, EVOL-12, HOLD-05, HOLD-06, HOLD-07, HOLD-08
+**Gap Closure:** Closes audit integration gaps 1 (engine Inngest not served) and 5 (configureEvolutionDeps missing). Restores Flows 2 (Bead Execution), 3 (Evolution), 6 (Git Push → Pipeline).
+**Success Criteria** (what must be TRUE):
+  1. An HTTP serve endpoint exists for the `cauldron-engine` Inngest client with all 5 engine functions registered
+  2. Inngest dev server can discover and invoke engine functions (handleBeadDispatchRequested, handleBeadCompleted, etc.)
+  3. `configureEvolutionDeps()` is called in bootstrap.ts alongside existing dependency configurators
+  4. Pipeline trigger webhook reaches downstream bead dispatch through the engine functions
+
+### Phase 12: Security & Tech Debt Cleanup
+**Goal**: Address warning-level security issues and minor tech debt items flagged by the milestone audit.
+**Depends on**: Phase 11
+**Gap Closure:** Closes warning-level audit findings. No requirements affected — all are already satisfied at the code level.
+**Success Criteria** (what must be TRUE):
+  1. SSE endpoint `/api/events/[projectId]` validates project access before streaming events
+  2. `kill` command accepts `--project-id` flag (not just env var)
+  3. Phase 09 VERIFICATION.md status field updated to reflect resolved gaps
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 6.1 → 6.2 → 7 → 8 → 9
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 6.1 → 6.2 → 7 → 8 → 9 → 10 → 11 → 12
 
-Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (DAG) depends on Phase 3 but not Phase 4. Phase 8 (Dashboard) can begin in parallel once the Phase 4 DAG data model is stable.
+Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (DAG) depends on Phase 3 but not Phase 4. Phase 8 (Dashboard) can begin in parallel once the Phase 4 DAG data model is stable. Phases 10-12 are gap closure phases from the v1.0 milestone audit.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -236,10 +270,13 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 2. LLM Gateway | 3/3 | Complete   | 2026-03-26 |
 | 3. Interview & Seed Pipeline | 3/3 | Complete   | 2026-03-26 |
 | 4. Holdout Vault | 3/3 | Complete   | 2026-03-26 |
-| 5. DAG Decomposition & Scheduler | 1/3 | In Progress|  |
+| 5. DAG Decomposition & Scheduler | 3/3 | Complete   | 2026-03-26 |
 | 6. Parallel Execution Engine | 5/5 | Complete   | 2026-03-26 |
 | 6.1. Dogfooding Transition | 5/5 | Complete   | 2026-03-26 |
 | 6.2. Testing & Tuning Dogfood | 3/3 | Complete   | 2026-03-26 |
-| 7. Evolutionary Loop | 0/4 | Not started | - |
+| 7. Evolutionary Loop | 4/4 | Complete   | 2026-03-27 |
 | 8. Web Dashboard | 9/9 | Complete   | 2026-03-27 |
 | 9. CLI | 4/4 | Complete   | 2026-03-27 |
+| 10. Wire tRPC Write Mutations | 0/? | Not started | - |
+| 11. Engine Inngest Serve & Bootstrap | 0/? | Not started | - |
+| 12. Security & Tech Debt | 0/? | Not started | - |
