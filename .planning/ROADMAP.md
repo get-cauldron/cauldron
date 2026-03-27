@@ -32,6 +32,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 12: Security & Tech Debt Cleanup** - SSE auth, kill command UX, minor tech debt items (gap closure) (completed 2026-03-27)
 - [x] **Phase 13: Re-scope to @get-cauldron/*** - Rename npm scope from @get-cauldron/* to @get-cauldron/*, consolidate trpc-types into shared, rename packages/cli to packages/cli (completed 2026-03-27)
 - [x] **Phase 14: Wire Interview Start & Fix Seed Crystallization Path** - Close P0/P1 integration gaps from v1.0 audit (gap closure) (completed 2026-03-27)
+- [ ] **Phase 15: Wire Holdout Generation Pipeline & Fix CLI Run** - Trigger holdout generation after crystallization, fix cauldron run seedId injection (gap closure)
+- [ ] **Phase 16: Bridge Evolution Loop & Fix Bead Dispatch** - Bridge evolution event types, fix dispatch payloads, add bead_claimed SSE, fix web SSE auth (gap closure)
 
 ## Phase Details
 
@@ -313,12 +315,47 @@ Plans:
 - [x] 14-01-PLAN.md — Add startInterview tRPC mutation, fix approveSummary to call crystallizeSeed()
 - [x] 14-02-PLAN.md — Wire web page and CLI to call startInterview for new projects
 
+### Phase 15: Wire Holdout Generation Pipeline & Fix CLI Run
+**Goal:** Trigger holdout scenario generation after seed crystallization so the vault is populated for review/sealing, and fix `cauldron run` so the full CLI pipeline (interview → crystallize → seal → decompose → execute) completes without manual intervention.
+**Requirements:** HOLD-01, HOLD-02, HOLD-03, HOLD-05, LLM-06, WEB-05, CLI-01
+**Depends on:** Phase 14
+**Gap Closure:** Closes P0 integration gaps from v1.0 milestone audit: holdout generation trigger, CLI run seedId injection. Restores Flow 1 (crystallize → seal → decompose) and CLI full-pipeline flow.
+**Success Criteria** (what must be TRUE):
+  1. After `approveSummary` crystallizes a seed, holdout scenarios are generated automatically (via Inngest event or direct call)
+  2. `getHoldouts` tRPC returns generated scenarios for review — vault is no longer always empty
+  3. `sealHoldouts` succeeds after user approves generated holdout scenarios
+  4. `cauldron run` passes seedId from crystallize stage to seal stage — full pipeline completes
+  5. Cross-model diversity enforcement (LLM-06) is active during holdout generation
+  6. Web interview page shows holdout review cards after crystallization
+**Plans:** 0/? plans
+
+Plans:
+- [ ] (to be planned)
+
+### Phase 16: Bridge Evolution Loop & Fix Bead Dispatch
+**Goal:** Make the evolution loop reachable from the pipeline by bridging the DB-event/Inngest-event gap, fix bead dispatch payloads so execution and re-execution work from all trigger paths, and add missing SSE events for live DAG status.
+**Requirements:** HOLD-07, HOLD-08, EVOL-01, EVOL-02, EVOL-03, EVOL-04, EVOL-05, EVOL-06, EVOL-07, EVOL-08, EVOL-09, EVOL-10, EVOL-11, EVOL-12, DAG-05, EXEC-03, WEB-03, WEB-04
+**Depends on:** Phase 15
+**Gap Closure:** Closes P1 integration gaps from v1.0 milestone audit: evolution trigger bridge, dispatch payload format. Also closes P2 items: bead_claimed event emission, web SSE auth. Restores Flow 3 (Evolution Loop) and Flow 5 (Git Push → Pipeline).
+**Success Criteria** (what must be TRUE):
+  1. `convergenceHandler` sends Inngest `evolution_started` event (not just DB event) after holdout failure
+  2. `handleEvolutionStarted` fires and runs the evolution FSM cycle
+  3. `triggerExecution` tRPC sends `bead.dispatch_requested` with correct `beadId` for each ready bead
+  4. Evolution re-dispatch includes `beadId` for newly decomposed beads
+  5. `claimBead` emits `bead_claimed` event — live DAG shows beads in `active` status
+  6. Web SSE connections work when `CAULDRON_API_KEY` is set (auth header included)
+  7. Git push → pipeline trigger dispatches beads with correct payload
+**Plans:** 0/? plans
+
+Plans:
+- [ ] (to be planned)
+
 ---
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 6.1 -> 6.2 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 6.1 -> 6.2 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16
 
 Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (DAG) depends on Phase 3 but not Phase 4. Phase 8 (Dashboard) can begin in parallel once the Phase 4 DAG data model is stable. Phases 10-12 are gap closure phases from the v1.0 milestone audit.
 
@@ -340,3 +377,5 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 12. Security & Tech Debt | 0/? | Complete    | 2026-03-27 |
 | 13. Re-scope to @get-cauldron/* | 2/2 | Complete    | 2026-03-27 |
 | 14. Wire Interview & Seed Path | 2/2 | Complete    | 2026-03-27 |
+| 15. Wire Holdout Pipeline & CLI Run | 0/? | Planned | — |
+| 16. Bridge Evolution & Fix Dispatch | 0/? | Planned | — |
