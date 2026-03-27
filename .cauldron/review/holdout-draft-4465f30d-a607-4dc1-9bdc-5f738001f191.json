@@ -1,0 +1,134 @@
+[
+  {
+    "id": "AC1E1C1A-001A-4A5D-9B9F-01F6D5E7C101",
+    "title": "Rejects invocation when required flag value is missing",
+    "given": "Given a target directory exists and the CLI is invoked with --dir /tmp/work --find old --replace but no value following --replace",
+    "when": "When the command is executed",
+    "then": "Then the CLI exits with a non-zero status and prints a clear usage or validation error instead of attempting any rename work",
+    "category": "error_handling",
+    "acceptanceCriterionRef": "1",
+    "severity": "major",
+    "approved": true
+  },
+  {
+    "id": "AC1E1C1A-002B-4A5D-9B9F-01F6D5E7C102",
+    "title": "Treats special-character pattern and replacement as literal filename text",
+    "given": "Given a directory contains files named report[a].txt and report$.txt",
+    "when": "When the CLI is run with --dir <dir> --find [a] --replace Ω and then separately with --find $ --replace _end",
+    "then": "Then only filenames containing the exact literal text [a] or $ are renamed, and files not containing those literal characters are unchanged",
+    "category": "edge_case",
+    "acceptanceCriterionRef": "1",
+    "severity": "major",
+    "approved": true
+  },
+  {
+    "id": "AC1E1C1A-003C-4A5D-9B9F-01F6D5E7C103",
+    "title": "Accepts empty replacement string for removal renames",
+    "given": "Given a directory contains files named old_notes.txt and keep.txt",
+    "when": "When the CLI is run with --dir <dir> --find old_ --replace \"\"",
+    "then": "Then the tool renames old_notes.txt to notes.txt and leaves keep.txt unchanged rather than rejecting the empty replacement as missing input",
+    "category": "happy_path",
+    "acceptanceCriterionRef": "1",
+    "severity": "major",
+    "approved": true
+  },
+  {
+    "id": "AC2E2C2A-001D-4A5D-9B9F-02F6D5E7C201",
+    "title": "Recursively renames matching files in nested directories only",
+    "given": "Given a target directory contains root_old.txt, a/b/c/deep_old.txt, and a directory named archive_old with a file inside named untouched.txt",
+    "when": "When the CLI is run with --dir <dir> --find old --replace new",
+    "then": "Then root_old.txt and a/b/c/deep_old.txt are renamed, but the directory archive_old itself is not renamed and untouched.txt remains unchanged because only file names are in scope",
+    "category": "edge_case",
+    "acceptanceCriterionRef": "2",
+    "severity": "major",
+    "approved": true
+  },
+  {
+    "id": "AC2E2C2A-002E-4A5D-9B9F-02F6D5E7C202",
+    "title": "Handles Unicode filenames during recursive traversal",
+    "given": "Given a target directory contains nested files named café_old.txt, emoji_📁_old.md, and RTL_שלום_old.txt",
+    "when": "When the CLI is run with --dir <dir> --find old --replace new",
+    "then": "Then each matching file is renamed successfully with the non-ASCII characters preserved exactly in the resulting filenames",
+    "category": "edge_case",
+    "acceptanceCriterionRef": "2",
+    "severity": "major",
+    "approved": true
+  },
+  {
+    "id": "AC3E3C3A-001F-4A5D-9B9F-03F6D5E7C301",
+    "title": "Replaces every occurrence of the find string within a filename",
+    "given": "Given a directory contains files named old_old_old.txt and oldkeep.txt",
+    "when": "When the CLI is run with --dir <dir> --find old --replace new",
+    "then": "Then old_old_old.txt becomes new_new_new.txt and oldkeep.txt becomes newkeep.txt, showing all occurrences in each filename are replaced",
+    "category": "happy_path",
+    "acceptanceCriterionRef": "3",
+    "severity": "major",
+    "approved": true
+  },
+  {
+    "id": "AC3E3C3A-0020-4A5D-9B9F-03F6D5E7C302",
+    "title": "Does not overwrite when two source filenames map to the same destination",
+    "given": "Given a directory contains files named a_old.txt and a_old_old.txt",
+    "when": "When the CLI is run with --dir <dir> --find _old --replace \"\"",
+    "then": "Then the CLI reports a name collision for the conflicting target filename, does not silently overwrite either file, and leaves the filesystem in a safe, observable state",
+    "category": "error_handling",
+    "acceptanceCriterionRef": "3",
+    "severity": "critical",
+    "approved": true
+  },
+  {
+    "id": "AC4E4C4A-0011-4A5D-9B9F-04F6D5E7C401",
+    "title": "Dry-run previews recursive changes without modifying any files",
+    "given": "Given a target directory contains nested matching files and their original names are recorded before execution",
+    "when": "When the CLI is run with --dir <dir> --find old --replace new --dry-run",
+    "then": "Then the CLI lists each planned rename and after the command completes every file still exists under its original name with no renamed files created",
+    "category": "happy_path",
+    "acceptanceCriterionRef": "4",
+    "severity": "critical",
+    "approved": true
+  },
+  {
+    "id": "AC4E4C4A-0022-4A5D-9B9F-04F6D5E7C402",
+    "title": "Dry-run reports collisions and permission problems as previews without partial mutation",
+    "given": "Given a target directory contains one rename that would collide with an existing filename and another matching file in a subdirectory without rename permission",
+    "when": "When the CLI is run with --dir <dir> --find old --replace \"\" --dry-run",
+    "then": "Then the output identifies both the planned rename and the blocking issues, and no file or directory contents are changed despite the mixed outcomes",
+    "category": "error_handling",
+    "acceptanceCriterionRef": "4",
+    "severity": "major",
+    "approved": true
+  },
+  {
+    "id": "AC5E5C5A-0013-4A5D-9B9F-05F6D5E7C501",
+    "title": "Reports no matches found cleanly and exits without error",
+    "given": "Given a readable target directory tree contains no filenames with the requested find string",
+    "when": "When the CLI is run with --dir <dir> --find missing --replace new",
+    "then": "Then the CLI reports that no matching files were found, makes no filesystem changes, and exits successfully",
+    "category": "edge_case",
+    "acceptanceCriterionRef": "5",
+    "severity": "minor",
+    "approved": true
+  },
+  {
+    "id": "AC5E5C5A-0024-4A5D-9B9F-05F6D5E7C502",
+    "title": "Continues or fails predictably on permission-denied files without hiding the error",
+    "given": "Given a target directory contains two matching files where one is renameable and one is in a subdirectory lacking permission for rename",
+    "when": "When the CLI is run with --dir <dir> --find old --replace new",
+    "then": "Then the CLI surfaces the permission error clearly and its final output and exit status reflect the partial failure rather than reporting full success",
+    "category": "error_handling",
+    "acceptanceCriterionRef": "5",
+    "severity": "critical",
+    "approved": true
+  },
+  {
+    "id": "AC5E5C5A-0035-4A5D-9B9F-05F6D5E7C503",
+    "title": "Prevents path-like replacement text from escaping the original directory",
+    "given": "Given a target directory contains a file named note_old.txt",
+    "when": "When the CLI is run with --dir <dir> --find old --replace ../escaped",
+    "then": "Then the tool does not move or rename the file outside the target directory, and instead rejects or safely handles the replacement text as invalid filename content on the platform",
+    "category": "security",
+    "acceptanceCriterionRef": "5",
+    "severity": "critical",
+    "approved": true
+  }
+]

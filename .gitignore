@@ -6,3 +6,4 @@ dist/
 *.local
 coverage/
 *.tsbuildinfo
+.DS_Store
