@@ -34,8 +34,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **INTV-05**: Brownfield variant adds context clarity dimension (15%) and adjusts other weights
 - [x] **INTV-06**: Structured summary presented to user for review before seed crystallization
 - [x] **INTV-07**: User explicitly approves summary before seed generation proceeds
-- [x] **SEED-01**: Immutable Seed spec generated in YAML format (goal, constraints, acceptance criteria, ontology schema, evaluation principles, exit conditions)
-- [x] **SEED-02**: Seeds are frozen after crystallization — no mutation, only evolution creates new seeds
+- [ ] **SEED-01**: Immutable Seed spec generated in YAML format (goal, constraints, acceptance criteria, ontology schema, evaluation principles, exit conditions)
+- [ ] **SEED-02**: Seeds are frozen after crystallization — no mutation, only evolution creates new seeds
 - [x] **SEED-03**: Each seed has a unique ID, version, creation timestamp, parent seed reference (if evolved), and interview ID
 - [x] **SEED-04**: Seed lineage trackable: given any seed, user can trace back to original interview through all evolutionary ancestors
 
@@ -107,7 +107,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Web Dashboard
 
-- [x] **WEB-01**: Chat-like interface for the Socratic interview with MC suggestions and freeform input
+- [ ] **WEB-01**: Chat-like interface for the Socratic interview with MC suggestions and freeform input
 - [x] **WEB-02**: Project workspace management (create, list, open, archive)
 - [x] **WEB-03**: Live DAG visualization showing bead execution status (pending, active, completed, failed, blocked)
 - [x] **WEB-04**: Real-time streaming of agent logs and code diffs via SSE
@@ -119,7 +119,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### CLI
 
-- [x] **CLI-01**: All pipeline operations available via CLI (start interview, trigger execution, check status, approve holdouts)
+- [ ] **CLI-01**: All pipeline operations available via CLI (start interview, trigger execution, check status, approve holdouts)
 - [x] **CLI-02**: Git-push triggered pipeline runs (webhook listener)
 - [x] **CLI-03**: CLI and web dashboard share the same API layer (tRPC)
 
@@ -190,8 +190,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INTV-05 | Phase 3 | Complete |
 | INTV-06 | Phase 3 | Complete |
 | INTV-07 | Phase 3 | Complete |
-| SEED-01 | Phase 3 | Complete |
-| SEED-02 | Phase 3 | Complete |
+| SEED-01 | Phase 14 | Pending |
+| SEED-02 | Phase 14 | Pending |
 | SEED-03 | Phase 3 | Complete |
 | SEED-04 | Phase 3 | Complete |
 | HOLD-01 | Phase 4 | Complete |
@@ -242,7 +242,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EVOL-10 | Phase 7 | Complete |
 | EVOL-11 | Phase 7 | Complete |
 | EVOL-12 | Phase 7 | Complete |
-| WEB-01 | Phase 8 | Complete |
+| WEB-01 | Phase 14 | Pending |
 | WEB-02 | Phase 8 | Complete |
 | WEB-03 | Phase 8 | Complete |
 | WEB-04 | Phase 8 | Complete |
@@ -251,7 +251,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WEB-07 | Phase 8 | Complete |
 | WEB-08 | Phase 8 | Complete |
 | WEB-09 | Phase 8 | Complete |
-| CLI-01 | Phase 9 | Complete |
+| CLI-01 | Phase 14 | Pending |
 | CLI-02 | Phase 9 | Complete |
 | CLI-03 | Phase 9 | Complete |
 

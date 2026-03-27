@@ -31,6 +31,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 11: Engine Inngest Serve & Evolution Bootstrap** - Add HTTP serve endpoint for engine Inngest functions, wire configureEvolutionDeps in bootstrap (gap closure) (completed 2026-03-27)
 - [x] **Phase 12: Security & Tech Debt Cleanup** - SSE auth, kill command UX, minor tech debt items (gap closure) (completed 2026-03-27)
 - [x] **Phase 13: Re-scope to @get-cauldron/*** - Rename npm scope from @get-cauldron/* to @get-cauldron/*, consolidate trpc-types into shared, rename packages/cli to packages/cli (completed 2026-03-27)
+- [ ] **Phase 14: Wire Interview Start & Fix Seed Crystallization Path** - Close P0/P1 integration gaps from v1.0 audit (gap closure)
 
 ## Phase Details
 
@@ -294,11 +295,29 @@ Plans:
 - [x] 13-01-PLAN.md — Package restructure: merge trpc-types into shared, rename packages/cli to packages/cli, update all package.json scopes
 - [x] 13-02-PLAN.md — Bulk import rename (@get-cauldron/* to @get-cauldron/*), update skills/docs, full regression gate
 
+### Phase 14: Wire Interview Start & Fix Seed Crystallization Path
+**Goal:** Close the two P0/P1 integration gaps: add `startInterview` tRPC procedure so new projects can begin interviews, and replace inline seed insert in `approveSummary` with `crystallizeSeed()` call so event sourcing and SSE work correctly.
+**Requirements:** SEED-01, SEED-02, WEB-01, CLI-01
+**Depends on:** Phase 13
+**Gap Closure:** Closes P0 (missing startInterview tRPC) and P1 (approveSummary bypasses crystallizeSeed) from v1.0 milestone audit.
+**Success Criteria** (what must be TRUE):
+  1. `startInterview` tRPC mutation exists and calls `InterviewFSM.startOrResume()`
+  2. Web interview page calls `startInterview` when interview doesn't exist, creating the DB record
+  3. CLI `interview` command calls `startInterview` when interview status is `not_started`
+  4. `approveSummary` tRPC mutation calls `crystallizeSeed()` instead of inline raw DB insert
+  5. `seed_crystallized` event is written to event store when seed is crystallized via web/CLI
+  6. SSE clients receive `seed_crystallized` event after crystallization
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 14 to break down)
+
+---
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 6.1 -> 6.2 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 6.1 -> 6.2 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14
 
 Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (DAG) depends on Phase 3 but not Phase 4. Phase 8 (Dashboard) can begin in parallel once the Phase 4 DAG data model is stable. Phases 10-12 are gap closure phases from the v1.0 milestone audit.
 
@@ -319,3 +338,4 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 11. Engine Inngest Serve & Bootstrap | 2/3 | Complete    | 2026-03-27 |
 | 12. Security & Tech Debt | 0/? | Complete    | 2026-03-27 |
 | 13. Re-scope to @get-cauldron/* | 2/2 | Complete    | 2026-03-27 |
+| 14. Wire Interview & Seed Path | 0/? | Not started | - |
