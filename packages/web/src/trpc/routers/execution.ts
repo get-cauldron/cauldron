@@ -3,7 +3,7 @@ import { router, publicProcedure } from '../init.js';
 import { beads, beadEdges, events, seeds } from '@get-cauldron/shared';
 import { appendEvent } from '@get-cauldron/shared';
 import { eq, desc, inArray } from 'drizzle-orm';
-import { runDecomposition, inngest as engineInngest } from '@get-cauldron/engine';
+import { runDecomposition, inngest as engineInngest, findReadyBeads } from '@get-cauldron/engine';
 
 
 export const executionRouter = router({
@@ -109,17 +109,22 @@ export const executionRouter = router({
         payload: { seedId: input.seedId, source: 'cli' },
       });
 
-      // Dispatch to engine Inngest functions for actual bead execution.
-      // engineInngest.send() routes by event name — cauldron-engine's handleBeadDispatchRequested receives this.
-      await engineInngest.send({
-        name: 'bead.dispatch_requested',
-        data: {
-          seedId: input.seedId,
-          projectId: input.projectId,
-        },
-      });
+      // Find all ready beads (no unmet dependencies) and dispatch each individually
+      const readyBeads = await findReadyBeads(ctx.db, input.seedId);
 
-      return { success: true, message: 'Execution triggered' };
+      for (const bead of readyBeads) {
+        await engineInngest.send({
+          name: 'bead.dispatch_requested',
+          data: {
+            beadId: bead.id,
+            seedId: input.seedId,
+            projectId: input.projectId,
+            moleculeId: bead.moleculeId,
+          },
+        });
+      }
+
+      return { success: true, message: `Execution triggered: ${readyBeads.length} beads dispatched` };
     }),
 
   // Get pipeline status including active state and queue state
