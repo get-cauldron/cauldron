@@ -18,7 +18,7 @@ export async function crystallizeCommand(
   client: CLIClient,
   args: string[],
   flags: Flags
-): Promise<void> {
+): Promise<{ seedId: string } | undefined> {
   const projectId = flags.projectId;
 
   if (!projectId) {
@@ -67,7 +67,7 @@ export async function crystallizeCommand(
 
   if (flags.json) {
     console.log(formatJson(result));
-    return;
+    return { seedId: result.seedId };
   }
 
   console.log(chalk.green('Seed crystallized:'), chalk.cyan(result.seedId));
@@ -75,4 +75,6 @@ export async function crystallizeCommand(
   console.log(chalk.gray('\nNext steps:'));
   console.log(chalk.white(`  cauldron seal --project ${projectId}`));
   console.log(chalk.white(`  cauldron decompose --project ${projectId}`));
+
+  return { seedId: result.seedId };
 }

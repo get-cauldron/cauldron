@@ -33,6 +33,8 @@ export async function runCommand(
     process.exit(1);
   }
 
+  let seedId: string | undefined;
+
   console.log(chalk.cyan('\nCauldron Pipeline Run'));
   console.log(chalk.gray('Running: interview → crystallize → seal → decompose → execute'));
   console.log(chalk.gray(`Project: ${projectId}\n`));
@@ -56,7 +58,8 @@ export async function runCommand(
       run: async () => {
         const spinner = createSpinner('Crystallizing seed...').start();
         try {
-          await crystallizeCommand(client, args, flags);
+          const result = await crystallizeCommand(client, args, flags);
+          seedId = result?.seedId;
           spinner.succeed('Seed crystallized');
         } catch (err) {
           spinner.fail('Crystallize failed');
@@ -70,9 +73,13 @@ export async function runCommand(
           {
             name: 'Seal',
             run: async () => {
+              if (!seedId) {
+                throw new Error('No seedId from crystallize stage — cannot seal');
+              }
               const spinner = createSpinner('Sealing holdouts...').start();
               try {
-                await sealCommand(client, args, flags);
+                const sealArgs = [...args, '--seed-id', seedId, '--approve-all'];
+                await sealCommand(client, sealArgs, flags);
                 spinner.succeed('Holdouts sealed');
               } catch (err) {
                 spinner.fail('Seal failed');
