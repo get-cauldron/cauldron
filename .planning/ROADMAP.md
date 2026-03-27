@@ -218,7 +218,7 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 09-01-PLAN.md — tRPC type-sharing package, client factory, server auto-start, config-io, output utilities, auth context
+- [x] 09-01-PLAN.md — tRPC type-sharing package, client factory, server auto-start, config-io, output utilities, auth context
 - [ ] 09-02-PLAN.md — CLI router refactor and all 13 commands (8 refactored + 5 new) using tRPC client
 - [ ] 09-03-PLAN.md — SSE-backed cauldron logs with per-bead color-coded streaming
 - [ ] 09-04-PLAN.md — GitHub push webhook handler and CLI webhook setup command
@@ -242,4 +242,4 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 6.2. Testing & Tuning Dogfood | 3/3 | Complete   | 2026-03-26 |
 | 7. Evolutionary Loop | 0/4 | Not started | - |
 | 8. Web Dashboard | 9/9 | Complete   | 2026-03-27 |
-| 9. CLI | 0/4 | Not started | - |
+| 9. CLI | 1/4 | In Progress|  |

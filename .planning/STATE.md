@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Phase 9 planned - 4 plans in 3 waves
-last_updated: "2026-03-27T14:20:17.538Z"
+status: Ready to execute
+stopped_at: Completed 09-cli-01-PLAN.md
+last_updated: "2026-03-27T14:29:09.143Z"
 progress:
   total_phases: 11
   completed_phases: 10
   total_plans: 45
-  completed_plans: 41
+  completed_plans: 42
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** User describes what they want; Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves until goal is met — humans steer at key decision points, not babysitting every step.
-**Current focus:** Phase 08 — web-dashboard
+**Current focus:** Phase 09 — cli
 
 ## Current Position
 
-Phase: 9
-Plan: Not started
+Phase: 09 (cli) — EXECUTING
+Plan: 2 of 4
 
 ## Performance Metrics
 
@@ -82,6 +82,7 @@ Plan: Not started
 | Phase 08-web-dashboard P05 | 6 | 3 tasks | 11 files |
 | Phase 08-web-dashboard P06 | 4min | 2 tasks | 7 files |
 | Phase 08-web-dashboard P08 | 5min | 2 tasks | 3 files |
+| Phase 09-cli P01 | 6min | 2 tasks | 16 files |
 
 ## Accumulated Context
 
@@ -183,6 +184,8 @@ Recent decisions affecting current work:
 - [Phase 08-web-dashboard]: tRPC inArray with const-asserted evolution event types: inArray(events.type, [...] as unknown as string[]) to satisfy eventTypeEnum column type
 - [Phase 08-web-dashboard]: Use (typeof eventTypeEnum.enumValues)[number][] for Drizzle inArray on pgEnum columns
 - [Phase 08-web-dashboard]: String() coercion for Drizzle timestamp fields avoids instanceof Date fragility in TypeScript
+- [Phase 09-cli]: trpc-types and api packages use Bundler moduleResolution to allow type traversal into web package without .js extension collisions
+- [Phase 09-cli]: createTRPCContext accepts optional Request parameter; CAULDRON_API_KEY unset = dev mode (allow all); authenticatedProcedure exported for protected routes
 
 ### Pending Todos
 
@@ -197,6 +200,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T14:20:17.535Z
-Stopped at: Phase 9 planned - 4 plans in 3 waves
-Resume file: .planning/phases/09-cli/09-01-PLAN.md
+Last session: 2026-03-27T14:29:09.141Z
+Stopped at: Completed 09-cli-01-PLAN.md
+Resume file: None

@@ -121,7 +121,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **CLI-01**: All pipeline operations available via CLI (start interview, trigger execution, check status, approve holdouts)
 - [ ] **CLI-02**: Git-push triggered pipeline runs (webhook listener)
-- [ ] **CLI-03**: CLI and web dashboard share the same API layer (tRPC)
+- [x] **CLI-03**: CLI and web dashboard share the same API layer (tRPC)
 
 ## v2 Requirements
 
@@ -253,7 +253,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WEB-09 | Phase 8 | Complete |
 | CLI-01 | Phase 9 | Pending |
 | CLI-02 | Phase 9 | Pending |
-| CLI-03 | Phase 9 | Pending |
+| CLI-03 | Phase 9 | Complete |
 
 **Coverage:**
 - v1 requirements: 83 total (note: original count of 72 was incorrect; actual count verified at 83)
