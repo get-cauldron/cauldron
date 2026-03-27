@@ -64,7 +64,14 @@ export async function saveCLIConfig(projectRoot: string, config: Partial<CLIConf
   }
 
   // Inject or update cli section in the config file via regex
-  const cliSection = `cli: { serverUrl: '${config.serverUrl ?? 'http://localhost:3000'}', apiKey: '${config.apiKey ?? ''}' }`;
+  const cliParts: string[] = [
+    `serverUrl: '${config.serverUrl ?? 'http://localhost:3000'}'`,
+    `apiKey: '${config.apiKey ?? ''}'`,
+  ];
+  if (config.webhookSecret !== undefined) {
+    cliParts.push(`webhookSecret: '${config.webhookSecret}'`);
+  }
+  const cliSection = `cli: { ${cliParts.join(', ')} }`;
   const cliRegex = /cli:\s*\{[^}]*\}/;
   if (cliRegex.test(content)) {
     content = content.replace(cliRegex, cliSection);

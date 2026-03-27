@@ -18,6 +18,7 @@ import { projectsCommand } from './commands/projects.js';
 import { costsCommand } from './commands/costs.js';
 import { evolutionCommand } from './commands/evolution.js';
 import { runCommand } from './commands/run.js';
+import { webhookCommand } from './commands/webhook.js';
 
 const COMMANDS = [
   'health',
@@ -191,7 +192,7 @@ async function main(): Promise<void> {
       await runCommand(client, commandArgs, flags);
       break;
     case 'webhook':
-      console.log(chalk.yellow('webhook command not yet implemented'));
+      await webhookCommand(client, commandArgs, flags);
       break;
   }
 }

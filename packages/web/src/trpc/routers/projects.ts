@@ -109,6 +109,7 @@ export const projectsRouter = router({
         settings: z.object({
           budgetLimitCents: z.number().optional(),
           maxConcurrentBeads: z.number().optional(),
+          repoUrl: z.string().optional(),
         }),
       }),
     )
