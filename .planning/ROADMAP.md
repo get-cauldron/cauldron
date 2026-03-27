@@ -352,22 +352,34 @@ Plans:
 - [x] 16-02-PLAN.md — Fix triggerExecution/pipelineTrigger dispatch payloads (beadId) and SSE query-param auth fallback
 - [x] 16-03-PLAN.md — Gap closure: execution.test.ts for per-bead dispatch tests, WEB-04 tracker update
 
-### Phase 17: UI testing, e2e testing, and final checks
+### Phase 17: UI Testing, E2E Testing, and Final Checks
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Comprehensive test coverage and pre-release quality validation -- Playwright E2E tests covering all dashboard surfaces with accessibility checks and visual snapshots, React component tests for all pages and key components, GitHub Actions CI pipeline wiring all test layers, and final quality audits (TypeScript strictness, dependency vulnerabilities, license compliance, Lighthouse).
+**Requirements**: D-01 through D-25 (from CONTEXT.md decisions)
 **Depends on:** Phase 16
-**Plans:** 0 plans
+**Success Criteria** (what must be TRUE):
+  1. pnpm build, pnpm typecheck, pnpm test, and pnpm lint all pass with zero errors
+  2. Playwright E2E tests cover all 6 dashboard surfaces (projects, interview, execution, evolution, costs, settings)
+  3. axe-core accessibility checks run on every page during E2E with zero critical/serious violations
+  4. All pages and key components have React component tests with interaction coverage
+  5. GitHub Actions CI pipeline runs lint + typecheck + build + unit + integration + E2E on every PR
+  6. pnpm audit reports zero critical/high vulnerabilities
+  7. Every any usage in the codebase has a justification comment
+**Plans:** 5 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 17 to break down)
+- [ ] 17-01-PLAN.md -- Regression gate, build fix, test infrastructure (Docker E2E DB, axe-core, factories, fixtures)
+- [ ] 17-02-PLAN.md -- React component tests for all 16 components and 5 pages
+- [ ] 17-03-PLAN.md -- E2E tests: project management, interview, and settings flows
+- [ ] 17-04-PLAN.md -- E2E tests: execution (DAG), evolution, and costs flows
+- [ ] 17-05-PLAN.md -- GitHub Actions CI pipeline, TypeScript strict audit, dependency audit, Lighthouse
 
 ---
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 6.1 -> 6.2 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 6.1 -> 6.2 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17
 
 Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (DAG) depends on Phase 3 but not Phase 4. Phase 8 (Dashboard) can begin in parallel once the Phase 4 DAG data model is stable. Phases 10-12 are gap closure phases from the v1.0 milestone audit.
 
@@ -391,3 +403,4 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 14. Wire Interview & Seed Path | 2/2 | Complete    | 2026-03-27 |
 | 15. Wire Holdout Pipeline & CLI Run | 1/1 | Complete    | 2026-03-27 |
 | 16. Bridge Evolution & Fix Dispatch | 3/3 | Complete    | 2026-03-27 |
+| 17. UI Testing & E2E & Final Checks | 0/5 | Planning    | — |
