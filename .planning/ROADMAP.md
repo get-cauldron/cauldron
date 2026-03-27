@@ -26,7 +26,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 6.2: Testing & Tuning Dogfood Process** (INSERTED) - Interview convergence fixes, pre-generated seed pipeline validation, end-to-end dry run (completed 2026-03-26)
 - [ ] **Phase 7: Evolutionary Loop** - Post-execution evaluator, evolution FSM, convergence detection, lateral thinking personas, holdout unsealing
 - [x] **Phase 8: Web Dashboard** - Interview chat, live DAG visualization, SSE log streaming, human approval UX, HZD aesthetic (completed 2026-03-27)
-- [ ] **Phase 9: CLI** - Full pipeline CLI, git-push trigger, shared tRPC API
+- [x] **Phase 9: CLI** - Full pipeline CLI, git-push trigger, shared tRPC API (completed 2026-03-27)
 
 ## Phase Details
 
@@ -221,7 +221,7 @@ Plans:
 - [x] 09-01-PLAN.md — tRPC type-sharing package, client factory, server auto-start, config-io, output utilities, auth context
 - [x] 09-02-PLAN.md — CLI router refactor and all 13 commands (8 refactored + 5 new) using tRPC client
 - [x] 09-03-PLAN.md — SSE-backed cauldron logs with per-bead color-coded streaming
-- [ ] 09-04-PLAN.md — GitHub push webhook handler and CLI webhook setup command
+- [x] 09-04-PLAN.md — GitHub push webhook handler and CLI webhook setup command
 
 ## Progress
 
@@ -242,4 +242,4 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 6.2. Testing & Tuning Dogfood | 3/3 | Complete   | 2026-03-26 |
 | 7. Evolutionary Loop | 0/4 | Not started | - |
 | 8. Web Dashboard | 9/9 | Complete   | 2026-03-27 |
-| 9. CLI | 3/4 | In Progress|  |
+| 9. CLI | 4/4 | Complete   | 2026-03-27 |

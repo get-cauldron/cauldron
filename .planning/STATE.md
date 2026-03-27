@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 09-cli-02-PLAN.md
-last_updated: "2026-03-27T14:42:51.710Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 09-cli-04-PLAN.md
+last_updated: "2026-03-27T14:52:18.332Z"
 progress:
   total_phases: 11
-  completed_phases: 10
+  completed_phases: 11
   total_plans: 45
-  completed_plans: 44
+  completed_plans: 45
 ---
 
 # Project State
@@ -85,6 +85,7 @@ Plan: 4 of 4
 | Phase 09-cli P01 | 6min | 2 tasks | 16 files |
 | Phase 09-cli P03 | 4min | 1 tasks | 2 files |
 | Phase 09-cli P02 | 10min | 2 tasks | 22 files |
+| Phase 09-cli P04 | 7min | 4 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -190,6 +191,8 @@ Recent decisions affecting current work:
 - [Phase 09-cli]: createTRPCContext accepts optional Request parameter; CAULDRON_API_KEY unset = dev mode (allow all); authenticatedProcedure exported for protected routes
 - [Phase 09-cli]: eventsource v4 uses custom fetch function (not headers init option) for auth injection in logsCommand
 - [Phase 09-cli]: All CLI commands use (client, args, flags) tRPC signature — zero @cauldron/engine imports in command layer; triggerDecomposition/triggerExecution mutations use events for async Inngest dispatch
+- [Phase 09-cli]: pipeline_trigger added to eventTypeEnum (not reused pipeline_started) — semantically distinct: trigger is inbound event, started is post-queue
+- [Phase 09-cli]: Inngest client in web package separate from engine package (cauldron-web vs cauldron-engine) — web layer owns its own functions
 
 ### Pending Todos
 
@@ -204,6 +207,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T14:42:51.707Z
-Stopped at: Completed 09-cli-02-PLAN.md
+Last session: 2026-03-27T14:52:18.329Z
+Stopped at: Completed 09-cli-04-PLAN.md
 Resume file: None
