@@ -307,10 +307,11 @@ Plans:
   4. `approveSummary` tRPC mutation calls `crystallizeSeed()` instead of inline raw DB insert
   5. `seed_crystallized` event is written to event store when seed is crystallized via web/CLI
   6. SSE clients receive `seed_crystallized` event after crystallization
-**Plans:** 0 plans
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 14 to break down)
+- [ ] 14-01-PLAN.md — Add startInterview tRPC mutation, fix approveSummary to call crystallizeSeed()
+- [ ] 14-02-PLAN.md — Wire web page and CLI to call startInterview for new projects
 
 ---
 
