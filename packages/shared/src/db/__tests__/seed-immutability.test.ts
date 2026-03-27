@@ -40,6 +40,12 @@ async function createTestInterview(projectId: string) {
   return interview!;
 }
 
+/** Extract the PG error message from a postgres package error (which nests PG details in .cause) */
+function extractPgError(err: unknown): string {
+  const e = err as { cause?: { message?: string }; message?: string };
+  return e.cause?.message ?? e.message ?? String(err);
+}
+
 describe('seed immutability trigger', () => {
   it('allows updating draft seed goal (draft seeds are mutable)', async () => {
     const project = await createTestProject();
@@ -105,8 +111,7 @@ describe('seed immutability trigger', () => {
       // If we get here, the trigger didn't fire — test fails
       throw new Error('Expected trigger to prevent mutation but it did not');
     } catch (err: unknown) {
-      const msg = String(err);
-      // Trigger should raise an error containing 'ImmutableSeedError' or 'crystallized and cannot be mutated'
+      const msg = extractPgError(err);
       expect(msg).toMatch(/ImmutableSeedError|crystallized and cannot be mutated/i);
     }
   });
@@ -131,7 +136,7 @@ describe('seed immutability trigger', () => {
         .where(sql`id = ${crystallizedSeed!.id}::uuid`);
       throw new Error('Expected trigger to prevent mutation but it did not');
     } catch (err: unknown) {
-      const msg = String(err);
+      const msg = extractPgError(err);
       expect(msg).toMatch(/ImmutableSeedError|crystallized and cannot be mutated/i);
     }
   });
@@ -155,7 +160,7 @@ describe('seed immutability trigger', () => {
         .where(sql`id = ${crystallizedSeed!.id}::uuid`);
       throw new Error('Expected trigger to prevent mutation but it did not');
     } catch (err: unknown) {
-      const msg = String(err);
+      const msg = extractPgError(err);
       // The trigger fires on ANY update to a crystallized seed
       expect(msg).toMatch(/ImmutableSeedError|crystallized and cannot be mutated/i);
     }
@@ -181,7 +186,7 @@ describe('seed immutability trigger', () => {
         .where(sql`id = ${crystallizedSeed!.id}::uuid`);
       throw new Error('Expected trigger to prevent mutation but it did not');
     } catch (err: unknown) {
-      const msg = String(err);
+      const msg = extractPgError(err);
       expect(msg).toMatch(/ImmutableSeedError|crystallized and cannot be mutated/i);
     }
   });

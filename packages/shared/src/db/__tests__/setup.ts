@@ -3,6 +3,10 @@ import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
 import * as schema from '../schema/index.js';
 import { sql } from 'drizzle-orm';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const TEST_DATABASE_URL = process.env['TEST_DATABASE_URL'] ?? 'postgres://cauldron:cauldron@localhost:5433/cauldron_test';
 
@@ -13,7 +17,7 @@ export function createTestDb() {
 }
 
 export async function runMigrations(db: ReturnType<typeof drizzle>) {
-  await migrate(db, { migrationsFolder: './src/db/migrations' });
+  await migrate(db, { migrationsFolder: path.resolve(__dirname, '../migrations') });
 }
 
 export async function truncateAll(db: ReturnType<typeof drizzle>) {

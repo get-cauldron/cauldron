@@ -23,6 +23,9 @@ describe('statusCommand', () => {
         getBeadDetail: {
           query: vi.fn().mockResolvedValue({ bead: {}, events: [] }),
         },
+        getPipelineStatus: {
+          query: vi.fn().mockResolvedValue({ queued: false, activePipelineId: null }),
+        },
       },
     } as unknown as Parameters<typeof statusCommand>[0];
   }
