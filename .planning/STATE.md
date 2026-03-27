@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Milestone complete
-stopped_at: Completed 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs-02-PLAN.md
-last_updated: "2026-03-27T19:32:50.836Z"
+status: Ready to execute
+stopped_at: Completed 14-wire-interview-start-fix-seed-crystallization-path-01-PLAN.md
+last_updated: "2026-03-27T20:20:38.312Z"
 progress:
-  total_phases: 15
+  total_phases: 16
   completed_phases: 15
-  total_plans: 54
-  completed_plans: 54
+  total_plans: 56
+  completed_plans: 55
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** User describes what they want; Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves until goal is met — humans steer at key decision points, not babysitting every step.
-**Current focus:** Phase 13 — re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs
+**Current focus:** Phase 14 — wire-interview-start-fix-seed-crystallization-path
 
 ## Current Position
 
-Phase: 13
-Plan: Not started
+Phase: 14 (wire-interview-start-fix-seed-crystallization-path) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -90,6 +90,7 @@ Plan: Not started
 | Phase 10-wire-trpc-mutations-to-engine P02 | 4min | 2 tasks | 3 files |
 | Phase 11-engine-inngest-serve-evolution-bootstrap P01 | 5min | 2 tasks | 4 files |
 | Phase 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs P02 | 8min | 2 tasks | 97 files |
+| Phase 14-wire-interview-start-fix-seed-crystallization-path P01 | 8min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -206,6 +207,8 @@ Recent decisions affecting current work:
 - [Phase 11-engine-inngest-serve-evolution-bootstrap]: pipelineTriggerFunction uses step.sendEvent (durable, inside Inngest function); triggerExecution uses engineInngest.send() (outside Inngest context, tRPC mutation)
 - [Phase 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs]: packages/shared/tsconfig.json excludes trpc-types.ts from rootDir check: the file re-exports from web's router (outside ./src), cross-package re-export shim consumed by web itself
 - [Phase 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs]: TRPCClient<AppRouter> explicit return type required in createCLIClient to avoid TS2883 non-portable type errors when AppRouter traverses shared subpath export boundaries
+- [Phase 14-wire-interview-start-fix-seed-crystallization-path]: crystallizeSeed() replaces inline DB insert in approveSummary — routes seed creation through event store, DB trigger enforcement, and immutability guard
+- [Phase 14-wire-interview-start-fix-seed-crystallization-path]: ImmutableSeedError caught at tRPC boundary and converted to CONFLICT code — lets web clients distinguish duplicate crystallization from other errors
 
 ### Pending Todos
 
@@ -220,6 +223,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T19:26:36.347Z
-Stopped at: Completed 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs-02-PLAN.md
+Last session: 2026-03-27T20:20:38.309Z
+Stopped at: Completed 14-wire-interview-start-fix-seed-crystallization-path-01-PLAN.md
 Resume file: None

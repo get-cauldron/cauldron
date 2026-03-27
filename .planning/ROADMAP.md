@@ -307,10 +307,10 @@ Plans:
   4. `approveSummary` tRPC mutation calls `crystallizeSeed()` instead of inline raw DB insert
   5. `seed_crystallized` event is written to event store when seed is crystallized via web/CLI
   6. SSE clients receive `seed_crystallized` event after crystallization
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
-- [ ] 14-01-PLAN.md — Add startInterview tRPC mutation, fix approveSummary to call crystallizeSeed()
+- [x] 14-01-PLAN.md — Add startInterview tRPC mutation, fix approveSummary to call crystallizeSeed()
 - [ ] 14-02-PLAN.md — Wire web page and CLI to call startInterview for new projects
 
 ---
@@ -339,4 +339,4 @@ Note: Phase 4 (Holdout Vault) can begin as soon as Phase 3 completes. Phase 5 (D
 | 11. Engine Inngest Serve & Bootstrap | 2/3 | Complete    | 2026-03-27 |
 | 12. Security & Tech Debt | 0/? | Complete    | 2026-03-27 |
 | 13. Re-scope to @get-cauldron/* | 2/2 | Complete    | 2026-03-27 |
-| 14. Wire Interview & Seed Path | 0/? | Not started | - |
+| 14. Wire Interview & Seed Path | 1/2 | In Progress|  |

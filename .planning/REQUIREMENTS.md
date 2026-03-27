@@ -34,8 +34,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **INTV-05**: Brownfield variant adds context clarity dimension (15%) and adjusts other weights
 - [x] **INTV-06**: Structured summary presented to user for review before seed crystallization
 - [x] **INTV-07**: User explicitly approves summary before seed generation proceeds
-- [ ] **SEED-01**: Immutable Seed spec generated in YAML format (goal, constraints, acceptance criteria, ontology schema, evaluation principles, exit conditions)
-- [ ] **SEED-02**: Seeds are frozen after crystallization — no mutation, only evolution creates new seeds
+- [x] **SEED-01**: Immutable Seed spec generated in YAML format (goal, constraints, acceptance criteria, ontology schema, evaluation principles, exit conditions)
+- [x] **SEED-02**: Seeds are frozen after crystallization — no mutation, only evolution creates new seeds
 - [x] **SEED-03**: Each seed has a unique ID, version, creation timestamp, parent seed reference (if evolved), and interview ID
 - [x] **SEED-04**: Seed lineage trackable: given any seed, user can trace back to original interview through all evolutionary ancestors
 
@@ -190,8 +190,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INTV-05 | Phase 3 | Complete |
 | INTV-06 | Phase 3 | Complete |
 | INTV-07 | Phase 3 | Complete |
-| SEED-01 | Phase 14 | Pending |
-| SEED-02 | Phase 14 | Pending |
+| SEED-01 | Phase 14 | Complete |
+| SEED-02 | Phase 14 | Complete |
 | SEED-03 | Phase 3 | Complete |
 | SEED-04 | Phase 3 | Complete |
 | HOLD-01 | Phase 4 | Complete |
