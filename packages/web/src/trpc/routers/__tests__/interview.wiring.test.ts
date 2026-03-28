@@ -7,6 +7,7 @@
 import { describe, it, expect, beforeAll, afterEach, afterAll } from 'vitest';
 import { createTestContext, type TestContext } from '@get-cauldron/test-harness';
 import { interviewTurnScript } from '@get-cauldron/test-harness';
+import type { MockGatewayCall } from '@get-cauldron/test-harness';
 import { eq } from 'drizzle-orm';
 import { interviews } from '@get-cauldron/shared';
 
@@ -299,5 +300,169 @@ describe('interview.getSummary wiring', () => {
     expect(result.summary).toBeDefined();
     expect(result.summary!.goal).toBe('Build a task manager');
     expect(result.phase).toBe('approved');
+  });
+});
+
+// ─── approveSummary (crystallization) ─────────────────────────────────────────
+
+describe('interview.approveSummary wiring', () => {
+  let ctx: TestContext;
+
+  afterEach(async () => {
+    if (ctx) await ctx.truncate();
+  });
+
+  afterAll(async () => {
+    if (ctx) await ctx.cleanup();
+  });
+
+  const mockSummary = {
+    goal: 'Build a task management CLI',
+    constraints: ['Must run on Node 22', 'No external DB'],
+    acceptanceCriteria: ['Can create tasks', 'Can list tasks', 'Can complete tasks'],
+    ontologySchema: {
+      entities: [
+        { name: 'Task', attributes: ['id', 'title', 'status'], relations: [] },
+      ],
+    },
+    evaluationPrinciples: ['Correctness over performance'],
+    exitConditions: [{ condition: 'all_ac_pass', description: 'All acceptance criteria pass' }],
+  };
+
+  it('creates seed record and transitions interview to crystallized', async () => {
+    // Gateway script: holdout generation needs generateObject calls too
+    // approveSummary calls crystallizeSeed (no LLM) then generateHoldoutScenarios (1 LLM call)
+    const holdoutScript: MockGatewayCall[] = [
+      {
+        stage: 'holdout',
+        returns: {
+          scenarios: Array.from({ length: 5 }, (_, i) => ({
+            id: `scenario-${i}`,
+            name: `Test scenario ${i + 1}`,
+            description: `Given X, when Y, then Z (scenario ${i + 1})`,
+            testCode: `expect(true).toBe(true); // scenario ${i + 1}`,
+          })),
+        },
+      },
+    ];
+    ctx = await createTestContext({ gatewayScript: holdoutScript });
+
+    const project = await ctx.fixtures.project();
+    const interview = await ctx.fixtures.interview({
+      projectId: project.id,
+      phase: 'reviewing',
+      currentAmbiguityScore: { goalClarity: 0.9, constraintClarity: 0.85, successCriteriaClarity: 0.88, overall: 0.88, reasoning: 'Clear' },
+    });
+
+    const result = await ctx.caller.interview.approveSummary({
+      projectId: project.id,
+      summary: mockSummary,
+    });
+
+    expect(result.seedId).toBeDefined();
+    expect(result.version).toBe(1);
+
+    // Verify interview transitioned
+    const [dbInterview] = await ctx.db
+      .select()
+      .from(interviews)
+      .where(eq(interviews.id, interview.id));
+
+    expect(dbInterview!.phase).toBe('crystallized');
+    expect(dbInterview!.status).toBe('completed');
+  });
+
+  it('rejects if interview is not in reviewing phase', async () => {
+    ctx = await createTestContext();
+    const project = await ctx.fixtures.project();
+    await ctx.fixtures.interview({
+      projectId: project.id,
+      phase: 'gathering',
+    });
+
+    await expect(
+      ctx.caller.interview.approveSummary({
+        projectId: project.id,
+        summary: mockSummary,
+      }),
+    ).rejects.toThrow(/reviewing/);
+  });
+
+  it('throws on double crystallization', async () => {
+    const holdoutScript: MockGatewayCall[] = [
+      {
+        stage: 'holdout',
+        returns: {
+          scenarios: Array.from({ length: 5 }, (_, i) => ({
+            id: `scenario-${i}`,
+            name: `Scenario ${i + 1}`,
+            description: `Test ${i + 1}`,
+            testCode: `expect(1).toBe(1);`,
+          })),
+        },
+      },
+    ];
+    ctx = await createTestContext({ gatewayScript: holdoutScript });
+
+    const project = await ctx.fixtures.project();
+    await ctx.fixtures.interview({
+      projectId: project.id,
+      phase: 'reviewing',
+      currentAmbiguityScore: { overall: 0.88 },
+    });
+
+    // First crystallization succeeds
+    await ctx.caller.interview.approveSummary({
+      projectId: project.id,
+      summary: mockSummary,
+    });
+
+    // Second should fail — interview is now crystallized, so the phase guard catches it
+    await expect(
+      ctx.caller.interview.approveSummary({
+        projectId: project.id,
+        summary: mockSummary,
+      }),
+    ).rejects.toThrow();
+  });
+});
+
+// ─── rejectSummary ────────────────────────────────────────────────────────────
+
+describe('interview.rejectSummary wiring', () => {
+  let ctx: TestContext;
+
+  beforeAll(async () => {
+    ctx = await createTestContext();
+  });
+
+  afterEach(async () => {
+    await ctx.truncate();
+  });
+
+  afterAll(async () => {
+    await ctx.cleanup();
+  });
+
+  it('transitions interview back to gathering', async () => {
+    const project = await ctx.fixtures.project();
+    const interview = await ctx.fixtures.interview({
+      projectId: project.id,
+      phase: 'reviewing',
+    });
+
+    const result = await ctx.caller.interview.rejectSummary({
+      projectId: project.id,
+    });
+
+    expect(result.phase).toBe('gathering');
+
+    // Verify DB
+    const [dbRow] = await ctx.db
+      .select()
+      .from(interviews)
+      .where(eq(interviews.id, interview.id));
+
+    expect(dbRow!.phase).toBe('gathering');
   });
 });
