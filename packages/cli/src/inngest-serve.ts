@@ -32,6 +32,7 @@ export function createInngestApp(): Hono {
   const handler = serve({
     client: engineInngest,
     functions: [...ENGINE_FUNCTIONS],
+    ...(process.env['NODE_ENV'] !== 'production' && { isDev: true }),
   });
 
   // Mount at /api/inngest so the Inngest dev server discovers engine functions here
