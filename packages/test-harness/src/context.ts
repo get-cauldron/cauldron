@@ -5,7 +5,8 @@ import * as schema from '@get-cauldron/shared';
 import { sql } from 'drizzle-orm';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { appRouter } from '@get-cauldron/web/src/trpc/router';
+// Use relative path to avoid circular workspace dependency (test-harness → web → test-harness)
+import { appRouter } from '../../web/src/trpc/router.js';
 import { createScriptedGateway } from './gateway.js';
 import { fixtures } from './fixtures.js';
 import type { MockGatewayCall } from './gateway.js';

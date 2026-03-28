@@ -116,8 +116,11 @@ export class InterviewFSM {
       return { ...existing, status: 'active' };
     }
 
-    // D-04: Auto-detect mode from git history if not explicitly provided
-    const mode = options?.mode ?? detectInterviewMode(options?.projectPath);
+    // D-04: Auto-detect mode from git history only when a projectPath is
+    // explicitly provided. Without it, detectInterviewMode falls back to
+    // process.cwd() which is the server directory — not the user's project.
+    const mode = options?.mode
+      ?? (options?.projectPath ? detectInterviewMode(options.projectPath) : 'greenfield');
 
     const [interview] = await this.db
       .insert(interviews)

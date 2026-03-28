@@ -164,9 +164,6 @@ importers:
       '@get-cauldron/shared':
         specifier: workspace:*
         version: link:../shared
-      '@get-cauldron/web':
-        specifier: workspace:*
-        version: link:../web
       '@trpc/server':
         specifier: 11.15.1
         version: 11.15.1(typescript@6.0.2)
@@ -283,6 +280,9 @@ importers:
       '@axe-core/playwright':
         specifier: ^4.11.1
         version: 4.11.1(playwright-core@1.58.2)
+      '@get-cauldron/test-harness':
+        specifier: workspace:*
+        version: link:../test-harness
       '@playwright/test':
         specifier: ^1.58.2
         version: 1.58.2
