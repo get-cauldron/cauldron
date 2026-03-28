@@ -826,14 +826,17 @@ describe('interview holdout lifecycle wiring', () => {
     ).rejects.toThrow(/No approved holdout/);
   });
 
-  it('approveHoldout on already-approved entry is idempotent', async () => {
+  it('approveHoldout on already-approved entry rejects (strict FSM)', async () => {
     ctx = await createTestContext();
     const project = await ctx.fixtures.project();
     const interview = await ctx.fixtures.interview({ projectId: project.id, phase: 'crystallized' });
     const seed = await ctx.fixtures.seed({ projectId: project.id, interviewId: interview.id });
     const vault = await ctx.fixtures.holdoutVault({ seedId: seed.id, status: 'approved' });
 
-    const result = await ctx.caller.interview.approveHoldout({ holdoutId: vault.id });
-    expect(result.status).toBe('approved');
+    // Vault FSM enforces strict transitions: approved → approved is not allowed
+    // Only approved → sealed is valid from the approved state
+    await expect(
+      ctx.caller.interview.approveHoldout({ holdoutId: vault.id }),
+    ).rejects.toThrow(/approved/);
   });
 });
