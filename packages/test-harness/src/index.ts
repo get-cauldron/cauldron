@@ -5,3 +5,7 @@ export { createTestContext } from './context.js';
 export type { TestContext } from './context.js';
 export { interviewTurnScript } from './scripts/interview-turn.js';
 export type { InterviewTurnOptions } from './scripts/interview-turn.js';
+export { decompositionScript } from './scripts/decomposition-turn.js';
+export type { DecompositionScriptOptions } from './scripts/decomposition-turn.js';
+export { holdoutGenerationScript } from './scripts/holdout-generation.js';
+export type { HoldoutGenerationOptions } from './scripts/holdout-generation.js';

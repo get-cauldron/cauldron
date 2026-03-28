@@ -1,4 +1,4 @@
-import { projects, interviews, seeds } from '@get-cauldron/shared';
+import { projects, interviews, seeds, beads, beadEdges, holdoutVault, llmUsage } from '@get-cauldron/shared';
 import type { DbClient } from '@get-cauldron/shared';
 
 /**
@@ -84,6 +84,137 @@ export function fixtures(db: DbClient) {
         })
         .returning();
       return row!;
+    },
+
+    /**
+     * Create a bead linked to a seed.
+     * Defaults to pending status with placeholder spec.
+     */
+    async bead(opts: {
+      seedId: string;
+      moleculeId?: string | null;
+      title?: string;
+      spec?: string;
+      status?: 'pending' | 'claimed' | 'active' | 'completed' | 'failed';
+      estimatedTokens?: number;
+      coversCriteria?: string[];
+    }) {
+      const [row] = await db
+        .insert(beads)
+        .values({
+          seedId: opts.seedId,
+          moleculeId: opts.moleculeId ?? null,
+          title: opts.title ?? 'Test Bead',
+          spec: opts.spec ?? 'Implement test functionality',
+          status: opts.status ?? 'pending',
+          estimatedTokens: opts.estimatedTokens ?? 5000,
+          coversCriteria: opts.coversCriteria ?? [],
+        })
+        .returning();
+      return row!;
+    },
+
+    /**
+     * Create a bead edge linking two beads.
+     * Defaults to 'blocks' edge type.
+     */
+    async beadEdge(opts: {
+      fromBeadId: string;
+      toBeadId: string;
+      edgeType?: 'blocks' | 'parent_child' | 'conditional_blocks' | 'waits_for';
+    }) {
+      const [row] = await db
+        .insert(beadEdges)
+        .values({
+          fromBeadId: opts.fromBeadId,
+          toBeadId: opts.toBeadId,
+          edgeType: opts.edgeType ?? 'blocks',
+        })
+        .returning();
+      return row!;
+    },
+
+    /**
+     * Create a holdout vault entry linked to a seed.
+     * Defaults to pending_review status with 5 generated scenarios.
+     */
+    async holdoutVault(opts: {
+      seedId: string;
+      status?: 'pending_review' | 'approved' | 'sealed' | 'unsealed' | 'evaluated';
+      draftScenarios?: unknown[];
+    }) {
+      const defaultScenarios = Array.from({ length: 5 }, (_, i) => ({
+        id: `scenario-${i + 1}`,
+        name: `Test Scenario ${i + 1}`,
+        description: `Holdout scenario ${i + 1} for testing`,
+        testCode: `test('scenario ${i + 1}', () => { expect(true).toBe(true); });`,
+        category: 'functional',
+      }));
+      const [row] = await db
+        .insert(holdoutVault)
+        .values({
+          seedId: opts.seedId,
+          status: opts.status ?? 'pending_review',
+          draftScenarios: opts.draftScenarios ?? defaultScenarios,
+        })
+        .returning();
+      return row!;
+    },
+
+    /**
+     * Create an LLM usage record linked to a project.
+     * Defaults to interview stage with claude-sonnet-4-6 model.
+     */
+    async llmUsage(opts: {
+      projectId: string;
+      beadId?: string | null;
+      seedId?: string | null;
+      evolutionCycle?: number | null;
+      stage?: string;
+      model?: string;
+      promptTokens?: number;
+      completionTokens?: number;
+      costCents?: number;
+    }) {
+      const prompt = opts.promptTokens ?? 1000;
+      const completion = opts.completionTokens ?? 500;
+      const [row] = await db
+        .insert(llmUsage)
+        .values({
+          projectId: opts.projectId,
+          beadId: opts.beadId ?? null,
+          seedId: opts.seedId ?? null,
+          evolutionCycle: opts.evolutionCycle ?? null,
+          stage: opts.stage ?? 'interview',
+          model: opts.model ?? 'claude-sonnet-4-6',
+          promptTokens: prompt,
+          completionTokens: completion,
+          totalTokens: prompt + completion,
+          costCents: opts.costCents ?? 10,
+        })
+        .returning();
+      return row!;
+    },
+
+    /**
+     * Append an event to the event store linked to a project.
+     * Uses the shared appendEvent helper for consistent event sourcing.
+     */
+    async event(opts: {
+      projectId: string;
+      seedId?: string | null;
+      beadId?: string | null;
+      type: string;
+      payload?: Record<string, unknown>;
+    }) {
+      const { appendEvent } = await import('@get-cauldron/shared');
+      return appendEvent(db, {
+        projectId: opts.projectId,
+        seedId: opts.seedId ?? null,
+        beadId: opts.beadId ?? null,
+        type: opts.type as any,
+        payload: opts.payload ?? {},
+      });
     },
   };
 }
