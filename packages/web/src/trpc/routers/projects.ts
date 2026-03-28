@@ -1,10 +1,18 @@
 import { z } from 'zod';
 import { router, publicProcedure } from '../init';
 import { projects, events, llmUsage } from '@get-cauldron/shared';
-import { eq, desc, sql, isNull } from 'drizzle-orm';
+import { eq, desc, sql, isNull, and, not, like } from 'drizzle-orm';
 
 export const projectsRouter = router({
-  list: publicProcedure.query(async ({ ctx }) => {
+  list: publicProcedure
+    .input(z.object({ includeArchived: z.boolean().default(false) }).optional())
+    .query(async ({ ctx, input }) => {
+    const includeArchived = input?.includeArchived ?? false;
+
+    const conditions = includeArchived
+      ? isNull(projects.deletedAt)
+      : and(isNull(projects.deletedAt), not(like(projects.name, '[archived]%')));
+
     const rows = await ctx.db
       .select({
         id: projects.id,
@@ -15,7 +23,7 @@ export const projectsRouter = router({
         updatedAt: projects.updatedAt,
       })
       .from(projects)
-      .where(isNull(projects.deletedAt))
+      .where(conditions)
       .orderBy(desc(projects.updatedAt));
 
     // For each project, get latest event and total cost

@@ -38,14 +38,21 @@ describe('projects router wiring', () => {
     expect(found.totalCostCents).toBe(0);
   });
 
-  it('archive prefixes name with [archived]', async () => {
+  it('archive prefixes name with [archived] and hides from default list', async () => {
     ctx = await createTestContext();
     const project = await ctx.caller.projects.create({ name: 'To Archive' });
     await ctx.caller.projects.archive({ id: project.id });
     const found = await ctx.caller.projects.byId({ id: project.id });
     expect(found.name).toBe('[archived] To Archive');
+
+    // Default list hides archived projects
     const list = await ctx.caller.projects.list();
-    expect(list).toHaveLength(1);
+    expect(list).toHaveLength(0);
+
+    // includeArchived shows them
+    const fullList = await ctx.caller.projects.list({ includeArchived: true });
+    expect(fullList).toHaveLength(1);
+    expect(fullList[0]!.name).toBe('[archived] To Archive');
   });
 
   it('delete sets deletedAt and excludes from list', async () => {

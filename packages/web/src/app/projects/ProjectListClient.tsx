@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { useTRPC } from '@/trpc/client';
 import { useSuspenseQuery } from '@tanstack/react-query';
@@ -62,8 +63,11 @@ const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }
 };
 
 export function ProjectListClient() {
+  const [showArchived, setShowArchived] = useState(false);
   const trpc = useTRPC();
-  const { data: projects } = useSuspenseQuery(trpc.projects.list.queryOptions());
+  const { data: projects } = useSuspenseQuery(
+    trpc.projects.list.queryOptions({ includeArchived: showArchived }),
+  );
 
   if (!projects || projects.length === 0) {
     return (
@@ -100,7 +104,21 @@ export function ProjectListClient() {
   ).id;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div>
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() => setShowArchived(!showArchived)}
+          className="text-xs px-3 py-1.5 rounded-md transition-colors"
+          style={{
+            background: showArchived ? '#1a2330' : 'transparent',
+            color: '#6b8399',
+            border: '1px solid #1a2330',
+          }}
+        >
+          {showArchived ? 'Hide archived' : 'Show archived'}
+        </button>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {projects.map((project) => {
         const status = getStatusLabel(project.lastEventType);
         const isRecent = project.id === mostRecentId;
@@ -154,6 +172,7 @@ export function ProjectListClient() {
           </Link>
         );
       })}
+      </div>
     </div>
   );
 }

@@ -10,7 +10,7 @@ import { ProjectListClient } from './ProjectListClient';
 
 export default async function ProjectsPage() {
   const queryClient = getQueryClient();
-  await queryClient.prefetchQuery(trpc.projects.list.queryOptions());
+  await queryClient.prefetchQuery(trpc.projects.list.queryOptions({ includeArchived: false }));
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
