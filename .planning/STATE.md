@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to plan
-stopped_at: Completed 17-02-PLAN.md
-last_updated: "2026-03-28T00:05:20.046Z"
+stopped_at: Completed 17-ui-testing-e2e-testing-and-final-checks-05-PLAN.md
+last_updated: "2026-03-28T00:16:30.785Z"
 progress:
   total_phases: 19
-  completed_phases: 18
+  completed_phases: 19
   total_plans: 65
-  completed_plans: 64
+  completed_plans: 65
 ---
 
 # Project State
@@ -97,6 +97,7 @@ Plan: Not started
 | Phase 17-ui-testing-e2e-testing-and-final-checks P03 | 15min | 2 tasks | 3 files |
 | Phase 17-ui-testing-e2e-testing-and-final-checks P04 | 20min | 2 tasks | 3 files |
 | Phase 17-ui-testing-e2e-testing-and-final-checks P17-02 | 90 | 3 tasks | 21 files |
+| Phase 17-ui-testing-e2e-testing-and-final-checks P05 | 25min | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -227,6 +228,8 @@ Recent decisions affecting current work:
 - [Phase 17-ui-testing-e2e-testing-and-final-checks]: No networkidle in execution spec — SSE keeps network active; use waitForSelector('.react-flow') for DAG readiness
 - [Phase 17-ui-testing-e2e-testing-and-final-checks]: SSE test inserts bead_dispatched event via DB + waitForTimeout(3000) for poll propagation — cannot assert border color change via text locator
 - [Phase 17-ui-testing-e2e-testing-and-final-checks]: Mocked entire DAGCanvas component in tests to prevent @xyflow/react infinite useEffect loop causing worker OOM; D-12 SSE coverage maintained via installEventSourceMock in the mock test
+- [Phase 17-05]: CI jobs parallelized: lint-typecheck-build blocks all downstream; unit/integration/e2e/lighthouse run concurrently after
+- [Phase 17-05]: packages/web/tsconfig.json excludes e2e/ to prevent Next.js build picking up test helpers with devDependencies
 
 ### Pending Todos
 
@@ -241,6 +244,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T00:05:20.043Z
-Stopped at: Completed 17-02-PLAN.md
+Last session: 2026-03-28T00:16:30.782Z
+Stopped at: Completed 17-ui-testing-e2e-testing-and-final-checks-05-PLAN.md
 Resume file: None
