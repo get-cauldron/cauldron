@@ -1,0 +1,212 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+env:
+  INNGEST_DEV: '1'
+
+jobs:
+  lint-typecheck-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm build
+
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      # D-22: Fail on critical/high vulnerabilities
+      - name: Security audit
+        run: pnpm audit --audit-level high
+      # D-19: License compliance check — GPL/AGPL/SSPL not allowed
+      - name: License compliance
+        run: |
+          npx license-checker --onlyAllow 'MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC;0BSD;CC0-1.0;CC-BY-3.0;CC-BY-4.0;Unlicense;Python-2.0;BlueOak-1.0.0' --excludePrivatePackages
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    needs: lint-typecheck-build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Unit tests
+        run: pnpm test
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    needs: lint-typecheck-build
+    services:
+      postgres-test:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: cauldron
+          POSTGRES_PASSWORD: cauldron
+          POSTGRES_DB: cauldron_test
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Integration tests
+        run: pnpm test:integration
+        env:
+          TEST_DATABASE_URL: postgres://cauldron:cauldron@localhost:5433/cauldron_test
+          DATABASE_URL: postgres://cauldron:cauldron@localhost:5433/cauldron_test
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    needs: lint-typecheck-build
+    services:
+      postgres-e2e:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: cauldron
+          POSTGRES_PASSWORD: cauldron
+          POSTGRES_DB: cauldron_e2e
+        ports:
+          - 5434:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Install Playwright browsers
+        run: pnpm -F @get-cauldron/web exec playwright install --with-deps chromium
+      - name: Run E2E tests
+        run: pnpm -F @get-cauldron/web test:e2e
+        env:
+          CI: 'true'
+          E2E_DATABASE_URL: postgres://cauldron:cauldron@localhost:5434/cauldron_e2e
+          DATABASE_URL: postgres://cauldron:cauldron@localhost:5434/cauldron_e2e
+      # D-24: Upload artifacts only on failure
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() && failure() }}
+        with:
+          name: playwright-report-${{ github.run_id }}
+          path: packages/web/playwright-report/
+          retention-days: 7
+      - name: Upload Playwright traces
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() && failure() }}
+        with:
+          name: playwright-traces-${{ github.run_id }}
+          path: packages/web/test-results/
+          retention-days: 7
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    needs: lint-typecheck-build
+    services:
+      postgres-e2e:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: cauldron
+          POSTGRES_PASSWORD: cauldron
+          POSTGRES_DB: cauldron_e2e
+        ports:
+          - 5434:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Build
+        run: pnpm build
+        env:
+          DATABASE_URL: postgres://cauldron:cauldron@localhost:5434/cauldron_e2e
+      # D-20: Lighthouse is informational only — no score thresholds
+      # D-23: Report uploaded as artifact (always)
+      - name: Run Lighthouse
+        run: |
+          npm install -g @lhci/cli
+          lhci autorun --config='{"ci":{"collect":{"url":["http://localhost:3000/projects"],"startServerCommand":"pnpm -F @get-cauldron/web start","startServerReadyPattern":"Ready"},"upload":{"target":"filesystem","outputDir":"./lighthouse-results"}}}'
+        env:
+          DATABASE_URL: postgres://cauldron:cauldron@localhost:5434/cauldron_e2e
+      - name: Upload Lighthouse report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-report-${{ github.run_id }}
+          path: ./lighthouse-results/
+          retention-days: 30
