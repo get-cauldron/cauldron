@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Milestone complete
-stopped_at: Completed 17-ui-testing-e2e-testing-and-final-checks-05-PLAN.md
-last_updated: "2026-03-28T00:24:20.197Z"
+status: Executing Phase 13
+stopped_at: Phase 13 context gathered
+last_updated: "2026-03-27T19:11:15.344Z"
 progress:
-  total_phases: 19
-  completed_phases: 19
-  total_plans: 65
-  completed_plans: 65
+  total_phases: 15
+  completed_phases: 14
+  total_plans: 54
+  completed_plans: 52
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** User describes what they want; Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves until goal is met — humans steer at key decision points, not babysitting every step.
-**Current focus:** Phase 15 — wire-holdout-generation-fix-cli-run
+**Current focus:** Phase 13 — re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs
 
 ## Current Position
 
-Phase: 17
-Plan: Not started
+Phase: 13 (re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs) — EXECUTING
+Plan: 1 of 2
 
 ## Performance Metrics
 
@@ -89,15 +89,6 @@ Plan: Not started
 | Phase 10-wire-trpc-mutations-to-engine P01 | 4min | 2 tasks | 4 files |
 | Phase 10-wire-trpc-mutations-to-engine P02 | 4min | 2 tasks | 3 files |
 | Phase 11-engine-inngest-serve-evolution-bootstrap P01 | 5min | 2 tasks | 4 files |
-| Phase 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs P02 | 8min | 2 tasks | 97 files |
-| Phase 14-wire-interview-start-fix-seed-crystallization-path P01 | 8min | 2 tasks | 2 files |
-| Phase 14 P02 | 12min | 2 tasks | 3 files |
-| Phase 15-wire-holdout-generation-fix-cli-run P01 | 10min | 2 tasks | 3 files |
-| Phase 17-ui-testing-e2e-testing-and-final-checks P01 | 40min | 2 tasks | 14 files |
-| Phase 17-ui-testing-e2e-testing-and-final-checks P03 | 15min | 2 tasks | 3 files |
-| Phase 17-ui-testing-e2e-testing-and-final-checks P04 | 20min | 2 tasks | 3 files |
-| Phase 17-ui-testing-e2e-testing-and-final-checks P17-02 | 90 | 3 tasks | 21 files |
-| Phase 17-ui-testing-e2e-testing-and-final-checks P05 | 25min | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -106,7 +97,6 @@ Plan: Not started
 - Phase 6.1 inserted after Phase 6: Dogfooding Transition — Bridge Claude Code to Cauldron for Self-Building (URGENT)
 - Phase 6.2 inserted after Phase 6: Testing and Tuning the Dogfood Process (URGENT)
 - Phase 13 added: Re-scope to @get-cauldron/* -- already have the github and npm orgs
-- Phase 17 added: UI testing, e2e testing, and final checks
 
 ### Decisions
 
@@ -135,7 +125,7 @@ Recent decisions affecting current work:
 - [Phase 03-interview-seed-pipeline]: validateScoreRules uses strict > 0.3 threshold — floating point means 0.8-0.5=0.30000000000000004 triggers anomaly; tests use unambiguous values to avoid precision traps
 - [Phase 03-interview-seed-pipeline]: selectActivePerspectives returns 2 perspectives in late turns (overall >= 0.7), 3 in early/mid turns per D-12 spec
 - [Phase 03-interview-seed-pipeline]: crystallizer.ts getSeedLineage returns result as unknown as Seed[] (no .rows property) — matches drizzle-orm postgres-js execute pattern in existing schema-invariants tests
-- [Phase 03-interview-seed-pipeline]: vi.mock('@get-cauldron/shared') required in engine unit tests that import modules with @get-cauldron/shared dependencies — prevents DATABASE_URL error at import time
+- [Phase 03-interview-seed-pipeline]: vi.mock('@cauldron/shared') required in engine unit tests that import modules with @cauldron/shared dependencies — prevents DATABASE_URL error at import time
 - [Phase 03-interview-seed-pipeline]: FSM CLARITY_THRESHOLD=0.8 matches ambiguity <= 0.2 (D-05); VALID_TRANSITIONS enforces gathering->reviewing->approved->crystallized with no skipping
 - [Phase 04-holdout-vault]: Compound encryptedDek field (dekIv:dekAuthTag:dekCiphertext) instead of separate DB columns — avoids extra migration complexity
 - [Phase 04-holdout-vault]: Encryption columns made nullable in holdout_vault: pending_review/approved rows have no ciphertext until sealed
@@ -147,7 +137,7 @@ Recent decisions affecting current work:
 - [Phase 05-dag-decomposition-scheduler]: version column defaults to 1 for optimistic concurrency — first increment yields version 2, making unversioned rows identifiable
 - [Phase 05-dag-decomposition-scheduler]: parent_child edges excluded from Kahn's cycle detection — they track molecule hierarchy, not scheduling order
 - [Phase 05-dag-decomposition-scheduler]: validateDAG priority: cycle > oversized_bead > coverage_gap — structural validity checked before context budget before spec completeness
-- [Phase 05-dag-decomposition-scheduler]: Engine integration tests use vitest.integration.config.ts with DATABASE_URL env to prevent @get-cauldron/shared client.ts from throwing at import time
+- [Phase 05-dag-decomposition-scheduler]: Engine integration tests use vitest.integration.config.ts with DATABASE_URL env to prevent @cauldron/shared client.ts from throwing at import time
 - [Phase 05-dag-decomposition-scheduler]: conditional_blocks NOT in ready-bead SQL query filter -- conditional skip is dispatch-time logic in beadDispatchHandler, not scheduling concern
 - [Phase 05-dag-decomposition-scheduler]: _journal.json was missing migration 0005 entry -- auto-fixed; drizzle-orm migrate() requires journal to discover migrations
 - [Phase 06-parallel-execution-engine]: execPromise() custom wrapper instead of promisify(exec): real exec has util.promisify.custom resolving {stdout,stderr} but mocked exec does not, causing destructuring to yield undefined
@@ -169,7 +159,7 @@ Recent decisions affecting current work:
 - [Phase 06.1]: Prior context injected as first-answer preamble (not DB transcript injection): works with FSM scoring without DB surgery
 - [Phase 06.1]: Brownfield mode auto-selected when priorContext is non-empty: ties D-07 to D-04 naturally
 - [Phase 06.1]: conflict_resolved added to eventTypeEnum with migration 0008 for resolve command appendEvent type correctness
-- [Phase 06.1]: handleMergeRequested exported from decomposition/index.ts to expose full Inngest function set via @get-cauldron/engine
+- [Phase 06.1]: handleMergeRequested exported from decomposition/index.ts to expose full Inngest function set via @cauldron/engine
 - [Phase 06.1]: vi.fn(function(){}) for Hono constructor mock — arrow functions cannot be used as constructors in Vitest
 - [Phase 06.1]: Skill files are plain markdown — Claude Code reads .claude/skills/*.md directly; no manifest or registration needed
 - [Phase 06.1]: Inngest v4 health endpoint is /v1/events (not /v0/envs) — corrected health check probe to POST empty events array for 200 response
@@ -204,7 +194,7 @@ Recent decisions affecting current work:
 - [Phase 09-cli]: trpc-types and api packages use Bundler moduleResolution to allow type traversal into web package without .js extension collisions
 - [Phase 09-cli]: createTRPCContext accepts optional Request parameter; CAULDRON_API_KEY unset = dev mode (allow all); authenticatedProcedure exported for protected routes
 - [Phase 09-cli]: eventsource v4 uses custom fetch function (not headers init option) for auth injection in logsCommand
-- [Phase 09-cli]: All CLI commands use (client, args, flags) tRPC signature — zero @get-cauldron/engine imports in command layer; triggerDecomposition/triggerExecution mutations use events for async Inngest dispatch
+- [Phase 09-cli]: All CLI commands use (client, args, flags) tRPC signature — zero @cauldron/engine imports in command layer; triggerDecomposition/triggerExecution mutations use events for async Inngest dispatch
 - [Phase 09-cli]: pipeline_trigger added to eventTypeEnum (not reused pipeline_started) — semantically distinct: trigger is inbound event, started is post-queue
 - [Phase 09-cli]: Inngest client in web package separate from engine package (cauldron-web vs cauldron-engine) — web layer owns its own functions
 - [Phase 10-wire-trpc-mutations-to-engine]: Local Logger structural type in engine-deps.ts avoids adding pino as direct web dep; cast to any at LLMGateway.create boundary
@@ -213,33 +203,10 @@ Recent decisions affecting current work:
 - [Phase 10-wire-trpc-mutations-to-engine]: triggerDecomposition preserves appendEvent audit trail and also calls runDecomposition synchronously with engineInngest alias for engine Inngest client
 - [Phase 11-engine-inngest-serve-evolution-bootstrap]: Use inngest/hono adapter for standalone API serve endpoint per CLAUDE.md Hono mandate
 - [Phase 11-engine-inngest-serve-evolution-bootstrap]: pipelineTriggerFunction uses step.sendEvent (durable, inside Inngest function); triggerExecution uses engineInngest.send() (outside Inngest context, tRPC mutation)
-- [Phase 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs]: packages/shared/tsconfig.json excludes trpc-types.ts from rootDir check: the file re-exports from web's router (outside ./src), cross-package re-export shim consumed by web itself
-- [Phase 13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs]: TRPCClient<AppRouter> explicit return type required in createCLIClient to avoid TS2883 non-portable type errors when AppRouter traverses shared subpath export boundaries
-- [Phase 14-wire-interview-start-fix-seed-crystallization-path]: crystallizeSeed() replaces inline DB insert in approveSummary — routes seed creation through event store, DB trigger enforcement, and immutability guard
-- [Phase 14-wire-interview-start-fix-seed-crystallization-path]: ImmutableSeedError caught at tRPC boundary and converted to CONFLICT code — lets web clients distinguish duplicate crystallization from other errors
-- [Phase 14]: useEffect guard uses both isPending and isSuccess to prevent infinite mutation loops in web interview auto-start
-- [Phase 14]: CLI startInterview placed before flags.json check so both JSON output and interactive mode get fresh interview state
-- [Phase 15-wire-holdout-generation-fix-cli-run]: Holdout generation failure is caught and logged separately from ImmutableSeedError — seed crystallization must not be rolled back due to LLM/budget errors in holdout generation
-- [Phase 15-wire-holdout-generation-fix-cli-run]: crystallizeCommand return type changed to Promise<{ seedId: string } | undefined> — both JSON and human-readable success paths return seedId; runCommand Seal stage injects --approve-all automatically for non-interactive pipeline mode
-- [Phase 17-ui-testing-e2e-testing-and-final-checks]: Lazy Proxy for db in shared/client.ts prevents DATABASE_URL throw at import time during Next.js static analysis
-- [Phase 17-ui-testing-e2e-testing-and-final-checks]: Webpack flag (--webpack) for next build/dev: Turbopack lacks extensionAlias; Node16 moduleResolution requires .js→.ts mapping
-- [Phase 17-ui-testing-e2e-testing-and-final-checks]: AxeBuilder API (not injectAxe/checkA11y): @axe-core/playwright exports AxeBuilder class only
-- [Phase 17-ui-testing-e2e-testing-and-final-checks]: Pre-seeded DB data (not page.route) for D-05: ALL LLM calls are server-side (tRPC->Next.js->engine->AI SDK->Anthropic). Playwright page.route() cannot intercept server-to-server calls; seeding transcript in DB tests real rendering path.
-- [Phase 17-ui-testing-e2e-testing-and-final-checks]: No networkidle in execution spec — SSE keeps network active; use waitForSelector('.react-flow') for DAG readiness
-- [Phase 17-ui-testing-e2e-testing-and-final-checks]: SSE test inserts bead_dispatched event via DB + waitForTimeout(3000) for poll propagation — cannot assert border color change via text locator
-- [Phase 17-ui-testing-e2e-testing-and-final-checks]: Mocked entire DAGCanvas component in tests to prevent @xyflow/react infinite useEffect loop causing worker OOM; D-12 SSE coverage maintained via installEventSourceMock in the mock test
-- [Phase 17-05]: CI jobs parallelized: lint-typecheck-build blocks all downstream; unit/integration/e2e/lighthouse run concurrently after
-- [Phase 17-05]: packages/web/tsconfig.json excludes e2e/ to prevent Next.js build picking up test helpers with devDependencies
 
 ### Pending Todos
 
 None yet.
-
-### Quick Tasks Completed
-
-| # | Description | Date | Commit | Directory |
-|---|-------------|------|--------|-----------|
-| 260327-rk9 | Write README.md and CONTRIBUTING.md for Cauldron project | 2026-03-28 | de8c7e4 | [260327-rk9-write-readme-md-and-contributing-md-for-](./quick/260327-rk9-write-readme-md-and-contributing-md-for-/) |
 
 ### Blockers/Concerns
 
@@ -248,9 +215,14 @@ None yet.
 - Phase 5: Inngest FlowProducer fan-in semantics for `waits-for` edge type need verification against v4 SDK before planning.
 - Phase 5: codebase-memory-mcp incremental re-index behavior under concurrent writes is underdocumented — needs phase research before planning Phase 6.
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260328-g8l | Hide archived projects by default with toggle | 2026-03-28 | 294c5c1 | [260328-g8l](./quick/260328-g8l-projects-list-should-hide-archived-proje/) |
+
 ## Session Continuity
 
-Last activity: 2026-03-28 - Completed quick task 260327-rk9: Write README.md and CONTRIBUTING.md for Cauldron project
-Last session: 2026-03-28T00:16:30.782Z
-Stopped at: Completed 17-ui-testing-e2e-testing-and-final-checks-05-PLAN.md
-Resume file: None
+Last activity: 2026-03-28 - Completed quick task 260328-g8l: Hide archived projects
+Stopped at: Phase 13 context gathered
+Resume file: .planning/phases/13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs/13-CONTEXT.md
