@@ -31,6 +31,10 @@
       "dependsOn": ["^build"],
       "cache": false
     },
+    "test:wiring": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
     "dev": {
       "persistent": true,
       "cache": false
