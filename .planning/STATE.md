@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to plan
-stopped_at: Completed 17-ui-testing-e2e-testing-and-final-checks-04-PLAN.md
-last_updated: "2026-03-27T23:31:30.915Z"
+stopped_at: Completed 17-02-PLAN.md
+last_updated: "2026-03-28T00:05:20.046Z"
 progress:
   total_phases: 19
   completed_phases: 18
   total_plans: 65
-  completed_plans: 63
+  completed_plans: 64
 ---
 
 # Project State
@@ -96,6 +96,7 @@ Plan: Not started
 | Phase 17-ui-testing-e2e-testing-and-final-checks P01 | 40min | 2 tasks | 14 files |
 | Phase 17-ui-testing-e2e-testing-and-final-checks P03 | 15min | 2 tasks | 3 files |
 | Phase 17-ui-testing-e2e-testing-and-final-checks P04 | 20min | 2 tasks | 3 files |
+| Phase 17-ui-testing-e2e-testing-and-final-checks P17-02 | 90 | 3 tasks | 21 files |
 
 ## Accumulated Context
 
@@ -225,6 +226,7 @@ Recent decisions affecting current work:
 - [Phase 17-ui-testing-e2e-testing-and-final-checks]: Pre-seeded DB data (not page.route) for D-05: ALL LLM calls are server-side (tRPC->Next.js->engine->AI SDK->Anthropic). Playwright page.route() cannot intercept server-to-server calls; seeding transcript in DB tests real rendering path.
 - [Phase 17-ui-testing-e2e-testing-and-final-checks]: No networkidle in execution spec — SSE keeps network active; use waitForSelector('.react-flow') for DAG readiness
 - [Phase 17-ui-testing-e2e-testing-and-final-checks]: SSE test inserts bead_dispatched event via DB + waitForTimeout(3000) for poll propagation — cannot assert border color change via text locator
+- [Phase 17-ui-testing-e2e-testing-and-final-checks]: Mocked entire DAGCanvas component in tests to prevent @xyflow/react infinite useEffect loop causing worker OOM; D-12 SSE coverage maintained via installEventSourceMock in the mock test
 
 ### Pending Todos
 
@@ -239,6 +241,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T23:31:30.911Z
-Stopped at: Completed 17-ui-testing-e2e-testing-and-final-checks-04-PLAN.md
+Last session: 2026-03-28T00:05:20.043Z
+Stopped at: Completed 17-02-PLAN.md
 Resume file: None
