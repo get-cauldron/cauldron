@@ -274,8 +274,9 @@ export async function evolutionCycleHandler({
  * Listens for 'evolution_started' events and runs the full FSM cycle.
  * The evolution_started event is emitted by the holdout convergence handler when tests fail.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- InngestFunction<any> avoids TS2883 from Inngest v4's deeply-nested generic chain; explicit annotation required for non-portable inferred type across package boundaries
 export const handleEvolutionStarted: InngestFunction<any, any, any, any> = inngest.createFunction(
   { id: 'evolution/run-cycle', triggers: [{ event: 'evolution_started' }] },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ctx narrowing handled inside evolutionCycleHandler; SDK context type not exported
   (ctx) => evolutionCycleHandler(ctx as any)
 );

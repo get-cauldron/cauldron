@@ -52,11 +52,11 @@ export function makeConsoleLogger(): Logger {
  * logger is typed as `any` to avoid pulling pino into the web package's type
  * surface — the structural shape is compatible, and InterviewFSM accepts it.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- logger typed as any to avoid pulling pino into the web package's type surface; structural shape is compatible with pino.Logger
 export async function getEngineDeps(): Promise<{
   gateway: LLMGateway;
   config: GatewayConfig;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- pino.Logger structural type cannot be satisfied without adding pino as a direct web dependency; `any` is the approved boundary escape hatch (Phase 10 decision)
   logger: any;
 }> {
   if (_gateway && _config && _logger) {
@@ -66,7 +66,7 @@ export async function getEngineDeps(): Promise<{
   const projectRoot = process.env['CAULDRON_PROJECT_ROOT'] ?? process.cwd();
   _config = await loadConfig(projectRoot);
   _logger = makeConsoleLogger();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- _logger is structurally compatible with pino.Logger; cast required because LLMGateway.create expects the pino type directly
   _gateway = await LLMGateway.create({ db, config: _config, logger: _logger as any, validateKeys: false });
 
   return { gateway: _gateway, config: _config, logger: _logger };

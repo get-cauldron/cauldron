@@ -19,14 +19,6 @@ describe('BeadNode', () => {
           name: 'Implement auth module',
           status: 'pending',
         }}
-        id="bead-1"
-        type="beadNode"
-        selected={false}
-        dragging={false}
-        zIndex={0}
-        isConnectable={true}
-        positionAbsoluteX={0}
-        positionAbsoluteY={0}
       />
     );
     expect(screen.getByText('Implement auth module')).toBeInTheDocument();
@@ -39,14 +31,6 @@ describe('BeadNode', () => {
           name: 'Active task',
           status: 'active',
         }}
-        id="bead-2"
-        type="beadNode"
-        selected={false}
-        dragging={false}
-        zIndex={0}
-        isConnectable={true}
-        positionAbsoluteX={0}
-        positionAbsoluteY={0}
       />
     );
     // Active status should show amber border color
@@ -61,14 +45,6 @@ describe('BeadNode', () => {
           name: 'Done task',
           status: 'completed',
         }}
-        id="bead-3"
-        type="beadNode"
-        selected={false}
-        dragging={false}
-        zIndex={0}
-        isConnectable={true}
-        positionAbsoluteX={0}
-        positionAbsoluteY={0}
       />
     );
     expect(screen.getByText('Done task')).toBeInTheDocument();
@@ -78,14 +54,6 @@ describe('BeadNode', () => {
     render(
       <BeadNode
         data={{ name: 'Test', status: 'pending' }}
-        id="bead-4"
-        type="beadNode"
-        selected={false}
-        dragging={false}
-        zIndex={0}
-        isConnectable={true}
-        positionAbsoluteX={0}
-        positionAbsoluteY={0}
       />
     );
     expect(screen.getByTestId('handle-target')).toBeInTheDocument();
@@ -100,14 +68,6 @@ describe('BeadNode', () => {
           status: 'active',
           agentModel: 'gpt-4.1',
         }}
-        id="bead-5"
-        type="beadNode"
-        selected={false}
-        dragging={false}
-        zIndex={0}
-        isConnectable={true}
-        positionAbsoluteX={0}
-        positionAbsoluteY={0}
       />
     );
     expect(screen.getByText('gpt-4.1')).toBeInTheDocument();

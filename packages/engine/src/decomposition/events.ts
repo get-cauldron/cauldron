@@ -64,7 +64,9 @@ export async function beadDispatchHandler({
   event: { data: BeadDispatchPayload };
   step: {
     run: <T>(name: string, callback: () => Promise<T>) => Promise<T>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Inngest step.waitForEvent returns unknown event payload; narrowing at SDK boundary
     waitForEvent: (id: string, opts: { event: string; match?: string; timeout: string }) => Promise<any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Inngest step.sendEvent accepts arbitrary event data shapes
     sendEvent: (id: string, event: { name: string; data: any }) => Promise<void>;
   };
 }): Promise<{ beadId: string; status: string }> {
@@ -292,6 +294,7 @@ export async function beadCompletionHandler({
   event: { data: BeadCompletedPayload };
   step: {
     run: <T>(name: string, callback: () => Promise<T>) => Promise<T>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Inngest step.sendEvent accepts arbitrary event data shapes
     sendEvent: (id: string, event: { name: string; data: any }) => Promise<void>;
   };
 }): Promise<{ dispatched: string[] }> {
@@ -375,7 +378,7 @@ export async function mergeRequestedHandler({
  * Listens for 'bead.dispatch_requested' events and orchestrates the full dispatch lifecycle.
  * Per-project concurrency limit enforced via the concurrency config (D-15).
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- InngestFunction<any> avoids TS2883 from Inngest v4's deeply-nested generic chain; explicit annotation required for non-portable inferred type across package boundaries
 export const handleBeadDispatchRequested: InngestFunction<any, any, any, any> = inngest.createFunction(
   {
     id: 'dag/dispatch-bead',
@@ -387,6 +390,7 @@ export const handleBeadDispatchRequested: InngestFunction<any, any, any, any> = 
     },
     retries: 3,
   },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ctx narrowing handled inside beadDispatchHandler; SDK context type not exported
   (ctx) => beadDispatchHandler(ctx as any)
 );
 
@@ -394,12 +398,13 @@ export const handleBeadDispatchRequested: InngestFunction<any, any, any, any> = 
  * Inngest function wrapper for bead completion.
  * Listens for 'bead.completed' events and dispatches newly-ready beads.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- InngestFunction<any> avoids TS2883 from Inngest v4's deeply-nested generic chain; explicit annotation required for non-portable inferred type across package boundaries
 export const handleBeadCompleted: InngestFunction<any, any, any, any> = inngest.createFunction(
   {
     id: 'dag/on-bead-completed',
     triggers: [{ event: 'bead.completed' }],
   },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ctx narrowing handled inside beadCompletionHandler; SDK context type not exported
   (ctx) => beadCompletionHandler(ctx as any)
 );
 
@@ -408,7 +413,7 @@ export const handleBeadCompleted: InngestFunction<any, any, any, any> = inngest.
  * Serialized per project (concurrency limit 1, keyed by projectId) to prevent
  * concurrent merges from corrupting the main branch (D-15, Research Pitfall 4).
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- InngestFunction<any> avoids TS2883 from Inngest v4's deeply-nested generic chain; explicit annotation required for non-portable inferred type across package boundaries
 export const handleMergeRequested: InngestFunction<any, any, any, any> = inngest.createFunction(
   {
     id: 'execution/merge-bead',
@@ -420,5 +425,6 @@ export const handleMergeRequested: InngestFunction<any, any, any, any> = inngest
     },
     retries: 2,
   },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ctx narrowing handled inside mergeRequestedHandler; SDK context type not exported
   (ctx) => mergeRequestedHandler(ctx as any)
 );

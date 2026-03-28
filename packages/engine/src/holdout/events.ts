@@ -130,8 +130,9 @@ export async function convergenceHandler({
  * Inngest function wrapper for the convergence handler.
  * Listens for 'evolution_converged' events and runs the full unseal-evaluate pipeline.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- InngestFunction<any> avoids TS2883 from Inngest v4's deeply-nested generic chain; explicit annotation required for non-portable inferred type across package boundaries
 export const handleEvolutionConverged: InngestFunction<any, any, any, any> = inngest.createFunction(
   { id: 'holdout-vault/unseal-on-convergence', triggers: [{ event: 'evolution_converged' }] },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ctx narrowing handled inside convergenceHandler; SDK context type not exported
   (ctx) => convergenceHandler(ctx as any)
 );

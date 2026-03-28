@@ -35,35 +35,6 @@ const mockByStage = [
   { stage: 'interview', totalCostCents: '334', totalTokens: '150000', callCount: '12' },
 ];
 
-function setupMocks(opts: { empty?: boolean; loading?: boolean } = {}) {
-  (useTRPC as ReturnType<typeof vi.fn>).mockReturnValue({
-    costs: {
-      getProjectSummary: { queryOptions: vi.fn().mockReturnValue({ queryKey: ['summary'], queryFn: vi.fn() }) },
-      getByModel: { queryOptions: vi.fn().mockReturnValue({ queryKey: ['byModel'], queryFn: vi.fn() }) },
-      getByStage: { queryOptions: vi.fn().mockReturnValue({ queryKey: ['byStage'], queryFn: vi.fn() }) },
-      getByCycle: { queryOptions: vi.fn().mockReturnValue({ queryKey: ['byCycle'], queryFn: vi.fn() }) },
-      getTopBeads: { queryOptions: vi.fn().mockReturnValue({ queryKey: ['topBeads'], queryFn: vi.fn() }) },
-    },
-  });
-
-  (useQuery as ReturnType<typeof vi.fn>).mockImplementation((opts: unknown) => {
-    const options = opts as { queryKey?: unknown[] };
-    const key = options?.queryKey?.[0];
-
-    if (loading) return { data: undefined, isLoading: true };
-
-    if (key === 'summary') {
-      return { data: opts?.empty ? { totalCostCents: '0', totalTokens: '0', callCount: '0' } : mockSummary, isLoading: false };
-    }
-    if (key === 'byModel') return { data: opts?.empty ? [] : mockByModel, isLoading: false };
-    if (key === 'byStage') return { data: opts?.empty ? [] : mockByStage, isLoading: false };
-    if (key === 'byCycle') return { data: [], isLoading: false };
-    if (key === 'topBeads') return { data: [], isLoading: false };
-    return { data: undefined, isLoading: false };
-  });
-}
-
-// Fix closure bug in setupMocks - rewrite cleanly
 function setupMocksClean(variant: 'data' | 'empty' | 'loading' = 'data') {
   (useTRPC as ReturnType<typeof vi.fn>).mockReturnValue({
     costs: {

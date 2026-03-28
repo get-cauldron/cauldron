@@ -16,14 +16,6 @@ describe('MoleculeGroup', () => {
     render(
       <MoleculeGroup
         data={{ name: 'Authentication Module', childCount: 3 }}
-        id="molecule-1"
-        type="moleculeGroup"
-        selected={false}
-        dragging={false}
-        zIndex={0}
-        isConnectable={true}
-        positionAbsoluteX={0}
-        positionAbsoluteY={0}
       />
     );
     expect(screen.getByText('Authentication Module')).toBeInTheDocument();
@@ -33,14 +25,6 @@ describe('MoleculeGroup', () => {
     render(
       <MoleculeGroup
         data={{ name: 'Module A' }}
-        id="molecule-2"
-        type="moleculeGroup"
-        selected={false}
-        dragging={false}
-        zIndex={0}
-        isConnectable={true}
-        positionAbsoluteX={0}
-        positionAbsoluteY={0}
       />
     );
     expect(screen.getByTestId('handle-target')).toBeInTheDocument();
@@ -48,17 +32,9 @@ describe('MoleculeGroup', () => {
   });
 
   it('is open by default (shows collapsible content)', () => {
-    const { container } = render(
+    render(
       <MoleculeGroup
         data={{ name: 'Module B', childCount: 2 }}
-        id="molecule-3"
-        type="moleculeGroup"
-        selected={false}
-        dragging={false}
-        zIndex={0}
-        isConnectable={true}
-        positionAbsoluteX={0}
-        positionAbsoluteY={0}
       />
     );
     // When collapsed, the bead count badge is shown — when open, it's hidden
@@ -70,14 +46,6 @@ describe('MoleculeGroup', () => {
     render(
       <MoleculeGroup
         data={{ name: 'Module C', childCount: 5 }}
-        id="molecule-4"
-        type="moleculeGroup"
-        selected={false}
-        dragging={false}
-        zIndex={0}
-        isConnectable={true}
-        positionAbsoluteX={0}
-        positionAbsoluteY={0}
       />
     );
     // Click the collapsible trigger to collapse

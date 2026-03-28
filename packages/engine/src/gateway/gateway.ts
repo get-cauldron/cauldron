@@ -123,7 +123,7 @@ export class LLMGateway {
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- AI SDK v6 StreamTextResult uses 'output as Output' namespace export that causes TS4053 non-portable type error; Promise<any> avoids the inferred return type crossing declaration boundary
   async streamText(options: GatewayCallOptions): Promise<any> {
     const budgetLimit = this.projectSettings?.budgetLimitCents ?? this.config.budget.defaultLimitCents;
     await checkBudget(this.db, options.projectId, budgetLimit);
@@ -136,9 +136,9 @@ export class LLMGateway {
       enforceDiversity(modelChain[0]!, implementerChain[0]!);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- AI SDK v6 tool/toolChoice types are deeply generic; casting avoids TS propagation into the internal failover utility
     const tools = options.tools as any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- AI SDK v6 tool/toolChoice types are deeply generic; casting avoids TS propagation into the internal failover utility
     const toolChoice = options.toolChoice as any;
 
     return executeWithFailover({
@@ -160,7 +160,7 @@ export class LLMGateway {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- AI SDK v6 GenerateTextResult uses complex generic chain that causes TS4053 when crossing package boundaries; Promise<any> avoids this
   async generateText(options: GatewayCallOptions): Promise<any> {
     const budgetLimit = this.projectSettings?.budgetLimitCents ?? this.config.budget.defaultLimitCents;
     await checkBudget(this.db, options.projectId, budgetLimit);
@@ -173,9 +173,9 @@ export class LLMGateway {
       enforceDiversity(modelChain[0]!, implementerChain[0]!);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- AI SDK v6 tool/toolChoice types are deeply generic; casting avoids TS propagation into the internal failover utility
     const tools = options.tools as any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- AI SDK v6 tool/toolChoice types are deeply generic; casting avoids TS propagation into the internal failover utility
     const toolChoice = options.toolChoice as any;
 
     return executeWithFailover({
@@ -224,7 +224,7 @@ export class LLMGateway {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- AI SDK v6 StreamObjectResult uses 'output as Output' namespace export that causes TS4053; Promise<any> avoids non-portable inferred type crossing package boundary
   async streamObject<T extends z.ZodType>(options: GatewayObjectOptions<T>): Promise<any> {
     const budgetLimit = this.projectSettings?.budgetLimitCents ?? this.config.budget.defaultLimitCents;
     await checkBudget(this.db, options.projectId, budgetLimit);
