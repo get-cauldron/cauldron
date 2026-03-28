@@ -430,3 +430,91 @@ describe('completeBead', () => {
     expect(skippedCalls.length).toBeGreaterThan(0);
   });
 });
+
+describe('findReadyBeads – DAG topology edge cases', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.clearAllMocks();
+  });
+
+  it('Wide fan-out: 3 independent beads with no edges → all 3 are ready', async () => {
+    const threeIndependentBeads = [
+      { id: 'bead-x', seedId: 'seed-1', status: 'pending', version: 1, title: 'Bead X', spec: 'spec', coversCriteria: [] },
+      { id: 'bead-y', seedId: 'seed-1', status: 'pending', version: 1, title: 'Bead Y', spec: 'spec', coversCriteria: [] },
+      { id: 'bead-z', seedId: 'seed-1', status: 'pending', version: 1, title: 'Bead Z', spec: 'spec', coversCriteria: [] },
+    ];
+
+    mockSelect.mockReturnValue({
+      from: vi.fn().mockReturnValue({
+        where: vi.fn().mockResolvedValue(threeIndependentBeads),
+      }),
+    });
+
+    const { findReadyBeads } = await import('../scheduler.js');
+    const result = await findReadyBeads(mockDb, 'seed-1');
+
+    expect(result).toHaveLength(3);
+    const ids = result.map(b => b.id);
+    expect(ids).toContain('bead-x');
+    expect(ids).toContain('bead-y');
+    expect(ids).toContain('bead-z');
+  });
+
+  it('Deep chain: A→B→C→D with blocks edges → only A is ready (B, C, D are blocked)', async () => {
+    // The SQL NOT EXISTS clause filters out blocked beads — only A (no upstream) is returned
+    const onlyA = [
+      { id: 'bead-a', seedId: 'seed-1', status: 'pending', version: 1, title: 'Bead A', spec: 'spec', coversCriteria: [] },
+    ];
+
+    mockSelect.mockReturnValue({
+      from: vi.fn().mockReturnValue({
+        where: vi.fn().mockResolvedValue(onlyA),
+      }),
+    });
+
+    const { findReadyBeads } = await import('../scheduler.js');
+    const result = await findReadyBeads(mockDb, 'seed-1');
+
+    expect(result).toHaveLength(1);
+    expect(result[0]!.id).toBe('bead-a');
+    // B, C, D are not present — they are blocked by incomplete upstream beads
+  });
+
+  it('Single bead with no deps → immediately ready', async () => {
+    const singleBead = [
+      { id: 'bead-solo', seedId: 'seed-1', status: 'pending', version: 1, title: 'Solo Bead', spec: 'spec', coversCriteria: [] },
+    ];
+
+    mockSelect.mockReturnValue({
+      from: vi.fn().mockReturnValue({
+        where: vi.fn().mockResolvedValue(singleBead),
+      }),
+    });
+
+    const { findReadyBeads } = await import('../scheduler.js');
+    const result = await findReadyBeads(mockDb, 'seed-1');
+
+    expect(result).toHaveLength(1);
+    expect(result[0]!.id).toBe('bead-solo');
+  });
+
+  it('Chain where first bead is completed → second bead becomes ready', async () => {
+    // When bead-a is completed, bead-b's blocks edge is satisfied.
+    // The NOT EXISTS clause no longer filters out bead-b — it now appears as ready.
+    const beadBReady = [
+      { id: 'bead-b', seedId: 'seed-1', status: 'pending', version: 1, title: 'Bead B', spec: 'spec', coversCriteria: [] },
+    ];
+
+    mockSelect.mockReturnValue({
+      from: vi.fn().mockReturnValue({
+        where: vi.fn().mockResolvedValue(beadBReady),
+      }),
+    });
+
+    const { findReadyBeads } = await import('../scheduler.js');
+    const result = await findReadyBeads(mockDb, 'seed-1');
+
+    expect(result).toHaveLength(1);
+    expect(result[0]!.id).toBe('bead-b');
+  });
+});
