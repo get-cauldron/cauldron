@@ -353,3 +353,56 @@ describe('buildScorerPrompt recency weighting', () => {
     expect(result).toContain('MOST RECENT ANSWERS');
   });
 });
+
+describe('computeWeightedScore boundary values', () => {
+  it('greenfield and brownfield produce different scores for same base dimensions', () => {
+    const scores = {
+      goalClarity: 0.9,
+      constraintClarity: 0.5,
+      successCriteriaClarity: 0.7,
+      reasoning: 'test',
+    };
+
+    const greenfield = computeWeightedScore(scores, 'greenfield');
+    expect(greenfield).toBeCloseTo(0.72, 2);
+
+    const brownfieldScores = { ...scores, contextClarity: 0.6 };
+    const brownfield = computeWeightedScore(brownfieldScores, 'brownfield');
+    expect(brownfield).toBeCloseTo(0.705, 2);
+
+    expect(greenfield).not.toBeCloseTo(brownfield, 2);
+  });
+
+  it('handles mixed extreme dimensions (one 0, one 1)', () => {
+    const scores = {
+      goalClarity: 1.0,
+      constraintClarity: 0.0,
+      successCriteriaClarity: 0.5,
+      reasoning: 'test',
+    };
+
+    const result = computeWeightedScore(scores, 'greenfield');
+    expect(result).toBeCloseTo(0.55, 2);
+  });
+});
+
+describe('validateScoreRules boundary cases', () => {
+  it('does not flag regression of exactly 0.3 (boundary)', () => {
+    // 0.6 - 0.3 = 0.3 exactly in IEEE 754 — not strictly greater than 0.3
+    const current = { goalClarity: 0.3, constraintClarity: 0.5, successCriteriaClarity: 0.5, reasoning: 'ok' };
+    const previous = { goalClarity: 0.6, constraintClarity: 0.5, successCriteriaClarity: 0.5, overall: 0.53, reasoning: 'ok' };
+
+    const result = validateScoreRules(current, previous);
+    expect(result.valid).toBe(true);
+  });
+
+  it('flags regression just over 0.3 (boundary)', () => {
+    // 1.0 - 0.7 = 0.30000000000000004 in IEEE 754 — strictly greater than 0.3
+    const current = { goalClarity: 0.7, constraintClarity: 0.5, successCriteriaClarity: 0.5, reasoning: 'ok' };
+    const previous = { goalClarity: 1.0, constraintClarity: 0.5, successCriteriaClarity: 0.5, overall: 0.7, reasoning: 'ok' };
+
+    const result = validateScoreRules(current, previous);
+    expect(result.valid).toBe(false);
+    expect(result.anomalies.length).toBeGreaterThan(0);
+  });
+});

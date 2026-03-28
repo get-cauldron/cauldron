@@ -217,3 +217,79 @@ describe('validateDAG', () => {
     expect(err!.details.uncoveredCriteria).toEqual(expect.arrayContaining(['AC-2']));
   });
 });
+
+describe('detectCycle edge cases', () => {
+  it('detects self-referencing bead as a cycle', () => {
+    const result = detectCycle(
+      ['a'],
+      [{ fromBeadId: 'a', toBeadId: 'a', edgeType: 'blocks' }],
+    );
+    expect(result).not.toBeNull();
+    expect(result).toContain('a');
+  });
+
+  it('handles empty graph (no beads, no edges)', () => {
+    const result = detectCycle([], []);
+    expect(result).toBeNull();
+  });
+
+  it('handles single bead with no edges', () => {
+    const result = detectCycle(['a'], []);
+    expect(result).toBeNull();
+  });
+
+  it('detects cycle in a complex 4-node graph', () => {
+    const result = detectCycle(
+      ['a', 'b', 'c', 'd'],
+      [
+        { fromBeadId: 'a', toBeadId: 'b', edgeType: 'blocks' },
+        { fromBeadId: 'b', toBeadId: 'c', edgeType: 'blocks' },
+        { fromBeadId: 'c', toBeadId: 'd', edgeType: 'blocks' },
+        { fromBeadId: 'd', toBeadId: 'b', edgeType: 'blocks' },
+      ],
+    );
+    expect(result).not.toBeNull();
+    expect(result).toContain('b');
+    expect(result).toContain('c');
+    expect(result).toContain('d');
+  });
+});
+
+describe('validateBeadSizes boundary cases', () => {
+  it('passes bead exactly at the token budget', () => {
+    const result = validateBeadSizes(
+      [{ id: 'b1', estimatedTokens: 200_000 } as any],
+      200_000,
+    );
+    expect(result).toHaveLength(0);
+  });
+
+  it('fails bead 1 token over budget', () => {
+    const result = validateBeadSizes(
+      [{ id: 'b1', estimatedTokens: 200_001 } as any],
+      200_000,
+    );
+    expect(result).toHaveLength(1);
+    expect(result[0]!.beadId).toBe('b1');
+  });
+});
+
+describe('validateCoverage edge cases', () => {
+  it('returns uncovered when beads cover overlapping but not all criteria', () => {
+    const beads = [
+      { coversCriteria: ['ac-1', 'ac-2'] },
+      { coversCriteria: ['ac-2', 'ac-3'] },
+    ] as any[];
+    const result = validateCoverage(beads, ['ac-1', 'ac-2', 'ac-3', 'ac-4']);
+    expect(result).toEqual(['ac-4']);
+  });
+
+  it('returns empty when all criteria are covered even with overlap', () => {
+    const beads = [
+      { coversCriteria: ['ac-1', 'ac-2'] },
+      { coversCriteria: ['ac-2', 'ac-3'] },
+    ] as any[];
+    const result = validateCoverage(beads, ['ac-1', 'ac-2', 'ac-3']);
+    expect(result).toHaveLength(0);
+  });
+});
