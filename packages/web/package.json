@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
+  "exports": {
+    "./src/trpc/router": "./src/trpc/router.ts"
+  },
   "scripts": {
     "build": "next build --webpack",
     "typecheck": "tsc --noEmit",

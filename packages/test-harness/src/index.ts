@@ -1,3 +1,7 @@
-// @get-cauldron/test-harness entry point
-// Exports are added as harness modules are implemented in Tasks 2-5.
-export {};
+export { createScriptedGateway } from './gateway.js';
+export type { MockGatewayCall } from './gateway.js';
+export { fixtures } from './fixtures.js';
+export { createTestContext } from './context.js';
+export type { TestContext } from './context.js';
+export { interviewTurnScript } from './scripts/interview-turn.js';
+export type { InterviewTurnOptions } from './scripts/interview-turn.js';
