@@ -64,7 +64,28 @@ export async function getEngineDeps(): Promise<{
   }
 
   const projectRoot = process.env['CAULDRON_PROJECT_ROOT'] ?? process.cwd();
-  _config = await loadConfig(projectRoot);
+  try {
+    _config = await loadConfig(projectRoot);
+  } catch {
+    // loadConfig uses dynamic import() which fails in Next.js because Node
+    // can't resolve workspace packages (@get-cauldron/*) at runtime.
+    // Fall back to the re-exported config from the engine package.
+    const { defineConfig } = await import('@get-cauldron/engine');
+    _config = defineConfig({
+      models: {
+        interview: ['claude-sonnet-4-6', 'gpt-4.1'],
+        holdout: ['gemini-2.5-pro', 'gpt-4.1'],
+        implementation: ['claude-sonnet-4-6', 'gpt-4.1'],
+        evaluation: ['gemini-2.5-pro', 'claude-sonnet-4-6'],
+        decomposition: ['claude-sonnet-4-6', 'gpt-4.1'],
+        context_assembly: ['gpt-4.1-mini', 'gpt-4o-mini'],
+        conflict_resolution: ['claude-sonnet-4-6', 'gpt-4.1'],
+      },
+      budget: { defaultLimitCents: 500 },
+      selfBuild: true,
+    });
+    console.warn('[engine-deps] cauldron.config.ts import failed — using built-in defaults');
+  }
   _logger = makeConsoleLogger();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- _logger is structurally compatible with pino.Logger; cast required because LLMGateway.create expects the pino type directly
   _gateway = await LLMGateway.create({ db, config: _config, logger: _logger as any, validateKeys: false });

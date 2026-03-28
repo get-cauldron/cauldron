@@ -41,9 +41,17 @@ export async function projectsCommand(
       process.exit(1);
     }
     await archiveProject(client, id, flags);
+  } else if (subcommand === 'delete') {
+    const id = args[1];
+    if (!id) {
+      console.error(chalk.red('Error: project ID is required'));
+      console.error('Usage: cauldron projects delete <id>');
+      process.exit(1);
+    }
+    await deleteProject(client, id, flags);
   } else {
     console.error(chalk.red(`Unknown subcommand: ${subcommand}`));
-    console.error('Usage: cauldron projects [list|create|archive]');
+    console.error('Usage: cauldron projects [list|create|archive|delete]');
     process.exit(1);
   }
 }
@@ -103,4 +111,15 @@ async function archiveProject(client: CLIClient, id: string, flags: Flags): Prom
   }
 
   console.log(chalk.green('Archived project:'), chalk.gray(id));
+}
+
+async function deleteProject(client: CLIClient, id: string, flags: Flags): Promise<void> {
+  const result = await client.projects.delete.mutate({ id });
+
+  if (flags.json) {
+    console.log(formatJson(result));
+    return;
+  }
+
+  console.log(chalk.green('Deleted project:'), chalk.gray(id));
 }

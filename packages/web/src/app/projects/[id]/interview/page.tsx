@@ -121,16 +121,21 @@ export default function InterviewPage() {
   };
   const overallClarity = currentScores?.overall ?? 0;
 
+  // Optimistic user message shown while the LLM processes
+  const [pendingAnswer, setPendingAnswer] = React.useState<string | null>(null);
+
   async function handleSendAnswer(answerText: string) {
     if (!answerText.trim() || isSending) return;
     setIsSending(true);
     setInputValue('');
+    setPendingAnswer(answerText.trim());
     try {
       await sendAnswerMutation.mutateAsync({ projectId, answer: answerText.trim() });
       await queryClient.invalidateQueries({ queryKey: ['interview', 'getTranscript', projectId] });
       await transcriptQuery.refetch();
     } finally {
       setIsSending(false);
+      setPendingAnswer(null);
     }
   }
 
@@ -247,10 +252,23 @@ export default function InterviewPage() {
               </div>
             ) : (
               transcript.map((turn, idx) => {
-                // Each turn has the system question + user answer
+                // Render user answer FIRST, then the AI's next question.
+                // This matches chat UX convention: user speaks, then AI responds.
+                // Turn 0 has no userAnswer (it's the opening question).
                 const items: React.ReactNode[] = [];
 
-                // System question (rendered first)
+                // User answer from this turn (rendered first — it's what the user said)
+                if (turn.userAnswer) {
+                  items.push(
+                    <ChatBubble
+                      key={`user-${idx}`}
+                      role="user"
+                      content={turn.userAnswer}
+                    />,
+                  );
+                }
+
+                // AI question from this turn (rendered after user's answer)
                 if (turn.question && turn.question !== '(opening turn)') {
                   items.push(
                     <ChatBubble
@@ -266,19 +284,41 @@ export default function InterviewPage() {
                   );
                 }
 
-                // User answer
-                if (turn.userAnswer) {
-                  items.push(
-                    <ChatBubble
-                      key={`user-${idx}`}
-                      role="user"
-                      content={turn.userAnswer}
-                    />,
-                  );
-                }
-
                 return items;
               })
+            )}
+
+            {/* Optimistic user message + thinking indicator while LLM processes */}
+            {pendingAnswer && (
+              <>
+                <ChatBubble
+                  key="pending-user"
+                  role="user"
+                  content={pendingAnswer}
+                />
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '12px 16px',
+                    color: '#6b8399',
+                    fontSize: 13,
+                  }}
+                >
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      backgroundColor: '#00d4aa',
+                      animation: 'pulse 1.5s ease-in-out infinite',
+                    }}
+                  />
+                  Thinking...
+                </div>
+              </>
             )}
 
             {/* Seed approval card — inline in chat when reviewing */}

@@ -9,5 +9,4 @@ import { pipelineTriggerFunction } from '@/inngest/pipeline-trigger';
 export const { GET, POST, PUT } = serve({
   client: inngest,
   functions: [pipelineTriggerFunction],
-  ...(process.env['NODE_ENV'] === 'development' && { isDev: true }),
 });

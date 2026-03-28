@@ -4,8 +4,9 @@ import { homedir } from 'node:os';
 import pino from 'pino';
 import { db, ensureMigrations } from '@get-cauldron/shared';
 
-// Load API keys from ~/.env as fallback (project .env takes precedence via @get-cauldron/shared)
-dotenvConfig({ path: resolve(homedir(), '.env') });
+// Load project-root .env first (DATABASE_URL, etc.), then ~/.env for API keys as fallback
+dotenvConfig(); // loads closest .env (project root or CWD)
+dotenvConfig({ path: resolve(homedir(), '.env') }); // ~/.env — won't override existing vars
 
 // Strip stray quotes from env vars — dotenv may leave them depending on .env formatting
 for (const key of ['OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'GOOGLE_GENERATIVE_AI_API_KEY', 'HOLDOUT_ENCRYPTION_KEY']) {

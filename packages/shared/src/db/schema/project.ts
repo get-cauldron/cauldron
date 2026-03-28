@@ -13,6 +13,7 @@ export const projects = pgTable('projects', {
   settings: jsonb('settings').$type<ProjectSettings>().default({}),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  deletedAt: timestamp('deleted_at', { withTimezone: true }),
 });
 
 export type Project = typeof projects.$inferSelect;

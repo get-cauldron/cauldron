@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { router, publicProcedure } from '../init';
 import { projects, events, llmUsage } from '@get-cauldron/shared';
-import { eq, desc, sql } from 'drizzle-orm';
+import { eq, desc, sql, isNull } from 'drizzle-orm';
 
 export const projectsRouter = router({
   list: publicProcedure.query(async ({ ctx }) => {
@@ -15,6 +15,7 @@ export const projectsRouter = router({
         updatedAt: projects.updatedAt,
       })
       .from(projects)
+      .where(isNull(projects.deletedAt))
       .orderBy(desc(projects.updatedAt));
 
     // For each project, get latest event and total cost
@@ -97,6 +98,24 @@ export const projectsRouter = router({
       await ctx.db
         .update(projects)
         .set({ name: `[archived] ${project.name}`, updatedAt: new Date() })
+        .where(eq(projects.id, input.id));
+
+      return { success: true };
+    }),
+
+  delete: publicProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const [project] = await ctx.db
+        .select()
+        .from(projects)
+        .where(eq(projects.id, input.id));
+
+      if (!project) throw new Error('Project not found');
+
+      await ctx.db
+        .update(projects)
+        .set({ deletedAt: new Date(), updatedAt: new Date() })
         .where(eq(projects.id, input.id));
 
       return { success: true };

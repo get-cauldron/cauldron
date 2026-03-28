@@ -48,11 +48,15 @@ export async function rankCandidates(
     .map((c, i) => `[${i}] (${c.perspective}): ${c.question}\n    Rationale: ${c.rationale}`)
     .join('\n');
 
+  const turnGuidance = transcript.length === 0
+    ? '\n\nNote: This is the opening question of the interview. Prefer questions that explore the user\'s full vision and goals before narrowing scope. The first question should make the user feel heard and excited to share — avoid questions that sound like they are simplifying or constraining the idea.'
+    : '';
+
   const result = await gateway.generateObject({
     projectId,
     stage: 'interview',
     system: RANKER_SYSTEM_PROMPT,
-    prompt: `Interview transcript so far:\n${serializeTranscript(transcript)}\n\nCandidate questions:\n${candidateList}\n\nSelect the best question (by index) and generate 3-4 multiple-choice answer options.`,
+    prompt: `Interview transcript so far:\n${serializeTranscript(transcript)}\n\nCandidate questions:\n${candidateList}\n\nSelect the best question (by index) and generate 3-4 multiple-choice answer options.${turnGuidance}`,
     schema: rankerOutputSchema,
     schemaName: 'RankerOutput',
     schemaDescription: 'Selected question index and multiple-choice answer suggestions',

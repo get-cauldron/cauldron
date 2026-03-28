@@ -22,7 +22,9 @@ export function defineConfig(config: GatewayConfig): GatewayConfig {
 export async function loadConfig(projectRoot: string): Promise<GatewayConfig> {
   const configPath = path.join(projectRoot, 'cauldron.config.ts');
   try {
-    const mod = await import(configPath);
+    // Dynamic import with variable path — only used by CLI, not by Next.js webpack.
+    // webpackIgnore comment prevents "Critical dependency" warning in web bundle.
+    const mod = await import(/* webpackIgnore: true */ configPath);
     return mod.default as GatewayConfig;
   } catch (err: unknown) {
     if (err && typeof err === 'object' && 'code' in err && err.code === 'ERR_MODULE_NOT_FOUND') {

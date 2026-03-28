@@ -9,7 +9,10 @@ import type { LLMGateway } from '../gateway/gateway.js';
  * Inngest client for the Cauldron engine.
  * All holdout vault Inngest functions use this shared client.
  */
-export const inngest = new Inngest({ id: 'cauldron-engine' });
+export const inngest = new Inngest({
+  id: 'cauldron-engine',
+  isDev: process.env['NODE_ENV'] !== 'production',
+});
 
 /**
  * Module-level dependencies for the vault event handlers.

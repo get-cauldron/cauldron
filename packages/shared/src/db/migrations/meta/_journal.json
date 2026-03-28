@@ -85,6 +85,13 @@
       "when": 1775250000000,
       "tag": "0011_pipeline_trigger_event",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1775336400000,
+      "tag": "0012_soft_delete_projects",
+      "breakpoints": true
     }
   ]
 }
