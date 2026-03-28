@@ -793,14 +793,19 @@ describe('interview holdout lifecycle wiring', () => {
 
   it('sealHoldouts encrypts approved vault entries', async () => {
     const originalKey = process.env['HOLDOUT_ENCRYPTION_KEY'];
-    process.env['HOLDOUT_ENCRYPTION_KEY'] = 'a'.repeat(64);
+    // Key must be valid base64-encoded 32 bytes (AES-256)
+    process.env['HOLDOUT_ENCRYPTION_KEY'] = Buffer.from('a'.repeat(32)).toString('base64');
 
     try {
       ctx = await createTestContext();
       const project = await ctx.fixtures.project();
       const interview = await ctx.fixtures.interview({ projectId: project.id, phase: 'crystallized' });
       const seed = await ctx.fixtures.seed({ projectId: project.id, interviewId: interview.id });
-      await ctx.fixtures.holdoutVault({ seedId: seed.id, status: 'approved' });
+
+      // Create vault in pending_review, then approve through proper flow
+      // so scenarios get _approved: true (required by sealVault)
+      const vault = await ctx.fixtures.holdoutVault({ seedId: seed.id, status: 'pending_review' });
+      await ctx.caller.interview.approveHoldout({ holdoutId: vault.id });
 
       const result = await ctx.caller.interview.sealHoldouts({ seedId: seed.id });
       expect(result.sealedCount).toBe(1);

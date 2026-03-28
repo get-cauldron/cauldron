@@ -17,15 +17,14 @@ describe('evolution router wiring', () => {
     const project = await ctx.fixtures.project();
     const interview = await ctx.fixtures.interview({ projectId: project.id, phase: 'crystallized' });
 
+    // Set generation at INSERT time — crystallized seeds cannot be UPDATEd (DB trigger)
     const seed0 = await ctx.fixtures.seed({
       projectId: project.id,
       interviewId: interview.id,
       version: 1,
       goal: 'Initial goal',
+      generation: 0,
     });
-
-    const { seeds } = await import('@get-cauldron/shared');
-    const { eq } = await import('drizzle-orm');
 
     const seed1 = await ctx.fixtures.seed({
       projectId: project.id,
@@ -33,10 +32,8 @@ describe('evolution router wiring', () => {
       version: 2,
       parentId: seed0.id,
       goal: 'Evolved goal',
+      generation: 1,
     });
-
-    await ctx.db.update(seeds).set({ generation: 0 }).where(eq(seeds.id, seed0.id));
-    await ctx.db.update(seeds).set({ generation: 1 }).where(eq(seeds.id, seed1.id));
 
     const lineage = await ctx.caller.evolution.getSeedLineage({ projectId: project.id });
     expect(lineage).toHaveLength(2);

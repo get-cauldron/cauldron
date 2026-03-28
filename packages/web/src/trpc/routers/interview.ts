@@ -395,10 +395,17 @@ export const interviewRouter = router({
         throw new Error(`Holdout vault entry ${holdoutId} not found`);
       }
 
-      await ctx.db
-        .update(holdoutVault)
-        .set({ status: 'approved' })
-        .where(eq(holdoutVault.id, holdoutId));
+      // Guard: only pending_review → approved is valid per vault FSM
+      if (entry.status !== 'pending_review') {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Cannot approve holdout: status is '${entry.status}', expected 'pending_review'`,
+        });
+      }
+
+      // Use engine's approveScenarios to properly mark scenarios as _approved
+      // and transition vault status through the FSM (raw UPDATE would skip this)
+      await approveScenarios(ctx.db, { vaultId: holdoutId, approvedIds: 'all' });
 
       return { holdoutId, status: 'approved' as const };
     }),
@@ -420,6 +427,14 @@ export const interviewRouter = router({
 
       if (!entry) {
         throw new Error(`Holdout vault entry ${holdoutId} not found`);
+      }
+
+      // Guard: only pending_review can be rejected
+      if (entry.status !== 'pending_review') {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Cannot reject holdout: status is '${entry.status}', expected 'pending_review'`,
+        });
       }
 
       // Reject: remove draft scenarios so they can be regenerated
@@ -463,9 +478,9 @@ export const interviewRouter = router({
         throw new Error(`No approved holdout entries found for seed ${seedId}`);
       }
 
-      // For each approved entry: mark all draftScenarios as _approved, then encrypt and seal
+      // For each approved entry: seal (encrypt). Skip approveScenarios() since
+      // entries are already in 'approved' status from the approveHoldout step.
       for (const entry of approved) {
-        await approveScenarios(ctx.db, { vaultId: entry.id, approvedIds: 'all' });
         await sealVault(ctx.db, { vaultId: entry.id, projectId: seedRow.projectId });
       }
 

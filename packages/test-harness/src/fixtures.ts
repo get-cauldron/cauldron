@@ -64,6 +64,7 @@ export function fixtures(db: DbClient) {
       ambiguityScore?: number;
       version?: number;
       parentId?: string;
+      generation?: number;
     }) {
       const [row] = await db
         .insert(seeds)
@@ -81,6 +82,7 @@ export function fixtures(db: DbClient) {
           exitConditions: opts.exitConditions ?? [{ condition: 'done', description: 'done' }],
           ambiguityScore: opts.ambiguityScore ?? 0.85,
           crystallizedAt: new Date(),
+          generation: opts.generation ?? 0,
         })
         .returning();
       return row!;

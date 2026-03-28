@@ -146,30 +146,18 @@ async function callMutation(router: any, name: string, input: unknown, ctx: unkn
 // Task 1: sealHoldouts wiring tests
 // ────────────────────────────────────────────────────────────────────────────
 
-describe('sealHoldouts tRPC mutation — approveScenarios + sealVault wiring', () => {
+describe('sealHoldouts tRPC mutation — sealVault wiring', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('calls approveScenarios with approvedIds="all" for each approved entry', async () => {
+  it('calls sealVault (not approveScenarios) for each approved entry', async () => {
     const ctx = makeSealCtx({});
     await callMutation(interviewRouter, 'sealHoldouts', { seedId: 'seed-001' }, ctx);
 
-    expect(mockApproveScenarios).toHaveBeenCalledTimes(2);
-    expect(mockApproveScenarios).toHaveBeenCalledWith(ctx.db, {
-      vaultId: 'vault-001',
-      approvedIds: 'all',
-    });
-    expect(mockApproveScenarios).toHaveBeenCalledWith(ctx.db, {
-      vaultId: 'vault-002',
-      approvedIds: 'all',
-    });
-  });
-
-  it('calls sealVault with correct vaultId and projectId for each approved entry', async () => {
-    const ctx = makeSealCtx({});
-    await callMutation(interviewRouter, 'sealHoldouts', { seedId: 'seed-001' }, ctx);
-
+    // sealHoldouts no longer calls approveScenarios — entries are already
+    // approved by the approveHoldout procedure which uses approveScenarios
+    expect(mockApproveScenarios).not.toHaveBeenCalled();
     expect(mockSealVault).toHaveBeenCalledTimes(2);
     expect(mockSealVault).toHaveBeenCalledWith(ctx.db, {
       vaultId: 'vault-001',
@@ -179,23 +167,6 @@ describe('sealHoldouts tRPC mutation — approveScenarios + sealVault wiring', (
       vaultId: 'vault-002',
       projectId: 'project-abc',
     });
-  });
-
-  it('calls approveScenarios before sealVault for each entry', async () => {
-    const callOrder: string[] = [];
-    mockApproveScenarios.mockImplementation(async () => {
-      callOrder.push('approve');
-    });
-    mockSealVault.mockImplementation(async () => {
-      callOrder.push('seal');
-    });
-
-    const ctx = makeSealCtx({
-      vaultRows: [{ id: 'vault-001', seedId: 'seed-001', status: 'approved' }],
-    });
-    await callMutation(interviewRouter, 'sealHoldouts', { seedId: 'seed-001' }, ctx);
-
-    expect(callOrder).toEqual(['approve', 'seal']);
   });
 
   it('throws when no approved entries exist for the seed', async () => {
