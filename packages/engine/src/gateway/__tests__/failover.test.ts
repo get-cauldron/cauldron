@@ -196,4 +196,53 @@ describe('executeWithFailover', () => {
 
     expect(execute).not.toHaveBeenCalled();
   });
+
+  it('handles mixed error types across models in sequence', async () => {
+    const execute = vi.fn().mockImplementation(async (_model: unknown, modelId: string) => {
+      if (modelId === 'claude-sonnet-4-6') {
+        const error = new Error('Rate limited');
+        (error as any).status = 429;
+        throw error;
+      }
+      if (modelId === 'gpt-4o') {
+        const error = new Error('Auth failed');
+        (error as any).status = 401;
+        throw error;
+      }
+      return { text: 'success' };
+    });
+
+    await expect(
+      executeWithFailover({
+        modelChain: ['claude-sonnet-4-6', 'gpt-4o'],
+        execute,
+        circuitBreaker: new CircuitBreaker(),
+        stage: 'interview',
+      }),
+    ).rejects.toThrow();
+
+    // Both models should have been attempted
+    expect(execute.mock.calls.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('does not retry on 401 auth errors (non-retryable)', async () => {
+    const execute = vi.fn().mockImplementation(async () => {
+      const error = new Error('Auth failed');
+      (error as any).status = 401;
+      throw error;
+    });
+
+    await expect(
+      executeWithFailover({
+        modelChain: ['claude-sonnet-4-6', 'gpt-4o'],
+        execute,
+        circuitBreaker: new CircuitBreaker(),
+        stage: 'interview',
+      }),
+    ).rejects.toThrow();
+
+    // 401 is non-retryable, so each model should be tried at most once (no retry)
+    // 2 models = at most 2 calls (one per model, no retries)
+    expect(execute.mock.calls.length).toBeLessThanOrEqual(2);
+  });
 });

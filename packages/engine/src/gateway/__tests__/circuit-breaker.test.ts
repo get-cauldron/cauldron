@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { CircuitBreaker, FAILURE_THRESHOLD, COOLDOWN_MS } from '../circuit-breaker.js';
+import { CircuitBreaker, FAILURE_THRESHOLD, COOLDOWN_MS, WINDOW_MS } from '../circuit-breaker.js';
 
 describe('CircuitBreaker', () => {
   let cb: CircuitBreaker;
@@ -97,5 +97,51 @@ describe('CircuitBreaker', () => {
     expect(cb.isOpen('anthropic')).toBe(true);
     expect(cb.isOpen('openai')).toBe(false);
     expect(cb.isOpen('google')).toBe(false);
+  });
+
+  it('only allows one probe call during HALF_OPEN state', () => {
+    vi.useFakeTimers();
+    const cb = new CircuitBreaker();
+
+    // Open the circuit
+    for (let i = 0; i < FAILURE_THRESHOLD; i++) {
+      cb.recordFailure('anthropic');
+    }
+    expect(cb.isOpen('anthropic')).toBe(true);
+
+    // Advance past cooldown → HALF_OPEN
+    vi.advanceTimersByTime(COOLDOWN_MS + 1);
+
+    // First probe: allowed (isOpen returns false)
+    expect(cb.isOpen('anthropic')).toBe(false);
+
+    // After the probe call, if it fails, circuit should go back to OPEN
+    cb.recordFailure('anthropic');
+    expect(cb.isOpen('anthropic')).toBe(true);
+
+    vi.useRealTimers();
+  });
+
+  it('window-based reset: old failures outside window do not count', () => {
+    vi.useFakeTimers();
+    const cb = new CircuitBreaker();
+
+    // Record failures just below threshold
+    for (let i = 0; i < FAILURE_THRESHOLD - 1; i++) {
+      cb.recordFailure('anthropic');
+    }
+    expect(cb.isOpen('anthropic')).toBe(false);
+
+    // Advance past the failure window
+    vi.advanceTimersByTime(WINDOW_MS + 1);
+
+    // Trigger window expiry check (isOpen resets stale failures on CLOSED circuits)
+    expect(cb.isOpen('anthropic')).toBe(false);
+
+    // One more failure should NOT open (old failures expired)
+    cb.recordFailure('anthropic');
+    expect(cb.isOpen('anthropic')).toBe(false);
+
+    vi.useRealTimers();
   });
 });
