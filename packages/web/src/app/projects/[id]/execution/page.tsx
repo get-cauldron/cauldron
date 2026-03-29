@@ -6,7 +6,7 @@ import { DAGCanvas } from '@/components/dag/DAGCanvas';
 import { BeadDetailSheet } from '@/components/bead/BeadDetailSheet';
 import { useEscalation } from '@/hooks/useEscalation';
 import { useTRPC } from '@/trpc/client';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { EvolutionTimeline, type GenerationDot, type GenerationStatus } from '@/components/evolution/EvolutionTimeline';
 import {
   Dialog,
@@ -142,12 +142,43 @@ export default function ExecutionPage() {
   const params = useParams<{ id: string }>();
   const projectId = params.id;
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
   const [selectedBeadId, setSelectedBeadId] = useState<string | null>(null);
   const [escalationAcknowledged, setEscalationAcknowledged] = useState(false);
   const [selectedGeneration, setSelectedGeneration] = useState<number | null>(null);
+  const [decompPhase, setDecompPhase] = useState<'idle' | 'decomposing' | 'executing'>('idle');
 
   const { activeEscalation, resolveEscalation } = useEscalation(projectId);
+
+  // Query DAG to check if beads exist and get seedId
+  const dagQuery = useQuery(
+    trpc.execution.getProjectDAG.queryOptions({ projectId })
+  );
+
+  const triggerDecomposition = useMutation(
+    trpc.execution.triggerDecomposition.mutationOptions({})
+  );
+
+  const triggerExecution = useMutation(
+    trpc.execution.triggerExecution.mutationOptions({})
+  );
+
+  const handleStartDecomposition = useCallback(async () => {
+    const seedId = dagQuery.data?.seedId;
+    if (!seedId) return;
+    try {
+      setDecompPhase('decomposing');
+      await triggerDecomposition.mutateAsync({ projectId, seedId });
+      setDecompPhase('executing');
+      await triggerExecution.mutateAsync({ projectId, seedId });
+      await queryClient.invalidateQueries(trpc.execution.getProjectDAG.queryFilter({ projectId }));
+    } catch {
+      // Error state handled by mutation — reset phase
+    } finally {
+      setDecompPhase('idle');
+    }
+  }, [dagQuery.data?.seedId, projectId, triggerDecomposition, triggerExecution, queryClient, trpc]);
 
   // Fetch seed lineage for the evolution timeline
   const seedLineageQuery = useQuery(
@@ -185,6 +216,39 @@ export default function ExecutionPage() {
           projectId={projectId}
           onNodeClick={(beadId) => setSelectedBeadId(beadId)}
         />
+
+        {/* Start Decomposition button — shown when DAG is empty and a seed exists */}
+        {dagQuery.data && dagQuery.data.beads.length === 0 && dagQuery.data.seedId && (
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            pointerEvents: 'none',
+          }}>
+            <Button
+              aria-label="Start Decomposition"
+              disabled={decompPhase !== 'idle'}
+              onClick={handleStartDecomposition}
+              style={{
+                pointerEvents: 'auto',
+                background: '#00d4aa',
+                color: '#0a0f14',
+                fontWeight: 600,
+                fontSize: 14,
+                padding: '10px 24px',
+                opacity: decompPhase !== 'idle' ? 0.7 : 1,
+              }}
+            >
+              {decompPhase === 'decomposing'
+                ? 'Decomposing...'
+                : decompPhase === 'executing'
+                  ? 'Starting execution...'
+                  : 'Start Decomposition'}
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Bead detail slide-out panel */}
