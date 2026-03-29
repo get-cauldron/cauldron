@@ -159,19 +159,25 @@ test.describe('Live Pipeline E2E', () => {
       expect(projectId).toBeTruthy();
       await page.goto(ROUTES.interview(projectId));
 
-      // The interview page shows "Interview not started" and "Send your first message
-      // to begin the Socratic interview." — the user must send an initial message to start.
-      // Wait for the input field to be ready, then send an opening message.
-      console.log('[pipeline-live] Waiting for interview page to load...');
-      const answerInput = page.getByRole('textbox', { name: /interview answer input/i })
-        .or(page.getByPlaceholder(/type your answer/i));
-      await expect(answerInput).toBeVisible({ timeout: 30_000 });
+      // Wait for Next.js to finish compiling — the "Compiling..." indicator
+      // must disappear before we interact with the page
+      console.log('[pipeline-live] Waiting for page to finish compiling...');
+      await expect(page.getByText('Compiling')).toBeHidden({ timeout: 60_000 });
 
-      // Send an initial message to start the interview
-      console.log('[pipeline-live] Sending initial message to start interview...');
+      // The interview page shows "Interview not started" — user must send a message.
+      // Wait for the input field to be ready and enabled.
+      console.log('[pipeline-live] Waiting for input field...');
+      const answerInput = page.getByRole('textbox', { name: /interview answer input/i });
+      await expect(answerInput).toBeVisible({ timeout: 10_000 });
+
+      // Type the initial message
       await answerInput.fill(LIVE_CONFIG.project.description);
+      // Wait a moment for React state to update and enable the button
+      await page.waitForTimeout(500);
+
       const sendButton = page.getByRole('button', { name: /send answer/i });
       await expect(sendButton).toBeEnabled({ timeout: 5000 });
+      console.log('[pipeline-live] Sending initial message to start interview...');
       await sendButton.click();
 
       // Wait for the first AI question to appear (the LLM generates it)
