@@ -258,6 +258,15 @@ export async function beadDispatchHandler({
 
     return { beadId, status: 'completed' };
   } else {
+    // Clean up worktree on failure (success path cleans up via merge queue)
+    await step.run('cleanup-worktree-on-failure', async () => {
+      try {
+        await worktreeManager.removeWorktree(beadId);
+      } catch {
+        // Best-effort cleanup — worktree may already be gone
+      }
+    });
+
     // Mark bead as failed after max iterations exhausted
     await step.run('fail-bead', async () => {
       await completeBead(db, beadId, 'failed', projectId, seedId);

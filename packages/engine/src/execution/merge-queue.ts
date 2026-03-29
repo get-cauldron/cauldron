@@ -279,6 +279,13 @@ export class MergeQueue {
     const git = simpleGit(this.projectRoot);
     await git.raw(['reset', '--hard', 'HEAD~1']);
 
+    // Clean up worktree after revert (D-18: don't leave orphaned worktrees)
+    try {
+      await this.worktreeManager.removeWorktree(entry.beadId);
+    } catch {
+      // Best-effort cleanup
+    }
+
     await appendEvent(this.db, {
       projectId: entry.projectId,
       seedId: entry.seedId,
