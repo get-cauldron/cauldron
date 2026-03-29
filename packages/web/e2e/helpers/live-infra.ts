@@ -162,6 +162,7 @@ export class LiveInfra {
       cwd: REPO_ROOT,
       env,
       stdio: 'pipe',
+      detached: true,
     });
     this.engineServer.stdout?.on('data', (d: Buffer) => process.stdout.write(`[engine] ${d}`));
     this.engineServer.stderr?.on('data', (d: Buffer) => process.stderr.write(`[engine:err] ${d}`));
@@ -176,6 +177,7 @@ export class LiveInfra {
       cwd: REPO_ROOT,
       env,
       stdio: 'pipe',
+      detached: true,
     });
     this.devServer.stdout?.on('data', (d: Buffer) => process.stdout.write(`[next] ${d}`));
     this.devServer.stderr?.on('data', (d: Buffer) => process.stderr.write(`[next:err] ${d}`));
@@ -190,15 +192,28 @@ export class LiveInfra {
   async stop(preserveOnFailure = false): Promise<void> {
     console.log('[live-infra] Stopping infrastructure...');
 
-    // Stop servers
-    if (this.devServer) {
-      this.devServer.kill('SIGTERM');
-      this.devServer = null;
+    // Stop servers — kill entire process tree (pnpm spawns child node processes)
+    for (const [server, label] of [[this.devServer, 'Next.js'], [this.engineServer, 'Engine']] as const) {
+      if (server?.pid) {
+        try {
+          // Kill the entire process group to catch child processes
+          process.kill(-server.pid, 'SIGKILL');
+        } catch {
+          // Process group kill may fail — fall back to direct kill
+          try { server.kill('SIGKILL'); } catch { /* already dead */ }
+        }
+      }
     }
-    if (this.engineServer) {
-      this.engineServer.kill('SIGTERM');
-      this.engineServer = null;
-    }
+    this.devServer = null;
+    this.engineServer = null;
+
+    // Also kill any lingering processes on our ports
+    try {
+      execSync('lsof -ti:3000 -ti:3001 | xargs kill -9 2>/dev/null || true', {
+        stdio: 'pipe',
+        timeout: 5_000,
+      });
+    } catch { /* no lingering processes */ }
 
     // Stop Docker
     if (!preserveOnFailure) {
