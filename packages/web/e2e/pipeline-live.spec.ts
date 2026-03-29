@@ -159,9 +159,30 @@ test.describe('Live Pipeline E2E', () => {
       expect(projectId).toBeTruthy();
       await page.goto(ROUTES.interview(projectId));
 
-      // Wait for interview to auto-start — "Starting interview..." text disappears
-      // once the first question loads from the LLM
-      await expect(page.getByText(/starting interview/i)).toBeHidden({ timeout: 60_000 });
+      // The interview page shows "Interview not started" and "Send your first message
+      // to begin the Socratic interview." — the user must send an initial message to start.
+      // Wait for the input field to be ready, then send an opening message.
+      console.log('[pipeline-live] Waiting for interview page to load...');
+      const answerInput = page.getByRole('textbox', { name: /interview answer input/i })
+        .or(page.getByPlaceholder(/type your answer/i));
+      await expect(answerInput).toBeVisible({ timeout: 30_000 });
+
+      // Send an initial message to start the interview
+      console.log('[pipeline-live] Sending initial message to start interview...');
+      await answerInput.fill(LIVE_CONFIG.project.description);
+      const sendButton = page.getByRole('button', { name: /send answer/i });
+      await expect(sendButton).toBeEnabled({ timeout: 5000 });
+      await sendButton.click();
+
+      // Wait for the first AI question to appear (the LLM generates it)
+      console.log('[pipeline-live] Waiting for first AI question...');
+      await expect(async () => {
+        const hasAvatar = await page.locator('[title="researcher"], [title="simplifier"], [title="architect"], [title="breadth-keeper"], [title="seed-closer"]').count();
+        console.log(`[pipeline-live] Perspective avatars found: ${hasAvatar}`);
+        expect(hasAvatar).toBeGreaterThan(0);
+      }).toPass({ timeout: 90_000, intervals: [3_000] });
+
+      console.log('[pipeline-live] Interview started — first question visible');
 
       const conversationHistory: Array<{ question: string; answer: string }> = [];
       let turn = 0;
