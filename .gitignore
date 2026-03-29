@@ -7,3 +7,16 @@ dist/
 coverage/
 *.tsbuildinfo
 .DS_Store
+
+# Playwright
+playwright-report/
+test-results/
+
+# Compiled TS output in src/ (test-harness)
+packages/test-harness/src/**/*.js
+packages/test-harness/src/**/*.js.map
+packages/test-harness/src/**/*.d.ts
+packages/test-harness/src/**/*.d.ts.map
+
+# Runtime data from pipeline runs
+packages/cli/.cauldron/
