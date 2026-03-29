@@ -174,30 +174,24 @@ test.describe('Live Pipeline E2E', () => {
       await expect(page.getByText('Compiling')).toBeHidden({ timeout: 60_000 });
 
       // Wait for the auto-start to create the interview.
-      // The auto-start useEffect fires startInterview, which creates the DB row.
-      // After that, the page should show an empty chat with an input field.
-      // The "Interview not started" text disappears when getTranscript returns active status.
+      // The auto-start useEffect fires startInterview (may take 1-2 retries in dev mode).
+      // Wait until "Interview not started" text is gone (interview created + refetch done).
       console.log('[pipeline-live] Waiting for interview to be created...');
       await expect(async () => {
-        // Either the "Interview not started" text is gone (interview created + refetch done)
-        // OR we see the input field is enabled (interview is active, ready for input)
         const notStarted = await page.getByText('Interview not started').isVisible().catch(() => false);
-        const btn = page.getByRole('button', { name: /send answer/i });
-        const btnVisible = await btn.isVisible().catch(() => false);
-        console.log(`[pipeline-live] not_started=${notStarted}, sendBtn=${btnVisible}`);
-        // We just need the send button to be visible — we'll handle not_started separately
-        expect(btnVisible).toBe(true);
-      }).toPass({ timeout: 30_000, intervals: [2_000] });
+        console.log(`[pipeline-live] not_started=${notStarted}`);
+        expect(notStarted).toBe(false);
+      }).toPass({ timeout: 60_000, intervals: [3_000] });
 
-      // The interview is now created. Send the first message to trigger the opening question.
-      // The InterviewFSM generates the first AI question in response to the user's first answer.
-      console.log('[pipeline-live] Typing first message...');
+      console.log('[pipeline-live] Interview created. Sending first message...');
+
+      // The interview is now active. Send the first message to trigger the opening question.
       const answerInput = page.getByRole('textbox', { name: /interview answer input/i });
+      await expect(answerInput).toBeVisible({ timeout: 10_000 });
       await answerInput.fill(LIVE_CONFIG.project.description);
       await page.waitForTimeout(500);
 
       const sendButton = page.getByRole('button', { name: /send answer/i });
-      // Wait for button to be enabled (it may be disabled briefly during mutation)
       await expect(sendButton).toBeEnabled({ timeout: 10_000 });
       await sendButton.click();
       console.log('[pipeline-live] First message sent, waiting for AI response...');
