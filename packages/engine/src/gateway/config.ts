@@ -20,7 +20,7 @@ export function defineConfig(config: GatewayConfig): GatewayConfig {
 }
 
 export async function loadConfig(projectRoot: string): Promise<GatewayConfig> {
-  const configPath = process.env['CAULDRON_CONFIG_PATH'] ?? path.join(projectRoot, 'cauldron.config.ts');
+  const configPath = process.env['CAULDRON_CONFIG_PATH'] || path.join(projectRoot, 'cauldron.config.ts');
   try {
     // Dynamic import with variable path — only used by CLI, not by Next.js webpack.
     // webpackIgnore comment prevents "Critical dependency" warning in web bundle.

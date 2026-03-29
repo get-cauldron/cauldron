@@ -117,7 +117,6 @@ export class LiveInfra {
       INNGEST_DEV: '1',
       INNGEST_BASE_URL: 'http://localhost:8290',
       CAULDRON_CONFIG_OVERRIDE: configOverride,
-      CAULDRON_CONFIG_PATH: '', // clear so loadConfig uses the override
       LOG_LEVEL: 'info',
       NODE_ENV: 'development',
     };
