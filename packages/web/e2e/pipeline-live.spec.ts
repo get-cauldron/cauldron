@@ -159,32 +159,29 @@ test.describe('Live Pipeline E2E', () => {
       expect(projectId).toBeTruthy();
       await page.goto(ROUTES.interview(projectId));
 
-      // Wait for Next.js to finish compiling — the "Compiling..." indicator
-      // must disappear before we interact with the page
+      // Wait for Next.js to finish compiling before interacting
       console.log('[pipeline-live] Waiting for page to finish compiling...');
       await expect(page.getByText('Compiling')).toBeHidden({ timeout: 60_000 });
 
-      // The interview page shows "Interview not started" — user must send a message.
-      // Wait for the input field to be ready and enabled.
-      console.log('[pipeline-live] Waiting for input field...');
-      const answerInput = page.getByRole('textbox', { name: /interview answer input/i });
-      await expect(answerInput).toBeVisible({ timeout: 10_000 });
+      // Wait for the auto-start useEffect to fire.
+      // The page transitions: "Interview not started" → "Starting interview..." → first question.
+      // The auto-start fires when getTranscript returns status='not_started'.
+      // We need to wait for getTranscript to resolve first (React hydration + query).
+      console.log('[pipeline-live] Waiting for interview auto-start...');
+      await expect(async () => {
+        const notStarted = await page.getByText('Interview not started').isVisible().catch(() => false);
+        const starting = await page.getByText('Starting interview').isVisible().catch(() => false);
+        const hasAvatar = await page.locator('[title="researcher"], [title="simplifier"], [title="architect"], [title="breadth-keeper"], [title="seed-closer"]').count();
+        console.log(`[pipeline-live] not_started=${notStarted}, starting=${starting}, avatars=${hasAvatar}`);
+        // Accept if auto-start fired (showing "Starting interview...") or first question appeared
+        expect(starting || hasAvatar > 0).toBe(true);
+      }).toPass({ timeout: 30_000, intervals: [2_000] });
 
-      // Type the initial message
-      await answerInput.fill(LIVE_CONFIG.project.description);
-      // Wait a moment for React state to update and enable the button
-      await page.waitForTimeout(500);
-
-      const sendButton = page.getByRole('button', { name: /send answer/i });
-      await expect(sendButton).toBeEnabled({ timeout: 5000 });
-      console.log('[pipeline-live] Sending initial message to start interview...');
-      await sendButton.click();
-
-      // Wait for the first AI question to appear (the LLM generates it)
-      console.log('[pipeline-live] Waiting for first AI question...');
+      // Now wait for the first AI question to actually appear
+      console.log('[pipeline-live] Waiting for first AI question from LLM...');
       await expect(async () => {
         const hasAvatar = await page.locator('[title="researcher"], [title="simplifier"], [title="architect"], [title="breadth-keeper"], [title="seed-closer"]').count();
-        console.log(`[pipeline-live] Perspective avatars found: ${hasAvatar}`);
+        console.log(`[pipeline-live] Perspective avatars: ${hasAvatar}`);
         expect(hasAvatar).toBeGreaterThan(0);
       }).toPass({ timeout: 90_000, intervals: [3_000] });
 
