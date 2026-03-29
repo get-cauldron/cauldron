@@ -159,35 +159,46 @@ test.describe('Live Pipeline E2E', () => {
       expect(projectId).toBeTruthy();
       await page.goto(ROUTES.interview(projectId));
 
-      // Wait for interview to auto-start and first question to appear
-      await page.waitForTimeout(3000); // allow startInterview mutation to complete
+      // Wait for interview to auto-start — "Starting interview..." text disappears
+      // once the first question loads from the LLM
+      await expect(page.getByText(/starting interview/i)).toBeHidden({ timeout: 60_000 });
 
       const conversationHistory: Array<{ question: string; answer: string }> = [];
       let turn = 0;
       let crystallized = false;
 
+      // AI messages are ChatBubble components with role="system" — they have
+      // perspective avatars with a title attribute (researcher, architect, etc.)
+      const perspectiveTitles = ['researcher', 'simplifier', 'architect', 'breadth-keeper', 'seed-closer'];
+      const perspectiveSelector = perspectiveTitles
+        .map((p) => `[title="${p}"]`)
+        .join(', ');
+
       while (turn < LIVE_CONFIG.maxInterviewTurns && !crystallized) {
         turn++;
         console.log(`[pipeline-live] Interview turn ${turn}...`);
 
-        // Wait for the latest AI question to appear
-        const aiMessages = page.locator('[data-testid="system-message"]').or(
-          page.locator('div').filter({ has: page.locator('[data-testid="perspective-avatar"]') })
-        );
+        // Find AI messages by their perspective avatar (system messages have one)
+        // Each ChatBubble with role="system" has a div with justify-start and an avatar
+        const aiMessages = page.locator(`div:has(${perspectiveSelector})`).filter({
+          has: page.locator('p'), // message content is in a <p> tag
+        });
 
-        // Wait for at least `turn` AI messages
+        // Wait for at least `turn` AI messages to appear
         await expect(async () => {
           const count = await aiMessages.count();
           expect(count).toBeGreaterThanOrEqual(turn);
         }).toPass({ timeout: LIVE_CONFIG.timeouts.interview / LIVE_CONFIG.maxInterviewTurns });
 
-        // Extract the last question text
+        // Extract the question text from the last AI message's <p> tag
         const lastMessage = aiMessages.last();
-        const questionText = await lastMessage.innerText();
+        const questionText = await lastMessage.locator('p').innerText();
         console.log(`[pipeline-live] Q${turn}: ${questionText.slice(0, 100)}...`);
 
-        // Check if clarity banner appeared (threshold met)
-        const clarityBanner = page.getByText(/clarity|crystallize seed/i);
+        // Check if clarity banner appeared (ClarityBanner has role="status")
+        const clarityBanner = page.locator('[role="status"]').filter({
+          hasText: /clarity|crystallize/i,
+        });
         if (await clarityBanner.isVisible({ timeout: 1000 }).catch(() => false)) {
           console.log('[pipeline-live] Clarity threshold met — crystallizing');
           const crystallizeButton = page.getByRole('button', { name: /crystallize seed/i });
@@ -204,16 +215,14 @@ test.describe('Live Pipeline E2E', () => {
         );
         console.log(`[pipeline-live] A${turn}: ${answer.slice(0, 100)}...`);
 
-        // Check for MC chips and try to click a matching one
-        const mcChips = page.locator('button').filter({
-          hasNotText: /Send|Sending|Crystallize|Keep|Approve|Reject|Seal|Start Building/i,
-        });
+        // Check for MC chips — they're in a group with aria-label="Multiple-choice suggestions"
+        const mcGroup = page.locator('[aria-label="Multiple-choice suggestions"]');
         const chipTexts: string[] = [];
-        const chipCount = await mcChips.count();
-        for (let i = 0; i < chipCount; i++) {
-          const text = await mcChips.nth(i).innerText();
-          if (text.length < 100 && text.length > 2) {
-            chipTexts.push(text);
+        if (await mcGroup.isVisible({ timeout: 1000 }).catch(() => false)) {
+          const chips = mcGroup.locator('button');
+          const chipCount = await chips.count();
+          for (let i = 0; i < chipCount; i++) {
+            chipTexts.push(await chips.nth(i).innerText());
           }
         }
 
@@ -224,7 +233,7 @@ test.describe('Live Pipeline E2E', () => {
           await page.getByText(matchingChip, { exact: true }).click();
         } else {
           // Type freeform answer
-          const answerInput = page.getByRole('textbox', { name: /interview answer|type your answer/i });
+          const answerInput = page.getByRole('textbox', { name: /interview answer input/i });
           await expect(answerInput).toBeVisible({ timeout: 5000 });
           await answerInput.fill(answer);
 
@@ -235,10 +244,8 @@ test.describe('Live Pipeline E2E', () => {
 
         conversationHistory.push({ question: questionText, answer });
 
-        // Wait for thinking indicator to appear and disappear
-        const thinkingIndicator = page.getByText(/thinking/i).or(
-          page.locator('[data-testid="thinking-indicator"]')
-        );
+        // Wait for "Thinking..." indicator to appear and disappear
+        const thinkingIndicator = page.getByText('Thinking...');
         await thinkingIndicator.waitFor({ state: 'visible', timeout: 10_000 }).catch(() => {});
         await thinkingIndicator.waitFor({ state: 'hidden', timeout: 60_000 }).catch(() => {});
 
@@ -267,9 +274,7 @@ test.describe('Live Pipeline E2E', () => {
       await page.goto(ROUTES.interview(projectId));
 
       // The seed approval card should be visible (phase = reviewing)
-      const seedCard = page.getByText(/seed summary/i).or(
-        page.locator('[data-testid="seed-approval-card"]')
-      );
+      const seedCard = page.getByText(/seed summary/i);
       await expect(seedCard).toBeVisible({
         timeout: LIVE_CONFIG.timeouts.crystallize,
       });
@@ -362,18 +367,14 @@ test.describe('Live Pipeline E2E', () => {
         await triggerButton.click();
       }
 
-      // Wait for bead nodes to appear in the DAG
+      // Wait for bead nodes to appear in the DAG (react-flow renders .react-flow__node)
       await expect(async () => {
-        const beadNodes = page.locator('[data-testid="bead-node"]').or(
-          page.locator('.react-flow__node')
-        );
+        const beadNodes = page.locator('.react-flow__node');
         const count = await beadNodes.count();
         expect(count).toBeGreaterThan(0);
       }).toPass({ timeout: LIVE_CONFIG.timeouts.decomposition });
 
-      const nodeCount = await page.locator('[data-testid="bead-node"]').or(
-        page.locator('.react-flow__node')
-      ).count();
+      const nodeCount = await page.locator('.react-flow__node').count();
       console.log(`[pipeline-live] DAG rendered with ${nodeCount} beads`);
 
       // Wait for all beads to finish executing
@@ -383,18 +384,25 @@ test.describe('Live Pipeline E2E', () => {
         await page.reload();
         await page.waitForTimeout(2000);
 
-        const pendingBeads = page.locator('[data-testid="bead-status-pending"]').or(
-          page.locator('.react-flow__node').filter({ hasText: /pending|executing|claimed/i })
-        );
+        // Check bead statuses — react-flow nodes contain status text or color indicators
+        const pendingBeads = page.locator('.react-flow__node').filter({
+          hasText: /pending|executing|claimed/i,
+        });
         const pendingCount = await pendingBeads.count();
 
-        const completedBeads = page.locator('[data-testid="bead-status-completed"]').or(
-          page.locator('.react-flow__node').filter({ hasText: /completed/i })
-        );
+        const completedBeads = page.locator('.react-flow__node').filter({
+          hasText: /completed/i,
+        });
         const completedCount = await completedBeads.count();
 
-        console.log(`[pipeline-live] Beads: ${completedCount} completed, ${pendingCount} pending`);
+        const failedBeads = page.locator('.react-flow__node').filter({
+          hasText: /failed/i,
+        });
+        const failedCount = await failedBeads.count();
 
+        console.log(`[pipeline-live] Beads: ${completedCount} completed, ${failedCount} failed, ${pendingCount} pending`);
+
+        // All beads should be done (completed or failed, not pending/executing)
         expect(pendingCount).toBe(0);
       }).toPass({
         timeout: LIVE_CONFIG.timeouts.execution,
@@ -423,15 +431,13 @@ test.describe('Live Pipeline E2E', () => {
         await page.reload();
         await page.waitForTimeout(3000);
 
+        // Look for any terminal state text on the evolution page
         const terminalIndicators = [
           page.getByText(/goal.?met/i),
           page.getByText(/converged/i),
           page.getByText(/budget.?exceeded/i),
           page.getByText(/halted/i),
           page.getByText(/evolution.*complete/i),
-          page.locator('[data-testid="generation-status"]').filter({
-            hasText: /converged|goal_met|halted/i,
-          }),
         ];
 
         let foundTerminal = false;
@@ -445,9 +451,7 @@ test.describe('Live Pipeline E2E', () => {
         }
 
         if (!foundTerminal) {
-          const evolutionEvents = page.locator('[data-testid="evolution-event"]').or(
-            page.getByText(/generation|evolution.*started|lateral/i)
-          );
+          const evolutionEvents = page.getByText(/generation|evolution.*started|lateral/i);
           const eventCount = await evolutionEvents.count();
           console.log(`[pipeline-live] Evolution events visible: ${eventCount}`);
         }
