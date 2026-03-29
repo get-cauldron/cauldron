@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import {
   ReactFlow,
   Background,
@@ -42,8 +42,8 @@ function DAGCanvasInner({ projectId, onNodeClick }: DAGCanvasInnerProps) {
   // Subscribe to SSE status updates
   const { beads: liveBeads } = useBeadStatus(projectId);
 
-  // Track previously active beads to detect transitions
-  const [prevActiveIds, setPrevActiveIds] = useState<Set<string>>(new Set());
+  // Track previously active beads to detect transitions (ref to avoid infinite re-render loop)
+  const prevActiveIdsRef = useRef<Set<string>>(new Set());
 
   // Build nodes/edges from DAG data + live status overlay
   const { nodes, edges } = useMemo(() => {
@@ -91,7 +91,7 @@ function DAGCanvasInner({ projectId, onNodeClick }: DAGCanvasInnerProps) {
       if (state.status === 'active') currentActiveIds.add(id);
     });
 
-    const newlyActive = [...currentActiveIds].filter((id) => !prevActiveIds.has(id));
+    const newlyActive = [...currentActiveIds].filter((id) => !prevActiveIdsRef.current.has(id));
     if (newlyActive.length > 0) {
       fitView({
         nodes: newlyActive.map((id) => ({ id })),
@@ -100,8 +100,8 @@ function DAGCanvasInner({ projectId, onNodeClick }: DAGCanvasInnerProps) {
       });
     }
 
-    setPrevActiveIds(currentActiveIds);
-  }, [liveBeads, fitView, prevActiveIds]);
+    prevActiveIdsRef.current = currentActiveIds;
+  }, [liveBeads, fitView]);
 
   const handleNodeClick = useCallback(
     (_event: React.MouseEvent, node: Node) => {

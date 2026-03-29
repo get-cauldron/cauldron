@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { eq, desc } from 'drizzle-orm';
 import { router, publicProcedure } from '../init';
 import { interviews, seeds, holdoutVault } from '@get-cauldron/shared';
-import { InterviewFSM, approveScenarios, sealVault, crystallizeSeed, ImmutableSeedError, generateHoldoutScenarios, createVault } from '@get-cauldron/engine';
+import { InterviewFSM, approveScenarios, sealVault, crystallizeSeed, ImmutableSeedError, generateHoldoutScenarios, createVault, synthesizeFromTranscript } from '@get-cauldron/engine';
 import { TRPCError } from '@trpc/server';
 import type {
   InterviewTurn,
@@ -172,13 +172,28 @@ export const interviewRouter = router({
         .limit(1);
 
       if (!interview) {
-        return { summary: null, phase: 'gathering' as const };
+        return { summary: null, phase: 'gathering' as const, seedId: null };
       }
 
       if (interview.phase !== 'reviewing' && interview.phase !== 'approved') {
+        // For crystallized phase, still look up the seed to return seedId
+        if (interview.phase === 'crystallized') {
+          const [existingSeed] = await ctx.db
+            .select({ id: seeds.id })
+            .from(seeds)
+            .where(eq(seeds.interviewId, interview.id))
+            .orderBy(desc(seeds.createdAt))
+            .limit(1);
+          return {
+            summary: null,
+            phase: interview.phase as 'gathering' | 'reviewing' | 'approved' | 'crystallized',
+            seedId: existingSeed?.id ?? null,
+          };
+        }
         return {
           summary: null,
           phase: interview.phase as 'gathering' | 'reviewing' | 'approved' | 'crystallized',
+          seedId: null,
         };
       }
 
@@ -191,7 +206,7 @@ export const interviewRouter = router({
         .orderBy(desc(seeds.createdAt))
         .limit(1);
 
-      const summary: SeedSummary | null = seed
+      let summary: SeedSummary | null = seed
         ? {
             goal: seed.goal,
             constraints: seed.constraints as unknown[],
@@ -202,10 +217,24 @@ export const interviewRouter = router({
           }
         : null;
 
+      // Auto-generate summary when in reviewing phase with no seed yet
+      if (!summary && interview.phase === 'reviewing') {
+        const transcript = (interview.transcript as InterviewTurn[]) ?? [];
+        if (transcript.length > 0) {
+          try {
+            const { gateway } = await ctx.getEngineDeps();
+            summary = await synthesizeFromTranscript(gateway, transcript, projectId);
+          } catch (err) {
+            console.error('[getSummary] Failed to auto-generate seed summary:', err);
+          }
+        }
+      }
+
       return {
         summary,
         phase: interview.phase as 'gathering' | 'reviewing' | 'approved' | 'crystallized',
         interviewId: interview.id,
+        seedId: seed?.id ?? null,
       };
     }),
 

@@ -105,6 +105,13 @@ export default function InterviewPage() {
   const transcriptData = transcriptQuery.data;
   const summaryData = summaryQuery.data;
 
+  // Initialize seedId from summary query when loading a page where seed already exists
+  React.useEffect(() => {
+    if (summaryData?.seedId && !seedId) {
+      setSeedId(summaryData.seedId);
+    }
+  }, [summaryData?.seedId, seedId]);
+
   const transcript: InterviewTurn[] = transcriptData?.transcript ?? [];
   const currentScores = transcriptData?.currentScores as AmbiguityScores | null;
   const phase = transcriptData?.phase ?? 'gathering';
@@ -133,6 +140,8 @@ export default function InterviewPage() {
       await sendAnswerMutation.mutateAsync({ projectId, answer: answerText.trim() });
       await queryClient.invalidateQueries({ queryKey: ['interview', 'getTranscript', projectId] });
       await transcriptQuery.refetch();
+      // Also refetch summary in case the interview transitioned to reviewing
+      void summaryQuery.refetch();
     } finally {
       setIsSending(false);
       setPendingAnswer(null);
