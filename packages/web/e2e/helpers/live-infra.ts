@@ -207,12 +207,12 @@ export class LiveInfra {
     this.devServer = null;
     this.engineServer = null;
 
-    // Also kill any lingering processes on our ports
+    // Also kill any lingering node processes on our ports (safe — only targets node)
     try {
-      execSync('lsof -ti:3000 -ti:3001 | xargs kill -9 2>/dev/null || true', {
-        stdio: 'pipe',
-        timeout: 5_000,
-      });
+      execSync(
+        "lsof -ti:3000 -ti:3001 -sTCP:LISTEN | xargs -r ps -o pid=,comm= | grep node | awk '{print $1}' | xargs -r kill -9 2>/dev/null || true",
+        { stdio: 'pipe', timeout: 5_000 },
+      );
     } catch { /* no lingering processes */ }
 
     // Stop Docker
