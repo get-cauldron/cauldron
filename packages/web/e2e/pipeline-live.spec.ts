@@ -243,9 +243,10 @@ test.describe('Live Pipeline E2E', () => {
           expect(count).toBeGreaterThanOrEqual(turn);
         }).toPass({ timeout: LIVE_CONFIG.timeouts.interview / LIVE_CONFIG.maxInterviewTurns });
 
-        // Extract the question text from the last AI message's <p> tag
+        // Extract the question text from the last AI message's first <p> tag
+        // (there may be multiple <p> tags — the content + timestamp)
         const lastMessage = aiMessages.last();
-        const questionText = await lastMessage.locator('p').innerText();
+        const questionText = await lastMessage.locator('p').first().innerText();
         console.log(`[pipeline-live] Q${turn}: ${questionText.slice(0, 100)}...`);
 
         // Check if clarity banner appeared (ClarityBanner has role="status")
