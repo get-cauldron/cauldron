@@ -415,12 +415,17 @@ test.describe('Live Pipeline E2E', () => {
       // Navigate to execution page
       await page.goto(ROUTES.execution(projectId));
 
-      // Look for a decomposition trigger button
-      const triggerButton = page.getByRole('button', { name: /decompose|trigger|start/i });
-      if (await triggerButton.isVisible({ timeout: 5000 }).catch(() => false)) {
-        console.log('[pipeline-live] Triggering decomposition...');
-        await triggerButton.click();
-      }
+      // Wait for Next.js to finish compiling
+      await expect(page.getByText('Compiling')).toBeHidden({ timeout: 60_000 });
+
+      // Find and click the "Start Decomposition" button
+      const startButton = page.getByRole('button', { name: /start decomposition/i });
+      await expect(startButton).toBeVisible({ timeout: 30_000 });
+      await startButton.click();
+      console.log('[pipeline-live] Triggered decomposition...');
+
+      // Wait for button to disappear (decomposition completed and beads rendered)
+      await expect(startButton).toBeHidden({ timeout: LIVE_CONFIG.timeouts.decomposition });
 
       // Wait for bead nodes to appear in the DAG (react-flow renders .react-flow__node)
       await expect(async () => {
