@@ -159,6 +159,16 @@ test.describe('Live Pipeline E2E', () => {
       expect(projectId).toBeTruthy();
       await page.goto(ROUTES.interview(projectId));
 
+      // Capture browser console errors for debugging
+      page.on('console', (msg) => {
+        if (msg.type() === 'error') {
+          console.log(`[browser:error] ${msg.text()}`);
+        }
+      });
+      page.on('pageerror', (err) => {
+        console.log(`[browser:pageerror] ${err.message}`);
+      });
+
       // Wait for Next.js to finish compiling before interacting
       console.log('[pipeline-live] Waiting for page to finish compiling...');
       await expect(page.getByText('Compiling')).toBeHidden({ timeout: 60_000 });
