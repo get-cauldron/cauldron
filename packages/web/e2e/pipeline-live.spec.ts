@@ -185,15 +185,26 @@ test.describe('Live Pipeline E2E', () => {
 
       console.log('[pipeline-live] Interview created. Sending first message...');
 
+      // Reload to get a fresh state after interview creation
+      await page.reload();
+      await expect(page.getByText('Compiling')).toBeHidden({ timeout: 30_000 });
+      await page.waitForTimeout(2000);
+
       // The interview is now active. Send the first message to trigger the opening question.
       const answerInput = page.getByRole('textbox', { name: /interview answer input/i });
       await expect(answerInput).toBeVisible({ timeout: 10_000 });
       await answerInput.fill(LIVE_CONFIG.project.description);
-      await page.waitForTimeout(500);
 
-      const sendButton = page.getByRole('button', { name: /send answer/i });
-      await expect(sendButton).toBeEnabled({ timeout: 10_000 });
-      await sendButton.click();
+      // Wait for the input value to register and button to enable
+      await expect(async () => {
+        const inputVal = await answerInput.inputValue();
+        const sendBtn = page.getByRole('button', { name: /send answer/i });
+        const isEnabled = await sendBtn.isEnabled().catch(() => false);
+        console.log(`[pipeline-live] input="${inputVal.slice(0, 30)}...", sendEnabled=${isEnabled}`);
+        expect(isEnabled).toBe(true);
+      }).toPass({ timeout: 10_000, intervals: [1_000] });
+
+      await page.getByRole('button', { name: /send answer/i }).click();
       console.log('[pipeline-live] First message sent, waiting for AI response...');
 
       // Wait for the first AI question to appear (perspective avatar = AI message)
