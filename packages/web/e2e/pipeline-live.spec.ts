@@ -173,44 +173,36 @@ test.describe('Live Pipeline E2E', () => {
       console.log('[pipeline-live] Waiting for page to finish compiling...');
       await expect(page.getByText('Compiling')).toBeHidden({ timeout: 60_000 });
 
-      // The auto-start useEffect may not fire reliably in dev mode.
-      // Instead, directly call startInterview via the page's fetch API as a fallback.
-      console.log('[pipeline-live] Waiting for interview to start...');
+      // Wait for the auto-start to create the interview.
+      // The auto-start useEffect fires startInterview, which creates the DB row.
+      // After that, the page should show an empty chat with an input field.
+      // The "Interview not started" text disappears when getTranscript returns active status.
+      console.log('[pipeline-live] Waiting for interview to be created...');
+      await expect(async () => {
+        // Either the "Interview not started" text is gone (interview created + refetch done)
+        // OR we see the input field is enabled (interview is active, ready for input)
+        const notStarted = await page.getByText('Interview not started').isVisible().catch(() => false);
+        const btn = page.getByRole('button', { name: /send answer/i });
+        const btnVisible = await btn.isVisible().catch(() => false);
+        console.log(`[pipeline-live] not_started=${notStarted}, sendBtn=${btnVisible}`);
+        // We just need the send button to be visible — we'll handle not_started separately
+        expect(btnVisible).toBe(true);
+      }).toPass({ timeout: 30_000, intervals: [2_000] });
 
-      // First, wait a few seconds for auto-start to potentially fire
-      await page.waitForTimeout(5000);
+      // The interview is now created. Send the first message to trigger the opening question.
+      // The InterviewFSM generates the first AI question in response to the user's first answer.
+      console.log('[pipeline-live] Typing first message...');
+      const answerInput = page.getByRole('textbox', { name: /interview answer input/i });
+      await answerInput.fill(LIVE_CONFIG.project.description);
+      await page.waitForTimeout(500);
 
-      // Check if auto-start worked
-      const starting = await page.getByText('Starting interview').isVisible().catch(() => false);
-      const notStarted = await page.getByText('Interview not started').isVisible().catch(() => false);
-      console.log(`[pipeline-live] After 5s: starting=${starting}, not_started=${notStarted}`);
+      const sendButton = page.getByRole('button', { name: /send answer/i });
+      // Wait for button to be enabled (it may be disabled briefly during mutation)
+      await expect(sendButton).toBeEnabled({ timeout: 10_000 });
+      await sendButton.click();
+      console.log('[pipeline-live] First message sent, waiting for AI response...');
 
-      if (notStarted && !starting) {
-        // Auto-start didn't fire — manually start via tRPC fetch with correct body format
-        console.log('[pipeline-live] Auto-start did not fire, calling startInterview via fetch...');
-        const response = await page.evaluate(async (pId) => {
-          try {
-            const res = await fetch('/api/trpc/interview.startInterview?batch=1', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ '0': { json: { projectId: pId } } }),
-            });
-            const text = await res.text();
-            return { status: res.status, body: text.slice(0, 1000) };
-          } catch (err) {
-            return { status: 0, body: String(err) };
-          }
-        }, projectId);
-        console.log(`[pipeline-live] startInterview response: ${response.status} — ${response.body}`);
-
-        // Reload to pick up the new interview state
-        await page.reload();
-        await expect(page.getByText('Compiling')).toBeHidden({ timeout: 30_000 });
-        await page.waitForTimeout(3000);
-      }
-
-      // Now wait for the first AI question to actually appear
-      console.log('[pipeline-live] Waiting for first AI question from LLM...');
+      // Wait for the first AI question to appear (perspective avatar = AI message)
       await expect(async () => {
         const hasAvatar = await page.locator('[title="researcher"], [title="simplifier"], [title="architect"], [title="breadth-keeper"], [title="seed-closer"]').count();
         console.log(`[pipeline-live] Perspective avatars: ${hasAvatar}`);
