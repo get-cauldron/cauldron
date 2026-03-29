@@ -1,0 +1,41 @@
+# docker-compose.live-test.yml
+# Isolated services for the live pipeline E2E test.
+# All ports offset from dev defaults to avoid conflicts.
+services:
+  postgres-live:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: cauldron
+      POSTGRES_PASSWORD: cauldron
+      POSTGRES_DB: cauldron_live
+    ports:
+      - '5435:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U cauldron']
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  redis-live:
+    image: redis:7-alpine
+    ports:
+      - '6380:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  inngest-live:
+    image: inngest/inngest:latest
+    command: >-
+      inngest dev
+      -u http://host.docker.internal:3001/api/inngest
+      -u http://host.docker.internal:3000/api/inngest
+    ports:
+      - '8290:8288'
+    depends_on:
+      redis-live:
+        condition: service_healthy
+    environment:
+      - INNGEST_DEV=1
