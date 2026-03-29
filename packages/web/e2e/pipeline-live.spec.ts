@@ -186,17 +186,17 @@ test.describe('Live Pipeline E2E', () => {
       console.log(`[pipeline-live] After 5s: starting=${starting}, not_started=${notStarted}`);
 
       if (notStarted && !starting) {
-        // Auto-start didn't fire — manually start via tRPC fetch
+        // Auto-start didn't fire — manually start via tRPC fetch with correct body format
         console.log('[pipeline-live] Auto-start did not fire, calling startInterview via fetch...');
         const response = await page.evaluate(async (pId) => {
           try {
-            const res = await fetch('/api/trpc/interview.startInterview', {
+            const res = await fetch('/api/trpc/interview.startInterview?batch=1', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ json: { projectId: pId } }),
+              body: JSON.stringify({ '0': { json: { projectId: pId } } }),
             });
             const text = await res.text();
-            return { status: res.status, body: text.slice(0, 500) };
+            return { status: res.status, body: text.slice(0, 1000) };
           } catch (err) {
             return { status: 0, body: String(err) };
           }
@@ -205,7 +205,8 @@ test.describe('Live Pipeline E2E', () => {
 
         // Reload to pick up the new interview state
         await page.reload();
-        await page.waitForTimeout(2000);
+        await expect(page.getByText('Compiling')).toBeHidden({ timeout: 30_000 });
+        await page.waitForTimeout(3000);
       }
 
       // Now wait for the first AI question to actually appear
