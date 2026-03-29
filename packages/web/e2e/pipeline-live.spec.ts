@@ -173,22 +173,23 @@ test.describe('Live Pipeline E2E', () => {
       console.log('[pipeline-live] Waiting for page to finish compiling...');
       await expect(page.getByText('Compiling')).toBeHidden({ timeout: 60_000 });
 
+      // Wait for the page to fully load — the AMBIGUITY SCORE heading confirms render
+      console.log('[pipeline-live] Waiting for page to fully render...');
+      await expect(page.getByText('AMBIGUITY SCORE')).toBeVisible({ timeout: 30_000 });
+
       // Wait for the auto-start to create the interview.
-      // The auto-start useEffect fires startInterview (may take 1-2 retries in dev mode).
-      // Wait until "Interview not started" text is gone (interview created + refetch done).
-      console.log('[pipeline-live] Waiting for interview to be created...');
-      await expect(async () => {
-        const notStarted = await page.getByText('Interview not started').isVisible().catch(() => false);
-        console.log(`[pipeline-live] not_started=${notStarted}`);
-        expect(notStarted).toBe(false);
-      }).toPass({ timeout: 60_000, intervals: [3_000] });
+      // First "Interview not started" appears, then auto-start fires startInterview,
+      // then refetch updates the UI. We need to wait until the status changes.
+      // Give it time since startInterview may 500 on first try in dev mode.
+      console.log('[pipeline-live] Waiting for interview auto-start...');
+
+      // Wait for "Interview not started" to appear first (confirms getTranscript loaded)
+      await expect(page.getByText('Interview not started')).toBeVisible({ timeout: 10_000 });
+
+      // Now wait for it to disappear (auto-start succeeded + refetch completed)
+      await expect(page.getByText('Interview not started')).toBeHidden({ timeout: 60_000 });
 
       console.log('[pipeline-live] Interview created. Sending first message...');
-
-      // Reload to get a fresh state after interview creation
-      await page.reload();
-      await expect(page.getByText('Compiling')).toBeHidden({ timeout: 30_000 });
-      await page.waitForTimeout(2000);
 
       // The interview is now active. Send the first message to trigger the opening question.
       const answerInput = page.getByRole('textbox', { name: /interview answer input/i });
