@@ -223,9 +223,10 @@ None yet.
 | 260329-kd3 | Add Start Decomposition button to execution page | 2026-03-29 | 1d95773 | [260329-kd3](./quick/260329-kd3-add-start-decomposition-button-to-execut/) |
 | 260331-a60 | Improve the CLI health check so it validates pre-execution prerequisites | 2026-03-31 | 0d97053 | [260331-a60](./quick/260331-a60-improve-the-cli-health-check-so-it-valid/) |
 | 260331-aid | There is a user scoped hook--possibly only in Claude right now--called something like no-excuses guard. I would like to 1. punch up the contents to be more broad and strict. 2. Add it to Codex's experimental hooks and enable them--or are they prod now? 3. Include the hook in installation of Cauldron to ensure it uses it during execution. | 2026-03-31 | 67ef1e3 | [260331-aid](./quick/260331-aid-there-is-a-user-scoped-hook-possibly-onl/) |
+| 260331-b00 | Pre-execution check against npx skills to see if there are any that could aid development of the project at hand. If there are not, add a stage to research and create them. | 2026-03-31 | pending | [260331-b00-pre-execution-check-against-npx-skills-t](./quick/260331-b00-pre-execution-check-against-npx-skills-t/) |
 
 ## Session Continuity
 
-Last activity: 2026-03-31 - Completed quick task 260331-aid: Repo-scoped no-excuses guard hooks
+Last activity: 2026-03-31 - Completed quick task 260331-b00: Pre-execution check against npx skills to see if there are any that could aid development of the project at hand. If there are not, add a stage to research and create them.
 Stopped at: Phase 13 context gathered
 Resume file: .planning/phases/13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs/13-CONTEXT.md
