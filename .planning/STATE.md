@@ -221,9 +221,10 @@ None yet.
 |---|-------------|------|--------|-----------|
 | 260328-g8l | Hide archived projects by default with toggle | 2026-03-28 | 294c5c1 | [260328-g8l](./quick/260328-g8l-projects-list-should-hide-archived-proje/) |
 | 260329-kd3 | Add Start Decomposition button to execution page | 2026-03-29 | 1d95773 | [260329-kd3](./quick/260329-kd3-add-start-decomposition-button-to-execut/) |
+| 260331-a60 | Improve the CLI health check so it validates pre-execution prerequisites | 2026-03-31 | 0d97053 | [260331-a60](./quick/260331-a60-improve-the-cli-health-check-so-it-valid/) |
 
 ## Session Continuity
 
-Last activity: 2026-03-29 - Completed quick task 260329-kd3: Add Start Decomposition button
+Last activity: 2026-03-31 - Completed quick task 260331-a60: Improve CLI health check preflight
 Stopped at: Phase 13 context gathered
 Resume file: .planning/phases/13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs/13-CONTEXT.md
