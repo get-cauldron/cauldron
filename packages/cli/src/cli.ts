@@ -2,6 +2,7 @@
 import { parseArgs } from 'node:util';
 import chalk from 'chalk';
 import { loadCLIConfig, saveCLIConfig, generateApiKey } from './config-io.js';
+import { healthCheck } from './health.js';
 import { isServerRunning, startDevServer } from './server-check.js';
 import { createCLIClient } from './trpc-client.js';
 import { createSpinner } from './output.js';
@@ -70,7 +71,7 @@ function printUsage(): void {
   console.log('  projects       Manage projects (list, create, archive)');
   console.log('  kill           Stop a running pipeline for a project');
   console.log('  resolve        Manually resolve a stalled or failed bead');
-  console.log('  health         Check server connectivity');
+  console.log('  health         Check local pre-execution prerequisites');
   console.log('');
   console.log(chalk.cyan('Options:'));
   console.log('  --json         Output machine-readable JSON');
@@ -144,13 +145,7 @@ async function main(): Promise<void> {
   // Health command is special — no tRPC client needed
   if (command === 'health') {
     const config = await loadCLIConfig(process.cwd());
-    const ok = await isServerRunning(config.serverUrl);
-    if (ok) {
-      console.log(chalk.green('Server is running at'), config.serverUrl);
-    } else {
-      console.log(chalk.red('Server is not running at'), config.serverUrl);
-      process.exit(1);
-    }
+    await healthCheck({ serverUrl: config.serverUrl });
     return;
   }
 
