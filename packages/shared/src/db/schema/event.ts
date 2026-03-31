@@ -31,6 +31,11 @@ export const eventTypeEnum = pgEnum('event_type', [
   'evolution_goal_met',
   'execution_started',
   'pipeline_trigger',
+  'asset_job_submitted',
+  'asset_job_active',
+  'asset_job_completed',
+  'asset_job_failed',
+  'asset_job_canceled',
 ]);
 
 export const events = pgTable('events', {

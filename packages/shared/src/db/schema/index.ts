@@ -6,3 +6,4 @@ export * from './event.js';
 export * from './holdout.js';
 export * from './snapshot.js';
 export * from './llm-usage.js';
+export * from './asset-job.js';
