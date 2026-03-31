@@ -6,3 +6,4 @@ export * from './holdout/index.js';
 export * from './execution/index.js';
 export * from './intelligence/index.js';
 export * from './evolution/index.js';
+export * from './asset/index.js';
