@@ -24,11 +24,11 @@ Requirements for the local image-generation milestone. Each maps to roadmap phas
 
 ### Async Asset Generation Engine
 
-- [ ] **ASSET-01**: Image generation requests persist as asynchronous jobs with queued, running, succeeded, failed, and canceled states
-- [ ] **ASSET-02**: Initiating generation returns a durable job handle immediately instead of blocking until the image is ready
+- [x] **ASSET-01**: Image generation requests persist as asynchronous jobs with queued, running, succeeded, failed, and canceled states
+- [x] **ASSET-02**: Initiating generation returns a durable job handle immediately instead of blocking until the image is ready
 - [ ] **ASSET-03**: Generation progress and completion can be observed independently of the initiating CLI or web request
-- [ ] **ASSET-04**: Completed jobs persist prompt inputs, output metadata, artifact locations, and failure diagnostics for review and reuse
-- [ ] **ASSET-05**: Asset jobs support retry and idempotency controls so duplicate calls do not trigger uncontrolled reruns
+- [x] **ASSET-04**: Completed jobs persist prompt inputs, output metadata, artifact locations, and failure diagnostics for review and reuse
+- [x] **ASSET-05**: Asset jobs support retry and idempotency controls so duplicate calls do not trigger uncontrolled reruns
 
 ### Local Image MCP & App Delivery
 
@@ -87,11 +87,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | IMG-02 | Phase 19 | Pending |
 | IMG-03 | Phase 19 | Pending |
 | IMG-04 | Phase 19 | Pending |
-| ASSET-01 | Phase 18 | Pending |
-| ASSET-02 | Phase 18 | Pending |
+| ASSET-01 | Phase 18 | Complete |
+| ASSET-02 | Phase 18 | Complete |
 | ASSET-03 | Phase 18 | Pending |
-| ASSET-04 | Phase 18 | Pending |
-| ASSET-05 | Phase 18 | Pending |
+| ASSET-04 | Phase 18 | Complete |
+| ASSET-05 | Phase 18 | Complete |
 | MCP-01 | Phase 21 | Pending |
 | MCP-02 | Phase 21 | Pending |
 | MCP-03 | Phase 21 | Pending |
