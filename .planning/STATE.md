@@ -5,9 +5,9 @@ milestone_name: Local Asset Generation & Style-Aware Seeds
 status: planning
 stopped_at: Roadmap created for milestone v1.1; next step is planning Phase 18
 last_updated: "2026-03-31T21:24:35.629Z"
-last_activity: 2026-03-31 — Created the v1.1 roadmap for Phases 18-22
+last_activity: 2026-03-31 — Removed Style Contract phase; v1.1 now Phases 18-21
 progress:
-  total_phases: 1
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** User describes what they want; Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves until the goal is met with humans steering at key decision points.
-**Current focus:** Phase 18 - Style Contract & Seed Evolution
+**Current focus:** Phase 18 - Model Acquisition & Project Runtime
 
 ## Current Position
 
-Phase: 18 of 21 (Style Contract & Seed Evolution)
+Phase: 18 of 21 (Model Acquisition & Project Runtime)
 Plan: Not planned yet
 Status: Ready to plan
-Last activity: 2026-03-31 — Created the v1.1 roadmap for Phases 18-22
+Last activity: 2026-03-31 — Removed Style Contract phase; v1.1 now Phases 18-21
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -45,7 +45,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1-17 (v1.0) | 65 | Historical | Historical |
-| 18-22 (v1.1) | 0 | - | - |
+| 18-21 (v1.1) | 0 | - | - |
 
 **Recent Trend:**
 
@@ -58,7 +58,6 @@ Progress: [░░░░░░░░░░] 0%
 
 - v1.1 stays local-first: image generation must run against a project-owned, gitignored FLUX.2 dev bundle
 - Acquisition must support both import-from-existing ComfyUI and guided upstream download
-- Style clarity is a seed-quality concern, so low visual clarity should keep the interview open
 - Image generation remains async-only and apps consume it through a local MCP surface
 
 ### Pending Todos
