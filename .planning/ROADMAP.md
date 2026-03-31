@@ -33,7 +33,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Job progress and completion can be checked later from another CLI or web request without relying on the initiating session still being open
   4. Completed and failed jobs retain prompt inputs, output metadata, artifact locations, and failure diagnostics for review and reuse
   5. Retry and idempotency controls prevent duplicate submissions from triggering uncontrolled reruns
-**Plans**: TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 18-01-PLAN.md — Schema, types, and job-store DB operations
+- [ ] 18-02-PLAN.md — ComfyUI adapter and artifact writer
+- [ ] 18-03-PLAN.md — Inngest function wiring, docker-compose, and gitignore
 
 ### Phase 19: Local Image MCP & App Delivery
 **Goal**: Apps and build agents consume local asset generation through a stable MCP contract and receive deliverable artifacts with provenance.
@@ -63,6 +68,6 @@ Phases execute in numeric order: 18 → 19 → 20
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 18. Async Asset Engine | 0/TBD | Not started | - |
+| 18. Async Asset Engine | 0/3 | Not started | - |
 | 19. Local Image MCP & App Delivery | 0/TBD | Not started | - |
 | 20. Operator Controls & End-to-End Validation | 0/TBD | Not started | - |
