@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 status: Executing Phase 13
 stopped_at: Phase 13 context gathered
-last_updated: "2026-03-27T19:11:15.344Z"
+last_updated: "2026-03-31T13:34:03.379Z"
 progress:
   total_phases: 15
   completed_phases: 14
@@ -222,9 +222,10 @@ None yet.
 | 260328-g8l | Hide archived projects by default with toggle | 2026-03-28 | 294c5c1 | [260328-g8l](./quick/260328-g8l-projects-list-should-hide-archived-proje/) |
 | 260329-kd3 | Add Start Decomposition button to execution page | 2026-03-29 | 1d95773 | [260329-kd3](./quick/260329-kd3-add-start-decomposition-button-to-execut/) |
 | 260331-a60 | Improve the CLI health check so it validates pre-execution prerequisites | 2026-03-31 | 0d97053 | [260331-a60](./quick/260331-a60-improve-the-cli-health-check-so-it-valid/) |
+| 260331-aid | There is a user scoped hook--possibly only in Claude right now--called something like no-excuses guard. I would like to 1. punch up the contents to be more broad and strict. 2. Add it to Codex's experimental hooks and enable them--or are they prod now? 3. Include the hook in installation of Cauldron to ensure it uses it during execution. | 2026-03-31 | 67ef1e3 | [260331-aid](./quick/260331-aid-there-is-a-user-scoped-hook-possibly-onl/) |
 
 ## Session Continuity
 
-Last activity: 2026-03-31 - Completed quick task 260331-a60: Improve CLI health check preflight
+Last activity: 2026-03-31 - Completed quick task 260331-aid: Repo-scoped no-excuses guard hooks
 Stopped at: Phase 13 context gathered
 Resume file: .planning/phases/13-re-scope-to-get-cauldron-already-have-the-github-and-npm-orgs/13-CONTEXT.md
