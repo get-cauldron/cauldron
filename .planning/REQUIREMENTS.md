@@ -1,155 +1,63 @@
 # Requirements: Cauldron
 
-**Defined:** 2026-03-25
+**Defined:** 2026-03-31
 **Core Value:** The full pipeline works end-to-end: a user describes what they want, and Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves the software until it meets the goal.
 
-## v1 Requirements
+## v1.1 Requirements
 
-Requirements for initial release. Each maps to roadmap phases.
+Requirements for the local image-generation milestone. Each maps to roadmap phases.
 
-### Persistence & Infrastructure
+### Style-Aware Interview & Seed Contract
 
-- [x] **INFR-01**: Monorepo scaffolded with Turborepo + pnpm workspaces (packages: web, api, engine, shared)
-- [x] **INFR-02**: PostgreSQL schema supports seeds, beads, DAG edges, agent sessions, and evolution lineage
-- [x] **INFR-03**: Redis configured for job queue (Inngest/BullMQ) and pub/sub event streaming
-- [x] **INFR-04**: Event sourcing model: all state changes are appended as immutable events; state derived by replay
-- [x] **INFR-05**: Database migrations managed via Drizzle Kit with version-controlled schema
-- [x] **INFR-06**: Docker Compose configuration for local development (PostgreSQL + Redis + Inngest dev server)
+- [ ] **STYLE-01**: Interview flow captures visual direction explicitly when the requested software depends on generated imagery or strong art direction
+- [ ] **STYLE-02**: Visual direction capture supports concrete fields such as look/feel, references, brand constraints, and asset intent
+- [ ] **STYLE-03**: Ambiguity scoring adds a style clarity dimension whenever visual ambiguity materially affects downstream implementation
+- [ ] **STYLE-04**: Interview continues asking follow-up questions when style clarity is low even if other clarity dimensions are high
+- [ ] **STYLE-05**: Seed summaries and crystallized seeds persist visual direction in structured form for downstream asset generation
 
-### LLM Gateway & Model Routing
+### Model Acquisition & Project Runtime
 
-- [x] **LLM-01**: Vercel AI SDK integrated as unified multi-provider interface (Anthropic, OpenAI, Google at minimum)
-- [x] **LLM-02**: Default model assignments per pipeline stage (interview, holdout generation, implementation, evaluation)
-- [x] **LLM-03**: Per-project model configuration overrides stored in project settings
-- [x] **LLM-04**: Provider failover: if primary provider fails, fall back to secondary for the same pipeline stage
-- [x] **LLM-05**: Token usage tracking per bead, per evolution cycle, and per project (cost visibility)
-- [x] **LLM-06**: Cross-model diversity enforced: holdout generator must use a different provider than implementer
+- [ ] **IMG-01**: Operators can acquire the required FLUX.2 dev model bundle into a project-owned, gitignored runtime directory
+- [ ] **IMG-02**: Acquisition supports at least two paths: importing from an existing ComfyUI install and guided upstream download
+- [ ] **IMG-03**: Imported assets record a manifest with role, source, and integrity/provenance metadata
+- [ ] **IMG-04**: Health checks fail fast with actionable errors when required local model files are missing, incomplete, or pointed at the wrong location
 
-### Socratic Interview & Seed Crystallization
+### Async Asset Generation Engine
 
-- [x] **INTV-01**: Interview begins with open-ended question generation using multi-perspective panel (researcher, simplifier, architect, breadth-keeper, seed-closer)
-- [x] **INTV-02**: Multiple-choice answer suggestions generated per question with always-available freeform option
-- [x] **INTV-03**: Deterministic ambiguity scoring matrix computed after each response (greenfield: goal 40%, constraint 30%, success criteria 30%)
-- [x] **INTV-04**: Interview continues until ambiguity score <= 0.2 (weighted clarity >= 80%)
-- [x] **INTV-05**: Brownfield variant adds context clarity dimension (15%) and adjusts other weights
-- [x] **INTV-06**: Structured summary presented to user for review before seed crystallization
-- [x] **INTV-07**: User explicitly approves summary before seed generation proceeds
-- [x] **SEED-01**: Immutable Seed spec generated in YAML format (goal, constraints, acceptance criteria, ontology schema, evaluation principles, exit conditions)
-- [x] **SEED-02**: Seeds are frozen after crystallization — no mutation, only evolution creates new seeds
-- [x] **SEED-03**: Each seed has a unique ID, version, creation timestamp, parent seed reference (if evolved), and interview ID
-- [x] **SEED-04**: Seed lineage trackable: given any seed, user can trace back to original interview through all evolutionary ancestors
+- [ ] **ASSET-01**: Image generation requests persist as asynchronous jobs with queued, running, succeeded, failed, and canceled states
+- [ ] **ASSET-02**: Initiating generation returns a durable job handle immediately instead of blocking until the image is ready
+- [ ] **ASSET-03**: Generation progress and completion can be observed independently of the initiating CLI or web request
+- [ ] **ASSET-04**: Completed jobs persist prompt inputs, output metadata, artifact locations, and failure diagnostics for review and reuse
+- [ ] **ASSET-05**: Asset jobs support retry and idempotency controls so duplicate calls do not trigger uncontrolled reruns
 
-### Holdout Testing
+### Local Image MCP & App Delivery
 
-- [x] **HOLD-01**: Holdout scenario tests generated by a different LLM provider/family than the interview model
-- [x] **HOLD-02**: Generated holdout tests presented to user for review and approval before encryption
-- [x] **HOLD-03**: Approved holdout tests encrypted at rest using AES-256-GCM with keys inaccessible to implementation agent processes
-- [x] **HOLD-04**: Encryption key stored in environment variable excluded from agent process environment scope
-- [x] **HOLD-05**: Holdout tests remain sealed during all execution and evolution cycles
-- [x] **HOLD-06**: Holdout tests unsealed only after evolutionary convergence is reached
-- [x] **HOLD-07**: Unsealed holdout test results determine whether additional evolution cycles are needed
-- [x] **HOLD-08**: Holdout test failure triggers new evolutionary cycle with the failure context
+- [ ] **MCP-01**: Cauldron exposes a local image-generation MCP surface backed by the project-owned FLUX.2 dev runtime
+- [ ] **MCP-02**: Apps and build agents can request assets with structured inputs including prompt, style guidance, references, aspect/size, destination, and intended use
+- [ ] **MCP-03**: MCP responses return job identifiers and retrieval handles suitable for async workflows
+- [ ] **MCP-04**: Completed generations can be written into the target app workspace or a declared artifact directory with provenance metadata attached
 
-### Task Decomposition & DAG Coordination
+### Operator Controls & Verification
 
-- [x] **DAG-01**: Seed acceptance criteria decomposed into molecules (non-atomic parent tasks) and beads (atomic leaf tasks)
-- [x] **DAG-02**: Each bead sized to fit in one fresh context window of a commercial model (~200k tokens target, Opus 1M excluded)
-- [x] **DAG-03**: Bead size validated at decomposition time (not assumed)
-- [x] **DAG-04**: Four dependency types supported: blocks/blocked-by, parent-child, conditional-blocks, waits-for
-- [x] **DAG-05**: Parallel-by-default: beads execute concurrently unless explicit dependency edges exist
-- [x] **DAG-06**: Synchronization gates (waits-for) fire when all upstream beads complete
-- [x] **DAG-07**: Cycle detection runs at DAG construction time and rejects cyclic graphs with clear error
-- [x] **DAG-08**: Atomic bead claiming prevents race conditions when multiple agents request work
-- [x] **DAG-09**: DAG state persisted: bead status (pending, claimed, active, completed, failed), dependency edges, agent assignments
+- [ ] **OPS-01**: Project-level settings support configuring image runtime paths, acquisition mode, and generation budgets without hand-editing implementation internals
+- [ ] **OPS-02**: Operators can disable or budget-limit image generation per project
+- [ ] **OPS-03**: End-to-end verification proves style capture -> seed persistence -> async generation -> asset delivery on a local runtime
 
-### Parallel Execution
+## v1.2+ Requirements
 
-- [x] **EXEC-01**: Each bead executes in a fresh context window with only relevant context pre-loaded
-- [x] **EXEC-02**: Git worktree isolation: each active bead gets its own worktree branch
-- [x] **EXEC-03**: Multiple agents execute independent beads concurrently
-- [x] **EXEC-04**: Agent context assembly: seed excerpt + bead spec + relevant code (via knowledge graph) + dependency outputs
-- [x] **EXEC-05**: Self-healing error loop: agent reads error output, iterates on code, reruns verification
-- [x] **EXEC-06**: Sequential merge queue resolves completed bead worktrees back to project main
-- [x] **EXEC-07**: Merge conflict detection with escalation (LLM-assisted resolution or human escalation)
-- [x] **EXEC-08**: Agent capability scoping: least-privilege access, no destructive operations without approval
-- [x] **EXEC-09**: Bead timeout supervision (soft warning, idle detection, hard timeout)
+Deferred until the local image path is stable.
 
-### Testing Cube
+### Advanced Image Workflows
 
-- [x] **TEST-01**: Unit tests generated with thorough coverage for every implemented feature
-- [x] **TEST-02**: Integration tests generated with thorough coverage — equal depth to unit tests
-- [x] **TEST-03**: E2E tests generated with thorough coverage — equal depth to unit tests
-- [x] **TEST-04**: Anti-mocking heuristics: prefer real integrations over mocks where feasible
-- [x] **TEST-05**: Test generation is part of bead execution (not a separate post-execution step)
-- [x] **TEST-06**: All three test levels must pass before a bead is marked complete
+- **IMGX-01**: Inpainting, outpainting, and multi-step editing flows beyond baseline generation
+- **IMGX-02**: Multi-model support beyond the initial FLUX.2 dev runtime
+- **IMGX-03**: Managed LoRA training or fine-tuning flows
 
-### Evolutionary Loop
+### Asset Platform Expansion
 
-- [x] **EVOL-01**: Post-execution evaluation assesses goal attainment (not just spec compliance)
-- [x] **EVOL-02**: Evaluation uses weighted principles from the seed's evaluation_principles field
-- [x] **EVOL-03**: If goal not met, system generates a new immutable evolved seed with parent reference
-- [x] **EVOL-04**: Evolution decomposes new/changed acceptance criteria into new beads
-- [x] **EVOL-05**: Convergence detection: ontology stability (similarity >= 0.95 across 2 generations)
-- [x] **EVOL-06**: Convergence detection: stagnation (unchanged for 3 consecutive generations)
-- [x] **EVOL-07**: Convergence detection: oscillation (period-2 cycling detected)
-- [x] **EVOL-08**: Convergence detection: repetitive feedback (wonder questions repeat >= 70%)
-- [x] **EVOL-09**: Hard cap: maximum 30 evolution generations
-- [x] **EVOL-10**: Lateral thinking personas activate on stagnation (contrarian, hacker, simplifier, researcher, architect)
-- [x] **EVOL-11**: Human escalation mechanism triggers when convergence looks unlikely
-- [x] **EVOL-12**: Token budget circuit breaker: evolution halts if cumulative cost exceeds configurable threshold
-
-### Code Intelligence
-
-- [x] **CODE-01**: Knowledge graph indexing of project codebase (functions, classes, methods, imports, call graph)
-- [x] **CODE-02**: Sub-millisecond graph queries for agent context loading
-- [x] **CODE-03**: Incremental re-indexing triggered as agents modify code during execution
-- [x] **CODE-04**: Brownfield codebase mapping: one-time full index when onboarding an existing project
-
-### Web Dashboard
-
-- [x] **WEB-01**: Chat-like interface for the Socratic interview with MC suggestions and freeform input
-- [x] **WEB-02**: Project workspace management (create, list, open, archive)
-- [x] **WEB-03**: Live DAG visualization showing bead execution status (pending, active, completed, failed, blocked)
-- [x] **WEB-04**: Real-time streaming of agent logs and code diffs via SSE
-- [x] **WEB-05**: Human approval gate UX for seed crystallization and holdout test review
-- [x] **WEB-06**: Evolution cycle visualization: seed lineage, convergence progress, lateral thinking activations
-- [x] **WEB-07**: Token usage and cost dashboard per project and per evolution cycle
-- [x] **WEB-08**: Visual identity: Horizon Zero Dawn Cauldron aesthetic (dark metallic, teal/blue energy conduits, hexagonal geometries, industrial-organic)
-- [x] **WEB-09**: WebSocket for bidirectional flows (human approval confirmations, escalation responses)
-
-### CLI
-
-- [x] **CLI-01**: All pipeline operations available via CLI (start interview, trigger execution, check status, approve holdouts)
-- [x] **CLI-02**: Git-push triggered pipeline runs (webhook listener)
-- [x] **CLI-03**: CLI and web dashboard share the same API layer (tRPC)
-
-## v2 Requirements
-
-Deferred to future release. Tracked but not in current roadmap.
-
-### Deployment
-
-- **DEPL-01**: Deploy generated applications to cloud infrastructure (AWS first)
-- **DEPL-02**: Multi-cloud provider support (GCP, Fly.io, Cloudflare)
-- **DEPL-03**: Preview deployments per evolution cycle
-- **DEPL-04**: Rollback capability
-
-### Digital Twins
-
-- **TWIN-01**: Locally-running mock servers for third-party integrations (Clerk, Stripe, AWS)
-- **TWIN-02**: Digital twins configurable per project
-- **TWIN-03**: First complex project Cauldron builds for itself (dogfooding milestone)
-
-### Multi-Tenant / Team
-
-- **TEAM-01**: Multi-user project access with role-based permissions
-- **TEAM-02**: Real-time collaborative presence on shared projects
-- **TEAM-03**: Async review/approval workflows for team use
-
-### Mobile
-
-- **MOBL-01**: Mobile app store packaging pipeline
-- **MOBL-02**: Platform-specific build configurations (iOS, Android)
+- **ASTX-01**: Shared asset library with dedupe and cross-project reuse
+- **ASTX-02**: Cloud fallback providers for teams without local GPU capacity
+- **ASTX-03**: Video, animation, or 3D generation
 
 ## Out of Scope
 
@@ -157,13 +65,12 @@ Explicitly excluded. Documented to prevent scope creep.
 
 | Feature | Reason |
 |---------|--------|
-| Mutable specs / in-place seed editing | Breaks lineage tracking and evolutionary loop invariants; evolution IS the update mechanism |
-| Credit-burn billing model | Perverse incentive — platform profits from its own mistakes; destroys user trust |
-| Fully autonomous "no human needed" mode | AI has correlated blind spots; structured autonomy with escalation is safer and more reliable |
-| Drag-and-drop visual workflow builder | Pipeline structure is fixed by design; visual output (DAG) but not visual input |
-| Streaming "vibe coding" output | Masks quality with speed illusion; focus engagement on spec completeness and test results |
-| Single-model vendor lock-in | Cross-model holdout testing requires provider diversity by design |
-| Context window compaction via summarization | Fresh context per bead is the structural fix; summarization loses precision |
+| Committing model binaries to git | Model assets are tens of gigabytes and belong in a gitignored runtime directory |
+| Copying the entire existing ComfyUI models tree verbatim | The local tree is about 93G; Cauldron should import only the required FLUX.2 dev subset |
+| Synchronous image generation in request handlers | Long-running generation must be async-first |
+| Embedded ComfyUI workflow editor | Managed generation is the goal, not reproducing the whole ComfyUI product |
+| Video, audio, or 3D generation | 2D image generation must prove reliable first |
+| Model training/fine-tuning | Acquisition and inference are the current milestone boundary |
 
 ## Traceability
 
@@ -171,95 +78,33 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFR-01 | Phase 1 | Complete |
-| INFR-02 | Phase 1 | Complete |
-| INFR-03 | Phase 1 | Complete |
-| INFR-04 | Phase 1 | Complete |
-| INFR-05 | Phase 1 | Complete |
-| INFR-06 | Phase 1 | Complete |
-| LLM-01 | Phase 2 | Complete |
-| LLM-02 | Phase 2 | Complete |
-| LLM-03 | Phase 2 | Complete |
-| LLM-04 | Phase 2 | Complete |
-| LLM-05 | Phase 2 | Complete |
-| LLM-06 | Phase 15 | Complete |
-| INTV-01 | Phase 3 | Complete |
-| INTV-02 | Phase 3 | Complete |
-| INTV-03 | Phase 3 | Complete |
-| INTV-04 | Phase 3 | Complete |
-| INTV-05 | Phase 3 | Complete |
-| INTV-06 | Phase 3 | Complete |
-| INTV-07 | Phase 3 | Complete |
-| SEED-01 | Phase 14 | Complete |
-| SEED-02 | Phase 14 | Complete |
-| SEED-03 | Phase 3 | Complete |
-| SEED-04 | Phase 3 | Complete |
-| HOLD-01 | Phase 15 | Complete |
-| HOLD-02 | Phase 15 | Complete |
-| HOLD-03 | Phase 15 | Complete |
-| HOLD-04 | Phase 4 | Complete |
-| HOLD-05 | Phase 15 | Complete |
-| HOLD-06 | Phase 4 | Complete |
-| HOLD-07 | Phase 16 | Complete |
-| HOLD-08 | Phase 16 | Complete |
-| DAG-01 | Phase 5 | Complete |
-| DAG-02 | Phase 5 | Complete |
-| DAG-03 | Phase 5 | Complete |
-| DAG-04 | Phase 5 | Complete |
-| DAG-05 | Phase 16 | Complete |
-| DAG-06 | Phase 5 | Complete |
-| DAG-07 | Phase 5 | Complete |
-| DAG-08 | Phase 5 | Complete |
-| DAG-09 | Phase 5 | Complete |
-| EXEC-01 | Phase 6 | Complete |
-| EXEC-02 | Phase 6 | Complete |
-| EXEC-03 | Phase 16 | Complete |
-| EXEC-04 | Phase 6 | Complete |
-| EXEC-05 | Phase 6 | Complete |
-| EXEC-06 | Phase 6 | Complete |
-| EXEC-07 | Phase 6 | Complete |
-| EXEC-08 | Phase 6 | Complete |
-| EXEC-09 | Phase 6 | Complete |
-| TEST-01 | Phase 6 | Complete |
-| TEST-02 | Phase 6 | Complete |
-| TEST-03 | Phase 6 | Complete |
-| TEST-04 | Phase 6 | Complete |
-| TEST-05 | Phase 6 | Complete |
-| TEST-06 | Phase 6 | Complete |
-| CODE-01 | Phase 6 | Complete |
-| CODE-02 | Phase 6 | Complete |
-| CODE-03 | Phase 6 | Complete |
-| CODE-04 | Phase 6 | Complete |
-| EVOL-01 | Phase 16 | Complete |
-| EVOL-02 | Phase 16 | Complete |
-| EVOL-03 | Phase 16 | Complete |
-| EVOL-04 | Phase 16 | Complete |
-| EVOL-05 | Phase 16 | Complete |
-| EVOL-06 | Phase 16 | Complete |
-| EVOL-07 | Phase 16 | Complete |
-| EVOL-08 | Phase 16 | Complete |
-| EVOL-09 | Phase 16 | Complete |
-| EVOL-10 | Phase 16 | Complete |
-| EVOL-11 | Phase 16 | Complete |
-| EVOL-12 | Phase 16 | Complete |
-| WEB-01 | Phase 14 | Complete |
-| WEB-02 | Phase 8 | Complete |
-| WEB-03 | Phase 16 | Complete |
-| WEB-04 | Phase 16 | Complete |
-| WEB-05 | Phase 15 | Complete |
-| WEB-06 | Phase 8 | Complete |
-| WEB-07 | Phase 8 | Complete |
-| WEB-08 | Phase 8 | Complete |
-| WEB-09 | Phase 8 | Complete |
-| CLI-01 | Phase 15 | Complete |
-| CLI-02 | Phase 9 | Complete |
-| CLI-03 | Phase 9 | Complete |
+| STYLE-01 | Phase 18 | Pending |
+| STYLE-02 | Phase 18 | Pending |
+| STYLE-03 | Phase 18 | Pending |
+| STYLE-04 | Phase 18 | Pending |
+| STYLE-05 | Phase 18 | Pending |
+| IMG-01 | Phase 19 | Pending |
+| IMG-02 | Phase 19 | Pending |
+| IMG-03 | Phase 19 | Pending |
+| IMG-04 | Phase 19 | Pending |
+| ASSET-01 | Phase 20 | Pending |
+| ASSET-02 | Phase 20 | Pending |
+| ASSET-03 | Phase 20 | Pending |
+| ASSET-04 | Phase 20 | Pending |
+| ASSET-05 | Phase 20 | Pending |
+| MCP-01 | Phase 21 | Pending |
+| MCP-02 | Phase 21 | Pending |
+| MCP-03 | Phase 21 | Pending |
+| MCP-04 | Phase 21 | Pending |
+| OPS-01 | Phase 22 | Pending |
+| OPS-02 | Phase 22 | Pending |
+| OPS-03 | Phase 22 | Pending |
 
 **Coverage:**
-- v1 requirements: 83 total (note: original count of 72 was incorrect; actual count verified at 83)
-- Mapped to phases: 83
-- Unmapped: 0
+- v1.1 requirements: 21 total
+- Mapped to phases 18-22: 21
+- Unmapped: 0 ✓
 
 ---
-*Requirements defined: 2026-03-25*
-*Last updated: 2026-03-27 after gap closure phase creation — 20 requirements reassigned to Phase 15/16*
+*Requirements defined: 2026-03-31*
+*Last updated: 2026-03-31 after roadmap creation for Phases 18-22*

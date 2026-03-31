@@ -8,6 +8,16 @@ Cauldron is an AI-powered software development platform that orchestrates multip
 
 The full pipeline works end-to-end: a user describes what they want, and Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves the software until it meets the goal — with humans steering at key decision points, not babysitting every step.
 
+## Current Milestone: v1.1 Local Asset Generation & Style-Aware Seeds
+
+**Goal:** Cauldron can drive project-local FLUX.2 dev image generation asynchronously, let apps request their own assets through a local MCP surface, and ask sharper visual-style questions before a seed crystallizes.
+
+**Target features:**
+- Project-owned FLUX.2 dev model bundle with guided acquisition and import paths
+- Local image-generation MCP backed by the project runtime, not a hosted-only dependency
+- Async asset job orchestration with persistence, status tracking, and artifact delivery
+- Style-aware interview, ambiguity scoring, and seed schema so downstream agents know what the product should look like
+
 ## Requirements
 
 ### Validated
@@ -63,53 +73,12 @@ The full pipeline works end-to-end: a user describes what they want, and Cauldro
 
 ### Active
 
-#### Task Decomposition & Coordination
-- [x] Seed decomposition into molecules (non-atomic parent tasks) and beads (atomic leaf tasks) — Phase 5
-- [x] DAG-based dependency coordination with parallel-by-default execution — Phase 5
-- [x] Four dependency types: blocks, parent-child, conditional-blocks, waits-for — Phase 5
-- [x] Each bead sized to fit in one fresh context window of a commercial model (Opus 1M excluded) — Phase 5
-- [x] Synchronization gates (waits-for) for fan-out/fan-in patterns — Phase 5
-
-#### Parallel Execution
-- [x] Multiple agents executing independent beads concurrently — Phase 6
-- [x] Fresh context window per bead (context rot prevention) — Phase 6
-- [x] Agents claim beads atomically to prevent race conditions — Phase 5
-- [ ] Real-time progress tracking and visualization of active agents
-
-#### Evolutionary Loop
-- [ ] Post-execution evaluation: did we meet the goal, not just the spec?
-- [ ] Seed evolution produces new immutable seed (seeds never mutate)
-- [ ] Convergence detection: ontology stability, stagnation, oscillation, repetitive feedback, hard cap
-- [ ] Lateral thinking personas activate on stagnation (contrarian, hacker, simplifier, researcher, architect)
-- [ ] Escalation mechanism when convergence looks unlikely (human intervention)
-- [ ] At least one evolutionary cycle must be demonstrable in v1
-
-#### Testing Cube
-- [x] Unit tests, integration tests, and E2E tests are all first-class with equal depth of coverage — Phase 6
-- [x] AI agents generate thorough tests at all three levels for every feature — Phase 6
-- [ ] Encrypted holdout tests provide an additional adversarial verification layer
-
-#### Code Intelligence
-- [x] Brownfield codebase mapping via knowledge graph (codebase-memory-mcp or equivalent) — Phase 6
-- [x] Sub-millisecond code queries for agent context loading — Phase 6
-- [x] Incremental re-indexing as agents modify code — Phase 6
-
-#### Web Dashboard
-- [ ] Chat-like interface for the Socratic interview
-- [ ] DAG visualization showing bead execution progress (active, completed, blocked)
-- [ ] Real-time streaming logs and diffs from executing agents
-- [ ] Project workspace management
-- [ ] Visual identity: Horizon Zero Dawn Cauldron aesthetic (dark metallic, glowing teal/blue energy conduits, hexagonal geometries, industrial-organic)
-
-#### Multi-Model Orchestration
-- [x] Vercel AI SDK for standardized multi-provider interface — Phase 2
-- [x] Opinionated default model assignments per pipeline stage — Phase 2
-- [x] Per-project model configuration overrides — Phase 2
-- [x] Cross-model diversity enforced for holdout generation (different provider than implementer) — Phase 2
-
-#### CLI
-- [x] CLI interface for all pipeline operations (alternative to web dashboard) — Phase 9
-- [x] Git-push triggered pipeline runs — Phase 9
+- Project-owned local image runtime: required FLUX.2 dev files can be imported from ComfyUI or acquired upstream into a gitignored project directory
+- Local image-generation MCP: apps and build agents can request assets through a Cauldron-managed tool surface
+- Async asset lifecycle: generation jobs persist queued/running/succeeded/failed states and return handles immediately
+- Style-aware interview and seed contract: Cauldron captures visual direction explicitly and treats missing style clarity as real ambiguity
+- Asset delivery: completed generations can be written back into the target app workspace with provenance metadata
+- Operator controls: acquisition, health checks, model paths, and generation budgets are configurable per project
 
 ### Out of Scope
 
@@ -119,6 +88,11 @@ The full pipeline works end-to-end: a user describes what they want, and Cauldro
 - Multi-tenant SaaS hosting — eventual OSS concern, not v1
 - Real-time collaboration (multiple users on same project simultaneously) — v2+
 - Billing/payments — not needed until SaaS or hosted offering
+- Committing FLUX or ComfyUI model binaries to git — local runtime assets should be project-owned but gitignored
+- Synchronous image generation in web or CLI request paths — generation must run through an async job lifecycle
+- Full embedded ComfyUI workflow editing inside Cauldron — this milestone is about managed generation, not cloning the ComfyUI UI
+- Video, audio, or 3D generation — defer until the 2D image path is reliable
+- Model fine-tuning or LoRA training flows — acquisition and inference first, training later
 
 ## Context
 
@@ -145,6 +119,15 @@ The full pipeline works end-to-end: a user describes what they want, and Cauldro
 
 A CLI bulk file renaming tool that accepts natural language requests. Deliberately trivial — the goal is proving the pipeline, not the product. Must be complex enough to trigger at least one evolutionary cycle.
 
+### v1.1 Milestone Context
+
+- Cauldron v1.0 shipped on 2026-03-28 with Phases 1-17 complete; this milestone starts from a working interview, seed, execution, evolution, dashboard, and CLI baseline.
+- The local machine already has ComfyUI installed at `/Users/zakkeown/Documents/ComfyUI` with FLUX.2 dev assets under `/Users/zakkeown/Documents/ComfyUI/models`.
+- Confirmed local files include `flux2_dev_fp8mixed.safetensors`, `mistral_3_small_flux2_bf16.safetensors`, `qwen_3_4b.safetensors`, `flux2-vae.safetensors`, and `Flux_2-Turbo-LoRA_comfyui.safetensors`.
+- The existing ComfyUI models tree is about 93G, while the FLUX.2 dev subset on this machine is still roughly 74G+, so the milestone must import only the required subset and keep the copied runtime bundle out of git.
+- The user explicitly wants a model acquisition path beyond “go download ComfyUI,” so acquisition/import UX is part of milestone scope, not a prerequisite.
+- Styling now becomes part of seed clarity: if the LLM cannot form a concrete picture of the product’s visual direction, the interview should keep drilling.
+
 ## Constraints
 
 - **Tech stack**: TypeScript end-to-end
@@ -152,6 +135,11 @@ A CLI bulk file renaming tool that accepts natural language requests. Deliberate
 - **Context window**: Each bead must fit in a commercial model's context window (Opus 1M excluded) — target ~200k tokens with room for implementation
 - **OSS dependencies**: Encouraged, but must not create coordination overhead or architectural contortion. If a library does 80% cleanly, use it. If 100% but forces contortion, don't.
 - **Encryption**: Holdout tests must be encrypted at rest with keys inaccessible to implementation agents
+- **Local runtime**: Image generation must work against a project-owned local FLUX.2 dev bundle, not require a hosted provider to function
+- **Acquisition UX**: Users need at least one supported path besides “install ComfyUI manually” — guided download/import is part of the milestone
+- **Storage**: Local model copies may be tens of gigabytes; copy only the required subset, record provenance, and keep it gitignored
+- **Asynchrony**: Image generation cannot block interactive requests; job creation, status tracking, and artifact retrieval must be durable
+- **Visual clarity**: Style direction is now part of spec quality; crystallization should not treat visual ambiguity as someone else’s problem
 
 ## Key Decisions
 
@@ -166,6 +154,10 @@ A CLI bulk file renaming tool that accepts natural language requests. Deliberate
 | Opinionated model defaults with per-project overrides | Reduces decision fatigue for common cases, preserves flexibility for advanced users | -- Pending |
 | HZD Cauldron visual identity | Distinctive, memorable, differentiated from generic SaaS aesthetics | -- Pending |
 | Dogfood ASAP | As soon as any Cauldron subsystem works, use it to build subsequent phases. Roadmap must flag the earliest dogfooding inflection point. Temporary skills may bridge gaps. | -- Pending |
+| Project-owned FLUX.2 dev bundle | Asset generation should remain local-first and reproducible across Cauldron runs, not depend on a preexisting global ComfyUI cache | -- Pending |
+| Acquisition includes import and guided download | “You already installed ComfyUI” is not a sufficient operator workflow; Cauldron needs a supported way to acquire the runtime bundle | -- Pending |
+| Style clarity is a first-class ambiguity dimension | Asset generation quality depends on having a concrete visual target, so the interview must explicitly test whether the LLM knows what the product should look like | -- Pending |
+| Async-only image generation | Long-running local generation jobs should use durable job tracking and artifact retrieval, not hold open a web or CLI request | -- Pending |
 
 ## Evolution
 
@@ -185,4 +177,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-28 after Phase 17 completion — comprehensive test coverage and pre-release quality validation. Fixed pnpm build failure (lazy DB init, webpack extensionAlias). 27 React component/page tests (155 tests), 6 Playwright E2E specs covering all dashboard surfaces with axe-core a11y and visual snapshots. GitHub Actions CI pipeline (5 parallel jobs). TypeScript any audit complete. All v1.0 phases (1-17) complete.*
+*Last updated: 2026-03-31 for milestone v1.1 kickoff — local asset generation, project-owned FLUX.2 dev runtime acquisition, async image jobs, and style-aware seed planning.*
