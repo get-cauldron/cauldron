@@ -197,7 +197,7 @@ describe('claimJob', () => {
 
     const db = {
       update: vi.fn().mockReturnValue(updateBuilder),
-    } as unknown as Parameters<typeof claimJob>[1];
+    } as unknown as Parameters<typeof claimJob>[0];
 
     const result = await claimJob(db, 'job-uuid-001', 1);
 
@@ -223,7 +223,7 @@ describe('claimJob', () => {
 
     const db = {
       update: vi.fn().mockReturnValue(updateBuilder),
-    } as unknown as Parameters<typeof claimJob>[1];
+    } as unknown as Parameters<typeof claimJob>[0];
 
     await expect(claimJob(db, 'job-uuid-001', 99)).rejects.toThrow(AssetJobError);
   });

@@ -22,6 +22,8 @@ import {
   configureSchedulerDeps,
   configureVaultDeps,
   configureEvolutionDeps,
+  configureAssetDeps,
+  createComfyUIExecutor,
 } from '@get-cauldron/engine';
 import type { GatewayConfig } from '@get-cauldron/engine';
 import type { DbClient } from '@get-cauldron/shared';
@@ -59,6 +61,12 @@ export async function bootstrap(projectRoot: string): Promise<BootstrapDeps> {
   configureSchedulerDeps({ db, gateway, projectRoot });
   configureVaultDeps({ db, gateway });
   configureEvolutionDeps({ db, gateway });
+
+  // Wire asset generation dependencies (D-07: ComfyUI URL from env, D-10: artifacts in .cauldron/)
+  const comfyuiUrl = process.env['COMFYUI_URL'] ?? 'http://localhost:8188';
+  const artifactsRoot = resolve(projectRoot, '.cauldron', 'artifacts');
+  const executor = createComfyUIExecutor({ baseUrl: comfyuiUrl, logger });
+  configureAssetDeps({ db, logger, executor, artifactsRoot });
 
   return { db, gateway, inngest, logger, config };
 }

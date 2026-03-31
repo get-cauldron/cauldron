@@ -7,10 +7,11 @@ import {
   handleMergeRequested,
   handleEvolutionConverged,
   handleEvolutionStarted,
+  handleAssetGenerate,
 } from '@get-cauldron/engine';
 
 /**
- * All 5 engine Inngest functions served via the cauldron-engine client.
+ * All 6 engine Inngest functions served via the cauldron-engine client.
  * Exported as a constant so the smoke test can verify function count.
  */
 export const ENGINE_FUNCTIONS = [
@@ -19,6 +20,7 @@ export const ENGINE_FUNCTIONS = [
   handleMergeRequested,
   handleEvolutionConverged,
   handleEvolutionStarted,
+  handleAssetGenerate,
 ] as const;
 
 /**

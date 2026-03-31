@@ -55,6 +55,7 @@ const mockJob = {
   guidanceScale: 3.5,
   status: 'pending' as const,
   version: 0,
+  priority: 0,
   idempotencyKey: null,
   extras: {},
   claimedAt: null,
@@ -62,6 +63,7 @@ const mockJob = {
   failureReason: null,
   artifactPath: null,
   outputMetadata: null,
+  executorAdapter: 'comfyui',
   createdAt: new Date(),
   updatedAt: new Date(),
 };

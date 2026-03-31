@@ -65,5 +65,28 @@ services:
     environment:
       - INNGEST_DEV=1
 
+  comfyui:
+    image: yanwk/comfyui-boot:latest
+    ports:
+      - '8188:8188'
+    volumes:
+      - comfyui_data:/root
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      - CLI_ARGS=--listen 0.0.0.0
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8188/system_stats']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
 volumes:
   postgres_data:
+  comfyui_data:

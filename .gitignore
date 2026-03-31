@@ -20,3 +20,6 @@ packages/test-harness/src/**/*.d.ts.map
 
 # Runtime data from pipeline runs
 packages/cli/.cauldron/
+
+# Asset generation artifacts (D-10)
+.cauldron/
