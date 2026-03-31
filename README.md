@@ -110,7 +110,16 @@ packages/
    pnpm install
    ```
 
-3. **Configure environment**
+3. **Agent hook guard is included in the repo**
+   Cauldron now ships a repo-scoped no-excuses guard for Claude and Codex. Because execution uses git worktrees, the tracked hook files land in those worktrees automatically too.
+
+   - Claude reads [`.claude/settings.json`](./.claude/settings.json) and applies the guard on `Stop` and `SubagentStop`.
+   - Codex reads [`.codex/hooks.json`](./.codex/hooks.json). This repo also enables `features.codex_hooks = true` in [`.codex/config.toml`](./.codex/config.toml).
+   - Both runtimes call the shared script at [`scripts/agent-hooks/no-excuses-guard.js`](./scripts/agent-hooks/no-excuses-guard.js).
+
+   Note: Codex hook support is still under development in the official docs. If your Codex build does not support hooks, Cauldron cannot get this protection from Codex for that run.
+
+4. **Configure environment**
    ```bash
    cp .env.example .env
    ```
@@ -125,17 +134,17 @@ packages/
    node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
    ```
 
-4. **Start infrastructure**
+5. **Start infrastructure**
    ```bash
    docker compose up -d   # PostgreSQL :5432, Redis :6379, Inngest :8288
    ```
 
-5. **Run database migrations**
+6. **Run database migrations**
    ```bash
    pnpm db:migrate
    ```
 
-6. **Start the web dashboard**
+7. **Start the web dashboard**
    ```bash
    pnpm dev   # Next.js at localhost:3000
    ```

@@ -1,0 +1,24 @@
+{
+  "Stop": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"$(git rev-parse --show-toplevel)/scripts/agent-hooks/no-excuses-guard.js\"",
+          "timeout": 5
+        }
+      ]
+    }
+  ],
+  "SubagentStop": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"$(git rev-parse --show-toplevel)/scripts/agent-hooks/no-excuses-guard.js\"",
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}
