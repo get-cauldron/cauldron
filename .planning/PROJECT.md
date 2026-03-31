@@ -70,12 +70,20 @@ The full pipeline works end-to-end: a user describes what they want, and Cauldro
 - Pipeline trigger and execution trigger send bead.dispatch_requested Inngest events — Phase 11
 - Engine server entry point (bootstrap → createInngestApp → @hono/node-server on port 3001) — Phase 11
 - Docker-compose dual-app Inngest discovery (engine:3001 + web:3000) — Phase 11
+- Durable async asset jobs with 6-state lifecycle (pending/claimed/active/completed/failed/canceled) — Phase 18
+- Pluggable executor interface with ComfyUI HTTP API adapter (submit/poll/fetch) — Phase 18
+- FLUX.2 dev workflow template with variable substitution at packages/shared/src/workflows/ — Phase 18
+- Artifact writer with JSON provenance sidecars at .cauldron/artifacts/{jobId}/ — Phase 18
+- Idempotency key dedup at DB level (composite unique constraint) — Phase 18
+- Inngest asset/generate function with 3 durable steps and retry/timeout controls — Phase 18
+- ComfyUI always-on Docker service in docker-compose.yml — Phase 18
+- 51 asset module unit tests — Phase 18
 
 ### Active
 
 - Project-owned local image runtime: required FLUX.2 dev files can be imported from ComfyUI or acquired upstream into a gitignored project directory
 - Local image-generation MCP: apps and build agents can request assets through a Cauldron-managed tool surface
-- Async asset lifecycle: generation jobs persist queued/running/succeeded/failed states and return handles immediately
+- Async asset lifecycle: generation jobs persist queued/running/succeeded/failed states and return handles immediately — Validated in Phase 18
 - Style-aware interview and seed contract: Cauldron captures visual direction explicitly and treats missing style clarity as real ambiguity
 - Asset delivery: completed generations can be written back into the target app workspace with provenance metadata
 - Operator controls: acquisition, health checks, model paths, and generation budgets are configurable per project
