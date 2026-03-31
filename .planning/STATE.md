@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Local Asset Generation & Style-Aware Seeds
-status: executing
-stopped_at: Completed 18-async-asset-engine-02-PLAN.md
-last_updated: "2026-03-31T22:29:24.485Z"
+status: verifying
+stopped_at: Completed 18-async-asset-engine-18-03-PLAN.md
+last_updated: "2026-03-31T22:49:22.917Z"
 last_activity: 2026-03-31
 progress:
   total_phases: 3
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
+  completed_plans: 3
   percent: 0
 ---
 
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 
 Phase: 18 (Async Asset Engine) — EXECUTING
 Plan: 3 of 3
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-03-31
 
 Progress: [░░░░░░░░░░] 0%
@@ -54,6 +54,7 @@ Progress: [░░░░░░░░░░] 0%
 
 | Phase 18 P01 | 17 | 2 tasks | 8 files |
 | Phase 18-async-asset-engine P02 | 8 | 2 tasks | 5 files |
+| Phase 18-async-asset-engine P03 | 1010 | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -65,6 +66,8 @@ Progress: [░░░░░░░░░░] 0%
 - [Phase 18]: Migration uses ALTER TYPE ADD VALUE for event_type enum extension — no drop/recreate, safe for existing DB
 - [Phase 18-async-asset-engine]: Template path resolved relative to file location via fileURLToPath + resolve, not require.resolve (simpler, no package boundary needed)
 - [Phase 18-async-asset-engine]: Numeric placeholders are quoted in JSON template and become unquoted after string replacement, preserving ComfyUI type expectations
+- [Phase 18-async-asset-engine]: Reused cauldron-engine Inngest client from holdout/events.ts to avoid multiple client instances
+- [Phase 18-async-asset-engine]: ComfyUI docker service has no profiles gate so it starts by default with docker compose up -d (D-06)
 
 ### Pending Todos
 
@@ -76,6 +79,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-31T22:29:24.483Z
-Stopped at: Completed 18-async-asset-engine-02-PLAN.md
+Last session: 2026-03-31T22:49:22.915Z
+Stopped at: Completed 18-async-asset-engine-18-03-PLAN.md
 Resume file: None

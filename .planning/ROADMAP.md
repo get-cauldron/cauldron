@@ -17,7 +17,7 @@ Cauldron v1.0 already shipped, so this roadmap is scoped only to milestone v1.1 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 18: Async Asset Engine** - Persist image generation as durable async jobs with observable lifecycle, retry, and artifact metadata
+- [x] **Phase 18: Async Asset Engine** - Persist image generation as durable async jobs with observable lifecycle, retry, and artifact metadata (completed 2026-03-31)
 - [ ] **Phase 19: Local Image MCP & App Delivery** - Expose local generation through a Cauldron-managed MCP surface and deliver completed assets into app workspaces
 - [ ] **Phase 20: Operator Controls & End-to-End Validation** - Add project-level runtime controls, budgets, and milestone-closing verification of the full asset path
 
@@ -33,12 +33,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Job progress and completion can be checked later from another CLI or web request without relying on the initiating session still being open
   4. Completed and failed jobs retain prompt inputs, output metadata, artifact locations, and failure diagnostics for review and reuse
   5. Retry and idempotency controls prevent duplicate submissions from triggering uncontrolled reruns
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [x] 18-01-PLAN.md — Schema, types, and job-store DB operations
 - [x] 18-02-PLAN.md — ComfyUI adapter and artifact writer
-- [ ] 18-03-PLAN.md — Inngest function wiring, docker-compose, and gitignore
+- [x] 18-03-PLAN.md — Inngest function wiring, docker-compose, and gitignore
 
 ### Phase 19: Local Image MCP & App Delivery
 **Goal**: Apps and build agents consume local asset generation through a stable MCP contract and receive deliverable artifacts with provenance.
@@ -68,6 +68,6 @@ Phases execute in numeric order: 18 → 19 → 20
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 18. Async Asset Engine | 2/3 | In Progress|  |
+| 18. Async Asset Engine | 3/3 | Complete   | 2026-03-31 |
 | 19. Local Image MCP & App Delivery | 0/TBD | Not started | - |
 | 20. Operator Controls & End-to-End Validation | 0/TBD | Not started | - |
