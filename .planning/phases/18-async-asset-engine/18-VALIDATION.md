@@ -38,16 +38,17 @@ created: 2026-03-31
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 18-01-01 | 01 | 1 | ASSET-01 | unit | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/job-store.test.ts` | ❌ W0 | ⬜ pending |
-| 18-01-02 | 01 | 1 | ASSET-01 | unit | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/job-store.test.ts` | ❌ W0 | ⬜ pending |
-| 18-01-03 | 01 | 1 | ASSET-02 | unit | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/job-store.test.ts` | ❌ W0 | ⬜ pending |
-| 18-02-01 | 02 | 1 | ASSET-02, ASSET-03 | unit | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/events.test.ts` | ❌ W0 | ⬜ pending |
-| 18-02-02 | 02 | 1 | ASSET-05 | unit | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/events.test.ts` | ❌ W0 | ⬜ pending |
-| 18-03-01 | 03 | 1 | ASSET-04 | unit | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/comfyui-adapter.test.ts` | ❌ W0 | ⬜ pending |
-| 18-03-02 | 03 | 1 | ASSET-04 | unit | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/artifact-writer.test.ts` | ❌ W0 | ⬜ pending |
-| 18-04-01 | 04 | 2 | ASSET-01–05 | integration | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/job-store.integration.test.ts` | ❌ W0 | ⬜ pending |
+| 18-01-01 | 01 | 1 | ASSET-01 | unit | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/job-store.test.ts` | W0 | pending |
+| 18-01-02 | 01 | 1 | ASSET-01 | unit | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/job-store.test.ts` | W0 | pending |
+| 18-01-03 | 01 | 1 | ASSET-02 | unit | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/job-store.test.ts` | W0 | pending |
+| 18-02-01 | 02 | 1 | ASSET-02, ASSET-03 | unit | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/events.test.ts` | W0 | pending |
+| 18-02-02 | 02 | 1 | ASSET-05 | unit | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/events.test.ts` | W0 | pending |
+| 18-03-01 | 03 | 1 | ASSET-04 | unit | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/comfyui-adapter.test.ts` | W0 | pending |
+| 18-03-02 | 03 | 1 | ASSET-04 | unit | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/artifact-writer.test.ts` | W0 | pending |
 
-*Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
+*Status: pending / green / red / flaky*
+
+**Note:** Integration tests (`job-store.integration.test.ts`) are deferred to Phase 19 when the full stack is available with real Postgres + ComfyUI. Phase 18 validates behavior through unit tests with mocked dependencies. The unit test coverage across Plans 01-03 covers all ASSET-01 through ASSET-05 requirements at the function level.
 
 ---
 
@@ -57,7 +58,6 @@ created: 2026-03-31
 - [ ] `packages/engine/src/asset/__tests__/events.test.ts` — stubs for ASSET-02, ASSET-03, ASSET-05
 - [ ] `packages/engine/src/asset/__tests__/artifact-writer.test.ts` — stubs for ASSET-04
 - [ ] `packages/engine/src/asset/__tests__/comfyui-adapter.test.ts` — ComfyUI HTTP adapter unit tests with mocked fetch
-- [ ] `packages/engine/src/asset/__tests__/job-store.integration.test.ts` — real Postgres lifecycle tests
 
 ---
 

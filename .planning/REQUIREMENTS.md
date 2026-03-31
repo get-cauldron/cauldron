@@ -87,11 +87,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | IMG-02 | Phase 19 | Pending |
 | IMG-03 | Phase 19 | Pending |
 | IMG-04 | Phase 19 | Pending |
-| ASSET-01 | Phase 20 | Pending |
-| ASSET-02 | Phase 20 | Pending |
-| ASSET-03 | Phase 20 | Pending |
-| ASSET-04 | Phase 20 | Pending |
-| ASSET-05 | Phase 20 | Pending |
+| ASSET-01 | Phase 18 | Pending |
+| ASSET-02 | Phase 18 | Pending |
+| ASSET-03 | Phase 18 | Pending |
+| ASSET-04 | Phase 18 | Pending |
+| ASSET-05 | Phase 18 | Pending |
 | MCP-01 | Phase 21 | Pending |
 | MCP-02 | Phase 21 | Pending |
 | MCP-03 | Phase 21 | Pending |
