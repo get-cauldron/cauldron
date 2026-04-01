@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Local Asset Generation & Style-Aware Seeds
 status: verifying
-stopped_at: Completed 20-02-PLAN.md
-last_updated: "2026-04-01T15:40:41.544Z"
+stopped_at: Completed 21-01-PLAN.md
+last_updated: "2026-04-01T18:43:49.135Z"
 last_activity: 2026-04-01
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 8
-  completed_plans: 8
+  total_phases: 4
+  completed_phases: 4
+  total_plans: 9
+  completed_plans: 9
   percent: 0
 ---
 
@@ -21,12 +21,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** User describes what they want; Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves until the goal is met with humans steering at key decision points.
-**Current focus:** Phase 20 — operator-controls-end-to-end-validation
+**Current focus:** Phase 21 — v1.1-polish-integration-wiring-type-fixes
 
 ## Current Position
 
-Phase: 20
-Plan: Not started
+Phase: 21 (v1.1-polish-integration-wiring-type-fixes) — EXECUTING
+Plan: 1 of 1
 Status: Phase complete — ready for verification
 Last activity: 2026-04-01
 
@@ -60,6 +60,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 19-local-image-mcp-app-delivery P03 | 31464647 | 2 tasks | 9 files |
 | Phase 20-operator-controls-end-to-end-validation P01 | 12 | 2 tasks | 10 files |
 | Phase 20-operator-controls-end-to-end-validation P02 | 11 | 2 tasks | 4 files |
+| Phase 21-v1.1-polish-integration-wiring-type-fixes P01 | 15m | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -84,6 +85,8 @@ Progress: [░░░░░░░░░░] 0%
 - [Phase 20-operator-controls-end-to-end-validation]: verify command uses bootstrap() directly (not tRPC) for real DB access when checking asset settings
 - [Phase 20-operator-controls-end-to-end-validation]: Style/seed provenance stored via job.extras.seedId + styleProvenance (not a dedicated column)
 - [Phase 20-operator-controls-end-to-end-validation]: Migration 0013 fixed with IF NOT EXISTS guards to enable integration test runs against pre-migrated DBs
+- [Phase 21-v1.1-polish-integration-wiring-type-fixes]: Callback injection pattern (onJobStatusChanged) for cross-package MCP notifications without engine importing MCP
+- [Phase 21-v1.1-polish-integration-wiring-type-fixes]: createRequire with monorepo-relative fallback for robust template resolution across packaging environments
 
 ### Pending Todos
 
@@ -95,6 +98,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-01T15:35:12.878Z
-Stopped at: Completed 20-02-PLAN.md
+Last session: 2026-04-01T18:43:49.132Z
+Stopped at: Completed 21-01-PLAN.md
 Resume file: None

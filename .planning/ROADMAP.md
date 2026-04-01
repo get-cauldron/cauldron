@@ -20,7 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 18: Async Asset Engine** - Persist image generation as durable async jobs with observable lifecycle, retry, and artifact metadata (completed 2026-03-31)
 - [x] **Phase 19: Local Image MCP & App Delivery** - Expose local generation through a Cauldron-managed MCP surface and deliver completed assets into app workspaces (completed 2026-04-01)
 - [x] **Phase 20: Operator Controls & End-to-End Validation** - Add project-level runtime controls, budgets, and milestone-closing verification of the full asset path (completed 2026-04-01)
-- [ ] **Phase 21: v1.1 Polish — Integration Wiring & Type Fixes** - Close minor integration gaps and tech debt from v1.1 audit
+- [x] **Phase 21: v1.1 Polish — Integration Wiring & Type Fixes** - Close minor integration gaps and tech debt from v1.1 audit (completed 2026-04-01)
 
 ## Phase Details
 
@@ -80,10 +80,10 @@ Plans:
   2. MCP resource subscription push notifications fire after job state transitions
   3. guidance_scale column stores float values without truncation
   4. flux-dev.json template resolves correctly outside monorepo source tree
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 21-01-PLAN.md — Wire submitted event, activate MCP push notifications, fix guidance_scale type, robust template path
+- [x] 21-01-PLAN.md — Wire submitted event, activate MCP push notifications, fix guidance_scale type, robust template path
 
 ## Progress
 
@@ -95,4 +95,4 @@ Phases execute in numeric order: 18 → 19 → 20 → 21
 | 18. Async Asset Engine | 3/3 | Complete    | 2026-03-31 |
 | 19. Local Image MCP & App Delivery | 3/3 | Complete    | 2026-04-01 |
 | 20. Operator Controls & End-to-End Validation | 2/2 | Complete    | 2026-04-01 |
-| 21. v1.1 Polish — Integration Wiring & Type Fixes | 0/1 | Not started | - |
+| 21. v1.1 Polish — Integration Wiring & Type Fixes | 1/1 | Complete   | 2026-04-01 |
