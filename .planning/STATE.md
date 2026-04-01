@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Local Asset Generation & Style-Aware Seeds
-status: verifying
-stopped_at: Phase 20 context gathered
-last_updated: "2026-04-01T14:42:10.022Z"
+status: executing
+stopped_at: Completed 20-operator-controls-end-to-end-validation plan 20-01
+last_updated: "2026-04-01T15:20:18.994Z"
 last_activity: 2026-04-01
 progress:
   total_phases: 3
   completed_phases: 2
-  total_plans: 6
-  completed_plans: 6
+  total_plans: 8
+  completed_plans: 7
   percent: 0
 ---
 
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** User describes what they want; Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves until the goal is met with humans steering at key decision points.
-**Current focus:** Phase 19 — local-image-mcp-app-delivery
+**Current focus:** Phase 20 — operator-controls-end-to-end-validation
 
 ## Current Position
 
-Phase: 20
-Plan: Not started
-Status: Phase complete — ready for verification
+Phase: 20 (operator-controls-end-to-end-validation) — EXECUTING
+Plan: 2 of 2
+Status: Ready to execute
 Last activity: 2026-04-01
 
 Progress: [░░░░░░░░░░] 0%
@@ -58,6 +58,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 19-local-image-mcp-app-delivery P01 | 12 | 2 tasks | 10 files |
 | Phase 19 P02 | 317 | 2 tasks | 4 files |
 | Phase 19-local-image-mcp-app-delivery P03 | 31464647 | 2 tasks | 9 files |
+| Phase 20-operator-controls-end-to-end-validation P01 | 12 | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -77,6 +78,8 @@ Progress: [░░░░░░░░░░] 0%
 - [Phase 19]: listAssetJobs applies where clause before limit/offset to match Drizzle chain ordering — avoids TypeError on resolved query
 - [Phase 19-local-image-mcp-app-delivery]: Extracted handleGenerateImage and handleCheckJobStatus as exported functions to enable unit testing without McpServer instance
 - [Phase 19-local-image-mcp-app-delivery]: Used readdir + filter(not .meta.json) pattern to find image filename without hardcoding ComfyUI output names
+- [Phase 20-operator-controls-end-to-end-validation]: checkAssetMode returns mode string (active/paused) rather than void, enabling callers to branch in a single DB round-trip
+- [Phase 20-operator-controls-end-to-end-validation]: updateSettings deep-merges asset sub-object to prevent clobbering sibling keys when only one sub-key is updated
 
 ### Pending Todos
 
@@ -88,6 +91,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-01T14:42:10.020Z
-Stopped at: Phase 20 context gathered
-Resume file: .planning/phases/20-operator-controls-end-to-end-validation/20-CONTEXT.md
+Last session: 2026-04-01T15:20:18.991Z
+Stopped at: Completed 20-operator-controls-end-to-end-validation plan 20-01
+Resume file: None

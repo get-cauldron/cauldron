@@ -64,10 +64,10 @@ Plans:
   1. Project settings let an operator configure runtime paths, acquisition mode, and generation budgets without editing implementation internals
   2. An operator can disable image generation entirely or enforce project-specific budget limits before jobs are accepted
   3. End-to-end verification demonstrates the full path from style capture to seed persistence to async generation to delivered local assets
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
-- [ ] 20-01-PLAN.md — Asset settings types, enforcement logic, tRPC mutation, and CLI config command
+- [x] 20-01-PLAN.md — Asset settings types, enforcement logic, tRPC mutation, and CLI config command
 - [ ] 20-02-PLAN.md — CLI verify command and E2E integration test
 
 ## Progress
@@ -79,4 +79,4 @@ Phases execute in numeric order: 18 → 19 → 20
 |-------|----------------|--------|-----------|
 | 18. Async Asset Engine | 3/3 | Complete    | 2026-03-31 |
 | 19. Local Image MCP & App Delivery | 3/3 | Complete    | 2026-04-01 |
-| 20. Operator Controls & End-to-End Validation | 0/2 | Not started | - |
+| 20. Operator Controls & End-to-End Validation | 1/2 | In Progress|  |
