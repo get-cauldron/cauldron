@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Local Asset Generation & Style-Aware Seeds
 status: executing
-stopped_at: Completed 19-01-PLAN.md
-last_updated: "2026-04-01T03:50:42.229Z"
+stopped_at: Completed 19-02-PLAN.md
+last_updated: "2026-04-01T03:52:54.674Z"
 last_activity: 2026-04-01
 progress:
   total_phases: 3
   completed_phases: 1
   total_plans: 6
-  completed_plans: 4
+  completed_plans: 5
   percent: 0
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 ## Current Position
 
 Phase: 19 (local-image-mcp-app-delivery) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-04-01
 
@@ -56,6 +56,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 18-async-asset-engine P02 | 8 | 2 tasks | 5 files |
 | Phase 18-async-asset-engine P03 | 1010 | 2 tasks | 10 files |
 | Phase 19-local-image-mcp-app-delivery P01 | 12 | 2 tasks | 10 files |
+| Phase 19 P02 | 317 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -72,6 +73,7 @@ Progress: [░░░░░░░░░░] 0%
 - [Phase 19-local-image-mcp-app-delivery]: bin field uses string form in MCP package.json so 'npx @get-cauldron/mcp' resolves to entry point without named key (per D-06)
 - [Phase 19-local-image-mcp-app-delivery]: bootstrapMcp uses pino.destination({dest: 2}) for stderr-only logging — stdout is reserved as MCP JSON-RPC transport pipe
 - [Phase 19-local-image-mcp-app-delivery]: bootstrapMcp only wires asset deps (no LLM gateway, scheduler, vault, evolution) — MCP server is asset-only
+- [Phase 19]: listAssetJobs applies where clause before limit/offset to match Drizzle chain ordering — avoids TypeError on resolved query
 
 ### Pending Todos
 
@@ -83,6 +85,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-01T03:50:42.226Z
-Stopped at: Completed 19-01-PLAN.md
+Last session: 2026-04-01T03:52:54.672Z
+Stopped at: Completed 19-02-PLAN.md
 Resume file: None
