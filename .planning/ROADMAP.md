@@ -19,7 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 18: Async Asset Engine** - Persist image generation as durable async jobs with observable lifecycle, retry, and artifact metadata (completed 2026-03-31)
 - [x] **Phase 19: Local Image MCP & App Delivery** - Expose local generation through a Cauldron-managed MCP surface and deliver completed assets into app workspaces (completed 2026-04-01)
-- [ ] **Phase 20: Operator Controls & End-to-End Validation** - Add project-level runtime controls, budgets, and milestone-closing verification of the full asset path
+- [x] **Phase 20: Operator Controls & End-to-End Validation** - Add project-level runtime controls, budgets, and milestone-closing verification of the full asset path (completed 2026-04-01)
 
 ## Phase Details
 
@@ -64,11 +64,11 @@ Plans:
   1. Project settings let an operator configure runtime paths, acquisition mode, and generation budgets without editing implementation internals
   2. An operator can disable image generation entirely or enforce project-specific budget limits before jobs are accepted
   3. End-to-end verification demonstrates the full path from style capture to seed persistence to async generation to delivered local assets
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 20-01-PLAN.md — Asset settings types, enforcement logic, tRPC mutation, and CLI config command
-- [ ] 20-02-PLAN.md — CLI verify command and E2E integration test
+- [x] 20-02-PLAN.md — CLI verify command and E2E integration test
 
 ## Progress
 
@@ -79,4 +79,4 @@ Phases execute in numeric order: 18 → 19 → 20
 |-------|----------------|--------|-----------|
 | 18. Async Asset Engine | 3/3 | Complete    | 2026-03-31 |
 | 19. Local Image MCP & App Delivery | 3/3 | Complete    | 2026-04-01 |
-| 20. Operator Controls & End-to-End Validation | 1/2 | In Progress|  |
+| 20. Operator Controls & End-to-End Validation | 2/2 | Complete   | 2026-04-01 |

@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Local Asset Generation & Style-Aware Seeds
-status: executing
-stopped_at: Completed 20-operator-controls-end-to-end-validation plan 20-01
-last_updated: "2026-04-01T15:20:18.994Z"
+status: verifying
+stopped_at: Completed 20-02-PLAN.md
+last_updated: "2026-04-01T15:35:12.880Z"
 last_activity: 2026-04-01
 progress:
   total_phases: 3
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 8
-  completed_plans: 7
+  completed_plans: 8
   percent: 0
 ---
 
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 
 Phase: 20 (operator-controls-end-to-end-validation) — EXECUTING
 Plan: 2 of 2
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-04-01
 
 Progress: [░░░░░░░░░░] 0%
@@ -59,6 +59,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 19 P02 | 317 | 2 tasks | 4 files |
 | Phase 19-local-image-mcp-app-delivery P03 | 31464647 | 2 tasks | 9 files |
 | Phase 20-operator-controls-end-to-end-validation P01 | 12 | 2 tasks | 10 files |
+| Phase 20-operator-controls-end-to-end-validation P02 | 11 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -80,6 +81,9 @@ Progress: [░░░░░░░░░░] 0%
 - [Phase 19-local-image-mcp-app-delivery]: Used readdir + filter(not .meta.json) pattern to find image filename without hardcoding ComfyUI output names
 - [Phase 20-operator-controls-end-to-end-validation]: checkAssetMode returns mode string (active/paused) rather than void, enabling callers to branch in a single DB round-trip
 - [Phase 20-operator-controls-end-to-end-validation]: updateSettings deep-merges asset sub-object to prevent clobbering sibling keys when only one sub-key is updated
+- [Phase 20-operator-controls-end-to-end-validation]: verify command uses bootstrap() directly (not tRPC) for real DB access when checking asset settings
+- [Phase 20-operator-controls-end-to-end-validation]: Style/seed provenance stored via job.extras.seedId + styleProvenance (not a dedicated column)
+- [Phase 20-operator-controls-end-to-end-validation]: Migration 0013 fixed with IF NOT EXISTS guards to enable integration test runs against pre-migrated DBs
 
 ### Pending Todos
 
@@ -91,6 +95,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-01T15:20:18.991Z
-Stopped at: Completed 20-operator-controls-end-to-end-validation plan 20-01
+Last session: 2026-04-01T15:35:12.878Z
+Stopped at: Completed 20-02-PLAN.md
 Resume file: None
