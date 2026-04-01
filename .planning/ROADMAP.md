@@ -80,7 +80,10 @@ Plans:
   2. MCP resource subscription push notifications fire after job state transitions
   3. guidance_scale column stores float values without truncation
   4. flux-dev.json template resolves correctly outside monorepo source tree
-**Plans**: TBD
+**Plans:** 1 plan
+
+Plans:
+- [ ] 21-01-PLAN.md — Wire submitted event, activate MCP push notifications, fix guidance_scale type, robust template path
 
 ## Progress
 
@@ -92,4 +95,4 @@ Phases execute in numeric order: 18 → 19 → 20 → 21
 | 18. Async Asset Engine | 3/3 | Complete    | 2026-03-31 |
 | 19. Local Image MCP & App Delivery | 3/3 | Complete    | 2026-04-01 |
 | 20. Operator Controls & End-to-End Validation | 2/2 | Complete    | 2026-04-01 |
-| 21. v1.1 Polish — Integration Wiring & Type Fixes | 0/TBD | Not started | - |
+| 21. v1.1 Polish — Integration Wiring & Type Fixes | 0/1 | Not started | - |
