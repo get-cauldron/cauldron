@@ -95,4 +95,4 @@ Phases execute in numeric order: 18 → 19 → 20 → 21
 | 18. Async Asset Engine | 3/3 | Complete    | 2026-03-31 |
 | 19. Local Image MCP & App Delivery | 3/3 | Complete    | 2026-04-01 |
 | 20. Operator Controls & End-to-End Validation | 2/2 | Complete    | 2026-04-01 |
-| 21. v1.1 Polish — Integration Wiring & Type Fixes | 1/1 | Complete   | 2026-04-01 |
+| 21. v1.1 Polish — Integration Wiring & Type Fixes | 1/1 | Complete    | 2026-04-01 |
