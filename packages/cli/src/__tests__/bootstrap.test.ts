@@ -20,6 +20,8 @@ vi.mock('@get-cauldron/engine', () => {
     configureSchedulerDeps: vi.fn(),
     configureVaultDeps: vi.fn(),
     configureEvolutionDeps: vi.fn(),
+    createComfyUIExecutor: vi.fn().mockReturnValue({ generate: vi.fn() }),
+    configureAssetDeps: vi.fn(),
   };
 });
 

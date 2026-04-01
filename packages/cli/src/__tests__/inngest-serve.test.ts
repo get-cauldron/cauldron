@@ -11,6 +11,8 @@ vi.mock('@get-cauldron/engine', () => ({
   configureSchedulerDeps: vi.fn(),
   configureVaultDeps: vi.fn(),
   configureEvolutionDeps: vi.fn(),
+  handleAssetGenerate: { id: 'asset/generate' },
+  configureAssetDeps: vi.fn(),
 }));
 
 // Mock inngest/hono serve to capture what it receives
@@ -18,12 +20,12 @@ const mockServe = vi.fn().mockReturnValue(() => new Response('ok'));
 vi.mock('inngest/hono', () => ({ serve: mockServe }));
 
 describe('inngest-serve', () => {
-  it('serves all 5 engine functions via the cauldron-engine client', async () => {
+  it('serves all 6 engine functions via the cauldron-engine client', async () => {
     const { createInngestApp, ENGINE_FUNCTIONS } = await import('../inngest-serve.js');
     const app = createInngestApp();
 
     expect(app).toBeDefined();
-    expect(ENGINE_FUNCTIONS).toHaveLength(5);
+    expect(ENGINE_FUNCTIONS).toHaveLength(6);
     expect(mockServe).toHaveBeenCalledWith(
       expect.objectContaining({
         client: expect.objectContaining({ id: 'cauldron-engine' }),
@@ -33,6 +35,7 @@ describe('inngest-serve', () => {
           expect.objectContaining({ id: 'execution/merge-bead' }),
           expect.objectContaining({ id: 'holdout-vault/unseal-on-convergence' }),
           expect.objectContaining({ id: 'evolution/run-cycle' }),
+          expect.objectContaining({ id: 'asset/generate' }),
         ]),
       })
     );
