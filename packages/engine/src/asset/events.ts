@@ -1,4 +1,6 @@
 import { NonRetriableError, type InngestFunction } from 'inngest';
+import { copyFile, mkdir } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
 import { inngest } from '../holdout/events.js'; // Reuse cauldron-engine client — do NOT create a second Inngest client
 import type { DbClient } from '@get-cauldron/shared';
 import type { Logger } from 'pino';
@@ -212,6 +214,17 @@ export async function generateAssetHandler(
         imageFilename: image.filename,
         sidecar,
       });
+
+      // D-20: Auto-deliver to destination when set in extras
+      const destination = (job?.extras as Record<string, unknown> | null)?.destination as string | undefined;
+      if (destination && typeof destination === 'string') {
+        // D-19: Create destination directory recursively
+        await mkdir(dirname(destination), { recursive: true });
+        // D-17: Copy image to destination (both copies exist; artifact dir is source of truth)
+        await copyFile(join(artifactPath, image.filename), destination);
+        // D-18: Provenance sidecar stays in artifact dir only — NOT copied to destination
+        logger.info({ jobId, destination }, 'Asset delivered to destination');
+      }
 
       const outputMetadata: AssetOutputMetadata = {
         imageFilename: image.filename,

@@ -1,6 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NonRetriableError } from 'inngest';
 
+// Mock node:fs/promises for destination delivery tests
+vi.mock('node:fs/promises', () => ({
+  copyFile: vi.fn().mockResolvedValue(undefined),
+  mkdir: vi.fn().mockResolvedValue(undefined),
+  writeFile: vi.fn().mockResolvedValue(undefined),
+}));
+
 // Mock @get-cauldron/shared to avoid DATABASE_URL requirement
 vi.mock('@get-cauldron/shared', () => ({
   appendEvent: vi.fn().mockResolvedValue({}),
@@ -328,5 +335,52 @@ describe('generateAssetHandler', () => {
     expect(stepNames[1]).toBe('poll-completion');
     expect(stepNames[2]).toBe('collect-artifacts');
     expect(fakeStep.run).toHaveBeenCalledTimes(3);
+  });
+
+  it('Test 16 (D-20): copies image to extras.destination when set', async () => {
+    const destination = '/tmp/test-delivery/hero.png';
+    const jobWithDestination = { ...mockJob, extras: { destination } };
+    const { eventsModule, fakeStep } = await setupAndRun({ getAssetJobResult: jobWithDestination });
+
+    const fsMod = await import('node:fs/promises');
+    vi.mocked(fsMod.copyFile).mockResolvedValue(undefined);
+    vi.mocked(fsMod.mkdir).mockResolvedValue(undefined);
+
+    await eventsModule.generateAssetHandler({ event: makeEvent(), step: fakeStep as any });
+
+    expect(fsMod.mkdir).toHaveBeenCalledWith('/tmp/test-delivery', { recursive: true });
+    expect(fsMod.copyFile).toHaveBeenCalledWith(
+      `${ARTIFACT_PATH}/${IMAGE_FILENAME}`,
+      destination
+    );
+  });
+
+  it('Test 17 (D-18): does NOT copy sidecar to destination — only image is copied', async () => {
+    const destination = '/tmp/test-delivery/hero.png';
+    const jobWithDestination = { ...mockJob, extras: { destination } };
+    const { eventsModule, fakeStep } = await setupAndRun({ getAssetJobResult: jobWithDestination });
+
+    const fsMod = await import('node:fs/promises');
+    vi.mocked(fsMod.copyFile).mockResolvedValue(undefined);
+
+    await eventsModule.generateAssetHandler({ event: makeEvent(), step: fakeStep as any });
+
+    // Should be called exactly once (the image), not for the sidecar
+    expect(fsMod.copyFile).toHaveBeenCalledTimes(1);
+    const callArgs = vi.mocked(fsMod.copyFile).mock.calls[0]!;
+    expect(callArgs[1]).toBe(destination);
+    // Destination should not be a .meta.json path
+    expect(callArgs[1]).not.toContain('.meta.json');
+  });
+
+  it('Test 18: does NOT call copyFile when extras.destination is not set', async () => {
+    const { eventsModule, fakeStep } = await setupAndRun({ getAssetJobResult: mockJob });
+
+    const fsMod = await import('node:fs/promises');
+    vi.mocked(fsMod.copyFile).mockResolvedValue(undefined);
+
+    await eventsModule.generateAssetHandler({ event: makeEvent(), step: fakeStep as any });
+
+    expect(fsMod.copyFile).not.toHaveBeenCalled();
   });
 });
