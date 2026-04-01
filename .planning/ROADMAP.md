@@ -2,97 +2,56 @@
 
 ## Milestones
 
-- ✅ **v1.0 End-to-End Autonomous Builder** - Phases 1-17 shipped on 2018-03-28
-- 🚧 **v1.1 Local Asset Generation & Style-Aware Seeds** - Phases 18-21 planned
-
-## Overview
-
-Cauldron v1.0 already shipped, so this roadmap is scoped only to milestone v1.1 and continues phase numbering from 17. The milestone adds durable async asset jobs backed by a local FLUX.2 dev runtime, exposes them through a local MCP surface for apps and build agents, and closes by giving operators project-level controls plus end-to-end proof that the asset workflow delivers.
+- ✅ **v1.0 End-to-End Autonomous Builder** — Phases 1-17 (shipped 2026-03-28)
+- ✅ **v1.1 Local Asset Generation & Style-Aware Seeds** — Phases 18-21 (shipped 2026-04-01)
 
 ## Phases
 
-**Phase Numbering:**
-- Integer phases (18, 19, 20): Planned milestone work
-- Decimal phases (18.1, 18.2): Urgent insertions after planning
+<details>
+<summary>✅ v1.0 End-to-End Autonomous Builder (Phases 1-17) — SHIPPED 2026-03-28</summary>
 
-Decimal phases appear between their surrounding integers in numeric order.
+See `.planning/milestones/v1.0-ROADMAP.md` for full details.
 
-- [x] **Phase 18: Async Asset Engine** - Persist image generation as durable async jobs with observable lifecycle, retry, and artifact metadata (completed 2026-03-31)
-- [x] **Phase 19: Local Image MCP & App Delivery** - Expose local generation through a Cauldron-managed MCP surface and deliver completed assets into app workspaces (completed 2026-04-01)
-- [x] **Phase 20: Operator Controls & End-to-End Validation** - Add project-level runtime controls, budgets, and milestone-closing verification of the full asset path (completed 2026-04-01)
-- [x] **Phase 21: v1.1 Polish — Integration Wiring & Type Fixes** - Close minor integration gaps and tech debt from v1.1 audit (completed 2026-04-01)
+- [x] Phase 1: Foundation & Infrastructure
+- [x] Phase 2: LLM Gateway & Model Routing
+- [x] Phase 3: Socratic Interview & Seed Crystallization
+- [x] Phase 4: Cross-Model Holdout Testing
+- [x] Phase 5: DAG Decomposition & Dispatch
+- [x] Phase 6: Bead Execution Engine
+- [x] Phase 6.1: Bead Execution Hardening
+- [x] Phase 6.2: Execution Pipeline Wiring
+- [x] Phase 7: Evolution Loop
+- [x] Phase 8: Web Dashboard — Core Surfaces
+- [x] Phase 9: Web Dashboard — Execution & Evolution
+- [x] Phase 10: Web Dashboard — Cost & Settings
+- [x] Phase 11: CLI & Engine Wiring
+- [x] Phase 12: CLI Commands — Project & Interview
+- [x] Phase 13: CLI Commands — Seed, Holdout, Pipeline
+- [x] Phase 14: Dogfooding
+- [x] Phase 15: Release Readiness — CI, Docs, Polish
+- [x] Phase 16: Post-Audit Gap Closure
+- [x] Phase 17: Release Validation & Hardening
 
-## Phase Details
+</details>
 
-### Phase 18: Async Asset Engine
-**Goal**: Local image generation runs as a durable async job system rather than a blocking CLI or web request.
-**Depends on**: Phase 17
-**Requirements**: ASSET-01, ASSET-02, ASSET-03, ASSET-04, ASSET-05
-**Success Criteria** (what must be TRUE):
-  1. Starting a generation request returns a durable job handle immediately instead of waiting for the image to finish
-  2. Asset jobs persist and move through queued, running, succeeded, failed, and canceled states
-  3. Job progress and completion can be checked later from another CLI or web request without relying on the initiating session still being open
-  4. Completed and failed jobs retain prompt inputs, output metadata, artifact locations, and failure diagnostics for review and reuse
-  5. Retry and idempotency controls prevent duplicate submissions from triggering uncontrolled reruns
-**Plans:** 3/3 plans complete
+<details>
+<summary>✅ v1.1 Local Asset Generation & Style-Aware Seeds (Phases 18-21) — SHIPPED 2026-04-01</summary>
 
-Plans:
-- [x] 18-01-PLAN.md — Schema, types, and job-store DB operations
-- [x] 18-02-PLAN.md — ComfyUI adapter and artifact writer
-- [x] 18-03-PLAN.md — Inngest function wiring, docker-compose, and gitignore
+See `.planning/milestones/v1.1-ROADMAP.md` for full details.
 
-### Phase 19: Local Image MCP & App Delivery
-**Goal**: Apps and build agents consume local asset generation through a stable MCP contract and receive deliverable artifacts with provenance.
-**Depends on**: Phase 18
-**Requirements**: MCP-01, MCP-02, MCP-03, MCP-04
-**Success Criteria** (what must be TRUE):
-  1. Cauldron exposes a local image-generation MCP surface backed by the project-owned FLUX.2 dev runtime instead of direct app-level ComfyUI coupling
-  2. Apps and build agents can submit structured asset requests including prompt, style guidance, references, aspect or size, destination, and intended use
-  3. MCP responses return job identifiers and retrieval handles that fit the async asset workflow rather than blocking on image completion
-  4. Completed generations can be written into the target app workspace or a declared artifact directory with provenance metadata attached
-**Plans:** 3/3 plans complete
+- [x] Phase 18: Async Asset Engine (3 plans) — completed 2026-03-31
+- [x] Phase 19: Local Image MCP & App Delivery (3 plans) — completed 2026-04-01
+- [x] Phase 20: Operator Controls & E2E Validation (2 plans) — completed 2026-04-01
+- [x] Phase 21: v1.1 Polish — Integration Wiring & Type Fixes (1 plan) — completed 2026-04-01
 
-Plans:
-- [x] 19-01-PLAN.md — MCP package scaffold with types, defaults, project detector, and bootstrap
-- [x] 19-02-PLAN.md — Engine extensions: listAssetJobs query and artifact delivery to destination
-- [x] 19-03-PLAN.md — MCP server with 4 tools, resource subscription, and stdio entry point
-
-### Phase 20: Operator Controls & End-to-End Validation
-**Goal**: Operators can configure, constrain, and prove the full local asset workflow on a per-project basis.
-**Depends on**: Phase 19
-**Requirements**: OPS-01, OPS-02, OPS-03
-**Success Criteria** (what must be TRUE):
-  1. Project settings let an operator configure runtime paths, acquisition mode, and generation budgets without editing implementation internals
-  2. An operator can disable image generation entirely or enforce project-specific budget limits before jobs are accepted
-  3. End-to-end verification demonstrates the full path from style capture to seed persistence to async generation to delivered local assets
-**Plans:** 2/2 plans complete
-
-Plans:
-- [x] 20-01-PLAN.md — Asset settings types, enforcement logic, tRPC mutation, and CLI config command
-- [x] 20-02-PLAN.md — CLI verify command and E2E integration test
-
-### Phase 21: v1.1 Polish — Integration Wiring & Type Fixes
-**Goal**: Close minor integration gaps and tech debt from v1.1 audit: wire asset_job_submitted event, activate MCP push notifications, fix guidance_scale column type, and resolve template path for standalone packaging.
-**Depends on**: Phase 20
-**Requirements**: ASSET-02, ASSET-03, ASSET-04, MCP-03
-**Success Criteria** (what must be TRUE):
-  1. submitAssetJob appends asset_job_submitted event so SSE observers see job submission
-  2. MCP resource subscription push notifications fire after job state transitions
-  3. guidance_scale column stores float values without truncation
-  4. flux-dev.json template resolves correctly outside monorepo source tree
-**Plans:** 1/1 plans complete
-
-Plans:
-- [x] 21-01-PLAN.md — Wire submitted event, activate MCP push notifications, fix guidance_scale type, robust template path
+</details>
 
 ## Progress
 
-**Execution Order:**
-Phases execute in numeric order: 18 → 19 → 20 → 21
-
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 18. Async Asset Engine | 3/3 | Complete    | 2026-03-31 |
-| 19. Local Image MCP & App Delivery | 3/3 | Complete    | 2026-04-01 |
-| 20. Operator Controls & End-to-End Validation | 2/2 | Complete    | 2026-04-01 |
-| 21. v1.1 Polish — Integration Wiring & Type Fixes | 1/1 | Complete    | 2026-04-01 |
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 1-17 | v1.0 | 65/65 | Complete | 2026-03-28 |
+| 18. Async Asset Engine | v1.1 | 3/3 | Complete | 2026-03-31 |
+| 19. Local Image MCP & App Delivery | v1.1 | 3/3 | Complete | 2026-04-01 |
+| 20. Operator Controls & E2E Validation | v1.1 | 2/2 | Complete | 2026-04-01 |
+| 21. v1.1 Polish — Integration Wiring | v1.1 | 1/1 | Complete | 2026-04-01 |
