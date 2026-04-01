@@ -1,29 +1,35 @@
-CREATE TYPE "public"."interview_mode" AS ENUM('greenfield', 'brownfield');--> statement-breakpoint
-CREATE TYPE "public"."interview_status" AS ENUM('active', 'paused', 'completed', 'abandoned');--> statement-breakpoint
+-- interview_mode and interview_status were created in 0003_interview_seed_guard — skip if already exist
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'interview_mode') THEN
+  CREATE TYPE "public"."interview_mode" AS ENUM('greenfield', 'brownfield');
+END IF; END $$;--> statement-breakpoint
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'interview_status') THEN
+  CREATE TYPE "public"."interview_status" AS ENUM('active', 'paused', 'completed', 'abandoned');
+END IF; END $$;--> statement-breakpoint
 CREATE TYPE "public"."asset_job_status" AS ENUM('pending', 'claimed', 'active', 'completed', 'failed', 'canceled');--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'decomposition_started' BEFORE 'holdouts_sealed';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'decomposition_completed' BEFORE 'holdouts_sealed';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'decomposition_failed' BEFORE 'holdouts_sealed';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'bead_dispatched' BEFORE 'holdouts_sealed';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'bead_skipped' BEFORE 'holdouts_sealed';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'bead_merged' BEFORE 'gateway_call_completed';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'merge_reverted' BEFORE 'gateway_call_completed';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'merge_escalation_needed' BEFORE 'gateway_call_completed';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'conflict_resolved';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'evolution_lateral_thinking';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'evolution_escalated';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'evolution_halted';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'evolution_goal_met';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'execution_started';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'pipeline_trigger';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'asset_job_submitted';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'asset_job_active';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'asset_job_completed';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'asset_job_failed';--> statement-breakpoint
-ALTER TYPE "public"."event_type" ADD VALUE 'asset_job_canceled';--> statement-breakpoint
-ALTER TYPE "public"."holdout_status" ADD VALUE 'pending_review' BEFORE 'sealed';--> statement-breakpoint
-ALTER TYPE "public"."holdout_status" ADD VALUE 'approved' BEFORE 'sealed';--> statement-breakpoint
-CREATE TABLE "interviews" (
+-- event_type values below may already exist from migrations 0005-0011 — use IF NOT EXISTS
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'decomposition_started';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'decomposition_completed';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'decomposition_failed';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'bead_dispatched';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'bead_skipped';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'bead_merged';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'merge_reverted';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'merge_escalation_needed';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'conflict_resolved';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'evolution_lateral_thinking';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'evolution_escalated';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'evolution_halted';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'evolution_goal_met';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'execution_started';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'pipeline_trigger';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'asset_job_submitted';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'asset_job_active';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'asset_job_completed';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'asset_job_failed';--> statement-breakpoint
+ALTER TYPE "public"."event_type" ADD VALUE IF NOT EXISTS 'asset_job_canceled';--> statement-breakpoint
+ALTER TYPE "public"."holdout_status" ADD VALUE IF NOT EXISTS 'pending_review';--> statement-breakpoint
+ALTER TYPE "public"."holdout_status" ADD VALUE IF NOT EXISTS 'approved';--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "interviews" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"project_id" uuid NOT NULL,
 	"status" "interview_status" DEFAULT 'active' NOT NULL,
@@ -37,7 +43,7 @@ CREATE TABLE "interviews" (
 	"completed_at" timestamp with time zone
 );
 --> statement-breakpoint
-CREATE TABLE "asset_jobs" (
+CREATE TABLE IF NOT EXISTS "asset_jobs" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"project_id" uuid NOT NULL,
 	"status" "asset_job_status" DEFAULT 'pending' NOT NULL,
@@ -70,19 +76,37 @@ ALTER TABLE "holdout_vault" ALTER COLUMN "auth_tag" DROP NOT NULL;--> statement-
 ALTER TABLE "holdout_vault" ALTER COLUMN "status" SET DEFAULT 'pending_review';--> statement-breakpoint
 ALTER TABLE "holdout_vault" ALTER COLUMN "encrypted_at" DROP DEFAULT;--> statement-breakpoint
 ALTER TABLE "holdout_vault" ALTER COLUMN "encrypted_at" DROP NOT NULL;--> statement-breakpoint
-ALTER TABLE "projects" ADD COLUMN "deleted_at" timestamp with time zone;--> statement-breakpoint
-ALTER TABLE "seeds" ADD COLUMN "generation" integer DEFAULT 0 NOT NULL;--> statement-breakpoint
-ALTER TABLE "seeds" ADD COLUMN "evolution_context" jsonb;--> statement-breakpoint
-ALTER TABLE "beads" ADD COLUMN "version" integer DEFAULT 1 NOT NULL;--> statement-breakpoint
-ALTER TABLE "beads" ADD COLUMN "covers_criteria" jsonb DEFAULT '[]'::jsonb NOT NULL;--> statement-breakpoint
-ALTER TABLE "beads" ADD COLUMN "worktree_path" text;--> statement-breakpoint
-ALTER TABLE "beads" ADD COLUMN "worktree_branch" text;--> statement-breakpoint
-ALTER TABLE "holdout_vault" ADD COLUMN "draft_scenarios" jsonb;--> statement-breakpoint
-ALTER TABLE "holdout_vault" ADD COLUMN "results" jsonb;--> statement-breakpoint
-ALTER TABLE "holdout_vault" ADD COLUMN "evaluated_at" timestamp with time zone;--> statement-breakpoint
-ALTER TABLE "llm_usage" ADD COLUMN "seed_id" uuid;--> statement-breakpoint
-ALTER TABLE "interviews" ADD CONSTRAINT "interviews_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "projects" ADD COLUMN IF NOT EXISTS "deleted_at" timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "seeds" ADD COLUMN IF NOT EXISTS "generation" integer DEFAULT 0 NOT NULL;--> statement-breakpoint
+ALTER TABLE "seeds" ADD COLUMN IF NOT EXISTS "evolution_context" jsonb;--> statement-breakpoint
+ALTER TABLE "beads" ADD COLUMN IF NOT EXISTS "version" integer DEFAULT 1 NOT NULL;--> statement-breakpoint
+ALTER TABLE "beads" ADD COLUMN IF NOT EXISTS "covers_criteria" jsonb DEFAULT '[]'::jsonb NOT NULL;--> statement-breakpoint
+ALTER TABLE "beads" ADD COLUMN IF NOT EXISTS "worktree_path" text;--> statement-breakpoint
+ALTER TABLE "beads" ADD COLUMN IF NOT EXISTS "worktree_branch" text;--> statement-breakpoint
+ALTER TABLE "holdout_vault" ADD COLUMN IF NOT EXISTS "draft_scenarios" jsonb;--> statement-breakpoint
+ALTER TABLE "holdout_vault" ADD COLUMN IF NOT EXISTS "results" jsonb;--> statement-breakpoint
+ALTER TABLE "holdout_vault" ADD COLUMN IF NOT EXISTS "evaluated_at" timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "llm_usage" ADD COLUMN IF NOT EXISTS "seed_id" uuid;--> statement-breakpoint
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'interviews_project_id_projects_id_fk'
+  ) THEN
+    ALTER TABLE "interviews" ADD CONSTRAINT "interviews_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE no action ON UPDATE no action;
+  END IF;
+END $$;--> statement-breakpoint
 ALTER TABLE "asset_jobs" ADD CONSTRAINT "asset_jobs_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "seeds" ADD CONSTRAINT "seeds_interview_id_interviews_id_fk" FOREIGN KEY ("interview_id") REFERENCES "public"."interviews"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "llm_usage" ADD CONSTRAINT "llm_usage_seed_id_seeds_id_fk" FOREIGN KEY ("seed_id") REFERENCES "public"."seeds"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX "llm_usage_seed_id_idx" ON "llm_usage" USING btree ("seed_id");
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'seeds_interview_id_interviews_id_fk'
+  ) THEN
+    ALTER TABLE "seeds" ADD CONSTRAINT "seeds_interview_id_interviews_id_fk" FOREIGN KEY ("interview_id") REFERENCES "public"."interviews"("id") ON DELETE no action ON UPDATE no action;
+  END IF;
+END $$;--> statement-breakpoint
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'llm_usage_seed_id_seeds_id_fk'
+  ) THEN
+    ALTER TABLE "llm_usage" ADD CONSTRAINT "llm_usage_seed_id_seeds_id_fk" FOREIGN KEY ("seed_id") REFERENCES "public"."seeds"("id") ON DELETE no action ON UPDATE no action;
+  END IF;
+END $$;--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "llm_usage_seed_id_idx" ON "llm_usage" USING btree ("seed_id");
