@@ -1,9 +1,19 @@
 import { pgTable, uuid, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
 
+export type AssetMode = 'active' | 'paused' | 'disabled';
+
+export interface AssetSettings {
+  mode?: AssetMode;
+  runtimeUrl?: string;
+  artifactsRoot?: string;
+  maxConcurrentJobs?: number;
+}
+
 export interface ProjectSettings {
   models?: Partial<Record<string, string[]>>;
   budgetLimitCents?: number;
   maxConcurrentBeads?: number; // DAG-parallel: limit concurrent agent execution per project
+  asset?: AssetSettings;
 }
 
 export const projects = pgTable('projects', {

@@ -1,8 +1,78 @@
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and, desc, inArray, sql } from 'drizzle-orm';
 import { assetJobs, appendEvent, projects } from '@get-cauldron/shared';
 import type { DbClient } from '@get-cauldron/shared';
 import type { AssetJobParams, AssetJobHandle, AssetOutputMetadata, AssetJobStatus } from './types.js';
-import { AssetJobError } from './errors.js';
+import type { AssetMode } from '@get-cauldron/shared';
+import { AssetJobError, AssetModeDisabledError, AssetConcurrencyLimitError } from './errors.js';
+
+// ---- Enforcement functions ----
+
+/**
+ * Check the project-level asset mode setting.
+ * - Throws AssetModeDisabledError if mode is 'disabled'.
+ * - Returns 'paused' if mode is 'paused' — callers should queue the job but skip dispatch.
+ * - Returns 'active' (default) when mode is 'active' or unset.
+ *
+ * Follows the checkBudget() pattern from packages/engine/src/gateway/budget.ts.
+ */
+export async function checkAssetMode(
+  db: DbClient,
+  projectId: string,
+): Promise<AssetMode> {
+  const [row] = await db
+    .select({ settings: projects.settings })
+    .from(projects)
+    .where(eq(projects.id, projectId))
+    .limit(1);
+
+  const mode: AssetMode = (row?.settings as { asset?: { mode?: AssetMode } } | undefined)?.asset?.mode ?? 'active';
+
+  if (mode === 'disabled') {
+    throw new AssetModeDisabledError(projectId);
+  }
+
+  return mode;
+}
+
+/**
+ * Check the project-level asset concurrency limit.
+ * Throws AssetConcurrencyLimitError if the number of in-flight jobs (pending, claimed, active)
+ * meets or exceeds maxConcurrentJobs. Returns immediately if no limit is set.
+ *
+ * Follows the checkBudget() pattern from packages/engine/src/gateway/budget.ts.
+ */
+export async function checkAssetConcurrency(
+  db: DbClient,
+  projectId: string,
+): Promise<void> {
+  const [row] = await db
+    .select({ settings: projects.settings })
+    .from(projects)
+    .where(eq(projects.id, projectId))
+    .limit(1);
+
+  const maxConcurrentJobs = (row?.settings as { asset?: { maxConcurrentJobs?: number } } | undefined)?.asset?.maxConcurrentJobs;
+
+  if (maxConcurrentJobs === undefined || maxConcurrentJobs === null) {
+    return; // No limit configured
+  }
+
+  const [countResult] = await db
+    .select({ count: sql<number>`COUNT(*)::int` })
+    .from(assetJobs)
+    .where(
+      and(
+        eq(assetJobs.projectId, projectId),
+        inArray(assetJobs.status, ['pending', 'claimed', 'active']),
+      )
+    )
+    .limit(1);
+
+  const current = countResult?.count ?? 0;
+  if (current >= maxConcurrentJobs) {
+    throw new AssetConcurrencyLimitError(projectId, maxConcurrentJobs, current);
+  }
+}
 
 // ---- List query ----
 
