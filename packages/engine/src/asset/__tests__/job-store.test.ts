@@ -22,6 +22,7 @@ import {
   cancelJob,
   getAssetJob,
   appendAssetEvent,
+  listAssetJobs,
 } from '../job-store.js';
 import { AssetJobError } from '../errors.js';
 import type { AssetJobParams } from '../types.js';
@@ -485,5 +486,84 @@ describe('appendAssetEvent', () => {
         }),
       })
     );
+  });
+});
+
+describe('listAssetJobs', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  function makeJobWithProject(overrides: Partial<Record<string, unknown>> = {}) {
+    return {
+      job: makeJobRow(overrides),
+      projectName: 'Test Project',
+    };
+  }
+
+  function makeListMockDb(results: unknown[] = [makeJobWithProject()]) {
+    const queryBuilder = {
+      from: vi.fn().mockReturnThis(),
+      innerJoin: vi.fn().mockReturnThis(),
+      orderBy: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      offset: vi.fn().mockResolvedValue(results),
+      where: vi.fn().mockReturnThis(),
+    };
+
+    return {
+      select: vi.fn().mockReturnValue(queryBuilder),
+      _queryBuilder: queryBuilder,
+    } as unknown as Parameters<typeof listAssetJobs>[0];
+  }
+
+  it('returns paginated results with default limit=50 and offset=0', async () => {
+    const rows = [makeJobWithProject(), makeJobWithProject({ id: 'job-uuid-002' })];
+    const db = makeListMockDb(rows);
+    const result = await listAssetJobs(db);
+
+    expect(result).toHaveLength(2);
+    expect(result[0]).toHaveProperty('job');
+    expect(result[0]).toHaveProperty('projectName', 'Test Project');
+    expect((db as any).select).toHaveBeenCalled();
+    const qb = (db as any)._queryBuilder;
+    expect(qb.limit).toHaveBeenCalledWith(50);
+    expect(qb.offset).toHaveBeenCalledWith(0);
+  });
+
+  it('applies status filter when provided', async () => {
+    const completedRows = [makeJobWithProject({ status: 'completed' })];
+    const db = makeListMockDb(completedRows);
+    const result = await listAssetJobs(db, { status: 'completed' });
+
+    const qb = (db as any)._queryBuilder;
+    expect(qb.where).toHaveBeenCalled();
+    expect(result[0]!.job.status).toBe('completed');
+  });
+
+  it('forwards limit and offset options correctly', async () => {
+    const db = makeListMockDb([]);
+    await listAssetJobs(db, { limit: 10, offset: 5 });
+
+    const qb = (db as any)._queryBuilder;
+    expect(qb.limit).toHaveBeenCalledWith(10);
+    expect(qb.offset).toHaveBeenCalledWith(5);
+  });
+
+  it('does NOT apply where clause when no status filter provided', async () => {
+    const db = makeListMockDb([]);
+    await listAssetJobs(db, {});
+
+    const qb = (db as any)._queryBuilder;
+    expect(qb.where).not.toHaveBeenCalled();
+  });
+
+  it('includes innerJoin for project name and orders results', async () => {
+    const db = makeListMockDb([]);
+    await listAssetJobs(db);
+
+    const qb = (db as any)._queryBuilder;
+    expect(qb.innerJoin).toHaveBeenCalled();
+    expect(qb.orderBy).toHaveBeenCalled();
   });
 });

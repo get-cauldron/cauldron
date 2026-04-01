@@ -1,8 +1,52 @@
-import { eq, and } from 'drizzle-orm';
-import { assetJobs, appendEvent } from '@get-cauldron/shared';
+import { eq, and, desc } from 'drizzle-orm';
+import { assetJobs, appendEvent, projects } from '@get-cauldron/shared';
 import type { DbClient } from '@get-cauldron/shared';
-import type { AssetJobParams, AssetJobHandle, AssetOutputMetadata } from './types.js';
+import type { AssetJobParams, AssetJobHandle, AssetOutputMetadata, AssetJobStatus } from './types.js';
 import { AssetJobError } from './errors.js';
+
+// ---- List query ----
+
+export interface ListAssetJobsOptions {
+  status?: AssetJobStatus;
+  limit?: number;
+  offset?: number;
+}
+
+export interface AssetJobWithProject {
+  job: typeof assetJobs.$inferSelect;
+  projectName: string;
+}
+
+/**
+ * List asset jobs with optional status filter and pagination.
+ * Results include the owning project name via an inner join.
+ * Default: limit=50, offset=0, ordered by createdAt desc.
+ */
+export async function listAssetJobs(
+  db: DbClient,
+  options: ListAssetJobsOptions = {}
+): Promise<AssetJobWithProject[]> {
+  const { status, limit = 50, offset = 0 } = options;
+
+  // Build base query up to innerJoin + orderBy
+  const base = db
+    .select({
+      job: assetJobs,
+      projectName: projects.name,
+    })
+    .from(assetJobs)
+    .innerJoin(projects, eq(assetJobs.projectId, projects.id))
+    .orderBy(desc(assetJobs.createdAt));
+
+  // Apply optional status filter before pagination
+  const filtered = status
+    ? (base as unknown as { where: (cond: unknown) => typeof base }).where(eq(assetJobs.status, status))
+    : base;
+
+  return (filtered as unknown as { limit: (n: number) => { offset: (n: number) => Promise<AssetJobWithProject[]> } })
+    .limit(limit)
+    .offset(offset);
+}
 
 /**
  * Submit a new asset generation job.
