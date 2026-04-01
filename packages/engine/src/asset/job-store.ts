@@ -148,6 +148,12 @@ export async function submitAssetJob({
       })
       .returning();
 
+    await appendAssetEvent(db, {
+      projectId: params.projectId,
+      jobId: job!.id,
+      type: 'asset_job_submitted',
+    });
+
     return {
       jobId: job!.id,
       status: job!.status,

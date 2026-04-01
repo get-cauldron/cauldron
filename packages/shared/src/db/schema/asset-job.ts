@@ -1,4 +1,4 @@
-import { pgTable, pgEnum, uuid, text, timestamp, integer, jsonb, unique } from 'drizzle-orm/pg-core';
+import { pgTable, pgEnum, uuid, text, timestamp, integer, real, jsonb, unique } from 'drizzle-orm/pg-core';
 import { projects } from './project.js';
 
 export interface AssetOutputMetadata {
@@ -30,7 +30,7 @@ export const assetJobs = pgTable('asset_jobs', {
   height: integer('height'),
   seed: integer('seed'),
   steps: integer('steps'),
-  guidanceScale: integer('guidance_scale'),
+  guidanceScale: real('guidance_scale'),
   idempotencyKey: text('idempotency_key'),
   extras: jsonb('extras').$type<Record<string, unknown>>().default({}),
   outputMetadata: jsonb('output_metadata').$type<AssetOutputMetadata | null>(),

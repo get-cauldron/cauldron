@@ -1,0 +1,1 @@
+ALTER TABLE "asset_jobs" ALTER COLUMN "guidance_scale" SET DATA TYPE real;
