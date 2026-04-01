@@ -49,7 +49,12 @@ Plans:
   2. Apps and build agents can submit structured asset requests including prompt, style guidance, references, aspect or size, destination, and intended use
   3. MCP responses return job identifiers and retrieval handles that fit the async asset workflow rather than blocking on image completion
   4. Completed generations can be written into the target app workspace or a declared artifact directory with provenance metadata attached
-**Plans**: TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 19-01-PLAN.md — MCP package scaffold with types, defaults, project detector, and bootstrap
+- [ ] 19-02-PLAN.md — Engine extensions: listAssetJobs query and artifact delivery to destination
+- [ ] 19-03-PLAN.md — MCP server with 4 tools, resource subscription, and stdio entry point
 
 ### Phase 20: Operator Controls & End-to-End Validation
 **Goal**: Operators can configure, constrain, and prove the full local asset workflow on a per-project basis.
@@ -69,5 +74,5 @@ Phases execute in numeric order: 18 → 19 → 20
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 18. Async Asset Engine | 3/3 | Complete    | 2026-03-31 |
-| 19. Local Image MCP & App Delivery | 0/TBD | Not started | - |
+| 19. Local Image MCP & App Delivery | 0/3 | Not started | - |
 | 20. Operator Controls & End-to-End Validation | 0/TBD | Not started | - |
