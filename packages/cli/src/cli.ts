@@ -22,6 +22,7 @@ import { evolutionCommand } from './commands/evolution.js';
 import { runCommand } from './commands/run.js';
 import { webhookCommand } from './commands/webhook.js';
 import { logsCommand } from './commands/logs.js';
+import { configCommand } from './commands/config.js';
 
 const COMMANDS = [
   'health',
@@ -39,6 +40,7 @@ const COMMANDS = [
   'resolve',
   'run',
   'webhook',
+  'config',
 ] as const;
 
 type Command = (typeof COMMANDS)[number];
@@ -69,6 +71,7 @@ function printUsage(): void {
   console.log('');
   console.log(chalk.cyan('Management commands:'));
   console.log('  projects       Manage projects (list, create, archive)');
+  console.log('  config         Get or set project configuration');
   console.log('  kill           Stop a running pipeline for a project');
   console.log('  resolve        Manually resolve a stalled or failed bead');
   console.log('  health         Check local pre-execution prerequisites');
@@ -199,6 +202,9 @@ async function main(): Promise<void> {
       break;
     case 'webhook':
       await webhookCommand(client, commandArgs, flags);
+      break;
+    case 'config':
+      await configCommand(client, commandArgs, flags);
       break;
   }
 }

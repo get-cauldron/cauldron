@@ -137,6 +137,12 @@ export const projectsRouter = router({
           budgetLimitCents: z.number().optional(),
           maxConcurrentBeads: z.number().optional(),
           repoUrl: z.string().optional(),
+          asset: z.object({
+            mode: z.enum(['active', 'paused', 'disabled']).optional(),
+            runtimeUrl: z.string().optional(),
+            artifactsRoot: z.string().optional(),
+            maxConcurrentJobs: z.number().int().positive().optional(),
+          }).optional(),
         }),
       }),
     )
@@ -148,7 +154,13 @@ export const projectsRouter = router({
 
       if (!existing) throw new Error('Project not found');
 
-      const merged = { ...existing.settings, ...input.settings };
+      const merged = {
+        ...existing.settings,
+        ...input.settings,
+        ...(input.settings.asset !== undefined ? {
+          asset: { ...existing.settings?.asset, ...input.settings.asset },
+        } : {}),
+      };
 
       const [updated] = await ctx.db
         .update(projects)

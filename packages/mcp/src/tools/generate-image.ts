@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { submitAssetJob } from '@get-cauldron/engine';
+import { submitAssetJob, checkAssetMode, checkAssetConcurrency } from '@get-cauldron/engine';
 import { getDefaultsForUse, composePrompt } from '../defaults.js';
 import { INTENDED_USES } from '../types.js';
 import type { DbClient } from '@get-cauldron/shared';
@@ -37,6 +37,10 @@ export async function handleGenerateImage(
   const defaults = getDefaultsForUse(params.intendedUse);
   const composedPrompt = composePrompt(params.prompt, params.styleGuidance);
 
+  // Enforce project-level asset mode (D-02) and concurrency limit (D-05)
+  const mode = await checkAssetMode(deps.db, deps.projectId);
+  await checkAssetConcurrency(deps.db, deps.projectId);
+
   const handle = await submitAssetJob({
     db: deps.db,
     params: {
@@ -59,11 +63,15 @@ export async function handleGenerateImage(
     },
   });
 
-  // Fire Inngest event to trigger async generation (per D-05)
-  await deps.inngest.send({
-    name: 'asset/generate.requested',
-    data: { jobId: handle.jobId, projectId: deps.projectId },
-  });
+  // Only dispatch to executor when mode is active (per D-02: paused queues but doesn't dispatch)
+  if (mode === 'active') {
+    await deps.inngest.send({
+      name: 'asset/generate.requested',
+      data: { jobId: handle.jobId, projectId: deps.projectId },
+    });
+  } else {
+    deps.logger.info({ jobId: handle.jobId, mode }, 'generate-image: job queued but not dispatched (mode: paused)');
+  }
 
   deps.logger.info({ jobId: handle.jobId, duplicate: handle.duplicate }, 'generate-image: job submitted');
 

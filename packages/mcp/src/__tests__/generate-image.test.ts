@@ -2,9 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { handleGenerateImage } from '../tools/generate-image.js';
 import type { GenerateImageDeps } from '../tools/generate-image.js';
 
-// Mock @get-cauldron/engine
+// Mock @get-cauldron/engine — include enforcement functions added in plan 20-01
 vi.mock('@get-cauldron/engine', () => ({
   submitAssetJob: vi.fn(),
+  checkAssetMode: vi.fn().mockResolvedValue('active'),
+  checkAssetConcurrency: vi.fn().mockResolvedValue(undefined),
 }));
 
 import { submitAssetJob } from '@get-cauldron/engine';
