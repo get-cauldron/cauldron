@@ -39,8 +39,8 @@ Requirements for the local image-generation milestone. Each maps to roadmap phas
 
 ### Operator Controls & Verification
 
-- [ ] **OPS-01**: Project-level settings support configuring image runtime paths, acquisition mode, and generation budgets without hand-editing implementation internals
-- [ ] **OPS-02**: Operators can disable or budget-limit image generation per project
+- [x] **OPS-01**: Project-level settings support configuring image runtime paths, acquisition mode, and generation budgets without hand-editing implementation internals
+- [x] **OPS-02**: Operators can disable or budget-limit image generation per project
 - [x] **OPS-03**: End-to-end verification proves style capture -> seed persistence -> async generation -> asset delivery on a local runtime
 
 ## v1.2+ Requirements
@@ -96,8 +96,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MCP-02 | Phase 21 | Complete |
 | MCP-03 | Phase 21 | Complete |
 | MCP-04 | Phase 21 | Complete |
-| OPS-01 | Phase 22 | Pending |
-| OPS-02 | Phase 22 | Pending |
+| OPS-01 | Phase 22 | Complete |
+| OPS-02 | Phase 22 | Complete |
 | OPS-03 | Phase 22 | Complete |
 
 **Coverage:**

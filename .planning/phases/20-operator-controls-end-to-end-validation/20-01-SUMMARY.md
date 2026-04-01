@@ -153,6 +153,10 @@ None - no external service configuration required. Changes are TypeScript types,
 - `cauldron config set asset.mode active --project <id>` works end-to-end
 - Next plan can build on this by testing the enforcement gate in integration tests or wiring runtime health checks
 
+## Self-Check: PASSED
+
+All created files exist. Both task commits verified (339778f, 3c5af12). Metadata commit c55bfb3.
+
 ---
 *Phase: 20-operator-controls-end-to-end-validation*
 *Completed: 2026-04-01*
