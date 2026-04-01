@@ -32,7 +32,7 @@ Requirements for the local image-generation milestone. Each maps to roadmap phas
 
 ### Local Image MCP & App Delivery
 
-- [ ] **MCP-01**: Cauldron exposes a local image-generation MCP surface backed by the project-owned FLUX.2 dev runtime
+- [x] **MCP-01**: Cauldron exposes a local image-generation MCP surface backed by the project-owned FLUX.2 dev runtime
 - [x] **MCP-02**: Apps and build agents can request assets with structured inputs including prompt, style guidance, references, aspect/size, destination, and intended use
 - [x] **MCP-03**: MCP responses return job identifiers and retrieval handles suitable for async workflows
 - [x] **MCP-04**: Completed generations can be written into the target app workspace or a declared artifact directory with provenance metadata attached
@@ -92,7 +92,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ASSET-03 | Phase 18 | Complete |
 | ASSET-04 | Phase 18 | Complete |
 | ASSET-05 | Phase 18 | Complete |
-| MCP-01 | Phase 21 | Pending |
+| MCP-01 | Phase 21 | Complete |
 | MCP-02 | Phase 21 | Complete |
 | MCP-03 | Phase 21 | Complete |
 | MCP-04 | Phase 21 | Complete |
