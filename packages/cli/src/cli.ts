@@ -23,6 +23,7 @@ import { runCommand } from './commands/run.js';
 import { webhookCommand } from './commands/webhook.js';
 import { logsCommand } from './commands/logs.js';
 import { configCommand } from './commands/config.js';
+import { verifyCommand } from './commands/verify.js';
 
 const COMMANDS = [
   'health',
@@ -41,6 +42,7 @@ const COMMANDS = [
   'run',
   'webhook',
   'config',
+  'verify',
 ] as const;
 
 type Command = (typeof COMMANDS)[number];
@@ -75,6 +77,7 @@ function printUsage(): void {
   console.log('  kill           Stop a running pipeline for a project');
   console.log('  resolve        Manually resolve a stalled or failed bead');
   console.log('  health         Check local pre-execution prerequisites');
+  console.log('  verify         Verify local asset pipeline health');
   console.log('');
   console.log(chalk.cyan('Options:'));
   console.log('  --json         Output machine-readable JSON');
@@ -149,6 +152,12 @@ async function main(): Promise<void> {
   if (command === 'health') {
     const config = await loadCLIConfig(process.cwd());
     await healthCheck({ serverUrl: config.serverUrl });
+    return;
+  }
+
+  // Verify command uses bootstrap() directly — not tRPC
+  if (command === 'verify') {
+    await verifyCommand(commandArgs, flags);
     return;
   }
 
