@@ -185,4 +185,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-01 — Phase 19 complete: MCP server with 4 tools, asset job store, and artifact delivery. Local generation now consumable via stable MCP contract.*
+*Last updated: 2026-04-01 — Phase 20 complete (final phase of v1.1): Operator controls (mode enum, concurrency limits, CLI config), E2E verification of full asset pipeline with style/seed provenance. Milestone v1.1 "Local Asset Generation & Style-Aware Seeds" is complete.*
