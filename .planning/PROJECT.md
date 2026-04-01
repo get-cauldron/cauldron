@@ -185,4 +185,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-01 — Phase 20 complete (final phase of v1.1): Operator controls (mode enum, concurrency limits, CLI config), E2E verification of full asset pipeline with style/seed provenance. Milestone v1.1 "Local Asset Generation & Style-Aware Seeds" is complete.*
+*Last updated: 2026-04-01 — Phase 21 complete (v1.1 polish): Integration wiring gaps closed — asset_job_submitted event emission, MCP push notification callbacks, guidance_scale float column, robust template path resolution. Milestone v1.1 "Local Asset Generation & Style-Aware Seeds" is fully polished.*
