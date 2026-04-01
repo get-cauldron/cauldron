@@ -1,0 +1,32 @@
+{
+  "name": "@get-cauldron/mcp",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "MCP server for Cauldron asset generation",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": "./dist/index.js",
+  "files": ["dist/"],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@get-cauldron/engine": "workspace:*",
+    "@get-cauldron/shared": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "dotenv": "^16.4.0",
+    "drizzle-orm": "^0.45.1",
+    "inngest": "^4.1.0",
+    "pino": "^10.3.1",
+    "postgres": "^3.4.8",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.1"
+  }
+}
