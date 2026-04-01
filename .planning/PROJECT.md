@@ -8,9 +8,31 @@ Cauldron is an AI-powered software development platform that orchestrates multip
 
 The full pipeline works end-to-end: a user describes what they want, and Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves the software until it meets the goal — with humans steering at key decision points, not babysitting every step.
 
-## Current State: v1.1 Shipped
+## Current Milestone: v1.2 Architectural Hardening
 
-**Shipped:** 2026-04-01
+**Goal:** Fix race conditions, silent failures, data integrity gaps, and performance bottlenecks that will break under concurrency and growth.
+
+**Target features:**
+- Structured JSON extraction for merge conflict resolution
+- Event sequence uniqueness constraint per project
+- Events table indexes (project+sequence, project+timestamp)
+- N+1 query elimination in projects list
+- Seed version uniqueness constraint (parent_seed_id + version)
+- Enforced timeout supervisor (kill hung agents)
+- Holdout failure rollback after crystallization
+- Cascading deletes or soft-delete for foreign keys
+- Synchronous usage recording for budget accuracy
+- Optimistic locking on bead completion
+- KEK rotation infrastructure and audit trail
+- Auth middleware on tRPC routes
+- React error boundaries around DAGCanvas
+- Reverse-lookup index on bead_edges
+- MCP push notification architecture fix (cross-process IPC)
+
+## History
+
+### v1.1 Shipped (2026-04-01)
+
 **Phases completed:** 21 (plus 2 inserted: 6.1, 6.2)
 **Total plans:** 74
 
@@ -59,9 +81,25 @@ v1.0 delivered the complete autonomous builder pipeline. v1.1 added local asset 
 
 ### Active
 
-- Style-aware interview capturing visual direction as a first-class ambiguity dimension
-- Model acquisition UX (import from ComfyUI install or guided upstream download)
+- Structured merge conflict resolution with per-file JSON extraction
+- Event sourcing sequence uniqueness and events table indexes
+- Seed version uniqueness constraint for parallel evolution safety
+- Enforced timeout supervisor with agent process termination
+- Holdout failure rollback (no silent success after crystallization)
+- Cascading foreign key cleanup (eliminate orphan rows)
+- Synchronous usage recording for budget enforcement accuracy
+- Optimistic locking on bead completion (version-conditioned updates)
+- N+1 query elimination in projects list
+- KEK rotation infrastructure with audit trail
+- Auth middleware on tRPC routes (beyond context-level)
+- React error boundaries around DAGCanvas
+- Reverse-lookup index on bead_edges
 - MCP push notifications via IPC or shared-process architecture (v1.1 tech debt)
+
+### Deferred
+
+- Style-aware interview capturing visual direction as a first-class ambiguity dimension — v1.3
+- Model acquisition UX (import from ComfyUI install or guided upstream download) — v1.3
 
 ### Out of Scope
 
@@ -156,4 +194,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-01 after v1.1 milestone completion*
+*Last updated: 2026-04-01 after v1.2 milestone start*
