@@ -3,7 +3,7 @@
 ## Milestones
 
 - ✅ **v1.0 End-to-End Autonomous Builder** - Phases 1-17 shipped on 2018-03-28
-- 🚧 **v1.1 Local Asset Generation & Style-Aware Seeds** - Phases 18-20 planned
+- 🚧 **v1.1 Local Asset Generation & Style-Aware Seeds** - Phases 18-21 planned
 
 ## Overview
 
@@ -20,6 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 18: Async Asset Engine** - Persist image generation as durable async jobs with observable lifecycle, retry, and artifact metadata (completed 2026-03-31)
 - [x] **Phase 19: Local Image MCP & App Delivery** - Expose local generation through a Cauldron-managed MCP surface and deliver completed assets into app workspaces (completed 2026-04-01)
 - [x] **Phase 20: Operator Controls & End-to-End Validation** - Add project-level runtime controls, budgets, and milestone-closing verification of the full asset path (completed 2026-04-01)
+- [ ] **Phase 21: v1.1 Polish — Integration Wiring & Type Fixes** - Close minor integration gaps and tech debt from v1.1 audit
 
 ## Phase Details
 
@@ -70,13 +71,25 @@ Plans:
 - [x] 20-01-PLAN.md — Asset settings types, enforcement logic, tRPC mutation, and CLI config command
 - [x] 20-02-PLAN.md — CLI verify command and E2E integration test
 
+### Phase 21: v1.1 Polish — Integration Wiring & Type Fixes
+**Goal**: Close minor integration gaps and tech debt from v1.1 audit: wire asset_job_submitted event, activate MCP push notifications, fix guidance_scale column type, and resolve template path for standalone packaging.
+**Depends on**: Phase 20
+**Requirements**: ASSET-02, ASSET-03, ASSET-04, MCP-03
+**Success Criteria** (what must be TRUE):
+  1. submitAssetJob appends asset_job_submitted event so SSE observers see job submission
+  2. MCP resource subscription push notifications fire after job state transitions
+  3. guidance_scale column stores float values without truncation
+  4. flux-dev.json template resolves correctly outside monorepo source tree
+**Plans**: TBD
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 18 → 19 → 20
+Phases execute in numeric order: 18 → 19 → 20 → 21
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 18. Async Asset Engine | 3/3 | Complete    | 2026-03-31 |
 | 19. Local Image MCP & App Delivery | 3/3 | Complete    | 2026-04-01 |
 | 20. Operator Controls & End-to-End Validation | 2/2 | Complete    | 2026-04-01 |
+| 21. v1.1 Polish — Integration Wiring & Type Fixes | 0/TBD | Not started | - |
