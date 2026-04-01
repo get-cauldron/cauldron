@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Local Asset Generation & Style-Aware Seeds
-status: verifying
-stopped_at: Phase 19 context gathered
-last_updated: "2026-04-01T02:55:52.341Z"
-last_activity: 2026-03-31
+status: executing
+stopped_at: Completed 19-01-PLAN.md
+last_updated: "2026-04-01T03:50:42.229Z"
+last_activity: 2026-04-01
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 6
+  completed_plans: 4
   percent: 0
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** User describes what they want; Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves until the goal is met with humans steering at key decision points.
-**Current focus:** Phase 18 — Async Asset Engine
+**Current focus:** Phase 19 — local-image-mcp-app-delivery
 
 ## Current Position
 
-Phase: 19
-Plan: Not started
-Status: Phase complete — ready for verification
-Last activity: 2026-03-31
+Phase: 19 (local-image-mcp-app-delivery) — EXECUTING
+Plan: 2 of 3
+Status: Ready to execute
+Last activity: 2026-04-01
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -55,6 +55,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 18 P01 | 17 | 2 tasks | 8 files |
 | Phase 18-async-asset-engine P02 | 8 | 2 tasks | 5 files |
 | Phase 18-async-asset-engine P03 | 1010 | 2 tasks | 10 files |
+| Phase 19-local-image-mcp-app-delivery P01 | 12 | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -68,6 +69,9 @@ Progress: [░░░░░░░░░░] 0%
 - [Phase 18-async-asset-engine]: Numeric placeholders are quoted in JSON template and become unquoted after string replacement, preserving ComfyUI type expectations
 - [Phase 18-async-asset-engine]: Reused cauldron-engine Inngest client from holdout/events.ts to avoid multiple client instances
 - [Phase 18-async-asset-engine]: ComfyUI docker service has no profiles gate so it starts by default with docker compose up -d (D-06)
+- [Phase 19-local-image-mcp-app-delivery]: bin field uses string form in MCP package.json so 'npx @get-cauldron/mcp' resolves to entry point without named key (per D-06)
+- [Phase 19-local-image-mcp-app-delivery]: bootstrapMcp uses pino.destination({dest: 2}) for stderr-only logging — stdout is reserved as MCP JSON-RPC transport pipe
+- [Phase 19-local-image-mcp-app-delivery]: bootstrapMcp only wires asset deps (no LLM gateway, scheduler, vault, evolution) — MCP server is asset-only
 
 ### Pending Todos
 
@@ -79,6 +83,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-01T02:55:52.339Z
-Stopped at: Phase 19 context gathered
-Resume file: .planning/phases/19-local-image-mcp-app-delivery/19-CONTEXT.md
+Last session: 2026-04-01T03:50:42.226Z
+Stopped at: Completed 19-01-PLAN.md
+Resume file: None
