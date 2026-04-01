@@ -51,10 +51,24 @@ beforeEach(() => {
       getSeedLineage: { queryOptions: vi.fn().mockReturnValue({ queryKey: ['lineage'], queryFn: vi.fn() }) },
     },
     execution: {
+      getProjectDAG: {
+        queryOptions: vi.fn().mockReturnValue({ queryKey: ['dag'], queryFn: vi.fn() }),
+        queryFilter: vi.fn().mockReturnValue({ queryKey: ['dag'] }),
+      },
+      triggerDecomposition: { mutationOptions: vi.fn().mockReturnValue({ mutationFn: vi.fn() }) },
+      triggerExecution: { mutationOptions: vi.fn().mockReturnValue({ mutationFn: vi.fn() }) },
       respondToEscalation: { mutationOptions: vi.fn().mockReturnValue({ mutationFn: vi.fn() }) },
     },
   });
-  (useQuery as ReturnType<typeof vi.fn>).mockReturnValue({ data: [], isLoading: false });
+  // Distinguish the two useQuery calls by inspecting the queryKey.
+  // dagQuery (execution.getProjectDAG) → DAG shape; seedLineageQuery → array.
+  (useQuery as ReturnType<typeof vi.fn>).mockImplementation((opts: { queryKey?: unknown[] }) => {
+    const key = JSON.stringify(opts?.queryKey ?? []);
+    if (key.includes('dag')) {
+      return { data: { beads: [], seedId: null, edges: [] }, isLoading: false };
+    }
+    return { data: [], isLoading: false };
+  });
   (useMutation as ReturnType<typeof vi.fn>).mockReturnValue({ mutate: vi.fn(), isPending: false });
 });
 

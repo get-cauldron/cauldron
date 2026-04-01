@@ -43,14 +43,14 @@ export function selectActivePerspectives(
 ): PerspectiveName[] {
   // No previous scores (first turn) → broad exploration
   if (!previousScores || turnCount === 0) {
-    return ['researcher', 'breadth-keeper', 'simplifier'];
+    return ['researcher', 'simplifier', 'breadth-keeper'];
   }
 
   const { goalClarity, constraintClarity, successCriteriaClarity, overall } = previousScores;
 
-  // Early turns (overall < 0.4): researcher + breadth-keeper + simplifier
+  // Early turns (overall < 0.4): researcher + simplifier + breadth-keeper
   if (overall < 0.4) {
-    return ['researcher', 'breadth-keeper', 'simplifier'];
+    return ['researcher', 'simplifier', 'breadth-keeper'];
   }
 
   // Mid turns (0.4 <= overall < 0.7): architect + dimension-aware specialist perspectives
