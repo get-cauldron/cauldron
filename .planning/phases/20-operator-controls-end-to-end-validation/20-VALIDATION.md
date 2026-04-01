@@ -2,7 +2,7 @@
 phase: 20
 slug: operator-controls-end-to-end-validation
 status: draft
-nyquist_compliant: false
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-04-01
 ---
@@ -38,23 +38,20 @@ created: 2026-04-01
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 20-01-01 | 01 | 1 | OPS-01 | unit | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/settings-enforcement.test.ts` | ❌ W0 | ⬜ pending |
-| 20-01-02 | 01 | 1 | OPS-02 | unit | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/settings-enforcement.test.ts` | ❌ W0 | ⬜ pending |
-| 20-02-01 | 02 | 1 | OPS-01 | unit | `pnpm -F @get-cauldron/cli test -- src/commands/config.test.ts` | ❌ W0 | ⬜ pending |
-| 20-02-02 | 02 | 1 | OPS-01 | unit | `pnpm -F @get-cauldron/web test -- src/trpc/routers/projects.test.ts` | ❌ W0 | ⬜ pending |
-| 20-03-01 | 03 | 2 | OPS-03 | integration | `pnpm test:integration` | ❌ W0 | ⬜ pending |
-| 20-03-02 | 03 | 2 | OPS-03 | unit | `pnpm -F @get-cauldron/cli test -- src/commands/verify.test.ts` | ❌ W0 | ⬜ pending |
+| 20-01-01 | 01 | 1 | OPS-01 | unit | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/settings-enforcement.test.ts` | W0 | pending |
+| 20-01-02 | 01 | 1 | OPS-02 | unit + behavioral | `pnpm -F @get-cauldron/engine test -- src/asset/__tests__/settings-enforcement.test.ts && pnpm -F @get-cauldron/mcp test -- src/__tests__/generate-image-enforcement.test.ts` | W0 | pending |
+| 20-02-01 | 02 | 2 | OPS-03 | typecheck | `pnpm typecheck` | n/a | pending |
+| 20-02-02 | 02 | 2 | OPS-03 | integration | `pnpm test:integration -- src/asset/__tests__/e2e-pipeline.integration.test.ts` | W0 | pending |
 
-*Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
+*Status: pending / green / red / flaky*
 
 ---
 
 ## Wave 0 Requirements
 
 - [ ] `packages/engine/src/asset/__tests__/settings-enforcement.test.ts` — stubs for OPS-01/OPS-02 mode and concurrency enforcement
-- [ ] `packages/engine/src/asset/__tests__/e2e-pipeline.integration.test.ts` — stubs for OPS-03 full wiring path
-- [ ] `packages/cli/src/commands/config.test.ts` — stubs for `config set` key parsing and tRPC call
-- [ ] `packages/cli/src/commands/verify.test.ts` — stubs for `verify assets` output and exit codes
+- [ ] `packages/engine/src/asset/__tests__/e2e-pipeline.integration.test.ts` — stubs for OPS-03 full wiring path including style/seed provenance
+- [ ] `packages/mcp/src/__tests__/generate-image-enforcement.test.ts` — stubs for MCP enforcement wiring (active/paused/disabled mode branching)
 
 *Existing infrastructure covers test framework setup; only new test files needed.*
 
@@ -70,11 +67,11 @@ created: 2026-04-01
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 15s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 15s
+- [x] `nyquist_compliant: true` set in frontmatter
 
 **Approval:** pending
