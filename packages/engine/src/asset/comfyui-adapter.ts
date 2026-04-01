@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 import type { AssetExecutor, AssetJobParams, ExecutorOutputs } from './types.js';
 import { ComfyUIError } from './errors.js';
 import type { Logger } from 'pino';
@@ -11,16 +12,29 @@ import type { Logger } from 'pino';
  * Load the FLUX.2 dev workflow template from the shared package.
  * The template uses placeholder strings for variable substitution.
  *
- * The file is at packages/shared/src/workflows/flux-dev.json.
- * This file lives at packages/engine/src/asset/comfyui-adapter.ts,
- * so we resolve 3 levels up (src/asset -> src -> engine -> packages)
- * then down into shared/src/workflows/.
+ * Uses two resolution strategies to work both in the monorepo and when
+ * the engine is packaged as a standalone npm dependency:
+ *
+ * Strategy 1: Node module resolution via @get-cauldron/shared package.json.
+ *   Works when shared is a proper node_modules dependency (standalone packaging).
+ *
+ * Strategy 2: Monorepo-relative path fallback for development.
+ *   packages/engine/src/asset  →  ../../../shared/src/workflows/flux-dev.json
  */
 function loadWorkflowTemplate(): string {
-  const __dirname = dirname(fileURLToPath(import.meta.url));
-  // packages/engine/src/asset  →  ../../../shared/src/workflows/flux-dev.json
-  const templatePath = resolve(__dirname, '../../../shared/src/workflows/flux-dev.json');
-  return readFileSync(templatePath, 'utf-8');
+  // Strategy 1: resolve via Node module system (works in standalone installs)
+  try {
+    const require = createRequire(import.meta.url);
+    const sharedPath = require.resolve('@get-cauldron/shared/package.json');
+    const sharedRoot = dirname(sharedPath);
+    const templatePath = resolve(sharedRoot, 'src/workflows/flux-dev.json');
+    return readFileSync(templatePath, 'utf-8');
+  } catch {
+    // Strategy 2: monorepo-relative path (dev environment)
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const templatePath = resolve(__dirname, '../../../shared/src/workflows/flux-dev.json');
+    return readFileSync(templatePath, 'utf-8');
+  }
 }
 
 /**

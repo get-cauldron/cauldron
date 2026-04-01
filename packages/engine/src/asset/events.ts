@@ -24,6 +24,12 @@ interface AssetDeps {
   logger: Logger;
   executor: AssetExecutor;
   artifactsRoot: string;
+  /**
+   * Optional callback fired after each job state transition.
+   * Callers (e.g. MCP server) can wire notifyJobStatusChanged here
+   * so push notifications reach subscribed MCP clients.
+   */
+  onJobStatusChanged?: (jobId: string) => void;
 }
 
 let assetDeps: AssetDeps | null = null;
@@ -100,7 +106,7 @@ export async function generateAssetHandler(
   pollInterval: number = DEFAULT_POLL_INTERVAL
 ): Promise<{ jobId: string; status: string }> {
   const { jobId, projectId } = event.data;
-  const { db, logger, executor, artifactsRoot } = getAssetDepsOrThrow();
+  const { db, logger, executor, artifactsRoot, onJobStatusChanged } = getAssetDepsOrThrow();
 
   // Track version across steps for optimistic concurrency
   let currentVersion = 0;
@@ -143,6 +149,7 @@ export async function generateAssetHandler(
         type: 'asset_job_active',
         extra: { comfyuiPromptId: promptId },
       });
+      onJobStatusChanged?.(jobId);
 
       logger.info({ jobId, comfyuiPromptId: promptId }, 'Asset job submitted to ComfyUI');
       return promptId;
@@ -150,6 +157,7 @@ export async function generateAssetHandler(
       const message = err instanceof Error ? err.message : String(err);
       await failJob(db, jobId, currentVersion, message);
       await appendAssetEvent(db, { projectId, jobId, type: 'asset_job_failed', extra: { reason: message } });
+      onJobStatusChanged?.(jobId);
       throw err;
     }
   });
@@ -162,6 +170,7 @@ export async function generateAssetHandler(
       const message = err instanceof Error ? err.message : String(err);
       await failJob(db, jobId, currentVersion, message);
       await appendAssetEvent(db, { projectId, jobId, type: 'asset_job_failed', extra: { reason: message } });
+      onJobStatusChanged?.(jobId);
       throw err;
     }
   });
@@ -243,12 +252,14 @@ export async function generateAssetHandler(
         type: 'asset_job_completed',
         extra: { artifactPath, imageFilename: image.filename },
       });
+      onJobStatusChanged?.(jobId);
 
       logger.info({ jobId, artifactPath }, 'Asset generation completed');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
       await failJob(db, jobId, currentVersion, message);
       await appendAssetEvent(db, { projectId, jobId, type: 'asset_job_failed', extra: { reason: message } });
+      onJobStatusChanged?.(jobId);
       throw err;
     }
   });

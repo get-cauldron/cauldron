@@ -5,7 +5,7 @@ import { registerGenerateImageTool } from './tools/generate-image.js';
 import { registerCheckJobStatusTool } from './tools/check-job-status.js';
 import { registerGetArtifactTool } from './tools/get-artifact.js';
 import { registerListJobsTool } from './tools/list-jobs.js';
-import { registerJobStatusResource } from './resources/job-status.js';
+import { registerJobStatusResource, notifyJobStatusChanged } from './resources/job-status.js';
 
 export interface McpServerDeps {
   db: DbClient;
@@ -27,4 +27,21 @@ export function createMcpServer(deps: McpServerDeps): McpServer {
   registerJobStatusResource(server, { db: deps.db });
 
   return server;
+}
+
+/**
+ * Create a job status notification callback bound to a running McpServer.
+ * Pass the returned function to configureAssetDeps as `onJobStatusChanged` so
+ * Inngest handlers can fire MCP push notifications after job state transitions
+ * without taking a direct dependency on the MCP server package.
+ *
+ * @example
+ * ```typescript
+ * const server = createMcpServer(deps);
+ * const notifier = createJobStatusNotifier(server);
+ * configureAssetDeps({ ...assetDeps, onJobStatusChanged: notifier });
+ * ```
+ */
+export function createJobStatusNotifier(server: McpServer): (jobId: string) => void {
+  return (jobId: string) => notifyJobStatusChanged(server, jobId);
 }
