@@ -77,12 +77,33 @@ Replaced the hard-coded monorepo-relative `__dirname` path in `packages/engine/s
 
 - `pnpm typecheck` — 7/7 tasks successful
 - `pnpm build` — 5/5 tasks successful
-- `pnpm test` — pre-existing failures in `perspectives.test.ts` (array ordering) and web `ExecutionPage` (tRPC mock) confirmed to exist before this plan; no regressions introduced
+- `pnpm test` — 7/7 tasks successful, all 463 engine tests + 153 web tests pass
 - All grep acceptance criteria confirmed
 
 ## Deviations from Plan
 
-None — plan executed exactly as written.
+### Auto-fixed Issues
+
+**1. [Rule 1 - Bug] Fixed selectActivePerspectives early-turn ordering**
+- **Found during:** Post-task test run
+- **Issue:** `perspectives.ts` returned `['researcher', 'breadth-keeper', 'simplifier']` for early turns (both null-scores and overall < 0.4 paths); tests specified `['researcher', 'simplifier', 'breadth-keeper']` per the D-12 spec
+- **Fix:** Swapped `simplifier` and `breadth-keeper` in both early-turn return statements
+- **Files modified:** `packages/engine/src/interview/perspectives.ts`
+- **Commit:** 35caec1
+
+**2. [Rule 1 - Bug] Fixed MergeQueue D-18 violation — removeWorktree called on failure**
+- **Found during:** Post-task test run
+- **Issue:** `revertMerge()` called `this.worktreeManager.removeWorktree(entry.beadId)` after reverting a failed post-merge test run, directly violating D-18 ("Worktree retained on failure") and causing the test "failed merges retain worktree — removeWorktree NOT called" to fail
+- **Fix:** Removed the `removeWorktree` call and the surrounding try/catch from `revertMerge`; clarified comment that D-18 intentionally retains the worktree for developer inspection
+- **Files modified:** `packages/engine/src/execution/merge-queue.ts`
+- **Commit:** 35caec1
+
+**3. [Rule 1 - Bug] Fixed execution-page test mock missing tRPC procedures**
+- **Found during:** Post-task test run
+- **Issue:** `execution-page.test.tsx` mocked `useTRPC` but omitted `execution.getProjectDAG`, `execution.triggerDecomposition`, and `execution.triggerExecution` — all three are called by `ExecutionPage`. The `useQuery` mock also returned a flat array where the DAG query expects `{ beads, seedId, edges }`
+- **Fix:** Added all three missing procedures to the `useTRPC` mock; replaced `mockReturnValue` with `mockImplementation` that inspects the `queryKey` to return the correct data shape per query
+- **Files modified:** `packages/web/src/__tests__/pages/execution-page.test.tsx`
+- **Commit:** 35caec1
 
 ## Known Stubs
 
@@ -96,4 +117,5 @@ None — all four integration gaps are fully wired. The `onJobStatusChanged` cal
 - `packages/mcp/src/server.ts` — FOUND, contains `createJobStatusNotifier`
 - `packages/engine/src/asset/comfyui-adapter.ts` — FOUND, contains `createRequire`
 - `packages/shared/src/db/migrations/0014_strange_gamma_corps.sql` — FOUND
-- Commits 759ac4e and b4218fd — FOUND in git log
+- Commits 759ac4e, b4218fd, 35caec1 — FOUND in git log
+- `pnpm test` — all 7 tasks green, 0 failures
