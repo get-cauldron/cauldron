@@ -52,7 +52,7 @@ See `.planning/milestones/v1.1-ROADMAP.md` for full details.
 **Milestone Goal:** Close the 15 documented race conditions, silent failures, data integrity gaps, and performance bottlenecks in the v1.1 system before the platform handles parallel agent workloads at scale.
 
 - [x] **Phase 22: Schema Migrations — Integrity Indexes** - Add uniqueness constraints and composite indexes as pure additive migrations (completed 2026-04-02)
-- [ ] **Phase 23: FK Cascade Strategy** - Assign CASCADE or SET NULL per foreign key relationship based on structural vs. audit table classification
+- [x] **Phase 23: FK Cascade Strategy** - Assign CASCADE or SET NULL per foreign key relationship based on structural vs. audit table classification (completed 2026-04-02)
 - [ ] **Phase 24: Concurrency & Performance** - Enforce optimistic locking on bead completion, synchronous usage recording, and N+1 query elimination
 - [ ] **Phase 25: Process Reliability & Transactions** - Enforce two-phase timeout kill, transactional holdout failure rollback, and DAGCanvas error boundary
 - [ ] **Phase 26: Auth Middleware** - Wire authenticatedProcedure to all tRPC mutation routes
@@ -84,10 +84,10 @@ Plans:
   1. Deleting a project cascades to beads, bead_edges, holdout_vault, and asset_jobs — no orphan structural rows remain after project deletion
   2. Deleting a project sets project_id to NULL on llm_usage and events rows — cost history and event logs survive and remain queryable
   3. An integration test asserts that llm_usage and events row counts are unchanged after a project is deleted
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [x] 23-01-PLAN.md — Hand-crafted FK migration (0017) + Drizzle schema updates for all 8 tables
-- [ ] 23-02-PLAN.md — Integration tests proving CASCADE and SET NULL behaviors
+- [x] 23-02-PLAN.md — Integration tests proving CASCADE and SET NULL behaviors
 
 ### Phase 24: Concurrency & Performance
 **Goal**: Bead state transitions are race-condition safe, budget enforcement reflects actual spend, and the projects list loads in a single query regardless of project count
@@ -161,7 +161,7 @@ Plans:
 | 20. Operator Controls & E2E Validation | v1.1 | 2/2 | Complete | 2026-04-01 |
 | 21. v1.1 Polish — Integration Wiring | v1.1 | 1/1 | Complete | 2026-04-01 |
 | 22. Schema Migrations — Integrity Indexes | v1.2 | 1/2 | Complete    | 2026-04-02 |
-| 23. FK Cascade Strategy | v1.2 | 1/2 | In Progress|  |
+| 23. FK Cascade Strategy | v1.2 | 2/2 | Complete   | 2026-04-02 |
 | 24. Concurrency & Performance | v1.2 | 0/? | Not started | - |
 | 25. Process Reliability & Transactions | v1.2 | 0/? | Not started | - |
 | 26. Auth Middleware | v1.2 | 0/? | Not started | - |
