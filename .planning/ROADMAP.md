@@ -51,7 +51,7 @@ See `.planning/milestones/v1.1-ROADMAP.md` for full details.
 
 **Milestone Goal:** Close the 15 documented race conditions, silent failures, data integrity gaps, and performance bottlenecks in the v1.1 system before the platform handles parallel agent workloads at scale.
 
-- [ ] **Phase 22: Schema Migrations — Integrity Indexes** - Add uniqueness constraints and composite indexes as pure additive migrations
+- [x] **Phase 22: Schema Migrations — Integrity Indexes** - Add uniqueness constraints and composite indexes as pure additive migrations (completed 2026-04-02)
 - [ ] **Phase 23: FK Cascade Strategy** - Assign CASCADE or SET NULL per foreign key relationship based on structural vs. audit table classification
 - [ ] **Phase 24: Concurrency & Performance** - Enforce optimistic locking on bead completion, synchronous usage recording, and N+1 query elimination
 - [ ] **Phase 25: Process Reliability & Transactions** - Enforce two-phase timeout kill, transactional holdout failure rollback, and DAGCanvas error boundary
@@ -71,7 +71,7 @@ See `.planning/milestones/v1.1-ROADMAP.md` for full details.
   2. Event queries by project + sequence and project + occurred_at use index scans — no full-table scans on the events table
   3. Inserting a second seed with the same parent_seed_id + version raises a constraint violation — parallel evolution workers cannot race on version numbers
   4. DAG traversal from target bead back to source uses the reverse-lookup index on bead_edges — reverse direction queries do not scan the full table
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [x] 22-01-PLAN.md — Schema declarations, migrations (0015 cleanup + 0016 constraints), appendEvent retry
 - [ ] 22-02-PLAN.md — Integration tests proving all DATA-01 through DATA-04 constraints
@@ -157,7 +157,7 @@ Plans:
 | 19. Local Image MCP & App Delivery | v1.1 | 3/3 | Complete | 2026-04-01 |
 | 20. Operator Controls & E2E Validation | v1.1 | 2/2 | Complete | 2026-04-01 |
 | 21. v1.1 Polish — Integration Wiring | v1.1 | 1/1 | Complete | 2026-04-01 |
-| 22. Schema Migrations — Integrity Indexes | v1.2 | 1/2 | In Progress|  |
+| 22. Schema Migrations — Integrity Indexes | v1.2 | 1/2 | Complete    | 2026-04-02 |
 | 23. FK Cascade Strategy | v1.2 | 0/? | Not started | - |
 | 24. Concurrency & Performance | v1.2 | 0/? | Not started | - |
 | 25. Process Reliability & Transactions | v1.2 | 0/? | Not started | - |

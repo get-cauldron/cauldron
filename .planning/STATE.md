@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: Local Asset Generation & Style-Aware Seeds
+milestone: v1.2
+milestone_name: Architectural Hardening
 status: planning
 stopped_at: Completed 22-02-PLAN.md
-last_updated: "2026-04-02T01:18:49.367Z"
-last_activity: 2026-03-31 — Created the v1.1 roadmap for Phases 18-22
+last_updated: "2026-04-02T01:22:45.064Z"
+last_activity: 2026-04-02
 progress:
-  total_phases: 5
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 1
+  total_phases: 8
+  completed_phases: 1
+  total_plans: 2
+  completed_plans: 2
   percent: 0
 ---
 
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 
 ## Current Position
 
-Phase: 18 of 22 (Style Contract & Seed Evolution)
-Plan: Not planned yet
+Phase: 23 of 22 (fk cascade strategy)
+Plan: Not started
 Status: Ready to plan
-Last activity: 2026-03-31 — Created the v1.1 roadmap for Phases 18-22
+Last activity: 2026-04-02
 
 Progress: [░░░░░░░░░░] 0%
 
