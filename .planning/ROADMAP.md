@@ -133,7 +133,9 @@ Plans:
   1. A conflict resolution response that fails Zod validation throws AI_NoObjectGeneratedError — the merge operation fails explicitly rather than writing malformed content
   2. The confidence field on each resolved file is a typed enum value (high or low) — string-scanning for "confidence" substrings is eliminated
   3. Resolved file contents are structured objects with path and resolved_content fields — no raw LLM prose is written directly to source files
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 27-01-PLAN.md — Replace generateText with generateObject + Zod schema in resolveConflict
 
 ### Phase 28: KEK Rotation Infrastructure
 **Goal**: A KEK compromise can be responded to by rotating to a new key and re-encrypting all DEKs, with a complete audit trail and no disruption to in-flight holdout evaluations
@@ -170,6 +172,6 @@ Plans:
 | 24. Concurrency & Performance | v1.2 | 1/2 | Complete    | 2026-04-02 |
 | 25. Process Reliability & Transactions | v1.2 | 2/2 | Complete    | 2026-04-02 |
 | 26. Auth Middleware | v1.2 | 0/1 | Complete    | 2026-04-02 |
-| 27. Structured Conflict Resolution | v1.2 | 0/? | Not started | - |
+| 27. Structured Conflict Resolution | v1.2 | 0/1 | Not started | - |
 | 28. KEK Rotation Infrastructure | v1.2 | 0/? | Not started | - |
 | 29. MCP Cross-Process IPC | v1.2 | 0/? | Not started | - |
