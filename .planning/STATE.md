@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** User describes what they want; Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves until the goal is met with humans steering at key decision points.
-**Current focus:** Phase 26 — Auth Middleware
+**Current focus:** Phase 27 — Structured Conflict Resolution
 
 ## Current Position
 
-Phase: 27
-Plan: Not started
-Status: Executing Phase 26
-Last activity: 2026-04-02
+Phase: 27 (Structured Conflict Resolution) — EXECUTING
+Plan: 1 of 1
+Status: Executing Phase 27
+Last activity: 2026-04-02 -- Phase 27 execution started
 
 Progress: [░░░░░░░░░░] 0%
 
