@@ -32,6 +32,12 @@ vi.mock('../artifact-writer.js', () => ({
   writeArtifact: vi.fn(),
 }));
 
+// Mock ipc-publisher to prevent Redis connections in tests
+vi.mock('../ipc-publisher.js', () => ({
+  configurePublisher: vi.fn(),
+  publishJobStatusChanged: vi.fn().mockResolvedValue(undefined),
+}));
+
 // Mock holdout/events to avoid second Inngest client creation issues
 vi.mock('../../holdout/events.js', async () => {
   const { Inngest } = await import('inngest');
@@ -382,5 +388,14 @@ describe('generateAssetHandler', () => {
     await eventsModule.generateAssetHandler({ event: makeEvent(), step: fakeStep as any });
 
     expect(fsMod.copyFile).not.toHaveBeenCalled();
+  });
+
+  it('Test 19: calls publishJobStatusChanged after job completion (cross-process IPC)', async () => {
+    const { eventsModule, fakeStep } = await setupAndRun();
+    const ipcPublisher = await import('../ipc-publisher.js');
+
+    await eventsModule.generateAssetHandler({ event: makeEvent(), step: fakeStep as any });
+
+    expect(ipcPublisher.publishJobStatusChanged).toHaveBeenCalledWith(JOB_ID);
   });
 });

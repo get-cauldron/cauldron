@@ -23,6 +23,7 @@ import {
   configureVaultDeps,
   configureEvolutionDeps,
   configureAssetDeps,
+  configurePublisher,
   createComfyUIExecutor,
 } from '@get-cauldron/engine';
 import type { GatewayConfig } from '@get-cauldron/engine';
@@ -67,6 +68,9 @@ export async function bootstrap(projectRoot: string): Promise<BootstrapDeps> {
   const artifactsRoot = resolve(projectRoot, '.cauldron', 'artifacts');
   const executor = createComfyUIExecutor({ baseUrl: comfyuiUrl, logger });
   configureAssetDeps({ db, logger, executor, artifactsRoot });
+
+  const redisUrl = process.env['REDIS_URL'] ?? 'redis://localhost:6379';
+  configurePublisher(redisUrl, logger);
 
   return { db, gateway, inngest, logger, config };
 }

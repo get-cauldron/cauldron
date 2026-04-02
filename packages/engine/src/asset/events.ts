@@ -14,6 +14,7 @@ import {
   appendAssetEvent,
 } from './job-store.js';
 import { writeArtifact } from './artifact-writer.js';
+import { publishJobStatusChanged } from './ipc-publisher.js';
 
 /**
  * Module-level dependencies for the asset event handlers.
@@ -150,6 +151,7 @@ export async function generateAssetHandler(
         extra: { comfyuiPromptId: promptId },
       });
       onJobStatusChanged?.(jobId);
+      await publishJobStatusChanged(jobId);
 
       logger.info({ jobId, comfyuiPromptId: promptId }, 'Asset job submitted to ComfyUI');
       return promptId;
@@ -158,6 +160,7 @@ export async function generateAssetHandler(
       await failJob(db, jobId, currentVersion, message);
       await appendAssetEvent(db, { projectId, jobId, type: 'asset_job_failed', extra: { reason: message } });
       onJobStatusChanged?.(jobId);
+      await publishJobStatusChanged(jobId);
       throw err;
     }
   });
@@ -171,6 +174,7 @@ export async function generateAssetHandler(
       await failJob(db, jobId, currentVersion, message);
       await appendAssetEvent(db, { projectId, jobId, type: 'asset_job_failed', extra: { reason: message } });
       onJobStatusChanged?.(jobId);
+      await publishJobStatusChanged(jobId);
       throw err;
     }
   });
@@ -253,6 +257,7 @@ export async function generateAssetHandler(
         extra: { artifactPath, imageFilename: image.filename },
       });
       onJobStatusChanged?.(jobId);
+      await publishJobStatusChanged(jobId);
 
       logger.info({ jobId, artifactPath }, 'Asset generation completed');
     } catch (err: unknown) {
@@ -260,6 +265,7 @@ export async function generateAssetHandler(
       await failJob(db, jobId, currentVersion, message);
       await appendAssetEvent(db, { projectId, jobId, type: 'asset_job_failed', extra: { reason: message } });
       onJobStatusChanged?.(jobId);
+      await publishJobStatusChanged(jobId);
       throw err;
     }
   });
