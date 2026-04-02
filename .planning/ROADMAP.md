@@ -166,7 +166,7 @@ Plans:
 | 22. Schema Migrations — Integrity Indexes | v1.2 | 1/2 | Complete    | 2026-04-02 |
 | 23. FK Cascade Strategy | v1.2 | 2/2 | Complete    | 2026-04-02 |
 | 24. Concurrency & Performance | v1.2 | 1/2 | Complete    | 2026-04-02 |
-| 25. Process Reliability & Transactions | v1.2 | 0/? | Not started | - |
+| 25. Process Reliability & Transactions | v1.2 | 1/2 | In Progress|  |
 | 26. Auth Middleware | v1.2 | 0/? | Not started | - |
 | 27. Structured Conflict Resolution | v1.2 | 0/? | Not started | - |
 | 28. KEK Rotation Infrastructure | v1.2 | 0/? | Not started | - |
