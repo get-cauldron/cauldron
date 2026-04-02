@@ -1,15 +1,17 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.1
-milestone_name: local-asset-generation-style-aware-seeds
-status: Ready to plan
-stopped_at: Roadmap created for milestone v1.1
-last_updated: "2026-03-31T23:59:00.000Z"
+milestone_name: Local Asset Generation & Style-Aware Seeds
+status: planning
+stopped_at: Completed 22-02-PLAN.md
+last_updated: "2026-04-02T01:18:49.367Z"
+last_activity: 2026-03-31 — Created the v1.1 roadmap for Phases 18-22
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 0
-  completed_plans: 0
+  completed_plans: 1
+  percent: 0
 ---
 
 # Project State
@@ -33,6 +35,7 @@ Progress: [░░░░░░░░░░] 0%
 ## Performance Metrics
 
 **Velocity:**
+
 - Total plans completed: 65 (v1.0 shipped)
 - Average duration: Historical v1.0 data preserved in archived phase summaries
 - Total execution time: Historical v1.0 data preserved in archived phase summaries
@@ -45,6 +48,7 @@ Progress: [░░░░░░░░░░] 0%
 | 18-22 (v1.1) | 0 | - | - |
 
 **Recent Trend:**
+
 - Last 5 plans: Historical v1.0 data
 - Trend: Reset for new milestone
 
@@ -56,6 +60,7 @@ Progress: [░░░░░░░░░░] 0%
 - Acquisition must support both import-from-existing ComfyUI and guided upstream download
 - Style clarity is a seed-quality concern, so low visual clarity should keep the interview open
 - Image generation remains async-only and apps consume it through a local MCP surface
+- [Phase 22]: Tests query pg_indexes and information_schema.table_constraints directly to verify DB-level constraint/index existence independent of Drizzle schema state
 
 ### Pending Todos
 
@@ -69,6 +74,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-31
-Stopped at: Roadmap created for milestone v1.1; next step is planning Phase 18
+Last session: 2026-04-02T01:18:46.399Z
+Stopped at: Completed 22-02-PLAN.md
 Resume file: None
