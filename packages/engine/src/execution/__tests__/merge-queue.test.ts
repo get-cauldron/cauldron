@@ -316,7 +316,7 @@ describe('MergeQueue', () => {
         message: 'Failed to generate valid object',
         text: undefined,
         response: { id: 'test', timestamp: new Date(), modelId: 'test-model' },
-        usage: { promptTokens: 0, completionTokens: 0 },
+        usage: { inputTokens: 0, outputTokens: 0 },
         finishReason: 'error',
       })
     );
