@@ -55,7 +55,7 @@ See `.planning/milestones/v1.1-ROADMAP.md` for full details.
 - [x] **Phase 23: FK Cascade Strategy** - Assign CASCADE or SET NULL per foreign key relationship based on structural vs. audit table classification (completed 2026-04-02)
 - [x] **Phase 24: Concurrency & Performance** - Enforce optimistic locking on bead completion, synchronous usage recording, and N+1 query elimination (completed 2026-04-02)
 - [x] **Phase 25: Process Reliability & Transactions** - Enforce two-phase timeout kill, transactional holdout failure rollback, and DAGCanvas error boundary (completed 2026-04-02)
-- [ ] **Phase 26: Auth Middleware** - Wire authenticatedProcedure to all tRPC mutation routes
+- [x] **Phase 26: Auth Middleware** - Wire authenticatedProcedure to all tRPC mutation routes (completed 2026-04-02)
 - [ ] **Phase 27: Structured Conflict Resolution** - Replace string-scanning heuristic with Zod-schema-validated AI SDK Output.object() extraction
 - [ ] **Phase 28: KEK Rotation Infrastructure** - Two-phase key rotation with versioned KEK table, bulk re-encryption, and append-only audit log
 - [ ] **Phase 29: MCP Cross-Process IPC** - Bridge Inngest worker push notifications to MCP stdio process via Redis pub/sub
@@ -121,7 +121,7 @@ Plans:
   1. A tRPC mutation request with a missing or incorrect API key receives an UNAUTHORIZED response — the operation does not proceed
   2. A request with no API key in an environment where CAULDRON_API_KEY is unset succeeds — the dev-mode bypass remains functional for local development
   3. All existing integration tests continue to pass without modification — the dev-mode bypass means tests do not require API key headers
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 Plans:
 - [ ] 26-01-PLAN.md — Switch 14 mutations to authenticatedProcedure + auth rejection tests
 
@@ -169,7 +169,7 @@ Plans:
 | 23. FK Cascade Strategy | v1.2 | 2/2 | Complete    | 2026-04-02 |
 | 24. Concurrency & Performance | v1.2 | 1/2 | Complete    | 2026-04-02 |
 | 25. Process Reliability & Transactions | v1.2 | 2/2 | Complete    | 2026-04-02 |
-| 26. Auth Middleware | v1.2 | 0/1 | Not started | - |
+| 26. Auth Middleware | v1.2 | 0/1 | Complete    | 2026-04-02 |
 | 27. Structured Conflict Resolution | v1.2 | 0/? | Not started | - |
 | 28. KEK Rotation Infrastructure | v1.2 | 0/? | Not started | - |
 | 29. MCP Cross-Process IPC | v1.2 | 0/? | Not started | - |
