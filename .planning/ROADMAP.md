@@ -193,7 +193,7 @@ Plans:
   3. `packages/engine/src/gateway/providers.ts` resolves `mistral` and `ollama` provider families — new switch cases exist and return valid AI SDK provider instances
   4. `packages/engine/src/evolution/embeddings.ts` uses Mistral embeddings — no OpenAI embedding references remain
   5. All existing tests pass with updated mocks — no test references `@ai-sdk/openai`
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 Plans:
 - [x] 30-01-PLAN.md — Core provider swap: types, providers, pricing, validation, embeddings, package.json deps
 - [x] 30-02-PLAN.md — Config restructure + all engine/CLI test mock updates
