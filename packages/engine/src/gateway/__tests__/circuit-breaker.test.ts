@@ -26,9 +26,9 @@ describe('CircuitBreaker', () => {
 
   it('stays closed with fewer than threshold failures', () => {
     for (let i = 0; i < FAILURE_THRESHOLD - 1; i++) {
-      cb.recordFailure('openai');
+      cb.recordFailure('mistral');
     }
-    expect(cb.isOpen('openai')).toBe(false);
+    expect(cb.isOpen('mistral')).toBe(false);
   });
 
   it('transitions to HALF_OPEN after cooldown expires: isOpen returns false', () => {
@@ -79,15 +79,15 @@ describe('CircuitBreaker', () => {
     // Open multiple circuits
     for (let i = 0; i < FAILURE_THRESHOLD; i++) {
       cb.recordFailure('anthropic');
-      cb.recordFailure('openai');
+      cb.recordFailure('mistral');
     }
     expect(cb.isOpen('anthropic')).toBe(true);
-    expect(cb.isOpen('openai')).toBe(true);
+    expect(cb.isOpen('mistral')).toBe(true);
 
     cb.reset();
 
     expect(cb.isOpen('anthropic')).toBe(false);
-    expect(cb.isOpen('openai')).toBe(false);
+    expect(cb.isOpen('mistral')).toBe(false);
   });
 
   it('circuits are independent: failure in one does not affect another', () => {
@@ -95,7 +95,7 @@ describe('CircuitBreaker', () => {
       cb.recordFailure('anthropic');
     }
     expect(cb.isOpen('anthropic')).toBe(true);
-    expect(cb.isOpen('openai')).toBe(false);
+    expect(cb.isOpen('mistral')).toBe(false);
     expect(cb.isOpen('google')).toBe(false);
   });
 

@@ -1,4 +1,4 @@
-import type { PipelineStage } from './types.js';
+import type { PipelineStage, ProviderFamily, CapabilityLevel, CapabilityDimension } from './types.js';
 import path from 'node:path';
 
 export interface CLIConfigSection {
@@ -13,6 +13,7 @@ export interface GatewayConfig {
   scoringModel?: string; // D-18: fast/cheap model for ambiguity scoring
   selfBuild?: boolean; // D-15: activates engine snapshot + migration review gates when building Cauldron itself
   cli?: CLIConfigSection; // D-14: CLI server URL and API key for tRPC client
+  providerCapabilities?: Partial<Record<ProviderFamily, Partial<Record<CapabilityDimension, CapabilityLevel>>>>; // D-14: per-provider capability tags
 }
 
 export function defineConfig(config: GatewayConfig): GatewayConfig {
