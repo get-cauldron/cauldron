@@ -89,14 +89,12 @@ v1.0 delivered the complete autonomous builder pipeline. v1.1 added local asset 
 - ✓ Enforced timeout supervisor (SIGTERM → 5s → SIGKILL) — v1.2
 - ✓ Holdout failure rollback with DB transaction — v1.2
 - ✓ DAGCanvas React error boundary — v1.2
+- ✓ Auth middleware on tRPC mutation routes (authenticatedProcedure, dev-mode bypass) — v1.2
 
 ### Active
 
 - Structured merge conflict resolution with per-file JSON extraction
 - KEK rotation infrastructure with audit trail
-- Auth middleware on tRPC routes (beyond context-level)
-- React error boundaries around DAGCanvas
-- Reverse-lookup index on bead_edges
 - MCP push notifications via IPC or shared-process architecture (v1.1 tech debt)
 
 ### Deferred
