@@ -1,5 +1,6 @@
 import { execFile } from 'node:child_process';
 import Redis from 'ioredis';
+import { Ollama } from 'ollama';
 import { sql } from 'drizzle-orm';
 import { db, ensureMigrations } from '@get-cauldron/shared';
 import { isServerRunning } from './server-check.js';
@@ -13,7 +14,7 @@ const INNGEST_DEV_SERVER_URL = 'http://localhost:8288/v1/events';
 const ENGINE_SERVER_URL = 'http://localhost:3001/api/inngest';
 const AI_PROVIDER_KEYS = [
   'ANTHROPIC_API_KEY',
-  'OPENAI_API_KEY',
+  'MISTRAL_API_KEY',
   'GOOGLE_GENERATIVE_AI_API_KEY',
 ] as const;
 
@@ -30,7 +31,7 @@ function warnOptionalPrerequisites(): void {
   const hasAiKey = AI_PROVIDER_KEYS.some((key) => Boolean(process.env[key]?.trim()));
   if (!hasAiKey) {
     console.warn(
-      'Warning: No AI provider API key configured. Set ANTHROPIC_API_KEY, OPENAI_API_KEY, or GOOGLE_GENERATIVE_AI_API_KEY before running the pipeline.'
+      'Warning: No AI provider API key configured. Set ANTHROPIC_API_KEY, MISTRAL_API_KEY, or GOOGLE_GENERATIVE_AI_API_KEY before running the pipeline.'
     );
   }
 
@@ -39,6 +40,50 @@ function warnOptionalPrerequisites(): void {
       'Warning: HOLDOUT_ENCRYPTION_KEY is unset. `cauldron seal` will fail until you add it to .env.'
     );
   }
+}
+
+async function ensureModels(ollamaHost: string, ollamaModels: string[]): Promise<void> {
+  const ollamaClient = new Ollama({ host: ollamaHost });
+  const { models } = await ollamaClient.list();
+  const presentNames = models.map(m => m.name);
+
+  for (const prefixed of ollamaModels) {
+    const modelTag = prefixed.replace(/^ollama:/, '');
+    // Ollama list returns names with :latest suffix by default
+    const found = presentNames.some(
+      n => n === modelTag || n === `${modelTag}:latest` || n.startsWith(`${modelTag}:`)
+    );
+    if (!found) {
+      console.log(`Model ${modelTag} not found locally. Pulling...`);
+      const stream = await ollamaClient.pull({ model: modelTag, stream: true });
+      for await (const chunk of stream) {
+        process.stdout.write(`\r${chunk.status}`);
+      }
+      console.log(`\n${modelTag} ready.`);
+    }
+  }
+}
+
+async function ensureOllama(config: { models: Record<string, string[]> }): Promise<void> {
+  // Scan all model chains for ollama: prefix
+  const ollamaModels = Object.values(config.models)
+    .flat()
+    .filter(m => m.startsWith('ollama:'));
+  if (ollamaModels.length === 0) return; // No Ollama models configured — skip
+
+  const ollamaHost = process.env['OLLAMA_HOST'] ?? 'http://localhost:11434';
+  try {
+    const res = await fetch(`${ollamaHost}/api/tags`, { signal: AbortSignal.timeout(3000) });
+    if (!res.ok) throw new Error(`Ollama returned HTTP ${res.status}`);
+  } catch {
+    exitWithError(
+      `Ollama not reachable at ${ollamaHost}. Ollama is required because your config includes local models: ${ollamaModels.join(', ')}. Start Ollama before running Cauldron.`
+    );
+    return; // exitWithError calls process.exit but TypeScript doesn't know that
+  }
+
+  // D-11: Auto-pull any missing models
+  await ensureModels(ollamaHost, ollamaModels);
 }
 
 async function ensureCodebaseMemoryBinary(): Promise<void> {
@@ -116,6 +161,7 @@ async function ensureEngineServer(engineServerUrl: string): Promise<void> {
 export interface HealthCheckOptions {
   serverUrl?: string;
   engineServerUrl?: string;
+  config?: { models: Record<string, string[]> };
 }
 
 /**
@@ -174,6 +220,11 @@ export async function healthCheck(options: HealthCheckOptions = {}): Promise<voi
   }
 
   await ensureRedis(redisUrl);
+
+  if (options.config) {
+    await ensureOllama(options.config);
+  }
+
   await ensureInngestDevServer();
   await ensureCodebaseMemoryBinary();
   await ensureEngineServer(engineServerUrl);
