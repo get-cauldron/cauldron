@@ -1,4 +1,5 @@
-import { pgTable, pgEnum, uuid, text, timestamp, jsonb, real, integer } from 'drizzle-orm/pg-core';
+import { pgTable, pgEnum, uuid, text, timestamp, jsonb, real, integer, uniqueIndex } from 'drizzle-orm/pg-core';
+import { isNotNull } from 'drizzle-orm';
 import { projects } from './project.js';
 import { interviews } from './interview.js';
 
@@ -27,7 +28,11 @@ export const seeds = pgTable('seeds', {
   // NO updatedAt — immutability enforced at application level; seeds never mutate after crystallization
   generation: integer('generation').notNull().default(0),
   evolutionContext: jsonb('evolution_context'),
-});
+}, (table) => [
+  uniqueIndex('seeds_parent_version_unique_idx')
+    .on(table.parentId, table.version)
+    .where(isNotNull(table.parentId)),
+]);
 
 export type Seed = typeof seeds.$inferSelect;
 export type NewSeed = typeof seeds.$inferInsert;

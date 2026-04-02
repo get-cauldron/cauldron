@@ -1,6 +1,6 @@
 {
-  "id": "34b9f1c8-7060-4cf4-9e8a-1ca26b30bdfd",
-  "prevId": "ead6cb79-7c32-43c7-bc97-a28fc448d2d5",
+  "id": "f284d03d-d2bd-4017-a0fa-6f55766fa1f0",
+  "prevId": "34b9f1c8-7060-4cf4-9e8a-1ca26b30bdfd",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -284,7 +284,30 @@
           "notNull": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "seeds_parent_version_unique_idx": {
+          "name": "seeds_parent_version_unique_idx",
+          "columns": [
+            {
+              "expression": "parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "version",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"seeds\".\"parent_id\" is not null",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "seeds_project_id_projects_id_fk": {
           "name": "seeds_project_id_projects_id_fk",
@@ -357,7 +380,23 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "bead_edges_to_bead_id_idx": {
+          "name": "bead_edges_to_bead_id_idx",
+          "columns": [
+            {
+              "expression": "to_bead_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "bead_edges_from_bead_id_beads_id_fk": {
           "name": "bead_edges_from_bead_id_beads_id_fk",
@@ -579,10 +618,62 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "events_project_sequence_idx": {
+          "name": "events_project_sequence_idx",
+          "columns": [
+            {
+              "expression": "project_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "sequence_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "events_project_occurred_at_idx": {
+          "name": "events_project_occurred_at_idx",
+          "columns": [
+            {
+              "expression": "project_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "occurred_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "events_project_sequence_unique": {
+          "name": "events_project_sequence_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "project_id",
+            "sequence_number"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false

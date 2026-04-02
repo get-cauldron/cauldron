@@ -1,4 +1,4 @@
-import { pgTable, pgEnum, uuid, timestamp, jsonb, integer } from 'drizzle-orm/pg-core';
+import { pgTable, pgEnum, uuid, timestamp, jsonb, integer, unique, index } from 'drizzle-orm/pg-core';
 
 export const eventTypeEnum = pgEnum('event_type', [
   'interview_started',
@@ -48,7 +48,11 @@ export const events = pgTable('events', {
   sequenceNumber: integer('sequence_number').notNull(), // monotonic within project for ordering guarantee
   occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull().defaultNow(),
   // NO updatedAt — this table is append-only, never UPDATE (D-05, D-06)
-});
+}, (table) => [
+  unique('events_project_sequence_unique').on(table.projectId, table.sequenceNumber),
+  index('events_project_sequence_idx').on(table.projectId, table.sequenceNumber),
+  index('events_project_occurred_at_idx').on(table.projectId, table.occurredAt),
+]);
 
 export type Event = typeof events.$inferSelect;
 export type NewEvent = typeof events.$inferInsert;

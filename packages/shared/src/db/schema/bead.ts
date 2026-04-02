@@ -1,4 +1,4 @@
-import { pgTable, pgEnum, uuid, text, timestamp, integer, jsonb } from 'drizzle-orm/pg-core';
+import { pgTable, pgEnum, uuid, text, timestamp, integer, jsonb, index } from 'drizzle-orm/pg-core';
 import { seeds } from './seed.js';
 
 export const beadStatusEnum = pgEnum('bead_status', [
@@ -41,7 +41,9 @@ export const beadEdges = pgTable('bead_edges', {
   toBeadId: uuid('to_bead_id').notNull().references(() => beads.id),
   edgeType: beadEdgeTypeEnum('edge_type').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-});
+}, (table) => [
+  index('bead_edges_to_bead_id_idx').on(table.toBeadId),
+]);
 
 export type Bead = typeof beads.$inferSelect;
 export type NewBead = typeof beads.$inferInsert;

@@ -1,6 +1,15 @@
 import { eq, asc, gt, and, sql } from 'drizzle-orm';
+import postgres from 'postgres';
 import * as schema from './schema/index.js';
 import type { DbClient } from './client.js';
+
+function isUniqueViolation(err: unknown): boolean {
+  // Check PostgresError code 23505 (unique constraint violation)
+  if (err instanceof postgres.PostgresError) {
+    return err.code === '23505';
+  }
+  return false;
+}
 
 // Event types matching the enum
 export type EventType = typeof schema.eventTypeEnum.enumValues[number];
@@ -76,23 +85,34 @@ export function applyEvent(
 }
 
 // Append — never update. Auto-increments sequence within project.
+// Retries on unique violation (23505) due to concurrent appends racing on MAX(sequence_number).
 export async function appendEvent(
   db: DbClient,
   event: Omit<typeof schema.events.$inferInsert, 'id' | 'occurredAt' | 'sequenceNumber'>
 ): Promise<typeof schema.events.$inferSelect> {
-  // Get next sequence number for this project
-  const [maxSeq] = await db
-    .select({ max: sql<number>`COALESCE(MAX(${schema.events.sequenceNumber}), 0)` })
-    .from(schema.events)
-    .where(eq(schema.events.projectId, event.projectId));
+  const MAX_RETRIES = 3;
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    const [maxSeq] = await db
+      .select({ max: sql<number>`COALESCE(MAX(${schema.events.sequenceNumber}), 0)` })
+      .from(schema.events)
+      .where(eq(schema.events.projectId, event.projectId));
 
-  const sequenceNumber = (maxSeq?.max ?? 0) + 1;
+    const sequenceNumber = (maxSeq?.max ?? 0) + 1;
 
-  const [row] = await db
-    .insert(schema.events)
-    .values({ ...event, sequenceNumber })
-    .returning();
-  return row!;
+    try {
+      const [row] = await db
+        .insert(schema.events)
+        .values({ ...event, sequenceNumber })
+        .returning();
+      return row!;
+    } catch (err) {
+      if (isUniqueViolation(err) && attempt < MAX_RETRIES - 1) {
+        continue; // retry with fresh MAX
+      }
+      throw err;
+    }
+  }
+  throw new Error('appendEvent: exhausted retries on sequence conflict');
 }
 
 // Replay all events to derive current state
