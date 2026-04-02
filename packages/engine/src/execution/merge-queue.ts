@@ -1,6 +1,7 @@
 import * as childProcess from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { z } from 'zod';
 import { simpleGit } from 'simple-git';
 import type { MergeQueueEntry, TestRunnerConfig } from './types.js';
 import type { WorktreeManager } from './worktree-manager.js';
@@ -8,6 +9,16 @@ import type { KnowledgeGraphAdapter } from '../intelligence/adapter.js';
 import type { LLMGateway } from '../gateway/gateway.js';
 import type { DbClient } from '@get-cauldron/shared';
 import { appendEvent } from '@get-cauldron/shared';
+
+const ConflictResolutionFileSchema = z.object({
+  path: z.string(),
+  resolved_content: z.string(),
+});
+
+const ConflictResolutionSchema = z.object({
+  confidence: z.enum(['high', 'low']),
+  files: z.array(ConflictResolutionFileSchema),
+});
 
 export type MergeStatus = 'merged' | 'conflict_resolved' | 'escalated' | 'reverted' | 'failed';
 
@@ -184,24 +195,21 @@ export class MergeQueue {
       `Conflicted files:`,
       ...conflictDetails,
       '',
-      'Resolve each conflict. If you cannot resolve confidently, include "confidence": "low" in your response.',
-      'Otherwise, include "confidence": "high" and provide the resolved file contents.',
+      'Resolve each conflicted file. Return confidence "high" if you can resolve all files correctly,',
+      'or "low" if you cannot resolve confidently. Include resolved_content for each file.',
     ].join('\n');
 
-    const result = await this.gateway.generateText({
+    const result = await this.gateway.generateObject({
       stage: 'conflict_resolution',
       prompt,
       projectId: entry.projectId,
       beadId: entry.beadId,
+      schema: ConflictResolutionSchema,
+      schemaName: 'ConflictResolution',
+      schemaDescription: 'Structured resolution for each conflicted file with confidence assessment',
     });
 
-    const responseText: string = result?.text ?? '';
-    const isLowConfidence =
-      responseText.includes('"confidence": "low"') ||
-      responseText.includes("confidence: 'low'") ||
-      responseText.includes('confidence: low');
-
-    if (isLowConfidence) {
+    if (result.object.confidence === 'low') {
       // Abort merge to leave working tree clean
       const git = simpleGit(this.projectRoot);
       try {
@@ -212,12 +220,10 @@ export class MergeQueue {
       return { resolved: false, confidence: 'low' };
     }
 
-    // High confidence — write resolved files
-    for (const file of conflicts) {
+    // High confidence — write resolved files using structured content
+    for (const file of result.object.files) {
       try {
-        // The LLM response is used as-is for the resolved content.
-        // In production, a more structured extraction would parse per-file blocks.
-        writeFileSync(join(this.projectRoot, file), responseText, 'utf-8');
+        writeFileSync(join(this.projectRoot, file.path), file.resolved_content, 'utf-8');
       } catch {
         // If write fails, fall back to low confidence behavior
         const git = simpleGit(this.projectRoot);
@@ -232,8 +238,8 @@ export class MergeQueue {
 
     // Stage resolved files
     const git = simpleGit(this.projectRoot);
-    for (const file of conflicts) {
-      await git.add(file);
+    for (const file of result.object.files) {
+      await git.add(file.path);
     }
 
     return { resolved: true, confidence: 'high' };
