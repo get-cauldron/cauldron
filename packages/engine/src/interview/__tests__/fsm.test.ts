@@ -46,9 +46,9 @@ const mockLogger = {
 
 const mockConfig = {
   models: {
-    interview: ['claude-3-5-sonnet-20241022'],
-    holdout: ['gpt-4o'],
-    implementation: ['gpt-4o'],
+    interview: ['claude-sonnet-4-6'],
+    holdout: ['gemini-2.5-pro'],
+    implementation: ['claude-sonnet-4-6'],
     evaluation: ['gemini-2.0-flash'],
   },
   budget: { defaultLimitCents: 1000 },

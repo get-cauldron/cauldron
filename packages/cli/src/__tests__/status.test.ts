@@ -36,7 +36,7 @@ describe('statusCommand', () => {
         id: 'bead-1',
         title: 'Implement auth',
         status: 'completed',
-        agentAssignment: 'gpt-4o',
+        agentAssignment: 'mistral-large-latest',
         claimedAt: new Date(Date.now() - 120000),
         completedAt: new Date(Date.now() - 60000),
       },

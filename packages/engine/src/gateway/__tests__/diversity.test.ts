@@ -9,8 +9,8 @@ describe('enforceDiversity', () => {
     );
   });
 
-  it('throws DiversityViolationError when both models are openai', () => {
-    expect(() => enforceDiversity('gpt-4o', 'gpt-4.1')).toThrow(DiversityViolationError);
+  it('throws DiversityViolationError when both models are mistral', () => {
+    expect(() => enforceDiversity('mistral-large-latest', 'mistral-small-latest')).toThrow(DiversityViolationError);
   });
 
   it('throws DiversityViolationError when both models are google', () => {
@@ -19,8 +19,8 @@ describe('enforceDiversity', () => {
     );
   });
 
-  it('does not throw when holdout is openai and implementer is anthropic', () => {
-    expect(() => enforceDiversity('gpt-4o', 'claude-sonnet-4-6')).not.toThrow();
+  it('does not throw when holdout is mistral and implementer is anthropic', () => {
+    expect(() => enforceDiversity('mistral-large-latest', 'claude-sonnet-4-6')).not.toThrow();
   });
 
   it('does not throw when holdout is google and implementer is anthropic', () => {
@@ -44,10 +44,10 @@ describe('enforceDiversity', () => {
 describe('filterDiverseModels', () => {
   it('removes models from the excluded family', () => {
     const result = filterDiverseModels(
-      ['claude-sonnet-4-6', 'gpt-4o', 'gemini-2.5-pro'],
+      ['claude-sonnet-4-6', 'mistral-large-latest', 'gemini-2.5-pro'],
       'anthropic'
     );
-    expect(result).toEqual(['gpt-4o', 'gemini-2.5-pro']);
+    expect(result).toEqual(['mistral-large-latest', 'gemini-2.5-pro']);
   });
 
   it('returns empty array when all models are from the same excluded family', () => {
@@ -60,18 +60,18 @@ describe('filterDiverseModels', () => {
 
   it('returns all models when none match the excluded family', () => {
     const result = filterDiverseModels(
-      ['gpt-4o', 'gemini-2.5-pro'],
+      ['mistral-large-latest', 'gemini-2.5-pro'],
       'anthropic'
     );
-    expect(result).toEqual(['gpt-4o', 'gemini-2.5-pro']);
+    expect(result).toEqual(['mistral-large-latest', 'gemini-2.5-pro']);
   });
 
   it('silently skips unknown model IDs', () => {
     const result = filterDiverseModels(
-      ['claude-sonnet-4-6', 'unknown-model-xyz', 'gpt-4o'],
+      ['claude-sonnet-4-6', 'unknown-model-xyz', 'mistral-large-latest'],
       'anthropic'
     );
     // unknown-model-xyz has no family, should be skipped
-    expect(result).toEqual(['gpt-4o']);
+    expect(result).toEqual(['mistral-large-latest']);
   });
 });

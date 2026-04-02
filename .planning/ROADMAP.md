@@ -196,5 +196,5 @@ Plans:
 **Plans:** 2/3 plans executed
 Plans:
 - [x] 30-01-PLAN.md — Core provider swap: types, providers, pricing, validation, embeddings, package.json deps
-- [ ] 30-02-PLAN.md — Config restructure + all engine/CLI test mock updates
-- [x] 30-03-PLAN.md — OpenAI artifact cleanup: health, bootstrap, env, turbo, web, E2E, scripts
+- [x] 30-02-PLAN.md — Config restructure + all engine/CLI test mock updates
+- [ ] 30-03-PLAN.md — OpenAI artifact cleanup: health, bootstrap, env, turbo, web, E2E, scripts
