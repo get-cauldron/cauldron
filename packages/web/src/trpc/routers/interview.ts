@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { eq, desc } from 'drizzle-orm';
-import { router, publicProcedure } from '../init';
+import { router, publicProcedure, authenticatedProcedure } from '../init';
 import { interviews, seeds, holdoutVault } from '@get-cauldron/shared';
 import { InterviewFSM, approveScenarios, sealVault, crystallizeSeed, ImmutableSeedError, generateHoldoutScenarios, createVault, synthesizeFromTranscript } from '@get-cauldron/engine';
 import { TRPCError } from '@trpc/server';
@@ -24,7 +24,7 @@ export const interviewRouter = router({
   // Calls InterviewFSM.startOrResume() to create the DB row and return
   // interview metadata. Must be called before sendAnswer.
   // ──────────────────────────────────────────────────────────────────────────
-  startInterview: publicProcedure
+  startInterview: authenticatedProcedure
     .input(z.object({
       projectId: z.string(),
       mode: z.enum(['greenfield', 'brownfield']).optional(),
@@ -106,7 +106,7 @@ export const interviewRouter = router({
   // Invokes InterviewFSM.submitAnswer() synchronously — LLM scoring runs in
   // the web request, generating the next question before returning.
   // ──────────────────────────────────────────────────────────────────────────
-  sendAnswer: publicProcedure
+  sendAnswer: authenticatedProcedure
     .input(
       z.object({
         projectId: z.string(),
@@ -243,7 +243,7 @@ export const interviewRouter = router({
   // Mutation: approve the summary and trigger seed crystallization.
   // Returns the new seed ID after crystallization.
   // ──────────────────────────────────────────────────────────────────────────
-  approveSummary: publicProcedure
+  approveSummary: authenticatedProcedure
     .input(
       z.object({
         projectId: z.string(),
@@ -345,7 +345,7 @@ export const interviewRouter = router({
   // rejectSummary
   // Mutation: reject the summary and return to interview gathering state.
   // ──────────────────────────────────────────────────────────────────────────
-  rejectSummary: publicProcedure
+  rejectSummary: authenticatedProcedure
     .input(z.object({ projectId: z.string() }))
     .mutation(async ({ input, ctx }) => {
       const { projectId } = input;
@@ -418,7 +418,7 @@ export const interviewRouter = router({
   // approveHoldout
   // Mutation: approve a specific holdout vault entry.
   // ──────────────────────────────────────────────────────────────────────────
-  approveHoldout: publicProcedure
+  approveHoldout: authenticatedProcedure
     .input(z.object({ holdoutId: z.string() }))
     .mutation(async ({ input, ctx }) => {
       const { holdoutId } = input;
@@ -452,7 +452,7 @@ export const interviewRouter = router({
   // rejectHoldout
   // Mutation: reject a specific holdout vault entry (marks for regeneration).
   // ──────────────────────────────────────────────────────────────────────────
-  rejectHoldout: publicProcedure
+  rejectHoldout: authenticatedProcedure
     .input(z.object({ holdoutId: z.string() }))
     .mutation(async ({ input, ctx }) => {
       const { holdoutId } = input;
@@ -491,7 +491,7 @@ export const interviewRouter = router({
   // function in a separate process. This tRPC procedure marks them as ready
   // for sealing and emits an event — the Inngest handler picks it up.
   // ──────────────────────────────────────────────────────────────────────────
-  sealHoldouts: publicProcedure
+  sealHoldouts: authenticatedProcedure
     .input(z.object({ seedId: z.string() }))
     .mutation(async ({ input, ctx }) => {
       const { seedId } = input;

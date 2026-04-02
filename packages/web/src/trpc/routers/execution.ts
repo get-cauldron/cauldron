@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { router, publicProcedure } from '../init.js';
+import { router, publicProcedure, authenticatedProcedure } from '../init.js';
 import { beads, beadEdges, events, seeds } from '@get-cauldron/shared';
 import { appendEvent } from '@get-cauldron/shared';
 import { eq, desc, inArray } from 'drizzle-orm';
@@ -58,7 +58,7 @@ export const executionRouter = router({
     }),
 
   // Trigger decomposition: runs the full decomposition pipeline synchronously
-  triggerDecomposition: publicProcedure
+  triggerDecomposition: authenticatedProcedure
     .input(z.object({
       projectId: z.string().uuid(),
       seedId: z.string().uuid(),
@@ -95,7 +95,7 @@ export const executionRouter = router({
     }),
 
   // Trigger execution (emits event for async Inngest processing)
-  triggerExecution: publicProcedure
+  triggerExecution: authenticatedProcedure
     .input(z.object({
       projectId: z.string().uuid(),
       seedId: z.string().uuid(),
@@ -169,7 +169,7 @@ export const executionRouter = router({
     }),
 
   // Submit escalation response
-  respondToEscalation: publicProcedure
+  respondToEscalation: authenticatedProcedure
     .input(z.object({
       projectId: z.string().uuid(),
       beadId: z.string().uuid().optional(),

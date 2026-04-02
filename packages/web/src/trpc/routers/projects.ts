@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { router, publicProcedure } from '../init';
+import { router, publicProcedure, authenticatedProcedure } from '../init';
 import { projects, llmUsage } from '@get-cauldron/shared';
 import { eq, sql } from 'drizzle-orm';
 
@@ -90,7 +90,7 @@ export const projectsRouter = router({
       return { ...project, totalCostCents: Number(costRow?.totalCost ?? 0) };
     }),
 
-  create: publicProcedure
+  create: authenticatedProcedure
     .input(
       z.object({
         name: z.string().min(1).max(100),
@@ -105,7 +105,7 @@ export const projectsRouter = router({
       return project!;
     }),
 
-  archive: publicProcedure
+  archive: authenticatedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
       const [project] = await ctx.db
@@ -123,7 +123,7 @@ export const projectsRouter = router({
       return { success: true };
     }),
 
-  delete: publicProcedure
+  delete: authenticatedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
       const [project] = await ctx.db
@@ -141,7 +141,7 @@ export const projectsRouter = router({
       return { success: true };
     }),
 
-  updateSettings: publicProcedure
+  updateSettings: authenticatedProcedure
     .input(
       z.object({
         id: z.string().uuid(),
