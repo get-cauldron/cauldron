@@ -4,7 +4,7 @@
 
 - ✅ **v1.0 End-to-End Autonomous Builder** — Phases 1-17 (shipped 2026-03-28)
 - ✅ **v1.1 Local Asset Generation & Style-Aware Seeds** — Phases 18-21 (shipped 2026-04-01)
-- 🚧 **v1.2 Architectural Hardening** — Phases 22-29 (in progress)
+- 🚧 **v1.2 Architectural Hardening** — Phases 22-30 (in progress)
 
 ## Phases
 
@@ -184,10 +184,13 @@ Plans:
 
 ### Phase 30: Replace OpenAI Provider
 
-**Goal:** [To be planned]
+**Goal**: Remove `@ai-sdk/openai` entirely and replace all OpenAI model references with Anthropic (primary), Google, Mistral (new), and local Qwen via Ollama (experimental) — no pipeline stage references a missing provider
+**Depends on**: Phase 29
 **Requirements**: TBD
-**Depends on:** Phase 29
-**Plans:** 0 plans
-
-Plans:
-- [ ] TBD (run /gsd:plan-phase 30 to break down)
+**Success Criteria** (what must be TRUE):
+  1. `@ai-sdk/openai` is not in any package.json — `grep -r "ai-sdk/openai" packages/*/package.json` returns zero results
+  2. `cauldron.config.ts` contains no `gpt-` model references — all stages map to Anthropic, Google, Mistral, or Ollama models
+  3. `packages/engine/src/gateway/providers.ts` resolves `mistral` and `ollama` provider families — new switch cases exist and return valid AI SDK provider instances
+  4. `packages/engine/src/evolution/embeddings.ts` uses Mistral embeddings — no OpenAI embedding references remain
+  5. All existing tests pass with updated mocks — no test references `@ai-sdk/openai`
+**Plans**: TBD
