@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Architectural Hardening
 status: executing
-stopped_at: Completed 25-01-PLAN.md — process reliability transactions
-last_updated: "2026-04-02T13:30:51.753Z"
+stopped_at: Completed 27-01-PLAN.md — structured conflict resolution
+last_updated: "2026-04-02T13:45:28.991Z"
 last_activity: 2026-04-02
 progress:
   total_phases: 8
-  completed_phases: 5
-  total_plans: 9
-  completed_plans: 9
+  completed_phases: 6
+  total_plans: 10
+  completed_plans: 10
   percent: 0
 ---
 
@@ -55,6 +55,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 24-concurrency-performance P02 | 15 | 1 tasks | 2 files |
 | Phase 25-process-reliability-transactions P02 | 15 | 1 tasks | 4 files |
 | Phase 25-process-reliability-transactions P01 | 20 | 2 tasks | 3 files |
+| Phase 27 P01 | 8 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -68,6 +69,8 @@ Progress: [░░░░░░░░░░] 0%
 - [Phase 25-process-reliability-transactions]: Wrap only DAGCanvas div contents in ErrorBoundary so EvolutionTimeline/BeadDetailSheet/EscalationDialog survive DAG crashes
 - [Phase 25-process-reliability-transactions]: Use tx as unknown as DbClient double-cast because PgTransaction lacks the dollar-client property that the DbClient Proxy type requires
 - [Phase 25-process-reliability-transactions]: Holdout failure reverts interview to reviewing phase not gathering — summary remains valid, user retries crystallization
+- [Phase 27]: ConflictResolutionSchema uses z.enum confidence so confidence is typed, never string-scanned
+- [Phase 27]: NoObjectGeneratedError propagates uncaught from resolveConflict — explicit failure over silent fallback (CONC-05)
 
 ### Pending Todos
 
@@ -81,6 +84,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-02T02:52:54.636Z
-Stopped at: Completed 25-01-PLAN.md — process reliability transactions
+Last session: 2026-04-02T13:45:28.988Z
+Stopped at: Completed 27-01-PLAN.md — structured conflict resolution
 Resume file: None

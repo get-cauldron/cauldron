@@ -21,7 +21,7 @@ Requirements for architectural hardening. Each maps to roadmap phases.
 - [x] **CONC-02**: LLM usage recording is synchronous — budget checks reflect actual spend before next call proceeds
 - [x] **CONC-03**: Timeout supervisor holds ChildProcess reference and enforces SIGTERM → 5s grace → SIGKILL on hard timeout
 - [x] **CONC-04**: Holdout generation failure after crystallization rolls back seed or marks it incomplete — no silent success masquerading as full success
-- [ ] **CONC-05**: Merge conflict resolver extracts structured JSON per file via AI SDK Output.object() with Zod schema — never writes raw LLM prose to source files
+- [x] **CONC-05**: Merge conflict resolver extracts structured JSON per file via AI SDK Output.object() with Zod schema — never writes raw LLM prose to source files
 
 ### Security & UX
 
@@ -64,7 +64,7 @@ Requirements for architectural hardening. Each maps to roadmap phases.
 | CONC-02 | Phase 24 | Complete |
 | CONC-03 | Phase 25 | Complete |
 | CONC-04 | Phase 25 | Complete |
-| CONC-05 | Phase 27 | Pending |
+| CONC-05 | Phase 27 | Complete |
 | SEC-01 | Phase 28 | Pending |
 | SEC-02 | Phase 26 | Pending |
 | SEC-03 | Phase 25 | Complete |

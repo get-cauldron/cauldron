@@ -56,7 +56,7 @@ See `.planning/milestones/v1.1-ROADMAP.md` for full details.
 - [x] **Phase 24: Concurrency & Performance** - Enforce optimistic locking on bead completion, synchronous usage recording, and N+1 query elimination (completed 2026-04-02)
 - [x] **Phase 25: Process Reliability & Transactions** - Enforce two-phase timeout kill, transactional holdout failure rollback, and DAGCanvas error boundary (completed 2026-04-02)
 - [x] **Phase 26: Auth Middleware** - Wire authenticatedProcedure to all tRPC mutation routes (completed 2026-04-02)
-- [ ] **Phase 27: Structured Conflict Resolution** - Replace string-scanning heuristic with Zod-schema-validated AI SDK Output.object() extraction
+- [x] **Phase 27: Structured Conflict Resolution** - Replace string-scanning heuristic with Zod-schema-validated AI SDK Output.object() extraction (completed 2026-04-02)
 - [ ] **Phase 28: KEK Rotation Infrastructure** - Two-phase key rotation with versioned KEK table, bulk re-encryption, and append-only audit log
 - [ ] **Phase 29: MCP Cross-Process IPC** - Bridge Inngest worker push notifications to MCP stdio process via Redis pub/sub
 
@@ -133,9 +133,9 @@ Plans:
   1. A conflict resolution response that fails Zod validation throws AI_NoObjectGeneratedError — the merge operation fails explicitly rather than writing malformed content
   2. The confidence field on each resolved file is a typed enum value (high or low) — string-scanning for "confidence" substrings is eliminated
   3. Resolved file contents are structured objects with path and resolved_content fields — no raw LLM prose is written directly to source files
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 Plans:
-- [ ] 27-01-PLAN.md — Replace generateText with generateObject + Zod schema in resolveConflict
+- [x] 27-01-PLAN.md — Replace generateText with generateObject + Zod schema in resolveConflict
 
 ### Phase 28: KEK Rotation Infrastructure
 **Goal**: A KEK compromise can be responded to by rotating to a new key and re-encrypting all DEKs, with a complete audit trail and no disruption to in-flight holdout evaluations
@@ -172,6 +172,6 @@ Plans:
 | 24. Concurrency & Performance | v1.2 | 1/2 | Complete    | 2026-04-02 |
 | 25. Process Reliability & Transactions | v1.2 | 2/2 | Complete    | 2026-04-02 |
 | 26. Auth Middleware | v1.2 | 0/1 | Complete    | 2026-04-02 |
-| 27. Structured Conflict Resolution | v1.2 | 0/1 | Not started | - |
+| 27. Structured Conflict Resolution | v1.2 | 1/1 | Complete   | 2026-04-02 |
 | 28. KEK Rotation Infrastructure | v1.2 | 0/? | Not started | - |
 | 29. MCP Cross-Process IPC | v1.2 | 0/? | Not started | - |
