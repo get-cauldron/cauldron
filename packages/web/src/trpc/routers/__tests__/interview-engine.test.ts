@@ -160,7 +160,7 @@ describe('sendAnswer tRPC mutation — InterviewFSM wiring', () => {
     const fakeTurnResult = {
       turn: {
         turnNumber: 1,
-        perspective: 'researcher',
+        perspective: 'henry-wu',
         question: 'What is the main user need?',
         mcOptions: ['Option A', 'Option B'],
         userAnswer: 'My answer',
@@ -171,7 +171,7 @@ describe('sendAnswer tRPC mutation — InterviewFSM wiring', () => {
         timestamp: new Date().toISOString(),
       },
       scores: { goalClarity: 0.5, constraintClarity: 0.5, successCriteriaClarity: 0.5, overall: 0.5, reasoning: '' },
-      nextQuestion: { selectedCandidate: { question: 'Next?', perspective: 'researcher', model: '' }, mcOptions: [], allCandidates: [] },
+      nextQuestion: { selectedCandidate: { question: 'Next?', perspective: 'henry-wu', model: '' }, mcOptions: [], allCandidates: [] },
       thresholdMet: false,
     };
 
@@ -195,7 +195,7 @@ describe('sendAnswer tRPC mutation — InterviewFSM wiring', () => {
     const scores = { goalClarity: 0.6, constraintClarity: 0.7, successCriteriaClarity: 0.5, overall: 0.6, reasoning: 'OK' };
     const turn = {
       turnNumber: 2,
-      perspective: 'breadth-keeper',
+      perspective: 'hickam',
       question: 'Any constraints?',
       mcOptions: [],
       userAnswer: 'No constraints',
@@ -205,7 +205,7 @@ describe('sendAnswer tRPC mutation — InterviewFSM wiring', () => {
       allCandidates: [],
       timestamp: new Date().toISOString(),
     };
-    const nextQuestion = { selectedCandidate: { question: 'Next question', perspective: 'researcher', model: 'mistral-large-latest' }, mcOptions: [], allCandidates: [] };
+    const nextQuestion = { selectedCandidate: { question: 'Next question', perspective: 'henry-wu', model: 'mistral-large-latest' }, mcOptions: [], allCandidates: [] };
 
     mockSubmitAnswer.mockResolvedValue({ turn, scores, nextQuestion, thresholdMet: false });
 
@@ -227,7 +227,7 @@ describe('sendAnswer tRPC mutation — InterviewFSM wiring', () => {
     const scores = { goalClarity: 0.9, constraintClarity: 0.9, successCriteriaClarity: 0.9, overall: 0.9, reasoning: 'Clear' };
     const turn = {
       turnNumber: 5,
-      perspective: 'researcher',
+      perspective: 'henry-wu',
       question: 'Ready?',
       mcOptions: [],
       userAnswer: 'Yes',

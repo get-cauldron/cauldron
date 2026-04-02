@@ -114,7 +114,7 @@ describe('CONTRARIAN_SYSTEM_PROMPT', () => {
 function makeTurn(userAnswer: string, turnNumber = 1): InterviewTurn {
   return {
     turnNumber,
-    perspective: 'researcher',
+    perspective: 'henry-wu',
     question: 'What problem are you solving?',
     mcOptions: [],
     userAnswer,

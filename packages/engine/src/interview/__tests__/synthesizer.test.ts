@@ -28,7 +28,7 @@ describe('synthesizeFromTranscript', () => {
 
     const turn: InterviewTurn = {
       turnNumber: 1,
-      perspective: 'researcher',
+      perspective: 'henry-wu',
       question: 'What should the tool do?',
       mcOptions: ['Option A', 'Option B'],
       userAnswer: 'Rename files based on natural language patterns',
@@ -84,7 +84,7 @@ describe('synthesizeFromTranscript', () => {
     const turns: InterviewTurn[] = [
       {
         turnNumber: 1,
-        perspective: 'researcher',
+        perspective: 'henry-wu',
         question: 'What should the tool do?',
         mcOptions: [],
         userAnswer: 'Rename files',
@@ -96,7 +96,7 @@ describe('synthesizeFromTranscript', () => {
       },
       {
         turnNumber: 2,
-        perspective: 'architect',
+        perspective: 'heist-o-tron',
         question: 'Any constraints?',
         mcOptions: [],
         userAnswer: 'TypeScript only',
@@ -110,8 +110,8 @@ describe('synthesizeFromTranscript', () => {
     await synthesizeFromTranscript(mockGateway as any, turns, 'project-xyz');
 
     const callArgs = mockGenerateObject.mock.calls[0][0];
-    expect(callArgs.prompt).toContain('Turn 1 (researcher)');
-    expect(callArgs.prompt).toContain('Turn 2 (architect)');
+    expect(callArgs.prompt).toContain('Turn 1 (henry-wu)');
+    expect(callArgs.prompt).toContain('Turn 2 (heist-o-tron)');
     expect(callArgs.prompt).toContain('Rename files');
     expect(callArgs.prompt).toContain('TypeScript only');
     expect(callArgs.prompt).toContain('More details here');

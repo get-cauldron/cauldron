@@ -270,8 +270,8 @@ describe('InterviewFSM.submitAnswer', () => {
     };
 
     const mockCandidates = [
-      { perspective: 'researcher', question: 'What is the goal?', rationale: 'Need goal', model: 'claude' },
-      { perspective: 'architect', question: 'What are constraints?', rationale: 'Need constraints', model: 'claude' },
+      { perspective: 'henry-wu', question: 'What is the goal?', rationale: 'Need goal', model: 'claude' },
+      { perspective: 'heist-o-tron', question: 'What are constraints?', rationale: 'Need constraints', model: 'claude' },
     ];
 
     const mockRanked = {
@@ -282,13 +282,13 @@ describe('InterviewFSM.submitAnswer', () => {
 
     // Mock gateway calls
     // Stage A (parallel): scoreTranscript + runContrarianAnalysis
-    // Stage B: runActivePerspectives (3 perspectives for early turn) + rankCandidates
+    // Stage B: runActivePerspectives (3 perspectives for early turn: henry-wu, occam, hickam) + rankCandidates
     mockGateway.generateObject
       .mockResolvedValueOnce({ object: mockScores }) // scoreTranscript (Stage A)
       .mockResolvedValueOnce({ object: { framings: [{ hypothesis: 'H', alternative: 'A', reasoning: 'R' }] } }) // contrarian (Stage A)
-      .mockResolvedValueOnce({ object: { question: 'What is the goal?', rationale: 'Need goal' } }) // perspective 1 (Stage B)
-      .mockResolvedValueOnce({ object: { question: 'What are constraints?', rationale: 'Need constraints' } }) // perspective 2 (Stage B)
-      .mockResolvedValueOnce({ object: { question: 'What are constraints?', rationale: 'Need constraints' } }) // perspective 3 (Stage B)
+      .mockResolvedValueOnce({ object: { question: 'What is the goal?', rationale: 'Need goal' } }) // henry-wu (Stage B)
+      .mockResolvedValueOnce({ object: { question: 'What are constraints?', rationale: 'Need constraints' } }) // occam (Stage B)
+      .mockResolvedValueOnce({ object: { question: 'What are constraints?', rationale: 'Need constraints' } }) // hickam (Stage B)
       .mockResolvedValueOnce({ object: { selectedIndex: 0, mcOptions: mockRanked.mcOptions, selectionRationale: mockRanked.selectionRationale } }); // rankCandidates
 
     // Mock update
@@ -336,13 +336,13 @@ describe('InterviewFSM.submitAnswer', () => {
       reasoning: 'clear',
     };
 
-    // With late-turn (overall >= 0.7), selectActivePerspectives returns 2 perspectives (seed-closer + architect)
+    // With late-turn (overall >= 0.7), selectActivePerspectives returns 2 perspectives (kirk + heist-o-tron)
     // Stage A (parallel): scorer + contrarian; Stage B: 2 perspectives + ranker
     mockGateway.generateObject
       .mockResolvedValueOnce({ object: highScores }) // scorer (Stage A)
       .mockResolvedValueOnce({ object: { framings: [{ hypothesis: 'H', alternative: 'A', reasoning: 'R' }] } }) // contrarian (Stage A)
-      .mockResolvedValueOnce({ object: { question: 'Q1', rationale: 'R1' } }) // seed-closer perspective (Stage B)
-      .mockResolvedValueOnce({ object: { question: 'Q2', rationale: 'R2' } }) // architect perspective (Stage B)
+      .mockResolvedValueOnce({ object: { question: 'Q1', rationale: 'R1' } }) // kirk perspective (Stage B)
+      .mockResolvedValueOnce({ object: { question: 'Q2', rationale: 'R2' } }) // heist-o-tron perspective (Stage B)
       .mockResolvedValueOnce({ object: { selectedIndex: 0, mcOptions: ['A', 'B', 'C'], selectionRationale: 'Best' } }); // ranker
 
     db.where.mockResolvedValue(undefined);

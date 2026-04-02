@@ -12,11 +12,11 @@ import type { AmbiguityScores, PerspectiveName, InterviewTurn, ContrarianFraming
 describe('PERSPECTIVE_PROMPTS', () => {
   it('has exactly 5 keys matching PerspectiveName values', () => {
     const expectedKeys: PerspectiveName[] = [
-      'researcher',
-      'simplifier',
-      'architect',
-      'breadth-keeper',
-      'seed-closer',
+      'henry-wu',
+      'occam',
+      'heist-o-tron',
+      'hickam',
+      'kirk',
     ];
     const actualKeys = Object.keys(PERSPECTIVE_PROMPTS);
     expect(actualKeys).toHaveLength(5);
@@ -67,49 +67,49 @@ function makeScores(overall: number, goalClarity = overall, constraintClarity = 
 }
 
 describe('selectActivePerspectives', () => {
-  it('returns researcher, simplifier, breadth-keeper when no previous scores (first turn)', () => {
+  it('returns henry-wu, occam, hickam when no previous scores (first turn)', () => {
     const result = selectActivePerspectives(null, 0);
-    expect(result).toEqual(['researcher', 'simplifier', 'breadth-keeper']);
+    expect(result).toEqual(['henry-wu', 'occam', 'hickam']);
   });
 
-  it('returns researcher, simplifier, breadth-keeper when turnCount is 0 regardless of scores', () => {
+  it('returns henry-wu, occam, hickam when turnCount is 0 regardless of scores', () => {
     const scores = makeScores(0.8);
     const result = selectActivePerspectives(scores, 0);
-    expect(result).toEqual(['researcher', 'simplifier', 'breadth-keeper']);
+    expect(result).toEqual(['henry-wu', 'occam', 'hickam']);
   });
 
   it('returns early perspectives when overall < 0.4', () => {
     const scores = makeScores(0.3);
     const result = selectActivePerspectives(scores, 2);
-    expect(result).toEqual(['researcher', 'simplifier', 'breadth-keeper']);
+    expect(result).toEqual(['henry-wu', 'occam', 'hickam']);
   });
 
-  it('includes architect and breadth-keeper in mid-range (0.4 <= overall < 0.7)', () => {
+  it('includes heist-o-tron and hickam in mid-range (0.4 <= overall < 0.7)', () => {
     const scores = makeScores(0.5);
     const result = selectActivePerspectives(scores, 5);
-    expect(result).toContain('architect');
-    expect(result).toContain('breadth-keeper');
+    expect(result).toContain('heist-o-tron');
+    expect(result).toContain('hickam');
     expect(result).toHaveLength(3);
   });
 
-  it('returns seed-closer and architect when overall >= 0.7', () => {
+  it('returns kirk and heist-o-tron when overall >= 0.7', () => {
     const scores = makeScores(0.8);
     const result = selectActivePerspectives(scores, 10);
-    expect(result).toEqual(['seed-closer', 'architect']);
+    expect(result).toEqual(['kirk', 'heist-o-tron']);
   });
 
-  it('includes researcher in mid-range when goalClarity is weakest dimension', () => {
+  it('includes henry-wu in mid-range when goalClarity is weakest dimension', () => {
     const scores = makeScores(0.5, 0.3, 0.6, 0.7); // goalClarity is lowest
     const result = selectActivePerspectives(scores, 5);
-    expect(result).toContain('researcher');
-    expect(result).not.toContain('simplifier');
+    expect(result).toContain('henry-wu');
+    expect(result).not.toContain('occam');
   });
 
-  it('includes simplifier in mid-range when goal is NOT weakest dimension', () => {
+  it('includes occam in mid-range when goal is NOT weakest dimension', () => {
     const scores = makeScores(0.5, 0.7, 0.3, 0.6); // constraintClarity is lowest
     const result = selectActivePerspectives(scores, 5);
-    expect(result).toContain('simplifier');
-    expect(result).not.toContain('researcher');
+    expect(result).toContain('occam');
+    expect(result).not.toContain('henry-wu');
   });
 
   it('returns exactly 2 perspectives in late turns', () => {
@@ -126,36 +126,36 @@ describe('selectActivePerspectives', () => {
 
   // ─── Dimension-aware convergence pressure tests ────────────────────────────
 
-  it('mid-turn: low constraintClarity targets breadth-keeper', () => {
+  it('mid-turn: low constraintClarity targets hickam', () => {
     const scores = makeScores(0.5, 0.8, 0.2, 0.7); // constraintClarity=0.2 is lowest and < 0.5
     const result = selectActivePerspectives(scores, 5);
-    expect(result).toContain('breadth-keeper');
+    expect(result).toContain('hickam');
   });
 
-  it('mid-turn: low successCriteriaClarity targets seed-closer', () => {
+  it('mid-turn: low successCriteriaClarity targets kirk', () => {
     const scores = makeScores(0.5, 0.7, 0.8, 0.15); // successCriteriaClarity=0.15 is lowest and < 0.5
     const result = selectActivePerspectives(scores, 5);
-    expect(result).toContain('seed-closer');
+    expect(result).toContain('kirk');
   });
 
-  it('mid-turn: all dimensions above 0.5 defaults to architect+breadth-keeper+simplifier', () => {
+  it('mid-turn: all dimensions above 0.5 defaults to heist-o-tron+hickam+occam', () => {
     const scores = makeScores(0.55, 0.6, 0.55, 0.5); // no dimension < 0.5
     const result = selectActivePerspectives(scores, 5);
-    expect(result).toEqual(['architect', 'breadth-keeper', 'simplifier']);
+    expect(result).toEqual(['heist-o-tron', 'hickam', 'occam']);
   });
 
-  it('late-turn: low constraintClarity adds breadth-keeper as third perspective', () => {
+  it('late-turn: low constraintClarity adds hickam as third perspective', () => {
     const scores = makeScores(0.75, 0.9, 0.3, 0.8); // constraintClarity=0.3 < 0.5
     const result = selectActivePerspectives(scores, 10);
-    expect(result).toContain('breadth-keeper');
-    expect(result).toContain('seed-closer');
-    expect(result).toContain('architect');
+    expect(result).toContain('hickam');
+    expect(result).toContain('kirk');
+    expect(result).toContain('heist-o-tron');
   });
 
-  it('early-turn unchanged: overall=0.2 still returns researcher+simplifier+breadth-keeper', () => {
+  it('early-turn unchanged: overall=0.2 still returns henry-wu+occam+hickam', () => {
     const scores = makeScores(0.2, 0.2, 0.1, 0.3);
     const result = selectActivePerspectives(scores, 3);
-    expect(result).toEqual(['researcher', 'simplifier', 'breadth-keeper']);
+    expect(result).toEqual(['henry-wu', 'occam', 'hickam']);
   });
 });
 
@@ -164,7 +164,7 @@ describe('selectActivePerspectives', () => {
 function makeTurn(question: string, userAnswer: string, turnNumber = 1): InterviewTurn {
   return {
     turnNumber,
-    perspective: 'researcher',
+    perspective: 'henry-wu',
     question,
     mcOptions: [],
     userAnswer,

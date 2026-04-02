@@ -220,7 +220,7 @@ describe('mutateSeedFromProposal', () => {
   it('sets tier to full in evolutionContext', async () => {
     const seed = makeSeed({ generation: 2 });
     const proposal = {
-      persona: 'simplifier',
+      persona: 'occam',
       goal: 'Simplified goal',
       constraints: [],
       acceptanceCriteria: [],
@@ -275,8 +275,8 @@ describe('mutateSeedFromProposal', () => {
     const { appendEvent } = await import('@get-cauldron/shared');
     const seed = makeSeed({ generation: 2 });
     const proposal = {
-      persona: 'architect',
-      goal: 'Architect goal',
+      persona: 'heist-o-tron',
+      goal: 'Heist-o-tron goal',
       constraints: [],
       acceptanceCriteria: [],
       rationale: 'Rethink architecture',
@@ -297,7 +297,7 @@ describe('mutateSeedFromProposal', () => {
       mockDb,
       expect.objectContaining({
         payload: expect.objectContaining({
-          persona: 'architect',
+          persona: 'heist-o-tron',
           source: 'lateral_thinking',
         }),
       })

@@ -23,19 +23,19 @@ describe('ChatBubble', () => {
       <ChatBubble
         role="system"
         content="Think about constraints"
-        perspective="researcher"
+        perspective="henry-wu"
       />
     );
     // Avatar shows uppercase initial
-    expect(screen.getByTitle('researcher')).toBeInTheDocument();
+    expect(screen.getByTitle('henry-wu')).toBeInTheDocument();
   });
 
   it('does not render perspective avatar for user messages', () => {
     render(
-      <ChatBubble role="user" content="My answer" perspective="researcher" />
+      <ChatBubble role="user" content="My answer" perspective="henry-wu" />
     );
     // User messages don't show perspective avatars
-    expect(screen.queryByTitle('researcher')).not.toBeInTheDocument();
+    expect(screen.queryByTitle('henry-wu')).not.toBeInTheDocument();
   });
 
   it('applies justify-end class for user messages', () => {

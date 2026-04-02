@@ -87,7 +87,7 @@ const mockLogger = {
  * Builds a mock LLMGateway where generateObject returns responses matching the
  * call sequence that submitAnswer drives:
  *   1. scoreTranscript → generateObject (scorer prompt)
- *   2. runActivePerspectives → generateObject x3 (one per perspective: researcher, simplifier, breadth-keeper)
+ *   2. runActivePerspectives → generateObject x3 (one per perspective: henry-wu, occam, hickam)
  *   3. rankCandidates → generateObject (ranker prompt)
  *
  * All calls return { object: ... } following Vercel AI SDK pattern.
@@ -105,7 +105,7 @@ function buildMockGateway(overallScore = 0.5): Pick<LLMGateway, 'generateObject'
     },
   });
 
-  // Calls 2-4: three perspective calls (researcher, simplifier, breadth-keeper for turn 0)
+  // Calls 2-4: three perspective calls (henry-wu, occam, hickam for turn 0)
   const perspectiveResponse = (name: string) => ({
     object: {
       question: `What is the primary goal of your ${name} requirement?`,
@@ -113,9 +113,9 @@ function buildMockGateway(overallScore = 0.5): Pick<LLMGateway, 'generateObject'
     },
   });
 
-  generateObject.mockResolvedValueOnce(perspectiveResponse('researcher'));
-  generateObject.mockResolvedValueOnce(perspectiveResponse('simplifier'));
-  generateObject.mockResolvedValueOnce(perspectiveResponse('breadth-keeper'));
+  generateObject.mockResolvedValueOnce(perspectiveResponse('henry-wu'));
+  generateObject.mockResolvedValueOnce(perspectiveResponse('occam'));
+  generateObject.mockResolvedValueOnce(perspectiveResponse('hickam'));
 
   // Call 5: ranker → selects first candidate (index 0)
   generateObject.mockResolvedValueOnce({

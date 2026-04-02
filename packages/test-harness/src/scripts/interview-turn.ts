@@ -16,7 +16,7 @@ export interface InterviewTurnOptions {
 /**
  * Builds a 5-call gateway script for one interview turn:
  *   1. scoreTranscript → ambiguity scores
- *   2-4. runActivePerspectives → 3 perspective candidates (researcher, simplifier, breadth-keeper)
+ *   2-4. runActivePerspectives → 3 perspective candidates (henry-wu, occam, hickam)
  *   5. rankCandidates → selected index + MC options
  *
  * This matches the real call sequence in InterviewFSM.submitAnswer().
@@ -38,7 +38,7 @@ export function interviewTurnScript(options?: InterviewTurnOptions): MockGateway
         reasoning: 'Mock scoring result for wiring test',
       },
     },
-    // Call 2: researcher perspective
+    // Call 2: henry-wu perspective
     {
       stage: 'interview',
       returns: {
@@ -46,7 +46,7 @@ export function interviewTurnScript(options?: InterviewTurnOptions): MockGateway
         rationale: 'Exploring the core objective from a research perspective.',
       },
     },
-    // Call 3: simplifier perspective
+    // Call 3: occam perspective
     {
       stage: 'interview',
       returns: {
@@ -54,7 +54,7 @@ export function interviewTurnScript(options?: InterviewTurnOptions): MockGateway
         rationale: 'Identifying the MVP scope.',
       },
     },
-    // Call 4: breadth-keeper perspective
+    // Call 4: hickam perspective
     {
       stage: 'interview',
       returns: {

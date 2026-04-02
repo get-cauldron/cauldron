@@ -64,7 +64,7 @@ describe('interviews table', () => {
 
     const turn = {
       turnNumber: 1,
-      perspective: 'researcher',
+      perspective: 'henry-wu',
       question: 'What is the goal?',
       mcOptions: ['Option A', 'Option B'],
       userAnswer: 'Build a CLI renaming tool',

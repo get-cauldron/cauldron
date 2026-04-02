@@ -50,9 +50,9 @@ describe('PERSONAS', () => {
     expect(PERSONAS).toHaveLength(5);
     expect(PERSONAS).toContain('contrarian');
     expect(PERSONAS).toContain('hacker');
-    expect(PERSONAS).toContain('simplifier');
-    expect(PERSONAS).toContain('researcher');
-    expect(PERSONAS).toContain('architect');
+    expect(PERSONAS).toContain('occam');
+    expect(PERSONAS).toContain('henry-wu');
+    expect(PERSONAS).toContain('heist-o-tron');
   });
 });
 
@@ -174,9 +174,9 @@ describe('metaJudgeSelect', () => {
       proposals: [
         { persona: 'contrarian', goal: 'g1', constraints: [], acceptanceCriteria: [], rationale: 'r1' },
         { persona: 'hacker', goal: 'g2', constraints: [], acceptanceCriteria: [], rationale: 'r2' },
-        { persona: 'simplifier', goal: 'g3', constraints: [], acceptanceCriteria: [], rationale: 'r3' },
-        { persona: 'researcher', goal: 'g4', constraints: [], acceptanceCriteria: [], rationale: 'r4' },
-        { persona: 'architect', goal: 'g5', constraints: [], acceptanceCriteria: [], rationale: 'r5' },
+        { persona: 'occam', goal: 'g3', constraints: [], acceptanceCriteria: [], rationale: 'r3' },
+        { persona: 'henry-wu', goal: 'g4', constraints: [], acceptanceCriteria: [], rationale: 'r4' },
+        { persona: 'heist-o-tron', goal: 'g5', constraints: [], acceptanceCriteria: [], rationale: 'r5' },
       ],
       originalSeed: makeSeed(),
       projectId: 'project-id-1',
@@ -189,14 +189,14 @@ describe('metaJudgeSelect', () => {
   it('returns a LateralThinkingProposal when meta-judge selects a viable proposal', async () => {
     mockGateway.generateObject.mockResolvedValueOnce({
       object: {
-        selectedPersona: 'architect',
+        selectedPersona: 'heist-o-tron',
         mergedProposal: {
           goal: 'Rethink the structural decomposition',
           constraints: [{ constraint: 'Keep boundaries clean' }],
           acceptanceCriteria: [{ criterion: 'Modules are independent' }],
           rationale: 'The architecture needs rethinking',
         },
-        reasoning: 'Architect proposal addresses the root cause',
+        reasoning: 'Heist-o-tron proposal addresses the root cause',
         viable: true,
       },
     });
@@ -207,9 +207,9 @@ describe('metaJudgeSelect', () => {
       proposals: [
         { persona: 'contrarian', goal: 'g1', constraints: [], acceptanceCriteria: [], rationale: 'r1' },
         { persona: 'hacker', goal: 'g2', constraints: [], acceptanceCriteria: [], rationale: 'r2' },
-        { persona: 'simplifier', goal: 'g3', constraints: [], acceptanceCriteria: [], rationale: 'r3' },
-        { persona: 'researcher', goal: 'g4', constraints: [], acceptanceCriteria: [], rationale: 'r4' },
-        { persona: 'architect', goal: 'g5', constraints: [], acceptanceCriteria: [], rationale: 'r5' },
+        { persona: 'occam', goal: 'g3', constraints: [], acceptanceCriteria: [], rationale: 'r3' },
+        { persona: 'henry-wu', goal: 'g4', constraints: [], acceptanceCriteria: [], rationale: 'r4' },
+        { persona: 'heist-o-tron', goal: 'g5', constraints: [], acceptanceCriteria: [], rationale: 'r5' },
       ],
       originalSeed: makeSeed(),
       projectId: 'project-id-1',
@@ -218,7 +218,7 @@ describe('metaJudgeSelect', () => {
 
     expect(result).not.toBeNull();
     expect(result!.goal).toBe('Rethink the structural decomposition');
-    expect(result!.persona).toBe('architect');
+    expect(result!.persona).toBe('heist-o-tron');
     expect(result!.rationale).toBe('The architecture needs rethinking');
   });
 
@@ -241,9 +241,9 @@ describe('metaJudgeSelect', () => {
     const proposals = [
       { persona: 'contrarian', goal: 'g1', constraints: [], acceptanceCriteria: [], rationale: 'r1' },
       { persona: 'hacker', goal: 'g2', constraints: [], acceptanceCriteria: [], rationale: 'r2' },
-      { persona: 'simplifier', goal: 'g3', constraints: [], acceptanceCriteria: [], rationale: 'r3' },
-      { persona: 'researcher', goal: 'g4', constraints: [], acceptanceCriteria: [], rationale: 'r4' },
-      { persona: 'architect', goal: 'g5', constraints: [], acceptanceCriteria: [], rationale: 'r5' },
+      { persona: 'occam', goal: 'g3', constraints: [], acceptanceCriteria: [], rationale: 'r3' },
+      { persona: 'henry-wu', goal: 'g4', constraints: [], acceptanceCriteria: [], rationale: 'r4' },
+      { persona: 'heist-o-tron', goal: 'g5', constraints: [], acceptanceCriteria: [], rationale: 'r5' },
     ];
 
     await metaJudgeSelect({
@@ -259,15 +259,15 @@ describe('metaJudgeSelect', () => {
     const prompt = callArgs.prompt as string;
     expect(prompt).toContain('contrarian');
     expect(prompt).toContain('hacker');
-    expect(prompt).toContain('simplifier');
-    expect(prompt).toContain('researcher');
-    expect(prompt).toContain('architect');
+    expect(prompt).toContain('occam');
+    expect(prompt).toContain('henry-wu');
+    expect(prompt).toContain('heist-o-tron');
   });
 
   it('calls gateway at stage evaluation', async () => {
     mockGateway.generateObject.mockResolvedValueOnce({
       object: {
-        selectedPersona: 'simplifier',
+        selectedPersona: 'occam',
         mergedProposal: {
           goal: 'Simple',
           constraints: [{ constraint: 'Less is more' }],
@@ -285,9 +285,9 @@ describe('metaJudgeSelect', () => {
       proposals: [
         { persona: 'contrarian', goal: 'g1', constraints: [], acceptanceCriteria: [], rationale: 'r1' },
         { persona: 'hacker', goal: 'g2', constraints: [], acceptanceCriteria: [], rationale: 'r2' },
-        { persona: 'simplifier', goal: 'g3', constraints: [], acceptanceCriteria: [], rationale: 'r3' },
-        { persona: 'researcher', goal: 'g4', constraints: [], acceptanceCriteria: [], rationale: 'r4' },
-        { persona: 'architect', goal: 'g5', constraints: [], acceptanceCriteria: [], rationale: 'r5' },
+        { persona: 'occam', goal: 'g3', constraints: [], acceptanceCriteria: [], rationale: 'r3' },
+        { persona: 'henry-wu', goal: 'g4', constraints: [], acceptanceCriteria: [], rationale: 'r4' },
+        { persona: 'heist-o-tron', goal: 'g5', constraints: [], acceptanceCriteria: [], rationale: 'r5' },
       ],
       originalSeed: makeSeed(),
       projectId: 'project-id-1',
@@ -320,9 +320,9 @@ describe('runLateralThinking', () => {
     mockGateway.generateObject
       .mockResolvedValueOnce({ object: { goal: 'contrarian-goal', constraints: [{ constraint: 'c1' }], acceptanceCriteria: [{ criterion: 'ac1' }], rationale: 'r1' } })
       .mockResolvedValueOnce({ object: { goal: 'hacker-goal', constraints: [{ constraint: 'c2' }], acceptanceCriteria: [{ criterion: 'ac2' }], rationale: 'r2' } })
-      .mockResolvedValueOnce({ object: { goal: 'simplifier-goal', constraints: [{ constraint: 'c3' }], acceptanceCriteria: [{ criterion: 'ac3' }], rationale: 'r3' } })
-      .mockResolvedValueOnce({ object: { goal: 'researcher-goal', constraints: [{ constraint: 'c4' }], acceptanceCriteria: [{ criterion: 'ac4' }], rationale: 'r4' } })
-      .mockResolvedValueOnce({ object: { goal: 'architect-goal', constraints: [{ constraint: 'c5' }], acceptanceCriteria: [{ criterion: 'ac5' }], rationale: 'r5' } })
+      .mockResolvedValueOnce({ object: { goal: 'occam-goal', constraints: [{ constraint: 'c3' }], acceptanceCriteria: [{ criterion: 'ac3' }], rationale: 'r3' } })
+      .mockResolvedValueOnce({ object: { goal: 'henry-wu-goal', constraints: [{ constraint: 'c4' }], acceptanceCriteria: [{ criterion: 'ac4' }], rationale: 'r4' } })
+      .mockResolvedValueOnce({ object: { goal: 'heist-o-tron-goal', constraints: [{ constraint: 'c5' }], acceptanceCriteria: [{ criterion: 'ac5' }], rationale: 'r5' } })
       // meta-judge
       .mockResolvedValueOnce({
         object: {
@@ -348,9 +348,9 @@ describe('runLateralThinking', () => {
     // Check that each persona was called with its named step
     expect(mockStep.run).toHaveBeenCalledWith('lateral-thinking-contrarian', expect.any(Function));
     expect(mockStep.run).toHaveBeenCalledWith('lateral-thinking-hacker', expect.any(Function));
-    expect(mockStep.run).toHaveBeenCalledWith('lateral-thinking-simplifier', expect.any(Function));
-    expect(mockStep.run).toHaveBeenCalledWith('lateral-thinking-researcher', expect.any(Function));
-    expect(mockStep.run).toHaveBeenCalledWith('lateral-thinking-architect', expect.any(Function));
+    expect(mockStep.run).toHaveBeenCalledWith('lateral-thinking-occam', expect.any(Function));
+    expect(mockStep.run).toHaveBeenCalledWith('lateral-thinking-henry-wu', expect.any(Function));
+    expect(mockStep.run).toHaveBeenCalledWith('lateral-thinking-heist-o-tron', expect.any(Function));
     expect(mockStep.run).toHaveBeenCalledWith('lateral-thinking-meta-judge', expect.any(Function));
   });
 
@@ -392,14 +392,14 @@ describe('runLateralThinking', () => {
       .mockResolvedValueOnce({ object: { goal: 'g5', constraints: [{ constraint: 'c' }], acceptanceCriteria: [{ criterion: 'ac' }], rationale: 'r' } })
       .mockResolvedValueOnce({
         object: {
-          selectedPersona: 'researcher',
+          selectedPersona: 'henry-wu',
           mergedProposal: {
             goal: 'Use proven library pattern',
             constraints: [{ constraint: 'Use existing library' }],
             acceptanceCriteria: [{ criterion: 'Library tests pass' }],
             rationale: 'Proven approach minimizes risk',
           },
-          reasoning: 'Researcher proposal best fits the gap',
+          reasoning: 'Henry Wu proposal best fits the gap',
           viable: true,
         },
       });
@@ -415,7 +415,7 @@ describe('runLateralThinking', () => {
     });
 
     expect(result).not.toBeNull();
-    expect(result!.persona).toBe('researcher');
+    expect(result!.persona).toBe('henry-wu');
     expect(result!.goal).toBe('Use proven library pattern');
     expect(result!.rationale).toBe('Proven approach minimizes risk');
   });

@@ -52,11 +52,11 @@ should cover round-trip shorten→expand, duplicate URLs, and invalid input.`,
   },
 
   perspectiveModels: {
-    researcher: 'mistral-small-latest',
-    simplifier: 'mistral-small-latest',
-    architect: 'mistral-small-latest',
-    'breadth-keeper': 'mistral-small-latest',
-    'seed-closer': 'mistral-small-latest',
+    'henry-wu': 'mistral-small-latest',
+    occam: 'mistral-small-latest',
+    'heist-o-tron': 'mistral-small-latest',
+    hickam: 'mistral-small-latest',
+    kirk: 'mistral-small-latest',
   },
 
   scoringModel: 'mistral-small-latest',
@@ -248,7 +248,7 @@ test.describe('Live Pipeline E2E', () => {
 
         // Wait for either a perspective avatar (AI question) or Thinking indicator
         // This confirms the send actually worked end-to-end
-        const aiQuestion = page.locator('[title="researcher"], [title="simplifier"], [title="architect"], [title="breadth-keeper"], [title="seed-closer"]');
+        const aiQuestion = page.locator('[title="henry-wu"], [title="occam"], [title="heist-o-tron"], [title="hickam"], [title="kirk"]');
         const thinking = page.getByText('Thinking...');
         await expect(aiQuestion.or(thinking)).toBeVisible({ timeout: 15_000 });
       }).toPass({ timeout: 60_000, intervals: [5_000] });
@@ -257,7 +257,7 @@ test.describe('Live Pipeline E2E', () => {
 
       // Wait for the first AI question to fully appear
       await expect(async () => {
-        const hasAvatar = await page.locator('[title="researcher"], [title="simplifier"], [title="architect"], [title="breadth-keeper"], [title="seed-closer"]').count();
+        const hasAvatar = await page.locator('[title="henry-wu"], [title="occam"], [title="heist-o-tron"], [title="hickam"], [title="kirk"]').count();
         console.log(`[pipeline-live] Perspective avatars: ${hasAvatar}`);
         expect(hasAvatar).toBeGreaterThan(0);
       }).toPass({ timeout: 90_000, intervals: [3_000] });
@@ -269,8 +269,8 @@ test.describe('Live Pipeline E2E', () => {
       let crystallized = false;
 
       // AI messages are ChatBubble components with role="system" — they have
-      // perspective avatars with a title attribute (researcher, architect, etc.)
-      const perspectiveTitles = ['researcher', 'simplifier', 'architect', 'breadth-keeper', 'seed-closer'];
+      // perspective avatars with a title attribute (henry-wu, occam, heist-o-tron, hickam, kirk)
+      const perspectiveTitles = ['henry-wu', 'occam', 'heist-o-tron', 'hickam', 'kirk'];
       const perspectiveSelector = perspectiveTitles
         .map((p) => `[title="${p}"]`)
         .join(', ');

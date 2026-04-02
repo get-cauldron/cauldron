@@ -76,7 +76,7 @@ function setupMocks(transcriptData: Record<string, unknown> = {}) {
         data: {
           status: 'active',
           transcript: [
-            { question: 'What do you want to build?', userAnswer: 'A task manager', timestamp: new Date().toISOString(), perspective: 'researcher' },
+            { question: 'What do you want to build?', userAnswer: 'A task manager', timestamp: new Date().toISOString(), perspective: 'henry-wu' },
           ],
           currentScores: { goalClarity: 0.7, constraintClarity: 0.5, successCriteriaClarity: 0.6, overall: 0.6 },
           phase: transcriptData.phase ?? 'gathering',

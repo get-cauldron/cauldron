@@ -320,7 +320,7 @@ function makeTurns(count: number): InterviewTurn[] {
   };
   return Array.from({ length: count }, (_, i) => ({
     turnNumber: i + 1,
-    perspective: 'researcher' as const,
+    perspective: 'henry-wu' as const,
     question: `Question ${i + 1}?`,
     mcOptions: [],
     userAnswer: `Answer ${i + 1}`,

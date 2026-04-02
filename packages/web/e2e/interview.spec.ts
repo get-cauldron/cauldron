@@ -52,7 +52,7 @@ function buildSeedTranscript() {
   return [
     {
       turnNumber: 1,
-      perspective: 'researcher',
+      perspective: 'henry-wu',
       question: 'What kind of software do you want to build?',
       mcOptions: ['File manipulation utility', 'CLI framework', 'DevOps automation'],
       userAnswer: 'A CLI tool for batch file renaming',
@@ -70,7 +70,7 @@ function buildSeedTranscript() {
     },
     {
       turnNumber: 2,
-      perspective: 'architect',
+      perspective: 'heist-o-tron',
       question: 'What file types and naming patterns should it support?',
       mcOptions: ['Regex patterns', 'Template strings', 'Glob matching'],
       userAnswer: '',
