@@ -96,9 +96,11 @@ v1.0 delivered the complete autonomous builder pipeline. v1.1 added local asset 
 
 - ✓ MCP cross-process IPC via Redis pub/sub (ARCH-01) — v1.2
 
+- ✓ OpenAI provider replaced with Mistral + Ollama + expanded Anthropic/Google — v1.2
+
 ### Active
 
-- (no active requirements — remaining phases are newly inserted)
+- (no active requirements — milestone complete)
 
 ### Deferred
 
