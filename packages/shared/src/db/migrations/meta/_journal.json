@@ -120,6 +120,13 @@
       "when": 1775595600000,
       "tag": "0016_small_red_wolf",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1775682000000,
+      "tag": "0017_fk_cascade_strategy",
+      "breakpoints": true
     }
   ]
 }
