@@ -57,7 +57,7 @@ See `.planning/milestones/v1.1-ROADMAP.md` for full details.
 - [x] **Phase 25: Process Reliability & Transactions** - Enforce two-phase timeout kill, transactional holdout failure rollback, and DAGCanvas error boundary (completed 2026-04-02)
 - [x] **Phase 26: Auth Middleware** - Wire authenticatedProcedure to all tRPC mutation routes (completed 2026-04-02)
 - [x] **Phase 27: Structured Conflict Resolution** - Replace string-scanning heuristic with Zod-schema-validated AI SDK Output.object() extraction (completed 2026-04-02)
-- [ ] **Phase 28: KEK Rotation Infrastructure** - Two-phase key rotation with versioned KEK table, bulk re-encryption, and append-only audit log
+- [x] **Phase 28: KEK Rotation Infrastructure** - Two-phase key rotation with versioned KEK table, bulk re-encryption, and append-only audit log (completed 2026-04-02)
 - [ ] **Phase 29: MCP Cross-Process IPC** - Bridge Inngest worker push notifications to MCP stdio process via Redis pub/sub
 
 ## Phase Details
@@ -146,7 +146,7 @@ Plans:
   2. The rotation audit log records three distinct events: rotation started, all DEKs re-encrypted, old key retired — the full rotation is traceable
   3. Holdout evaluations that began decrypting before rotation completes are not broken — the dual-encrypt window ensures the old key remains valid until all in-flight evaluations finish
   4. The old KEK is not retired in the same deployment that introduces the new KEK — no in-flight evaluation can see a missing key
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 28-01-PLAN.md — Schema (kek_versions, kek_rotation_log, kek_version column), rotation core logic, dual-key unseal, unit tests
 - [x] 28-02-PLAN.md — CLI rotate-kek command with --init, rotation, and --retire-old modes
@@ -176,7 +176,7 @@ Plans:
 | 25. Process Reliability & Transactions | v1.2 | 2/2 | Complete    | 2026-04-02 |
 | 26. Auth Middleware | v1.2 | 0/1 | Complete    | 2026-04-02 |
 | 27. Structured Conflict Resolution | v1.2 | 1/1 | Complete    | 2026-04-02 |
-| 28. KEK Rotation Infrastructure | v1.2 | 1/2 | In Progress|  |
+| 28. KEK Rotation Infrastructure | v1.2 | 1/2 | Complete    | 2026-04-02 |
 | 29. MCP Cross-Process IPC | v1.2 | 0/? | Not started | - |
 
 ### Phase 30: Replace OpenAI Provider
