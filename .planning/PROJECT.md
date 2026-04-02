@@ -83,15 +83,15 @@ v1.0 delivered the complete autonomous builder pipeline. v1.1 added local asset 
 - ✓ Seed version partial unique index (parent_seed_id + version) — v1.2
 - ✓ bead_edges reverse-lookup index (target_bead_id) — v1.2
 - ✓ FK cascade strategy (CASCADE structural, SET NULL audit tables) — v1.2
+- ✓ Optimistic locking on bead completion (version-conditioned WHERE) — v1.2
+- ✓ Synchronous LLM usage recording for budget enforcement — v1.2
+- ✓ N+1 query elimination in projects list (LATERAL JOIN) — v1.2
 
 ### Active
 
 - Structured merge conflict resolution with per-file JSON extraction
 - Enforced timeout supervisor with agent process termination
 - Holdout failure rollback (no silent success after crystallization)
-- Synchronous usage recording for budget enforcement accuracy
-- Optimistic locking on bead completion (version-conditioned updates)
-- N+1 query elimination in projects list
 - KEK rotation infrastructure with audit trail
 - Auth middleware on tRPC routes (beyond context-level)
 - React error boundaries around DAGCanvas
@@ -196,4 +196,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-02 after Phase 23 completion*
+*Last updated: 2026-04-02 after Phase 24 completion*
