@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
+import { ErrorBoundary } from 'react-error-boundary';
 import { DAGCanvas } from '@/components/dag/DAGCanvas';
 import { BeadDetailSheet } from '@/components/bead/BeadDetailSheet';
 import { useEscalation } from '@/hooks/useEscalation';
@@ -212,43 +213,71 @@ export default function ExecutionPage() {
 
       {/* DAG Canvas fills remaining height */}
       <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>
-        <DAGCanvas
-          projectId={projectId}
-          onNodeClick={(beadId) => setSelectedBeadId(beadId)}
-        />
-
-        {/* Start Decomposition button — shown when DAG is empty and a seed exists */}
-        {dagQuery.data && dagQuery.data.beads.length === 0 && dagQuery.data.seedId && (
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            pointerEvents: 'none',
-          }}>
-            <Button
-              aria-label="Start Decomposition"
-              disabled={decompPhase !== 'idle'}
-              onClick={handleStartDecomposition}
-              style={{
-                pointerEvents: 'auto',
-                background: '#00d4aa',
-                color: '#0a0f14',
-                fontWeight: 600,
-                fontSize: 14,
-                padding: '10px 24px',
-                opacity: decompPhase !== 'idle' ? 0.7 : 1,
-              }}
+        <ErrorBoundary
+          fallbackRender={({ error, resetErrorBoundary }) => (
+            <div
+              role="alert"
+              className="flex flex-col items-center justify-center gap-3"
+              style={{ height: '100%', color: '#6b8399' }}
             >
-              {decompPhase === 'decomposing'
-                ? 'Decomposing...'
-                : decompPhase === 'executing'
-                  ? 'Starting execution...'
-                  : 'Start Decomposition'}
-            </Button>
-          </div>
-        )}
+              <span style={{ fontSize: 14 }}>DAG visualization failed</span>
+              <span style={{ fontSize: 12, color: '#e5484d' }}>{error instanceof Error ? error.message : String(error)}</span>
+              <button
+                onClick={resetErrorBoundary}
+                className="px-4 py-1.5 text-xs rounded"
+                style={{
+                  background: '#1a2330',
+                  border: '1px solid #2a3a4a',
+                  color: '#c8d6e5',
+                  cursor: 'pointer',
+                }}
+              >
+                Retry
+              </button>
+            </div>
+          )}
+          onError={(error, info) => {
+            console.error('[DAGCanvas] render error:', error, info.componentStack);
+          }}
+        >
+          <DAGCanvas
+            projectId={projectId}
+            onNodeClick={(beadId) => setSelectedBeadId(beadId)}
+          />
+
+          {/* Start Decomposition button — shown when DAG is empty and a seed exists */}
+          {dagQuery.data && dagQuery.data.beads.length === 0 && dagQuery.data.seedId && (
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'none',
+            }}>
+              <Button
+                aria-label="Start Decomposition"
+                disabled={decompPhase !== 'idle'}
+                onClick={handleStartDecomposition}
+                style={{
+                  pointerEvents: 'auto',
+                  background: '#00d4aa',
+                  color: '#0a0f14',
+                  fontWeight: 600,
+                  fontSize: 14,
+                  padding: '10px 24px',
+                  opacity: decompPhase !== 'idle' ? 0.7 : 1,
+                }}
+              >
+                {decompPhase === 'decomposing'
+                  ? 'Decomposing...'
+                  : decompPhase === 'executing'
+                    ? 'Starting execution...'
+                    : 'Start Decomposition'}
+              </Button>
+            </div>
+          )}
+        </ErrorBoundary>
       </div>
 
       {/* Bead detail slide-out panel */}
