@@ -105,6 +105,69 @@ describe('appendEvent', () => {
     expect(p2e1.sequenceNumber).toBe(1);
     expect(p2e2.sequenceNumber).toBe(2);
   });
+
+  it('Test 8: direct insert of duplicate project_id + sequence_number raises constraint violation', async () => {
+    const project = await createTestProject();
+
+    // Insert first event
+    await testDb.db.insert(schema.events).values({
+      projectId: project.id,
+      type: 'interview_started',
+      payload: {},
+      sequenceNumber: 1,
+    });
+
+    // Attempt duplicate — same project_id + sequence_number
+    await expect(
+      testDb.db.insert(schema.events).values({
+        projectId: project.id,
+        type: 'interview_completed',
+        payload: {},
+        sequenceNumber: 1,
+      })
+    ).rejects.toThrow(); // PostgreSQL unique_violation (23505)
+  });
+
+  it('Test 9: appendEvent produces correct sequence after manual inserts', async () => {
+    const project = await createTestProject();
+
+    // Manually insert events with specific sequence numbers
+    await testDb.db.insert(schema.events).values({
+      projectId: project.id,
+      type: 'interview_started',
+      payload: {},
+      sequenceNumber: 1,
+    });
+    await testDb.db.insert(schema.events).values({
+      projectId: project.id,
+      type: 'interview_completed',
+      payload: {},
+      sequenceNumber: 2,
+    });
+
+    // appendEvent should pick up MAX(2)+1 = 3
+    const event = await appendEvent(testDb.db, {
+      projectId: project.id,
+      type: 'evolution_started',
+      payload: {},
+    });
+
+    expect(event.sequenceNumber).toBe(3);
+  });
+
+  it('Test 10: appendEvent handles concurrent-safe sequence assignment with constraint', async () => {
+    const project = await createTestProject();
+
+    // Rapid sequential inserts — each should get a unique sequence
+    const results = await Promise.all([
+      appendEvent(testDb.db, { projectId: project.id, type: 'interview_started', payload: {} }),
+      appendEvent(testDb.db, { projectId: project.id, type: 'interview_completed', payload: {} }),
+    ]);
+
+    const sequences = results.map(r => r.sequenceNumber).sort();
+    // Both should succeed with different sequence numbers
+    expect(new Set(sequences).size).toBe(2);
+  });
 });
 
 describe('deriveProjectState', () => {
