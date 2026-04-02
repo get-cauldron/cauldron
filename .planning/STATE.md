@@ -101,7 +101,8 @@ None yet.
 
 | # | Description | Date | Commit | Status | Directory |
 |---|-------------|------|--------|--------|-----------|
-| 260402-o0w | Add Cousin Eddie persona to interview FSM | 2026-04-02 | pending | Verified | [260402-o0w-add-cousin-eddie-persona-to-interview-fs](./quick/260402-o0w-add-cousin-eddie-persona-to-interview-fs/) |
+| 260402-o0w | Add Cousin Eddie persona to interview FSM | 2026-04-02 | 49d731d | Verified | [260402-o0w-add-cousin-eddie-persona-to-interview-fs](./quick/260402-o0w-add-cousin-eddie-persona-to-interview-fs/) |
+| 260402-oou | Rename perspectives to character personas (Wu, Occam, Heist-o-tron, Hickam, Kirk) | 2026-04-02 | ef55eb7 | Done | [260402-oou-rename-interview-perspectives-to-charact](./quick/260402-oou-rename-interview-perspectives-to-charact/) |
 
 ## Session Continuity
 
