@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Architectural Hardening
 status: executing
-stopped_at: Completed 29-02-PLAN.md
-last_updated: "2026-04-02T23:17:29.069Z"
-last_activity: 2026-04-02 -- Phase 30 execution started
+stopped_at: Completed 30-03-PLAN.md
+last_updated: "2026-04-02T23:33:07.266Z"
+last_activity: 2026-04-02
 progress:
   total_phases: 9
   completed_phases: 8
   total_plans: 17
-  completed_plans: 14
+  completed_plans: 16
   percent: 0
 ---
 
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 ## Current Position
 
 Phase: 30 (Replace OpenAI Provider) — EXECUTING
-Plan: 1 of 3
-Status: Executing Phase 30
-Last activity: 2026-04-02 -- Phase 30 execution started
+Plan: 2 of 3
+Status: Ready to execute
+Last activity: 2026-04-02
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -59,6 +59,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 28-kek-rotation-infrastructure P02 | 204 | 1 tasks | 2 files |
 | Phase 29-mcp-cross-process-ipc P01 | 363 | 2 tasks | 6 files |
 | Phase 29-mcp-cross-process-ipc P02 | 8 | 2 tasks | 5 files |
+| Phase 30-replace-openai-provider P03 | 15 | 2 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -79,6 +80,8 @@ Progress: [░░░░░░░░░░] 0%
 - [Phase 29-mcp-cross-process-ipc]: Use psubscribe wildcard pattern cauldron:job-status:* in MCP subscriber -- one connection covers all jobs
 - [Phase 29-mcp-cross-process-ipc]: publishJobStatusChanged called immediately after onJobStatusChanged on every state transition — both in-process callback and cross-process IPC fire together
 - [Phase 29-mcp-cross-process-ipc]: createJobStatusSubscriber called after server.connect() to ensure MCP server is ready for notifications before subscribing
+- [Phase 30-replace-openai-provider]: CLI health check calls ensureOllama() only when config.models contains ollama: prefix models — zero cost when Ollama not configured
+- [Phase 30-replace-openai-provider]: ollama package added directly to CLI package.json for auto-pull health check (engine uses ai-sdk-ollama, CLI uses bare ollama client)
 
 ### Pending Todos
 
@@ -96,6 +99,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-02T14:55:11.139Z
-Stopped at: Completed 29-02-PLAN.md
+Last session: 2026-04-02T23:33:07.264Z
+Stopped at: Completed 30-03-PLAN.md
 Resume file: None
