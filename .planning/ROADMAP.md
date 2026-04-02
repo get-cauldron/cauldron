@@ -180,7 +180,7 @@ Plans:
 | 26. Auth Middleware | v1.2 | 0/1 | Complete    | 2026-04-02 |
 | 27. Structured Conflict Resolution | v1.2 | 1/1 | Complete    | 2026-04-02 |
 | 28. KEK Rotation Infrastructure | v1.2 | 1/2 | Complete    | 2026-04-02 |
-| 29. MCP Cross-Process IPC | v1.2 | 2/2 | Complete   | 2026-04-02 |
+| 29. MCP Cross-Process IPC | v1.2 | 2/2 | Complete    | 2026-04-02 |
 
 ### Phase 30: Replace OpenAI Provider
 
