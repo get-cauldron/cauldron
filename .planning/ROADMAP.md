@@ -161,7 +161,7 @@ Plans:
 | 20. Operator Controls & E2E Validation | v1.1 | 2/2 | Complete | 2026-04-01 |
 | 21. v1.1 Polish — Integration Wiring | v1.1 | 1/1 | Complete | 2026-04-01 |
 | 22. Schema Migrations — Integrity Indexes | v1.2 | 1/2 | Complete    | 2026-04-02 |
-| 23. FK Cascade Strategy | v1.2 | 2/2 | Complete   | 2026-04-02 |
+| 23. FK Cascade Strategy | v1.2 | 2/2 | Complete    | 2026-04-02 |
 | 24. Concurrency & Performance | v1.2 | 0/? | Not started | - |
 | 25. Process Reliability & Transactions | v1.2 | 0/? | Not started | - |
 | 26. Auth Middleware | v1.2 | 0/? | Not started | - |
