@@ -7,7 +7,7 @@ stopped_at: null
 last_updated: "2026-04-01"
 last_activity: 2026-04-01
 progress:
-  total_phases: 0
+  total_phases: 8
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -21,19 +21,20 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-01)
 
 **Core value:** User describes what they want; Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves until the goal is met with humans steering at key decision points.
-**Current focus:** Milestone v1.2 — Architectural Hardening
+**Current focus:** Phase 22 — Schema Migrations: Integrity Indexes
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-04-01 — Milestone v1.2 started
+Phase: 22 of 29 (Schema Migrations — Integrity Indexes)
+Plan: — of — in current phase
+Status: Ready to plan
+Last activity: 2026-04-01 — v1.2 roadmap created (8 phases, 15 requirements)
+
+Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
 **Velocity:**
-
 - Total plans completed: 74 (65 v1.0 + 9 v1.1)
 - v1.1 timeline: 2 days (2026-03-31 → 2026-04-01)
 
@@ -43,16 +44,25 @@ Last activity: 2026-04-01 — Milestone v1.2 started
 
 Prior milestone decisions archived to `.planning/milestones/v1.1-ROADMAP.md`.
 
+v1.2 roadmap decisions:
+- Phase 22 before Phase 23: additive indexes separated from behavior-changing FK cascade rules (each independently reversible)
+- Phase 25 depends on Phase 22: process kill and rollback require index infrastructure to be stable first
+- Phase 28 last: KEK rotation has highest complexity and a non-recoverable in-flight decryption hazard — must come after all other phases stable
+- DATA-05 gets its own phase (23): FK cascade is schema-only but behavior-changing; conflating with additive migrations risks hard-to-roll-back failures
+
 ### Pending Todos
 
 None.
 
 ### Blockers/Concerns
 
-None.
+- Phase 22: Run duplicate-sequence audit query against dev and test DBs before applying UNIQUE constraint migration (existing duplicates will fail the migration)
+- Phase 23: Map the complete FK graph before writing any SQL — llm_usage and events must use SET NULL, not CASCADE
+- Phase 25: Read `execution/agent-runner.ts` and the `interview/` crystallize call site before planning — spawn mechanism and transaction ownership cannot be assumed
+- Phase 28: Design the two-phase rotation window explicitly as a pre-task before writing any code
 
 ## Session Continuity
 
 Last session: 2026-04-01
-Stopped at: Milestone v1.2 initialization
+Stopped at: Roadmap created for v1.2 — 8 phases (22-29), 15 requirements mapped, ready to plan Phase 22
 Resume file: None

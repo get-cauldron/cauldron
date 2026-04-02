@@ -55,27 +55,27 @@ Requirements for architectural hardening. Each maps to roadmap phases.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | — | Pending |
-| DATA-02 | — | Pending |
-| DATA-03 | — | Pending |
-| DATA-04 | — | Pending |
-| DATA-05 | — | Pending |
-| CONC-01 | — | Pending |
-| CONC-02 | — | Pending |
-| CONC-03 | — | Pending |
-| CONC-04 | — | Pending |
-| CONC-05 | — | Pending |
-| SEC-01 | — | Pending |
-| SEC-02 | — | Pending |
-| SEC-03 | — | Pending |
-| PERF-01 | — | Pending |
-| ARCH-01 | — | Pending |
+| DATA-01 | Phase 22 | Pending |
+| DATA-02 | Phase 22 | Pending |
+| DATA-03 | Phase 22 | Pending |
+| DATA-04 | Phase 22 | Pending |
+| DATA-05 | Phase 23 | Pending |
+| CONC-01 | Phase 24 | Pending |
+| CONC-02 | Phase 24 | Pending |
+| CONC-03 | Phase 25 | Pending |
+| CONC-04 | Phase 25 | Pending |
+| CONC-05 | Phase 27 | Pending |
+| SEC-01 | Phase 28 | Pending |
+| SEC-02 | Phase 26 | Pending |
+| SEC-03 | Phase 25 | Pending |
+| PERF-01 | Phase 24 | Pending |
+| ARCH-01 | Phase 29 | Pending |
 
 **Coverage:**
 - v1.2 requirements: 15 total
-- Mapped to phases: 0
-- Unmapped: 15
+- Mapped to phases: 15
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-04-01*
-*Last updated: 2026-04-01 after initial definition*
+*Last updated: 2026-04-01 after v1.2 roadmap creation (15/15 mapped)*
