@@ -298,37 +298,46 @@ export const interviewRouter = router({
         .where(eq(interviews.id, interview.id));
 
       try {
-        const seed = await crystallizeSeed(
-          ctx.db,
-          interview.id,
-          projectId,
-          summary,
-          ambiguityScore,
-        );
+        // CONC-04: Wrap crystallization + holdout generation in a transaction.
+        // If holdout generation fails, the seed row is rolled back so the mutation
+        // never returns a seedId that lacks test coverage. The interview phase
+        // reverts to 'reviewing' in the catch block so the user can retry.
+        const { gateway } = await ctx.getEngineDeps();
+        const { seedId, version } = await ctx.db.transaction(async (tx) => {
+          const seed = await crystallizeSeed(
+            tx as unknown as import('@get-cauldron/shared').DbClient,
+            interview.id,
+            projectId,
+            summary,
+            ambiguityScore,
+          );
 
-        // Generate holdout scenarios and create vault entry.
-        // Gateway diversity enforcement (LLM-06) is active for stage: 'holdout'.
-        // This is a separate try/catch: if holdout generation fails (LLM error,
-        // budget exceeded), the seed is already crystallized and should remain.
-        // The mutation still returns seedId. The user can retry holdout generation.
-        try {
-          const { gateway } = await ctx.getEngineDeps();
           const scenarios = await generateHoldoutScenarios({
             gateway,
             seed,
             projectId,
           });
-          await createVault(ctx.db, { seedId: seed.id, scenarios });
-        } catch (holdoutErr) {
-          console.error('[approveSummary] Holdout generation failed:', holdoutErr);
-        }
+          await createVault(
+            tx as unknown as import('@get-cauldron/shared').DbClient,
+            { seedId: seed.id, scenarios },
+          );
+          return { seedId: seed.id, version: seed.version };
+        });
 
-        return { seedId: seed.id, version: seed.version };
+        return { seedId, version };
       } catch (e) {
         if (e instanceof ImmutableSeedError) {
           throw new TRPCError({ code: 'CONFLICT', message: e.message });
         }
-        throw e;
+        // Revert interview phase so user can retry (seed was rolled back by transaction)
+        await ctx.db
+          .update(interviews)
+          .set({ phase: 'reviewing' })
+          .where(eq(interviews.id, interview.id));
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Crystallization failed — please retry',
+        });
       }
     }),
 
