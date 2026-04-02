@@ -84,7 +84,7 @@ describe('MergeQueue', () => {
     createWorktree: ReturnType<typeof vi.fn>;
   };
   let knowledgeGraph: { indexRepository: ReturnType<typeof vi.fn> };
-  let gateway: { generateText: ReturnType<typeof vi.fn> };
+  let gateway: { generateObject: ReturnType<typeof vi.fn> };
   let db: object;
   let queue: MergeQueue;
   const projectRoot = '/project';
@@ -104,7 +104,7 @@ describe('MergeQueue', () => {
     };
 
     gateway = {
-      generateText: vi.fn(),
+      generateObject: vi.fn(),
     };
 
     db = {};
@@ -216,14 +216,18 @@ describe('MergeQueue', () => {
       '<<<<<<< HEAD\nconst a = 1;\n=======\nconst a = 2;\n>>>>>>> branch\n'
     );
 
-    gateway.generateText.mockResolvedValue({
-      text: 'const a = 1;\n// confidence: "high"',
+    gateway.generateObject.mockResolvedValue({
+      object: {
+        confidence: 'high',
+        files: [{ path: 'src/index.ts', resolved_content: 'const a = 1; // resolved\n' }],
+      },
+      usage: { inputTokens: 100, outputTokens: 50 },
     });
 
     queue.enqueue(makeEntry());
     await queue.processNext(testRunner);
 
-    expect(gateway.generateText).toHaveBeenCalledWith(
+    expect(gateway.generateObject).toHaveBeenCalledWith(
       expect.objectContaining({ stage: 'conflict_resolution' })
     );
   });
@@ -241,8 +245,12 @@ describe('MergeQueue', () => {
       '<<<<<<< HEAD\nconst a = 1;\n=======\nconst a = 2;\n>>>>>>> branch\n'
     );
 
-    gateway.generateText.mockResolvedValue({
-      text: 'const a = 1; // resolved\n',
+    gateway.generateObject.mockResolvedValue({
+      object: {
+        confidence: 'high',
+        files: [{ path: 'src/index.ts', resolved_content: 'const a = 1; // resolved\n' }],
+      },
+      usage: { inputTokens: 100, outputTokens: 50 },
     });
 
     queue.enqueue(makeEntry());
@@ -251,6 +259,12 @@ describe('MergeQueue', () => {
     expect(outcome?.status).toBe('conflict_resolved');
     // mergeWorktreeToMain called twice: once for conflict, once for retry
     expect(worktreeManager.mergeWorktreeToMain).toHaveBeenCalledTimes(2);
+    // writeFileSync uses structured resolved_content, not raw prose
+    expect(fs.writeFileSync).toHaveBeenCalledWith(
+      expect.stringContaining('src/index.ts'),
+      'const a = 1; // resolved\n',
+      'utf-8'
+    );
   });
 
   it('if LLM resolution confidence is low, emits human_escalation event and returns escalated status', async () => {
@@ -264,8 +278,12 @@ describe('MergeQueue', () => {
       '<<<<<<< HEAD\nconst a = 1;\n=======\nconst a = 2;\n>>>>>>> branch\n'
     );
 
-    gateway.generateText.mockResolvedValue({
-      text: 'I cannot resolve this. "confidence": "low"',
+    gateway.generateObject.mockResolvedValue({
+      object: {
+        confidence: 'low',
+        files: [],
+      },
+      usage: { inputTokens: 100, outputTokens: 50 },
     });
 
     queue.enqueue(makeEntry());
@@ -278,6 +296,33 @@ describe('MergeQueue', () => {
     );
     // worktree NOT removed on escalation
     expect(worktreeManager.removeWorktree).not.toHaveBeenCalled();
+  });
+
+  it('if generateObject throws NoObjectGeneratedError, merge fails explicitly (CONC-05)', async () => {
+    const { NoObjectGeneratedError } = await import('ai');
+
+    worktreeManager.mergeWorktreeToMain.mockResolvedValue({
+      success: false,
+      conflicted: true,
+      conflicts: ['src/index.ts'],
+    });
+
+    (fs.readFileSync as ReturnType<typeof vi.fn>).mockReturnValue(
+      '<<<<<<< HEAD\nconst a = 1;\n=======\nconst a = 2;\n>>>>>>> branch\n'
+    );
+
+    gateway.generateObject.mockRejectedValue(
+      new NoObjectGeneratedError({
+        message: 'Failed to generate valid object',
+        text: undefined,
+        response: { id: 'test', timestamp: new Date(), modelId: 'test-model' },
+        usage: { promptTokens: 0, completionTokens: 0 },
+        finishReason: 'error',
+      })
+    );
+
+    queue.enqueue(makeEntry());
+    await expect(queue.processNext(testRunner)).rejects.toThrow(NoObjectGeneratedError);
   });
 
   // -------------------------------------------------------------------------
