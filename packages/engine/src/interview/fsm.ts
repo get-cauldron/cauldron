@@ -193,11 +193,27 @@ export class InterviewFSM {
       },
     ];
 
-    // D-21: Run scoring + perspectives in parallel — using transcript that includes current answer
-    const [scores, candidates] = await Promise.all([
+    // D-21: Stage A — scoring + contrarian analysis run in parallel
+    // Contrarian failure is non-fatal — Cousin Eddie is additive, not critical path.
+    const [scores, contrarianFramings] = await Promise.all([
       scoreTranscript(this.gateway, transcriptWithCurrentAnswer, mode, projectId, previousScores, this.config),
-      runActivePerspectives(this.gateway, transcriptWithCurrentAnswer, previousScores, projectId, turnCount, this.config),
+      runContrarianAnalysis(this.gateway, transcriptWithCurrentAnswer, projectId, this.config)
+        .catch((err: unknown) => {
+          this.logger.warn({ err, interviewId }, 'Contrarian analysis failed, continuing without');
+          return [];
+        }),
     ]);
+
+    // Stage B: Run perspectives with contrarian context injected
+    const candidates = await runActivePerspectives(
+      this.gateway,
+      transcriptWithCurrentAnswer,
+      previousScores,
+      projectId,
+      turnCount,
+      this.config,
+      contrarianFramings,
+    );
 
     // Rank candidates to get the next question
     const rankedQuestion = await rankCandidates(this.gateway, candidates, currentTranscript, projectId);

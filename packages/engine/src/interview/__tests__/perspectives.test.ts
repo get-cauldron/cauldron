@@ -3,8 +3,9 @@ import {
   PERSPECTIVE_PROMPTS,
   perspectiveCandidateSchema,
   selectActivePerspectives,
+  buildPerspectivePrompt,
 } from '../perspectives.js';
-import type { AmbiguityScores, PerspectiveName } from '../types.js';
+import type { AmbiguityScores, PerspectiveName, InterviewTurn, ContrarianFraming } from '../types.js';
 
 // ─── PERSPECTIVE_PROMPTS ──────────────────────────────────────────────────────
 
@@ -155,5 +156,104 @@ describe('selectActivePerspectives', () => {
     const scores = makeScores(0.2, 0.2, 0.1, 0.3);
     const result = selectActivePerspectives(scores, 3);
     expect(result).toEqual(['researcher', 'simplifier', 'breadth-keeper']);
+  });
+});
+
+// ─── buildPerspectivePrompt ───────────────────────────────────────────────────
+
+function makeTurn(question: string, userAnswer: string, turnNumber = 1): InterviewTurn {
+  return {
+    turnNumber,
+    perspective: 'researcher',
+    question,
+    mcOptions: [],
+    userAnswer,
+    ambiguityScoreSnapshot: makeScores(0.5),
+    model: 'test-model',
+    allCandidates: [],
+    timestamp: new Date().toISOString(),
+  };
+}
+
+describe('buildPerspectivePrompt', () => {
+  it('without contrarianFramings produces the base prompt (backward compatible)', () => {
+    const transcript = [makeTurn('What are you building?', 'A task manager')];
+    const result = buildPerspectivePrompt(transcript);
+    expect(result).toContain('Interview transcript so far:');
+    expect(result).toContain('ask one helpful clarifying question');
+    expect(result).not.toContain('Alternative framings to consider');
+  });
+
+  it('with undefined contrarianFramings produces the same output as without', () => {
+    const transcript = [makeTurn('What are you building?', 'A task manager')];
+    const withUndefined = buildPerspectivePrompt(transcript, undefined);
+    const withoutParam = buildPerspectivePrompt(transcript);
+    expect(withUndefined).toBe(withoutParam);
+  });
+
+  it('with empty contrarianFramings array produces the same output as without', () => {
+    const transcript = [makeTurn('What are you building?', 'A task manager')];
+    const withEmpty = buildPerspectivePrompt(transcript, []);
+    const withoutParam = buildPerspectivePrompt(transcript);
+    expect(withEmpty).toBe(withoutParam);
+  });
+
+  it('with contrarianFramings includes "Alternative framings to consider" section', () => {
+    const transcript = [makeTurn('What are you building?', 'A real-time dashboard')];
+    const framings: ContrarianFraming[] = [
+      {
+        hypothesis: 'Users want real-time updates',
+        alternative: 'Users want accurate final results',
+        reasoning: 'Real-time can add noise',
+      },
+    ];
+    const result = buildPerspectivePrompt(transcript, framings);
+    expect(result).toContain('Alternative framings to consider');
+    expect(result).toContain('Users want real-time updates');
+    expect(result).toContain('Users want accurate final results');
+    expect(result).toContain('Real-time can add noise');
+  });
+
+  it('with contrarianFramings the contrarian section appears BEFORE the question instruction', () => {
+    const transcript = [makeTurn('What are you building?', 'A real-time dashboard')];
+    const framings: ContrarianFraming[] = [
+      {
+        hypothesis: 'H',
+        alternative: 'A',
+        reasoning: 'R',
+      },
+    ];
+    const result = buildPerspectivePrompt(transcript, framings);
+    const contrarianIdx = result.indexOf('Alternative framings to consider');
+    const questionIdx = result.indexOf('ask one helpful clarifying question');
+    expect(contrarianIdx).toBeGreaterThan(-1);
+    expect(questionIdx).toBeGreaterThan(-1);
+    expect(contrarianIdx).toBeLessThan(questionIdx);
+  });
+
+  it('with contrarianFramings on empty transcript still includes the section', () => {
+    const framings: ContrarianFraming[] = [
+      {
+        hypothesis: 'H',
+        alternative: 'A',
+        reasoning: 'R',
+      },
+    ];
+    const result = buildPerspectivePrompt([], framings);
+    expect(result).toContain('Alternative framings to consider');
+    expect(result).toContain('The user has just started');
+  });
+
+  it('instructs perspective not to mention framings directly to the user', () => {
+    const transcript = [makeTurn('What are you building?', 'A task manager')];
+    const framings: ContrarianFraming[] = [
+      {
+        hypothesis: 'H',
+        alternative: 'A',
+        reasoning: 'R',
+      },
+    ];
+    const result = buildPerspectivePrompt(transcript, framings);
+    expect(result).toContain('Do not mention these framings directly to the user');
   });
 });

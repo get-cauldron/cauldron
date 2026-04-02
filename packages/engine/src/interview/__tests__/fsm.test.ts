@@ -281,11 +281,14 @@ describe('InterviewFSM.submitAnswer', () => {
     };
 
     // Mock gateway calls
+    // Stage A (parallel): scoreTranscript + runContrarianAnalysis
+    // Stage B: runActivePerspectives (3 perspectives for early turn) + rankCandidates
     mockGateway.generateObject
-      .mockResolvedValueOnce({ object: mockScores }) // scoreTranscript
-      .mockResolvedValueOnce({ object: { question: 'What is the goal?', rationale: 'Need goal' } }) // perspective 1
-      .mockResolvedValueOnce({ object: { question: 'What are constraints?', rationale: 'Need constraints' } }) // perspective 2
-      .mockResolvedValueOnce({ object: { question: 'What are constraints?', rationale: 'Need constraints' } }) // perspective 3
+      .mockResolvedValueOnce({ object: mockScores }) // scoreTranscript (Stage A)
+      .mockResolvedValueOnce({ object: { framings: [{ hypothesis: 'H', alternative: 'A', reasoning: 'R' }] } }) // contrarian (Stage A)
+      .mockResolvedValueOnce({ object: { question: 'What is the goal?', rationale: 'Need goal' } }) // perspective 1 (Stage B)
+      .mockResolvedValueOnce({ object: { question: 'What are constraints?', rationale: 'Need constraints' } }) // perspective 2 (Stage B)
+      .mockResolvedValueOnce({ object: { question: 'What are constraints?', rationale: 'Need constraints' } }) // perspective 3 (Stage B)
       .mockResolvedValueOnce({ object: { selectedIndex: 0, mcOptions: mockRanked.mcOptions, selectionRationale: mockRanked.selectionRationale } }); // rankCandidates
 
     // Mock update
@@ -334,10 +337,12 @@ describe('InterviewFSM.submitAnswer', () => {
     };
 
     // With late-turn (overall >= 0.7), selectActivePerspectives returns 2 perspectives (seed-closer + architect)
+    // Stage A (parallel): scorer + contrarian; Stage B: 2 perspectives + ranker
     mockGateway.generateObject
-      .mockResolvedValueOnce({ object: highScores }) // scorer
-      .mockResolvedValueOnce({ object: { question: 'Q1', rationale: 'R1' } }) // seed-closer perspective
-      .mockResolvedValueOnce({ object: { question: 'Q2', rationale: 'R2' } }) // architect perspective
+      .mockResolvedValueOnce({ object: highScores }) // scorer (Stage A)
+      .mockResolvedValueOnce({ object: { framings: [{ hypothesis: 'H', alternative: 'A', reasoning: 'R' }] } }) // contrarian (Stage A)
+      .mockResolvedValueOnce({ object: { question: 'Q1', rationale: 'R1' } }) // seed-closer perspective (Stage B)
+      .mockResolvedValueOnce({ object: { question: 'Q2', rationale: 'R2' } }) // architect perspective (Stage B)
       .mockResolvedValueOnce({ object: { selectedIndex: 0, mcOptions: ['A', 'B', 'C'], selectionRationale: 'Best' } }); // ranker
 
     db.where.mockResolvedValue(undefined);
