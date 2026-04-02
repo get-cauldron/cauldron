@@ -90,10 +90,10 @@ v1.0 delivered the complete autonomous builder pipeline. v1.1 added local asset 
 - ✓ Holdout failure rollback with DB transaction — v1.2
 - ✓ DAGCanvas React error boundary — v1.2
 - ✓ Auth middleware on tRPC mutation routes (authenticatedProcedure, dev-mode bypass) — v1.2
+- ✓ Structured merge conflict resolution with Zod-validated generateObject (CONC-05) — v1.2
 
 ### Active
 
-- Structured merge conflict resolution with per-file JSON extraction
 - KEK rotation infrastructure with audit trail
 - MCP push notifications via IPC or shared-process architecture (v1.1 tech debt)
 
