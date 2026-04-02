@@ -58,7 +58,7 @@ See `.planning/milestones/v1.1-ROADMAP.md` for full details.
 - [x] **Phase 26: Auth Middleware** - Wire authenticatedProcedure to all tRPC mutation routes (completed 2026-04-02)
 - [x] **Phase 27: Structured Conflict Resolution** - Replace string-scanning heuristic with Zod-schema-validated AI SDK Output.object() extraction (completed 2026-04-02)
 - [x] **Phase 28: KEK Rotation Infrastructure** - Two-phase key rotation with versioned KEK table, bulk re-encryption, and append-only audit log (completed 2026-04-02)
-- [ ] **Phase 29: MCP Cross-Process IPC** - Bridge Inngest worker push notifications to MCP stdio process via Redis pub/sub
+- [x] **Phase 29: MCP Cross-Process IPC** - Bridge Inngest worker push notifications to MCP stdio process via Redis pub/sub (completed 2026-04-02)
 
 ## Phase Details
 
@@ -159,10 +159,10 @@ Plans:
   1. An asset job status change in the Inngest worker process triggers a Redis PUBLISH to the job's channel — the event is not silently dropped at the process boundary
   2. The MCP stdio process receives the pub/sub message and calls notifyJobStatusChanged — the consuming app sees a push notification without polling
   3. A Redis connection failure in the IPC path is logged but does not surface as an error to the caller — check-job-status DB query remains the reliable fallback
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [x] 29-01-PLAN.md — IPC publisher + subscriber modules with unit tests
-- [ ] 29-02-PLAN.md — Wire publisher into events.ts/CLI bootstrap, subscriber into MCP bootstrap/index
+- [x] 29-02-PLAN.md — Wire publisher into events.ts/CLI bootstrap, subscriber into MCP bootstrap/index
 
 ## Progress
 
@@ -180,7 +180,7 @@ Plans:
 | 26. Auth Middleware | v1.2 | 0/1 | Complete    | 2026-04-02 |
 | 27. Structured Conflict Resolution | v1.2 | 1/1 | Complete    | 2026-04-02 |
 | 28. KEK Rotation Infrastructure | v1.2 | 1/2 | Complete    | 2026-04-02 |
-| 29. MCP Cross-Process IPC | v1.2 | 1/2 | In Progress|  |
+| 29. MCP Cross-Process IPC | v1.2 | 2/2 | Complete   | 2026-04-02 |
 
 ### Phase 30: Replace OpenAI Provider
 
