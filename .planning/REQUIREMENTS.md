@@ -13,7 +13,7 @@ Requirements for architectural hardening. Each maps to roadmap phases.
 - [x] **DATA-02**: Events table has composite indexes on (project_id, sequence_number) and (project_id, occurred_at)
 - [x] **DATA-03**: Seed versions are unique per parent seed, enforced by partial unique index (WHERE parent_seed_id IS NOT NULL)
 - [x] **DATA-04**: bead_edges table has reverse-lookup index on (target_bead_id)
-- [ ] **DATA-05**: Foreign keys use appropriate cascade strategy (CASCADE for structural rows like bead_edges/holdout_vault, SET NULL for audit tables like llm_usage/events) with data-audit migration preceding constraint changes
+- [x] **DATA-05**: Foreign keys use appropriate cascade strategy (CASCADE for structural rows like bead_edges/holdout_vault, SET NULL for audit tables like llm_usage/events) with data-audit migration preceding constraint changes
 
 ### Concurrency Safety
 
@@ -59,7 +59,7 @@ Requirements for architectural hardening. Each maps to roadmap phases.
 | DATA-02 | Phase 22 | Complete |
 | DATA-03 | Phase 22 | Complete |
 | DATA-04 | Phase 22 | Complete |
-| DATA-05 | Phase 23 | Pending |
+| DATA-05 | Phase 23 | Complete |
 | CONC-01 | Phase 24 | Pending |
 | CONC-02 | Phase 24 | Pending |
 | CONC-03 | Phase 25 | Pending |
