@@ -78,12 +78,14 @@ v1.0 delivered the complete autonomous builder pipeline. v1.1 added local asset 
 - ✓ `cauldron verify assets` E2E pipeline verification command — v1.1
 - ✓ Asset event emission and MCP push notification callbacks — v1.1
 - ✓ Float-precision guidance_scale column — v1.1
+- ✓ Event sourcing sequence uniqueness (UNIQUE constraint + appendEvent retry) — v1.2
+- ✓ Events table composite indexes (project+sequence, project+occurred_at) — v1.2
+- ✓ Seed version partial unique index (parent_seed_id + version) — v1.2
+- ✓ bead_edges reverse-lookup index (target_bead_id) — v1.2
 
 ### Active
 
 - Structured merge conflict resolution with per-file JSON extraction
-- Event sourcing sequence uniqueness and events table indexes
-- Seed version uniqueness constraint for parallel evolution safety
 - Enforced timeout supervisor with agent process termination
 - Holdout failure rollback (no silent success after crystallization)
 - Cascading foreign key cleanup (eliminate orphan rows)
@@ -194,4 +196,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-01 after v1.2 milestone start*
+*Last updated: 2026-04-02 after Phase 22 completion*
