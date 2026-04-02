@@ -1,4 +1,4 @@
-export type PerspectiveName = 'researcher' | 'simplifier' | 'architect' | 'breadth-keeper' | 'seed-closer';
+export type PerspectiveName = 'henry-wu' | 'occam' | 'heist-o-tron' | 'hickam' | 'kirk';
 
 export type InterviewPhase = 'gathering' | 'reviewing' | 'approved' | 'crystallized';
 

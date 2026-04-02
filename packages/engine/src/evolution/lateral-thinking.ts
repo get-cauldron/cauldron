@@ -3,7 +3,7 @@ import type { LLMGateway } from '../gateway/gateway.js';
 import type { Seed } from '@get-cauldron/shared';
 import type { GapAnalysis, LateralThinkingProposal } from './types.js';
 
-export const PERSONAS = ['contrarian', 'hacker', 'simplifier', 'researcher', 'architect'] as const;
+export const PERSONAS = ['contrarian', 'hacker', 'occam', 'henry-wu', 'heist-o-tron'] as const;
 export type Persona = typeof PERSONAS[number];
 
 const PERSONA_PROMPTS: Record<Persona, string> = {
@@ -11,12 +11,12 @@ const PERSONA_PROMPTS: Record<Persona, string> = {
     'Challenge every assumption in the current approach. Propose the opposite of what failed. If the current spec is complex, propose radical simplicity. If it is simple, propose depth.',
   hacker:
     'Find the fastest, most pragmatic path to the goal. Cut unnecessary abstractions. Propose the minimal viable approach that would actually work.',
-  simplifier:
-    'Remove complexity. Merge overlapping criteria. Identify what can be eliminated entirely. The best code is no code.',
-  researcher:
-    'What proven patterns or libraries solve this problem? Propose an approach grounded in established solutions, not invention.',
-  architect:
-    'Rethink the structural decomposition. Maybe the molecule/bead boundaries are wrong. Propose a different way to organize the work.',
+  occam:
+    'Remove complexity. Merge overlapping criteria. Identify what can be eliminated entirely. Every entity must justify its existence — the best spec is the simplest spec that still achieves the goal.',
+  'henry-wu':
+    'Map the full possibility space. What proven patterns or unexplored approaches could solve this problem? Propose an approach grounded in what is known to work, and surface dimensions the current spec may have missed.',
+  'heist-o-tron':
+    'Rethink the structural decomposition. Identify the preconditions that make execution trivial. Maybe the bead boundaries are wrong — propose a different structural setup where the hard parts become easy.',
 };
 
 /**

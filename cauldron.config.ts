@@ -19,11 +19,11 @@ export default defineConfig({
     defaultLimitCents: 500,
   },
   perspectiveModels: {
-    researcher: 'claude-sonnet-4-6',
-    simplifier: 'mistral-small-latest',
-    architect: 'mistral-large-latest',
-    'breadth-keeper': 'claude-sonnet-4-6',
-    'seed-closer': 'claude-sonnet-4-6',
+    'henry-wu': 'claude-sonnet-4-6',
+    occam: 'mistral-small-latest',
+    'heist-o-tron': 'mistral-large-latest',
+    hickam: 'claude-sonnet-4-6',
+    kirk: 'claude-sonnet-4-6',
   },
   scoringModel: 'mistral-small-latest',
   // D-15: this IS the Cauldron project itself — activates engine snapshot + migration review gates

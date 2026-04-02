@@ -5,11 +5,11 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 // Perspective color map per D-03
 const PERSPECTIVE_COLORS: Record<string, string> = {
-  researcher: '#2563eb',
-  simplifier: '#059669',
-  architect: '#7c3aed',
-  'breadth-keeper': '#d97706',
-  'seed-closer': '#00d4aa',
+  'henry-wu': '#2563eb',
+  occam: '#059669',
+  'heist-o-tron': '#7c3aed',
+  hickam: '#d97706',
+  kirk: '#00d4aa',
 };
 
 export interface ChatBubbleProps {
