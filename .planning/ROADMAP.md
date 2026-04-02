@@ -53,7 +53,7 @@ See `.planning/milestones/v1.1-ROADMAP.md` for full details.
 
 - [x] **Phase 22: Schema Migrations — Integrity Indexes** - Add uniqueness constraints and composite indexes as pure additive migrations (completed 2026-04-02)
 - [x] **Phase 23: FK Cascade Strategy** - Assign CASCADE or SET NULL per foreign key relationship based on structural vs. audit table classification (completed 2026-04-02)
-- [ ] **Phase 24: Concurrency & Performance** - Enforce optimistic locking on bead completion, synchronous usage recording, and N+1 query elimination
+- [x] **Phase 24: Concurrency & Performance** - Enforce optimistic locking on bead completion, synchronous usage recording, and N+1 query elimination (completed 2026-04-02)
 - [ ] **Phase 25: Process Reliability & Transactions** - Enforce two-phase timeout kill, transactional holdout failure rollback, and DAGCanvas error boundary
 - [ ] **Phase 26: Auth Middleware** - Wire authenticatedProcedure to all tRPC mutation routes
 - [ ] **Phase 27: Structured Conflict Resolution** - Replace string-scanning heuristic with Zod-schema-validated AI SDK Output.object() extraction
@@ -97,7 +97,7 @@ Plans:
   1. An Inngest retry that attempts to complete an already-completed bead receives a conflict error — double-completion cannot silently corrupt bead state
   2. A budget check immediately following a parallel LLM call reflects the actual cost of that call — no window where the kill switch sees stale spend
   3. The projects list page issues a single SQL query regardless of how many projects, seeds, or beads exist — query count does not scale with project count
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [x] 24-01-PLAN.md — Optimistic locking on completeBead + synchronous LLM usage recording
 - [ ] 24-02-PLAN.md — N+1 query elimination in projects list route
@@ -165,7 +165,7 @@ Plans:
 | 21. v1.1 Polish — Integration Wiring | v1.1 | 1/1 | Complete | 2026-04-01 |
 | 22. Schema Migrations — Integrity Indexes | v1.2 | 1/2 | Complete    | 2026-04-02 |
 | 23. FK Cascade Strategy | v1.2 | 2/2 | Complete    | 2026-04-02 |
-| 24. Concurrency & Performance | v1.2 | 1/2 | In Progress|  |
+| 24. Concurrency & Performance | v1.2 | 1/2 | Complete    | 2026-04-02 |
 | 25. Process Reliability & Transactions | v1.2 | 0/? | Not started | - |
 | 26. Auth Middleware | v1.2 | 0/? | Not started | - |
 | 27. Structured Conflict Resolution | v1.2 | 0/? | Not started | - |
