@@ -1,5 +1,5 @@
 import { generateText, APICallError } from 'ai';
-import { resolveModel, MODEL_FAMILY_MAP } from './providers.js';
+import { resolveModel, getProviderFamily } from './providers.js';
 import type { ProviderFamily } from './types.js';
 import type { Logger } from 'pino';
 
@@ -12,6 +12,7 @@ export interface ValidationResult {
 /**
  * Startup API key validation: pings each configured provider family once
  * with a minimal request (maxOutputTokens: 1) to detect invalid keys early.
+ * Ollama family is validated via HTTP health check at /api/tags instead of generateText.
  * Satisfies D-12: startup key validation catches config errors before pipeline runs.
  */
 export async function validateProviderKeys(
@@ -22,8 +23,9 @@ export async function validateProviderKeys(
   const families = new Set<ProviderFamily>();
   const modelsToCheck: Array<{ modelId: string; family: ProviderFamily }> = [];
   for (const modelId of configuredModels) {
-    const family = MODEL_FAMILY_MAP[modelId];
-    if (family && !families.has(family)) {
+    let family: ProviderFamily;
+    try { family = getProviderFamily(modelId); } catch { continue; }
+    if (!families.has(family)) {
       families.add(family);
       modelsToCheck.push({ modelId, family });
     }
@@ -31,6 +33,20 @@ export async function validateProviderKeys(
 
   const results: ValidationResult[] = [];
   for (const { modelId, family } of modelsToCheck) {
+    if (family === 'ollama') {
+      try {
+        const ollamaHost = process.env['OLLAMA_HOST'] ?? 'http://localhost:11434';
+        const res = await fetch(`${ollamaHost}/api/tags`, { signal: AbortSignal.timeout(3000) });
+        if (!res.ok) throw new Error(`Ollama returned HTTP ${res.status}`);
+        results.push({ provider: 'ollama', valid: true });
+        logger.info({ provider: 'ollama' }, 'Ollama reachable');
+      } catch (error) {
+        results.push({ provider: 'ollama', valid: false, error: `Ollama not reachable: ${String(error)}` });
+        logger.error({ provider: 'ollama', err: error }, 'Ollama validation failed');
+      }
+      continue;
+    }
+
     try {
       await generateText({
         model: resolveModel(modelId),
