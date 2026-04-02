@@ -85,4 +85,77 @@ describe('projects router wiring', () => {
     const list = await ctx.caller.projects.list();
     expect(list).toHaveLength(2);
   });
+
+  // Single-query N+1 elimination tests (PERF-01)
+  // These tests verify projects.list returns lastActivity, lastEventType, and
+  // totalCostCents correctly via the single-query implementation.
+
+  it('list returns lastActivity from latest event and lastEventType when project has events', async () => {
+    ctx = await createTestContext();
+    const project = await ctx.caller.projects.create({ name: 'Event Project' });
+    await ctx.fixtures.event({ projectId: project.id, type: 'interview_started' });
+    await ctx.fixtures.event({ projectId: project.id, type: 'seed_crystallized' });
+
+    const list = await ctx.caller.projects.list();
+    const found = list.find((p) => p.id === project.id);
+    expect(found).toBeDefined();
+    expect(found!.lastEventType).toBe('seed_crystallized');
+    expect(found!.lastActivity).toBeInstanceOf(Date);
+  });
+
+  it('list returns createdAt as lastActivity and null lastEventType when project has no events', async () => {
+    ctx = await createTestContext();
+    const project = await ctx.caller.projects.create({ name: 'No Events Project' });
+
+    const list = await ctx.caller.projects.list();
+    const found = list.find((p) => p.id === project.id);
+    expect(found).toBeDefined();
+    expect(found!.lastEventType).toBeNull();
+    expect(found!.lastActivity).toBeInstanceOf(Date);
+    // lastActivity should equal createdAt (within a second)
+    expect(Math.abs(found!.lastActivity.getTime() - found!.createdAt.getTime())).toBeLessThan(2000);
+  });
+
+  it('list returns totalCostCents=0 when project has no llm_usage rows', async () => {
+    ctx = await createTestContext();
+    const project = await ctx.caller.projects.create({ name: 'No Usage Project' });
+
+    const list = await ctx.caller.projects.list();
+    const found = list.find((p) => p.id === project.id);
+    expect(found).toBeDefined();
+    expect(found!.totalCostCents).toBe(0);
+  });
+
+  it('list returns summed totalCostCents from llm_usage rows', async () => {
+    ctx = await createTestContext();
+    const project = await ctx.caller.projects.create({ name: 'Usage Project' });
+    await ctx.fixtures.llmUsage({ projectId: project.id, costCents: 100 });
+    await ctx.fixtures.llmUsage({ projectId: project.id, costCents: 250 });
+
+    const list = await ctx.caller.projects.list();
+    const found = list.find((p) => p.id === project.id);
+    expect(found).toBeDefined();
+    expect(found!.totalCostCents).toBe(350);
+  });
+
+  it('list filters archived projects when includeArchived=false (single-query)', async () => {
+    ctx = await createTestContext();
+    const project = await ctx.caller.projects.create({ name: 'Archivable Project' });
+    await ctx.caller.projects.archive({ id: project.id });
+
+    const list = await ctx.caller.projects.list({ includeArchived: false });
+    expect(list.find((p) => p.id === project.id)).toBeUndefined();
+
+    const fullList = await ctx.caller.projects.list({ includeArchived: true });
+    expect(fullList.find((p) => p.id === project.id)).toBeDefined();
+  });
+
+  it('list excludes soft-deleted projects (single-query)', async () => {
+    ctx = await createTestContext();
+    const project = await ctx.caller.projects.create({ name: 'To Soft Delete' });
+    await ctx.caller.projects.delete({ id: project.id });
+
+    const list = await ctx.caller.projects.list();
+    expect(list.find((p) => p.id === project.id)).toBeUndefined();
+  });
 });
