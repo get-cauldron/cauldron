@@ -121,7 +121,9 @@ Plans:
   1. A tRPC mutation request with a missing or incorrect API key receives an UNAUTHORIZED response — the operation does not proceed
   2. A request with no API key in an environment where CAULDRON_API_KEY is unset succeeds — the dev-mode bypass remains functional for local development
   3. All existing integration tests continue to pass without modification — the dev-mode bypass means tests do not require API key headers
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 26-01-PLAN.md — Switch 14 mutations to authenticatedProcedure + auth rejection tests
 
 ### Phase 27: Structured Conflict Resolution
 **Goal**: Merge conflict resolution writes only Zod-schema-validated JSON per file to source — LLM prose can never reach the filesystem
@@ -167,7 +169,7 @@ Plans:
 | 23. FK Cascade Strategy | v1.2 | 2/2 | Complete    | 2026-04-02 |
 | 24. Concurrency & Performance | v1.2 | 1/2 | Complete    | 2026-04-02 |
 | 25. Process Reliability & Transactions | v1.2 | 2/2 | Complete    | 2026-04-02 |
-| 26. Auth Middleware | v1.2 | 0/? | Not started | - |
+| 26. Auth Middleware | v1.2 | 0/1 | Not started | - |
 | 27. Structured Conflict Resolution | v1.2 | 0/? | Not started | - |
 | 28. KEK Rotation Infrastructure | v1.2 | 0/? | Not started | - |
 | 29. MCP Cross-Process IPC | v1.2 | 0/? | Not started | - |
