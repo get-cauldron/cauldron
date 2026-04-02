@@ -9,10 +9,10 @@ Requirements for architectural hardening. Each maps to roadmap phases.
 
 ### Data Integrity
 
-- [ ] **DATA-01**: Event sequence numbers are unique per project, enforced by DB constraint (UNIQUE on project_id + sequence_number)
-- [ ] **DATA-02**: Events table has composite indexes on (project_id, sequence_number) and (project_id, occurred_at)
-- [ ] **DATA-03**: Seed versions are unique per parent seed, enforced by partial unique index (WHERE parent_seed_id IS NOT NULL)
-- [ ] **DATA-04**: bead_edges table has reverse-lookup index on (target_bead_id)
+- [x] **DATA-01**: Event sequence numbers are unique per project, enforced by DB constraint (UNIQUE on project_id + sequence_number)
+- [x] **DATA-02**: Events table has composite indexes on (project_id, sequence_number) and (project_id, occurred_at)
+- [x] **DATA-03**: Seed versions are unique per parent seed, enforced by partial unique index (WHERE parent_seed_id IS NOT NULL)
+- [x] **DATA-04**: bead_edges table has reverse-lookup index on (target_bead_id)
 - [ ] **DATA-05**: Foreign keys use appropriate cascade strategy (CASCADE for structural rows like bead_edges/holdout_vault, SET NULL for audit tables like llm_usage/events) with data-audit migration preceding constraint changes
 
 ### Concurrency Safety
@@ -55,10 +55,10 @@ Requirements for architectural hardening. Each maps to roadmap phases.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | Phase 22 | Pending |
-| DATA-02 | Phase 22 | Pending |
-| DATA-03 | Phase 22 | Pending |
-| DATA-04 | Phase 22 | Pending |
+| DATA-01 | Phase 22 | Complete |
+| DATA-02 | Phase 22 | Complete |
+| DATA-03 | Phase 22 | Complete |
+| DATA-04 | Phase 22 | Complete |
 | DATA-05 | Phase 23 | Pending |
 | CONC-01 | Phase 24 | Pending |
 | CONC-02 | Phase 24 | Pending |

@@ -71,9 +71,9 @@ See `.planning/milestones/v1.1-ROADMAP.md` for full details.
   2. Event queries by project + sequence and project + occurred_at use index scans — no full-table scans on the events table
   3. Inserting a second seed with the same parent_seed_id + version raises a constraint violation — parallel evolution workers cannot race on version numbers
   4. DAG traversal from target bead back to source uses the reverse-lookup index on bead_edges — reverse direction queries do not scan the full table
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 Plans:
-- [ ] 22-01-PLAN.md — Schema declarations, migrations (0015 cleanup + 0016 constraints), appendEvent retry
+- [x] 22-01-PLAN.md — Schema declarations, migrations (0015 cleanup + 0016 constraints), appendEvent retry
 - [ ] 22-02-PLAN.md — Integration tests proving all DATA-01 through DATA-04 constraints
 
 ### Phase 23: FK Cascade Strategy
@@ -157,7 +157,7 @@ Plans:
 | 19. Local Image MCP & App Delivery | v1.1 | 3/3 | Complete | 2026-04-01 |
 | 20. Operator Controls & E2E Validation | v1.1 | 2/2 | Complete | 2026-04-01 |
 | 21. v1.1 Polish — Integration Wiring | v1.1 | 1/1 | Complete | 2026-04-01 |
-| 22. Schema Migrations — Integrity Indexes | v1.2 | 0/2 | Planned | - |
+| 22. Schema Migrations — Integrity Indexes | v1.2 | 1/2 | In Progress|  |
 | 23. FK Cascade Strategy | v1.2 | 0/? | Not started | - |
 | 24. Concurrency & Performance | v1.2 | 0/? | Not started | - |
 | 25. Process Reliability & Transactions | v1.2 | 0/? | Not started | - |

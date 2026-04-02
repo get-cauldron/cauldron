@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Architectural Hardening
-status: planning
-stopped_at: Phase 22 context gathered
-last_updated: "2026-04-02T00:33:59.413Z"
-last_activity: 2026-04-01 — v1.2 roadmap created (8 phases, 15 requirements)
+status: in-progress
+stopped_at: Completed 22-01-PLAN.md
+last_updated: "2026-04-01T00:25:00.000Z"
+last_activity: 2026-04-01 — Executed 22-01-PLAN.md — schema integrity indexes and migrations
 progress:
   total_phases: 8
   completed_phases: 0
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-04-01)
 ## Current Position
 
 Phase: 22 of 29 (Schema Migrations — Integrity Indexes)
-Plan: — of — in current phase
-Status: Ready to plan
-Last activity: 2026-04-01 — v1.2 roadmap created (8 phases, 15 requirements)
+Plan: 1 of 1 in current phase
+Status: In progress — 22-01 complete
+Last activity: 2026-04-01 — Completed 22-01: schema constraints, indexes, appendEvent retry logic
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -44,6 +44,10 @@ Progress: [░░░░░░░░░░] 0%
 ### Decisions
 
 Prior milestone decisions archived to `.planning/milestones/v1.1-ROADMAP.md`.
+
+v1.2 execution decisions (22-01):
+- Data-only migration (0015) needs no Drizzle snapshot — Drizzle rejects identical adjacent snapshots; data cleanup before constraint DDL is the correct pattern
+- appendEvent retry uses `instanceof postgres.PostgresError` (default import namespace) rather than named import — correct for postgres v3 `export =` module format
 
 v1.2 roadmap decisions:
 
