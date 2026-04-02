@@ -47,7 +47,7 @@ See `.planning/milestones/v1.1-ROADMAP.md` for full details.
 
 </details>
 
-### 🚧 v1.2 Architectural Hardening (In Progress)
+### v1.2 Architectural Hardening (In Progress)
 
 **Milestone Goal:** Close the 15 documented race conditions, silent failures, data integrity gaps, and performance bottlenecks in the v1.1 system before the platform handles parallel agent workloads at scale.
 
@@ -186,11 +186,15 @@ Plans:
 
 **Goal**: Remove `@ai-sdk/openai` entirely and replace all OpenAI model references with Anthropic (primary), Google, Mistral (new), and local Qwen via Ollama (experimental) — no pipeline stage references a missing provider
 **Depends on**: Phase 29
-**Requirements**: TBD
+**Requirements**: SC-01, SC-02, SC-03, SC-04, SC-05
 **Success Criteria** (what must be TRUE):
   1. `@ai-sdk/openai` is not in any package.json — `grep -r "ai-sdk/openai" packages/*/package.json` returns zero results
   2. `cauldron.config.ts` contains no `gpt-` model references — all stages map to Anthropic, Google, Mistral, or Ollama models
   3. `packages/engine/src/gateway/providers.ts` resolves `mistral` and `ollama` provider families — new switch cases exist and return valid AI SDK provider instances
   4. `packages/engine/src/evolution/embeddings.ts` uses Mistral embeddings — no OpenAI embedding references remain
   5. All existing tests pass with updated mocks — no test references `@ai-sdk/openai`
-**Plans**: TBD
+**Plans:** 3 plans
+Plans:
+- [ ] 30-01-PLAN.md — Core provider swap: types, providers, pricing, validation, embeddings, package.json deps
+- [ ] 30-02-PLAN.md — Config restructure + all engine/CLI test mock updates
+- [ ] 30-03-PLAN.md — OpenAI artifact cleanup: health, bootstrap, env, turbo, web, E2E, scripts
