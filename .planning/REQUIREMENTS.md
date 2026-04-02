@@ -32,7 +32,7 @@ Requirements for architectural hardening. Each maps to roadmap phases.
 ### Performance & Architecture
 
 - [ ] **PERF-01**: Projects list loads in a single query with joins or window functions — no N+1 pattern
-- [ ] **ARCH-01**: MCP push notifications delivered via Redis pub/sub bridge between Inngest worker process and MCP stdio process
+- [x] **ARCH-01**: MCP push notifications delivered via Redis pub/sub bridge between Inngest worker process and MCP stdio process
 
 ## Future Requirements
 
@@ -69,7 +69,7 @@ Requirements for architectural hardening. Each maps to roadmap phases.
 | SEC-02 | Phase 26 | Pending |
 | SEC-03 | Phase 25 | Complete |
 | PERF-01 | Phase 24 | Pending |
-| ARCH-01 | Phase 29 | Pending |
+| ARCH-01 | Phase 29 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 15 total

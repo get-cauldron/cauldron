@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Architectural Hardening
 status: executing
-stopped_at: Completed 28-02-PLAN.md
-last_updated: "2026-04-02T14:29:09.803Z"
+stopped_at: Completed 29-01-PLAN.md
+last_updated: "2026-04-02T14:49:37.760Z"
 last_activity: 2026-04-02
 progress:
   total_phases: 9
   completed_phases: 7
-  total_plans: 12
-  completed_plans: 12
+  total_plans: 14
+  completed_plans: 13
   percent: 0
 ---
 
@@ -21,12 +21,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** User describes what they want; Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves until the goal is met with humans steering at key decision points.
-**Current focus:** Phase 28 — KEK Rotation Infrastructure
+**Current focus:** Phase 29 — MCP Cross-Process IPC
 
 ## Current Position
 
-Phase: 30
-Plan: Not started
+Phase: 29 (MCP Cross-Process IPC) — EXECUTING
+Plan: 2 of 2
 Status: Ready to execute
 Last activity: 2026-04-02
 
@@ -57,6 +57,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 25-process-reliability-transactions P01 | 20 | 2 tasks | 3 files |
 | Phase 27 P01 | 8 | 2 tasks | 2 files |
 | Phase 28-kek-rotation-infrastructure P02 | 204 | 1 tasks | 2 files |
+| Phase 29-mcp-cross-process-ipc P01 | 363 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -73,6 +74,8 @@ Progress: [░░░░░░░░░░] 0%
 - [Phase 27]: ConflictResolutionSchema uses z.enum confidence so confidence is typed, never string-scanned
 - [Phase 27]: NoObjectGeneratedError propagates uncaught from resolveConflict — explicit failure over silent fallback (CONC-05)
 - [Phase 28-kek-rotation-infrastructure]: KEK rotate-kek CLI: keys injected exclusively via env vars to prevent shell history exposure; retire is always a separate invocation from rotate
+- [Phase 29-mcp-cross-process-ipc]: Redis pub/sub chosen for cross-process IPC between Inngest worker and MCP stdio process (ioredis already in project)
+- [Phase 29-mcp-cross-process-ipc]: Use psubscribe wildcard pattern cauldron:job-status:* in MCP subscriber -- one connection covers all jobs
 
 ### Pending Todos
 
@@ -90,6 +93,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-02T14:24:48.405Z
-Stopped at: Completed 28-02-PLAN.md
+Last session: 2026-04-02T14:49:37.757Z
+Stopped at: Completed 29-01-PLAN.md
 Resume file: None
