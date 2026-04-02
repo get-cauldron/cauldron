@@ -20,6 +20,8 @@ export interface GatewayCallOptions {
   toolChoice?: 'auto' | 'none' | 'required' | { type: 'tool'; toolName: string };
   maxTokens?: number;
   temperature?: number;
+  /** Override the model chain for this call. When set, uses this single model instead of the stage's configured chain. */
+  modelOverride?: string;
 }
 
 export interface GatewayObjectOptions<T extends z.ZodType> extends GatewayCallOptions {

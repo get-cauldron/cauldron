@@ -239,8 +239,8 @@ describe('runContrarianAnalysis', () => {
     });
 
     const callArgs = (mockGateway.generateObject as Mock).mock.calls[0][0];
-    // contrarianModel is passed through via the config — the module uses it to override model selection
-    expect(callArgs).toHaveProperty('contrarianModel', 'claude-3-haiku');
+    // contrarianModel is mapped to modelOverride — the gateway uses it to bypass the stage's model chain
+    expect(callArgs).toHaveProperty('modelOverride', 'claude-3-haiku');
   });
 
   it('only sends the last 2 turns to the contrarian (focused context)', async () => {

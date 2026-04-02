@@ -101,8 +101,9 @@ export async function runContrarianAnalysis(
     schema: contrarianOutputSchema,
     schemaName: 'ContrarianAnalysis',
     schemaDescription: 'Alternative framings from orthogonal analysis of user statements',
-    // Pass contrarianModel through so gateway model selection can honor it
-    ...(config.contrarianModel ? { contrarianModel: config.contrarianModel } : {}),
+    // When contrarianModel is configured, override the model chain to use a different
+    // model than the primary interviewer — cross-model diversity for orthogonal thinking
+    ...(config.contrarianModel ? { modelOverride: config.contrarianModel } : {}),
   });
 
   return result.object.framings;

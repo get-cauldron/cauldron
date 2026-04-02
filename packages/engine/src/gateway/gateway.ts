@@ -204,7 +204,9 @@ export class LLMGateway {
     const budgetLimit = this.projectSettings?.budgetLimitCents ?? this.config.budget.defaultLimitCents;
     await checkBudget(this.db, options.projectId, budgetLimit);
 
-    const modelChain = this.resolveModelChain(options.stage);
+    const modelChain = options.modelOverride
+      ? [options.modelOverride]
+      : this.resolveModelChain(options.stage);
     const systemPrompt = this.buildSystemPrompt(options.stage, options.system);
 
     if (options.stage === 'holdout' || options.stage === 'evaluation') {
