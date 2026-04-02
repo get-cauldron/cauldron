@@ -159,7 +159,10 @@ Plans:
   1. An asset job status change in the Inngest worker process triggers a Redis PUBLISH to the job's channel — the event is not silently dropped at the process boundary
   2. The MCP stdio process receives the pub/sub message and calls notifyJobStatusChanged — the consuming app sees a push notification without polling
   3. A Redis connection failure in the IPC path is logged but does not surface as an error to the caller — check-job-status DB query remains the reliable fallback
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 29-01-PLAN.md — IPC publisher + subscriber modules with unit tests
+- [ ] 29-02-PLAN.md — Wire publisher into events.ts/CLI bootstrap, subscriber into MCP bootstrap/index
 
 ## Progress
 
@@ -177,7 +180,7 @@ Plans:
 | 26. Auth Middleware | v1.2 | 0/1 | Complete    | 2026-04-02 |
 | 27. Structured Conflict Resolution | v1.2 | 1/1 | Complete    | 2026-04-02 |
 | 28. KEK Rotation Infrastructure | v1.2 | 1/2 | Complete    | 2026-04-02 |
-| 29. MCP Cross-Process IPC | v1.2 | 0/? | Not started | - |
+| 29. MCP Cross-Process IPC | v1.2 | 0/2 | Not started | - |
 
 ### Phase 30: Replace OpenAI Provider
 
