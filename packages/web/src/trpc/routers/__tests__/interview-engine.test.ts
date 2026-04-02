@@ -30,6 +30,9 @@ vi.mock('@get-cauldron/engine', () => ({
   },
   approveScenarios: vi.fn(),
   sealVault: vi.fn(),
+  generateHoldoutScenarios: vi.fn().mockResolvedValue([{ scenario: 'test' }]),
+  createVault: vi.fn().mockResolvedValue(undefined),
+  synthesizeFromTranscript: vi.fn().mockResolvedValue({ goal: 'test', constraints: [], acceptanceCriteria: [] }),
 }));
 
 vi.mock('@get-cauldron/shared', () => ({
@@ -111,7 +114,11 @@ function makeCtx(overrides: {
         returning: vi.fn().mockResolvedValue([{ id: 'seed-1', version: 1 }]),
       }),
     }),
-  };
+    transaction: vi.fn(async (fn: (tx: unknown) => Promise<unknown>) => {
+      // Pass the db itself as the transaction client so inner queries use the same mocks
+      return fn(db);
+    }),
+  } as Record<string, unknown>;
 
   const getEngineDeps = vi.fn().mockResolvedValue({
     gateway: mockGateway,
