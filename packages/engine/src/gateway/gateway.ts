@@ -147,8 +147,8 @@ export class LLMGateway {
       circuitBreaker: this.circuitBreaker,
       implementerFamily: (options.stage === 'holdout' || options.stage === 'evaluation') ? this.getImplementerFamily() : undefined,
       execute: (model, modelId) => {
-        const onFinish = ({ usage }: { usage: LanguageModelUsage }) => {
-          this.recordUsageAsync(options, modelId, usage);
+        const onFinish = async ({ usage }: { usage: LanguageModelUsage }) => {
+          await this.recordUsage(options, modelId, usage);
         };
         const common = { model, system: systemPrompt, tools, toolChoice, maxOutputTokens: options.maxTokens, temperature: options.temperature, maxRetries: 0 as const, onFinish };
         const result = options.messages && options.messages.length > 0
@@ -178,21 +178,26 @@ export class LLMGateway {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- AI SDK v6 tool/toolChoice types are deeply generic; casting avoids TS propagation into the internal failover utility
     const toolChoice = options.toolChoice as any;
 
-    return executeWithFailover({
+    // Capture modelId outside execute callback so usage is recorded after failover resolves.
+    // DB write errors must not be treated as provider failures and trigger re-failover.
+    let chosenModelId = '';
+    const result = await executeWithFailover({
       modelChain,
       stage: options.stage,
       circuitBreaker: this.circuitBreaker,
       implementerFamily: (options.stage === 'holdout' || options.stage === 'evaluation') ? this.getImplementerFamily() : undefined,
       execute: async (model, modelId) => {
         const common = { model, system: systemPrompt, tools, toolChoice, maxOutputTokens: options.maxTokens, temperature: options.temperature, maxRetries: 0 as const };
-        const result = options.messages && options.messages.length > 0
+        const r = options.messages && options.messages.length > 0
           ? await aiGenerateText({ ...common, messages: options.messages as ModelMessage[] })
           : await aiGenerateText({ ...common, prompt: options.prompt ?? '' });
-        this.recordUsageAsync(options, modelId, result.usage);
-        return result;
+        chosenModelId = modelId;
+        return r;
       },
       onFailover: this.makeFailoverCallback(options),
     });
+    await this.recordUsage(options, chosenModelId, result.usage);
+    return result;
   }
 
   async generateObject<T extends z.ZodType>(options: GatewayObjectOptions<T>) {
@@ -207,21 +212,26 @@ export class LLMGateway {
       enforceDiversity(modelChain[0]!, implementerChain[0]!);
     }
 
-    return executeWithFailover({
+    // Capture modelId outside execute callback so usage is recorded after failover resolves.
+    // DB write errors must not be treated as provider failures and trigger re-failover.
+    let chosenModelId = '';
+    const result = await executeWithFailover({
       modelChain,
       stage: options.stage,
       circuitBreaker: this.circuitBreaker,
       implementerFamily: (options.stage === 'holdout' || options.stage === 'evaluation') ? this.getImplementerFamily() : undefined,
       execute: async (model, modelId) => {
         const common = { model, schema: options.schema, schemaName: options.schemaName, schemaDescription: options.schemaDescription, system: systemPrompt, maxOutputTokens: options.maxTokens, temperature: options.temperature, maxRetries: 0 as const };
-        const result = options.messages && options.messages.length > 0
+        const r = options.messages && options.messages.length > 0
           ? await aiGenerateObject({ ...common, messages: options.messages as ModelMessage[] })
           : await aiGenerateObject({ ...common, prompt: options.prompt ?? '' });
-        this.recordUsageAsync(options, modelId, result.usage);
-        return result;
+        chosenModelId = modelId;
+        return r;
       },
       onFailover: this.makeFailoverCallback(options),
     });
+    await this.recordUsage(options, chosenModelId, result.usage);
+    return result;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- AI SDK v6 StreamObjectResult uses 'output as Output' namespace export that causes TS4053; Promise<any> avoids non-portable inferred type crossing package boundary
@@ -243,8 +253,8 @@ export class LLMGateway {
       circuitBreaker: this.circuitBreaker,
       implementerFamily: (options.stage === 'holdout' || options.stage === 'evaluation') ? this.getImplementerFamily() : undefined,
       execute: (model, modelId) => {
-        const onFinish = ({ usage }: { usage: LanguageModelUsage }) => {
-          this.recordUsageAsync(options, modelId, usage);
+        const onFinish = async ({ usage }: { usage: LanguageModelUsage }) => {
+          await this.recordUsage(options, modelId, usage);
         };
         const common = { model, schema: options.schema, schemaName: options.schemaName, schemaDescription: options.schemaDescription, system: systemPrompt, maxOutputTokens: options.maxTokens, temperature: options.temperature, maxRetries: 0 as const, onFinish };
         const result = options.messages && options.messages.length > 0
@@ -256,14 +266,17 @@ export class LLMGateway {
     });
   }
 
-  private recordUsageAsync(
+  private async recordUsage(
     options: GatewayCallOptions,
     modelId: string,
     usage: LanguageModelUsage
-  ): void {
-    void this.writeUsage(options, modelId, usage).catch((err) =>
-      this.logger.error({ err }, 'Failed to record LLM usage')
-    );
+  ): Promise<void> {
+    try {
+      await this.writeUsage(options, modelId, usage);
+    } catch (err) {
+      this.logger.error({ err }, 'Failed to record LLM usage');
+      throw err;
+    }
   }
 
   private async writeUsage(

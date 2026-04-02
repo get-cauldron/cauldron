@@ -147,7 +147,7 @@ describe('beadDispatchHandler', () => {
     const schedulerModule = await import('../scheduler.js');
     const { appendEvent } = await import('@get-cauldron/shared');
 
-    vi.mocked(schedulerModule.completeBead).mockResolvedValue(undefined);
+    vi.mocked(schedulerModule.completeBead).mockResolvedValue({ success: true, beadId: BEAD_ID, newVersion: 2 });
 
     const conditionalEdge = [
       { id: 'edge-cond', fromBeadId: UPSTREAM_BEAD_ID, toBeadId: BEAD_ID, edgeType: 'conditional_blocks', createdAt: new Date() },

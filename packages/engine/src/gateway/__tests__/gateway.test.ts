@@ -263,8 +263,9 @@ describe('LLMGateway', () => {
       gateway.generateText({ projectId: 'proj-err-1', stage: 'interview', prompt: 'Test' })
     ).rejects.toThrow('DB write failed');
 
-    // Error should also be logged
-    expect(mockLogger.error).toHaveBeenCalled();
+    // Error should also be logged (access via the underlying object before the `as never` cast)
+    const loggerImpl = mockLogger as unknown as { error: ReturnType<typeof vi.fn> };
+    expect(loggerImpl.error).toHaveBeenCalled();
   });
 
   it('no recordUsageAsync (fire-and-forget) pattern remains in gateway -- method renamed to recordUsage (CONC-02)', () => {
