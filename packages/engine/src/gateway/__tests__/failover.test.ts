@@ -19,8 +19,8 @@ vi.mock('../providers.js', () => ({
     const map: Record<string, string> = {
       'claude-sonnet-4-6': 'anthropic',
       'claude-opus-4-5': 'anthropic',
-      'gpt-4o': 'openai',
-      'gpt-4.1': 'openai',
+      'mistral-large-latest': 'mistral',
+      'mistral-small-latest': 'mistral',
       'gemini-2.5-pro': 'google',
       'gemini-2.0-flash': 'google',
     };
@@ -47,7 +47,7 @@ describe('executeWithFailover', () => {
     const execute = vi.fn().mockResolvedValueOnce({ text: 'hello', model: 'claude-sonnet-4-6' });
 
     const result = await executeWithFailover({
-      modelChain: ['claude-sonnet-4-6', 'gpt-4o'],
+      modelChain: ['claude-sonnet-4-6', 'mistral-large-latest'],
       stage: 'interview',
       circuitBreaker,
       execute,
@@ -63,17 +63,17 @@ describe('executeWithFailover', () => {
       .fn()
       .mockRejectedValueOnce(rateLimitErr) // first attempt at model 1
       .mockRejectedValueOnce(rateLimitErr) // retry at model 1
-      .mockResolvedValueOnce({ text: 'from gpt-4o' }); // model 2
+      .mockResolvedValueOnce({ text: 'from mistral-large-latest' }); // model 2
 
     const result = await executeWithFailover({
-      modelChain: ['claude-sonnet-4-6', 'gpt-4o'],
+      modelChain: ['claude-sonnet-4-6', 'mistral-large-latest'],
       stage: 'interview',
       circuitBreaker,
       execute,
     });
 
-    expect(result).toEqual({ text: 'from gpt-4o' });
-    // 2 calls for claude-sonnet-4-6 (initial + retry), 1 for gpt-4o
+    expect(result).toEqual({ text: 'from mistral-large-latest' });
+    // 2 calls for claude-sonnet-4-6 (initial + retry), 1 for mistral-large-latest
     expect(execute).toHaveBeenCalledTimes(3);
   });
 
@@ -86,7 +86,7 @@ describe('executeWithFailover', () => {
       .mockResolvedValueOnce({ text: 'fallback result' }); // failover model succeeds
 
     await executeWithFailover({
-      modelChain: ['claude-sonnet-4-6', 'gpt-4o'],
+      modelChain: ['claude-sonnet-4-6', 'mistral-large-latest'],
       stage: 'implementation',
       circuitBreaker,
       execute,
@@ -99,7 +99,7 @@ describe('executeWithFailover', () => {
     const thirdCallModel = (execute.mock.calls[2] as [{ modelId: string }])[0];
     expect(firstCallModel.modelId).toBe('claude-sonnet-4-6');
     expect(secondCallModel.modelId).toBe('claude-sonnet-4-6');
-    expect(thirdCallModel.modelId).toBe('gpt-4o');
+    expect(thirdCallModel.modelId).toBe('mistral-large-latest');
   });
 
   it('throws GatewayExhaustedError when all models fail', async () => {
@@ -107,7 +107,7 @@ describe('executeWithFailover', () => {
 
     await expect(
       executeWithFailover({
-        modelChain: ['claude-sonnet-4-6', 'gpt-4o'],
+        modelChain: ['claude-sonnet-4-6', 'mistral-large-latest'],
         stage: 'interview',
         circuitBreaker,
         execute,
@@ -121,17 +121,17 @@ describe('executeWithFailover', () => {
       circuitBreaker.recordFailure('anthropic');
     }
 
-    const execute = vi.fn().mockResolvedValueOnce({ text: 'from gpt-4o' });
+    const execute = vi.fn().mockResolvedValueOnce({ text: 'from mistral-large-latest' });
 
     const result = await executeWithFailover({
-      modelChain: ['claude-sonnet-4-6', 'gpt-4o'],
+      modelChain: ['claude-sonnet-4-6', 'mistral-large-latest'],
       stage: 'interview',
       circuitBreaker,
       execute,
     });
 
-    expect(result).toEqual({ text: 'from gpt-4o' });
-    // execute should only have been called once — for gpt-4o, not claude-sonnet-4-6
+    expect(result).toEqual({ text: 'from mistral-large-latest' });
+    // execute should only have been called once — for mistral-large-latest, not claude-sonnet-4-6
     expect(execute).toHaveBeenCalledTimes(1);
   });
 
@@ -139,7 +139,7 @@ describe('executeWithFailover', () => {
     const execute = vi.fn().mockResolvedValueOnce({ text: 'holdout result' });
 
     const result = await executeWithFailover({
-      modelChain: ['claude-sonnet-4-6', 'gpt-4o', 'gemini-2.5-pro'],
+      modelChain: ['claude-sonnet-4-6', 'mistral-large-latest', 'gemini-2.5-pro'],
       stage: 'holdout',
       circuitBreaker,
       implementerFamily: 'anthropic',
@@ -147,9 +147,9 @@ describe('executeWithFailover', () => {
     });
 
     expect(result).toEqual({ text: 'holdout result' });
-    // Only gpt-4o or gemini-2.5-pro should have been attempted
+    // Only mistral-large-latest or gemini-2.5-pro should have been attempted
     const calledModel = (execute.mock.calls[0] as [{ modelId: string }])[0];
-    expect(['gpt-4o', 'gemini-2.5-pro']).toContain(calledModel.modelId);
+    expect(['mistral-large-latest', 'gemini-2.5-pro']).toContain(calledModel.modelId);
   });
 
   it('records FailoverAttempt for each failed model via onFailover callback', async () => {
@@ -158,14 +158,14 @@ describe('executeWithFailover', () => {
       .fn()
       .mockRejectedValueOnce(serverErr) // claude initial
       .mockRejectedValueOnce(serverErr) // claude retry
-      .mockRejectedValueOnce(serverErr) // gpt-4o initial
-      .mockRejectedValueOnce(serverErr); // gpt-4o retry
+      .mockRejectedValueOnce(serverErr) // mistral-large-latest initial
+      .mockRejectedValueOnce(serverErr); // mistral-large-latest retry
 
     const onFailover = vi.fn();
 
     await expect(
       executeWithFailover({
-        modelChain: ['claude-sonnet-4-6', 'gpt-4o'],
+        modelChain: ['claude-sonnet-4-6', 'mistral-large-latest'],
         stage: 'interview',
         circuitBreaker,
         execute,
@@ -178,7 +178,7 @@ describe('executeWithFailover', () => {
     const firstAttempt = onFailover.mock.calls[0][0];
     const secondAttempt = onFailover.mock.calls[1][0];
     expect(firstAttempt.model).toBe('claude-sonnet-4-6');
-    expect(secondAttempt.model).toBe('gpt-4o');
+    expect(secondAttempt.model).toBe('mistral-large-latest');
   });
 
   it('throws GatewayExhaustedError when holdout chain is empty after diversity filter', async () => {
@@ -204,7 +204,7 @@ describe('executeWithFailover', () => {
         (error as any).status = 429;
         throw error;
       }
-      if (modelId === 'gpt-4o') {
+      if (modelId === 'mistral-large-latest') {
         const error = new Error('Auth failed');
         (error as any).status = 401;
         throw error;
@@ -214,7 +214,7 @@ describe('executeWithFailover', () => {
 
     await expect(
       executeWithFailover({
-        modelChain: ['claude-sonnet-4-6', 'gpt-4o'],
+        modelChain: ['claude-sonnet-4-6', 'mistral-large-latest'],
         execute,
         circuitBreaker: new CircuitBreaker(),
         stage: 'interview',
@@ -234,7 +234,7 @@ describe('executeWithFailover', () => {
 
     await expect(
       executeWithFailover({
-        modelChain: ['claude-sonnet-4-6', 'gpt-4o'],
+        modelChain: ['claude-sonnet-4-6', 'mistral-large-latest'],
         execute,
         circuitBreaker: new CircuitBreaker(),
         stage: 'interview',

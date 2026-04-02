@@ -18,10 +18,10 @@ describe('calculateCostCents', () => {
     expect(calculateCostCents('', 1000, 1000)).toBe(0);
   });
 
-  it('returns correct cost for gpt-4o', () => {
-    // inputPerMToken: 250, outputPerMToken: 1000
-    // 1M input → 250 cents, 1M output → 1000 cents
-    expect(calculateCostCents('gpt-4o', 1_000_000, 1_000_000)).toBe(1250);
+  it('returns correct cost for mistral-large-latest', () => {
+    // inputPerMToken: 200, outputPerMToken: 600
+    // 1M input → 200 cents, 1M output → 600 cents
+    expect(calculateCostCents('mistral-large-latest', 1_000_000, 1_000_000)).toBe(800);
   });
 
   it('returns correct cost for gemini-2.5-pro', () => {
