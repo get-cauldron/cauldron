@@ -346,7 +346,7 @@ describe('persistDecomposition', () => {
 describe('completeBead', () => {
   beforeEach(() => {
     vi.resetModules();
-    vi.clearAllMocks();
+    vi.resetAllMocks();
   });
 
   it('Test 10: transitions status to completed and emits bead_completed event', async () => {
@@ -556,7 +556,7 @@ describe('completeBead', () => {
 describe('findReadyBeads – DAG topology edge cases', () => {
   beforeEach(() => {
     vi.resetModules();
-    vi.clearAllMocks();
+    vi.resetAllMocks();
   });
 
   it('Wide fan-out: 3 independent beads with no edges → all 3 are ready', async () => {

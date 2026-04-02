@@ -52,6 +52,13 @@ export interface ClaimResult {
   newVersion?: number;
 }
 
+/** Complete result for version-conditioned bead completion (CONC-01) */
+export interface CompleteBeadResult {
+  success: boolean;
+  beadId: string;
+  newVersion?: number;
+}
+
 /** Event payload shapes for Inngest events */
 export interface BeadDispatchPayload {
   beadId: string;

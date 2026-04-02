@@ -5,6 +5,7 @@ export type {
   DecompositionOptions,
   DAGValidationError,
   ClaimResult,
+  CompleteBeadResult,
   BeadDispatchPayload,
   BeadCompletedPayload,
 } from './types.js';

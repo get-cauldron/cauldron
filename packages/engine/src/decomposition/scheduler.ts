@@ -2,7 +2,7 @@ import { eq, and, sql } from 'drizzle-orm';
 import { beads, beadEdges } from '@get-cauldron/shared';
 import { appendEvent } from '@get-cauldron/shared';
 import type { DbClient, Bead } from '@get-cauldron/shared';
-import type { DecompositionResult, ClaimResult } from './types.js';
+import type { DecompositionResult, ClaimResult, CompleteBeadResult } from './types.js';
 
 /**
  * Finds all pending beads with no incomplete blocking upstream dependencies.
@@ -192,9 +192,16 @@ export async function persistDecomposition(
 }
 
 /**
- * Marks a bead as completed or failed, emits the corresponding event,
- * and handles D-14: conditional beads downstream of a failed bead are
- * marked as failed with reason 'upstream_conditional_failed'.
+ * Marks a bead as completed or failed using version-conditioned optimistic locking (CONC-01).
+ * Follows the same pattern as claimBead(): read current version, then UPDATE WHERE version = current.
+ *
+ * Returns { success: false } if:
+ * - Bead not found
+ * - Bead is already in a terminal status (completed/failed) — prevents double-completion
+ * - Version mismatch — another agent updated the bead concurrently
+ *
+ * On success, emits the appropriate event and handles D-14 cascade (conditional beads
+ * downstream of a failed bead are marked as failed with reason 'upstream_conditional_failed').
  */
 export async function completeBead(
   db: DbClient,
@@ -202,9 +209,20 @@ export async function completeBead(
   status: 'completed' | 'failed',
   projectId: string,
   seedId: string
-): Promise<void> {
-  // Update bead status
-  await db
+): Promise<CompleteBeadResult> {
+  // Read current bead to get version and validate status
+  const [current] = await db
+    .select()
+    .from(beads)
+    .where(eq(beads.id, beadId));
+
+  // Not found or already in terminal status — cannot complete
+  if (!current || current.status === 'completed' || current.status === 'failed') {
+    return { success: false, beadId };
+  }
+
+  // Optimistic update: only succeeds if version still matches (no concurrent update)
+  const updated = await db
     .update(beads)
     .set({
       status,
@@ -212,8 +230,18 @@ export async function completeBead(
       version: sql`${beads.version} + 1`,
       updatedAt: new Date(),
     })
-    .where(eq(beads.id, beadId))
+    .where(
+      and(
+        eq(beads.id, beadId),
+        eq(beads.version, current.version)
+      )
+    )
     .returning({ id: beads.id, version: beads.version });
+
+  if (updated.length === 0) {
+    // Version conflict: another agent updated this bead first
+    return { success: false, beadId };
+  }
 
   // Emit the appropriate event
   const eventType = status === 'completed' ? 'bead_completed' : 'bead_failed';
@@ -260,4 +288,6 @@ export async function completeBead(
       });
     }
   }
+
+  return { success: true, beadId, newVersion: updated[0]!.version };
 }
