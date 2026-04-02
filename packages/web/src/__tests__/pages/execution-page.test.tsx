@@ -10,13 +10,18 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('@/trpc/client', () => ({ useTRPC: vi.fn() }));
 
-// Mock DAGCanvas to avoid @xyflow/react OOM
+// DAGCanvas mock — can be switched to throw for error boundary tests
+let _dagCanvasShouldThrow = false;
+let _dagCanvasError = new Error('DAG render failed');
 vi.mock('@/components/dag/DAGCanvas', () => ({
-  DAGCanvas: ({ onNodeClick }: { onNodeClick?: (id: string) => void }) => (
-    <div data-testid="dag-canvas">
-      <button onClick={() => onNodeClick?.('bead-1')}>Bead 1</button>
-    </div>
-  ),
+  DAGCanvas: ({ onNodeClick }: { onNodeClick?: (id: string) => void }) => {
+    if (_dagCanvasShouldThrow) throw _dagCanvasError;
+    return (
+      <div data-testid="dag-canvas">
+        <button onClick={() => onNodeClick?.('bead-1')}>Bead 1</button>
+      </div>
+    );
+  },
 }));
 
 // Mock BeadDetailSheet
@@ -107,6 +112,45 @@ describe('ExecutionPage', () => {
   it('renders evolution timeline', () => {
     render(<TestProviders><ExecutionPage /></TestProviders>);
     // EvolutionTimeline with empty generations shows "No evolution cycles yet"
+    expect(screen.getByText('No evolution cycles yet')).toBeInTheDocument();
+  });
+});
+
+describe('ExecutionPage — DAGCanvas error boundary', () => {
+  beforeEach(() => {
+    // Suppress React's console.error for uncaught errors during boundary tests
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    _dagCanvasShouldThrow = false;
+    _dagCanvasError = new Error('DAG render failed');
+  });
+
+  it('renders fallback with role="alert" when DAGCanvas throws', () => {
+    _dagCanvasShouldThrow = true;
+    _dagCanvasError = new Error('DAG render failed');
+    render(<TestProviders><ExecutionPage /></TestProviders>);
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+  });
+
+  it('shows the error message text in the fallback', () => {
+    _dagCanvasShouldThrow = true;
+    _dagCanvasError = new Error('DAG render failed');
+    render(<TestProviders><ExecutionPage /></TestProviders>);
+    expect(screen.getByText('DAG render failed')).toBeInTheDocument();
+  });
+
+  it('shows a Retry button in the fallback', () => {
+    _dagCanvasShouldThrow = true;
+    render(<TestProviders><ExecutionPage /></TestProviders>);
+    expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
+  });
+
+  it('EvolutionTimeline remains visible when DAGCanvas crashes', () => {
+    _dagCanvasShouldThrow = true;
+    render(<TestProviders><ExecutionPage /></TestProviders>);
+    // EvolutionTimeline with empty data renders "No evolution cycles yet"
     expect(screen.getByText('No evolution cycles yet')).toBeInTheDocument();
   });
 });
