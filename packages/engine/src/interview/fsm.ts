@@ -9,6 +9,7 @@ import type { LLMGateway } from '../gateway/gateway.js';
 import type { GatewayConfig } from '../gateway/config.js';
 import { scoreTranscript } from './scorer.js';
 import { runActivePerspectives } from './perspectives.js';
+import { runContrarianAnalysis } from './contrarian.js';
 import { rankCandidates } from './ranker.js';
 import { synthesizeFromTranscript } from './synthesizer.js';
 import { crystallizeSeed, ImmutableSeedError } from './crystallizer.js';

@@ -4,6 +4,7 @@ import type {
   AmbiguityScores,
   PerspectiveCandidate,
   InterviewTurn,
+  ContrarianFraming,
 } from './types.js';
 import type { LLMGateway } from '../gateway/gateway.js';
 
@@ -105,9 +106,27 @@ export function selectActivePerspectives(
 
 // ─── Prompt Builder ───────────────────────────────────────────────────────────
 
-export function buildPerspectivePrompt(transcript: InterviewTurn[]): string {
+/**
+ * Builds the prompt for a perspective panel member.
+ *
+ * When contrarianFramings are provided (from Cousin Eddie analysis), they are
+ * injected as context BEFORE the instruction to ask a question. This allows the
+ * perspective to organically weave contrarian insights into their question
+ * without ever surfacing the framings directly to the user.
+ */
+export function buildPerspectivePrompt(
+  transcript: InterviewTurn[],
+  contrarianFramings?: ContrarianFraming[],
+): string {
+  const hasFramings = contrarianFramings && contrarianFramings.length > 0;
+
   if (transcript.length === 0) {
-    return 'The user has just started describing their project. Ask one friendly, clarifying question from your perspective to help them flesh out their idea. Include a brief rationale for why this question matters. Remember: you are helping them build what THEY want — accept their vision and help clarify the details.';
+    const base =
+      'The user has just started describing their project. Ask one friendly, clarifying question from your perspective to help them flesh out their idea. Include a brief rationale for why this question matters. Remember: you are helping them build what THEY want — accept their vision and help clarify the details.';
+    if (!hasFramings) return base;
+
+    const contrarianSection = buildContrarianSection(contrarianFramings!);
+    return `${contrarianSection}\n\n${base}`;
   }
 
   const turns = transcript
@@ -117,7 +136,27 @@ export function buildPerspectivePrompt(transcript: InterviewTurn[]): string {
     )
     .join('\n\n');
 
-  return `Interview transcript so far:\n${turns}\n\nBased on the conversation, ask one helpful clarifying question from your perspective. Accept the user's goals as stated — help them refine the details, don't question their direction. Include a brief rationale for why this question matters.`;
+  const transcriptBlock = `Interview transcript so far:\n${turns}`;
+  const questionInstruction =
+    'Based on the conversation, ask one helpful clarifying question from your perspective. Accept the user\'s goals as stated — help them refine the details, don\'t question their direction. Include a brief rationale for why this question matters.';
+
+  if (!hasFramings) {
+    return `${transcriptBlock}\n\n${questionInstruction}`;
+  }
+
+  const contrarianSection = buildContrarianSection(contrarianFramings!);
+  return `${transcriptBlock}\n\n${contrarianSection}\n\n${questionInstruction}`;
+}
+
+function buildContrarianSection(framings: ContrarianFraming[]): string {
+  const framingLines = framings
+    .map(
+      (f) =>
+        `- Hypothesis: "${f.hypothesis}" -> Alternative: "${f.alternative}" (Reasoning: ${f.reasoning})`,
+    )
+    .join('\n');
+
+  return `Alternative framings to consider (from a contrarian analysis of the user's statements):\n${framingLines}\n\nConsider these alternative framings when crafting your question. If any of them reveal an unexamined assumption, weave that insight into your question naturally. Do not mention these framings directly to the user — integrate the insight organically.`;
 }
 
 // ─── Parallel Perspective Execution (D-09, D-21) ─────────────────────────────
@@ -125,6 +164,10 @@ export function buildPerspectivePrompt(transcript: InterviewTurn[]): string {
 /**
  * Runs the selected perspectives in parallel via Promise.all, generating
  * a question candidate from each perspective's system prompt.
+ *
+ * When contrarianFramings are provided (from Cousin Eddie analysis), they are
+ * injected into the perspective prompt as context — so each perspective can
+ * organically weave contrarian insights into their question.
  */
 export async function runActivePerspectives(
   gateway: LLMGateway,
@@ -133,6 +176,7 @@ export async function runActivePerspectives(
   projectId: string,
   turnCount: number,
   config: { perspectiveModels?: Partial<Record<string, string>> },
+  contrarianFramings?: ContrarianFraming[],
 ): Promise<PerspectiveCandidate[]> {
   const active = selectActivePerspectives(previousScores, turnCount);
 
@@ -141,7 +185,7 @@ export async function runActivePerspectives(
       projectId,
       stage: 'interview',
       system: PERSPECTIVE_PROMPTS[name],
-      prompt: buildPerspectivePrompt(transcript),
+      prompt: buildPerspectivePrompt(transcript, contrarianFramings),
       schema: perspectiveCandidateSchema,
       schemaName: `${name}Candidate`,
       schemaDescription: `Question candidate from the ${name} perspective`,

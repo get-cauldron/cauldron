@@ -73,6 +73,24 @@ const testRunner: TestRunnerConfig = {
   typecheckCommand: 'tsc --noEmit',
 };
 
+/** Minimal LanguageModelUsage-conforming value for mocks.
+ * inputTokenDetails and outputTokenDetails are required objects (their sub-fields are optional). */
+const mockUsage = {
+  inputTokens: 100,
+  outputTokens: 50,
+  totalTokens: undefined,
+  inputTokenDetails: { noCacheTokens: undefined, cacheReadTokens: undefined, cacheWriteTokens: undefined },
+  outputTokenDetails: { textTokens: undefined, reasoningTokens: undefined },
+} as const;
+
+const mockUsageZero = {
+  inputTokens: 0,
+  outputTokens: 0,
+  totalTokens: undefined,
+  inputTokenDetails: { noCacheTokens: undefined, cacheReadTokens: undefined, cacheWriteTokens: undefined },
+  outputTokenDetails: { textTokens: undefined, reasoningTokens: undefined },
+} as const;
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -221,7 +239,7 @@ describe('MergeQueue', () => {
         confidence: 'high',
         files: [{ path: 'src/index.ts', resolved_content: 'const a = 1; // resolved\n' }],
       },
-      usage: { inputTokens: 100, outputTokens: 50 },
+      usage: mockUsage,
     });
 
     queue.enqueue(makeEntry());
@@ -250,7 +268,7 @@ describe('MergeQueue', () => {
         confidence: 'high',
         files: [{ path: 'src/index.ts', resolved_content: 'const a = 1; // resolved\n' }],
       },
-      usage: { inputTokens: 100, outputTokens: 50 },
+      usage: mockUsage,
     });
 
     queue.enqueue(makeEntry());
@@ -283,7 +301,7 @@ describe('MergeQueue', () => {
         confidence: 'low',
         files: [],
       },
-      usage: { inputTokens: 100, outputTokens: 50 },
+      usage: mockUsage,
     });
 
     queue.enqueue(makeEntry());
@@ -316,7 +334,7 @@ describe('MergeQueue', () => {
         message: 'Failed to generate valid object',
         text: undefined,
         response: { id: 'test', timestamp: new Date(), modelId: 'test-model' },
-        usage: { inputTokens: 0, outputTokens: 0 },
+        usage: mockUsageZero,
         finishReason: 'error',
       })
     );
