@@ -28,6 +28,7 @@ export interface McpBootstrapDeps {
   db: DbClient;
   logger: Logger;
   inngest: typeof inngest;
+  redisUrl: string;
 }
 
 /**
@@ -56,5 +57,7 @@ export async function bootstrapMcp(projectRoot: string): Promise<McpBootstrapDep
   const executor = createComfyUIExecutor({ baseUrl: comfyuiUrl, logger });
   configureAssetDeps({ db, logger, executor, artifactsRoot });
 
-  return { db, logger, inngest };
+  const redisUrl = process.env['REDIS_URL'] ?? 'redis://localhost:6379';
+
+  return { db, logger, inngest, redisUrl };
 }

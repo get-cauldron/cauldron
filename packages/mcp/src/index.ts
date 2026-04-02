@@ -4,6 +4,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { bootstrapMcp } from './bootstrap.js';
 import { findProjectRoot, resolveProjectId } from './project-detector.js';
 import { createMcpServer } from './server.js';
+import { createJobStatusSubscriber } from './ipc-subscriber.js';
 
 async function main() {
   // D-07: Auto-detect project from cwd
@@ -16,7 +17,7 @@ async function main() {
     process.exit(1);
   }
 
-  const { db, logger, inngest } = await bootstrapMcp(projectRoot);
+  const { db, logger, inngest, redisUrl } = await bootstrapMcp(projectRoot);
 
   // Resolve project ID from filesystem marker or DB fallback
   const projectId = await resolveProjectId(db, projectRoot);
@@ -39,6 +40,9 @@ async function main() {
 
   const transport = new StdioServerTransport();
   await server.connect(transport);
+
+  // Start Redis subscriber for cross-process push notifications (best-effort)
+  createJobStatusSubscriber(server, redisUrl, logger);
 
   // CRITICAL: No console.log after this point — stdout is the JSON-RPC pipe
   logger.info({ projectRoot, projectId }, 'Cauldron MCP server started');
