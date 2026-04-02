@@ -65,19 +65,11 @@ export function sealPayload(plaintext: string): SealedPayload {
 }
 
 /**
- * Unseals a SealedPayload back to plaintext using AES-256-GCM envelope decryption.
- *
- * Process:
- * 1. Get KEK from HOLDOUT_ENCRYPTION_KEY
- * 2. Parse compound encryptedDek to recover dekIv, dekAuthTag, dekCiphertext
- * 3. Decrypt the DEK with KEK + GCM auth tag verification
- * 4. Decrypt ciphertext with DEK + GCM auth tag verification
- *
- * Throws if KEK is absent, auth tags don't match (tampered data), or parsing fails.
+ * Internal helper: unseals a SealedPayload using an explicitly provided KEK buffer.
+ * Avoids duplicating decrypt logic across unsealPayload and unsealPayloadWithFallback.
+ * NEVER exported — internal only.
  */
-export function unsealPayload(sealed: SealedPayload): string {
-  const kek = getKek();
-
+function unsealPayloadWithKek(sealed: SealedPayload, kek: Buffer): string {
   // Parse compound DEK string: dekIv:dekAuthTag:dekCiphertext
   const parts = sealed.encryptedDek.split(':');
   if (parts.length !== 3) {
@@ -110,4 +102,46 @@ export function unsealPayload(sealed: SealedPayload): string {
   ]);
 
   return decrypted.toString('utf8');
+}
+
+/**
+ * Unseals a SealedPayload back to plaintext using AES-256-GCM envelope decryption.
+ *
+ * Process:
+ * 1. Get KEK from HOLDOUT_ENCRYPTION_KEY
+ * 2. Parse compound encryptedDek to recover dekIv, dekAuthTag, dekCiphertext
+ * 3. Decrypt the DEK with KEK + GCM auth tag verification
+ * 4. Decrypt ciphertext with DEK + GCM auth tag verification
+ *
+ * Throws if KEK is absent, auth tags don't match (tampered data), or parsing fails.
+ */
+export function unsealPayload(sealed: SealedPayload): string {
+  return unsealPayloadWithKek(sealed, getKek());
+}
+
+/**
+ * Unseals a SealedPayload with dual-key fallback for safe KEK rotation windows.
+ *
+ * Attempts decryption with the current HOLDOUT_ENCRYPTION_KEY first.
+ * If that fails (e.g. payload was encrypted with the previous KEK), falls back
+ * to HOLDOUT_ENCRYPTION_KEY_PREV if set.
+ *
+ * Use this instead of unsealPayload during and immediately after a KEK rotation
+ * to ensure in-flight evaluations succeed even if their DEKs have not been
+ * re-encrypted yet.
+ *
+ * Throws if both keys fail or if fallback is needed but HOLDOUT_ENCRYPTION_KEY_PREV is unset.
+ */
+export function unsealPayloadWithFallback(sealed: SealedPayload): string {
+  try {
+    return unsealPayloadWithKek(sealed, getKek());
+  } catch {
+    const prevRaw = process.env['HOLDOUT_ENCRYPTION_KEY_PREV'];
+    if (!prevRaw) {
+      throw new Error(
+        'Decryption failed and no HOLDOUT_ENCRYPTION_KEY_PREV available for fallback'
+      );
+    }
+    return unsealPayloadWithKek(sealed, Buffer.from(prevRaw, 'base64'));
+  }
 }

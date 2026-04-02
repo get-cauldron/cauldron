@@ -1,5 +1,6 @@
-import { pgTable, pgEnum, uuid, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
+import { pgTable, pgEnum, uuid, text, timestamp, jsonb, integer } from 'drizzle-orm/pg-core';
 import { seeds } from './seed.js';
+import { kekVersions } from './kek.js';
 
 export const holdoutStatusEnum = pgEnum('holdout_status', [
   'pending_review',
@@ -26,6 +27,8 @@ export const holdoutVault = pgTable('holdout_vault', {
   encryptedAt: timestamp('encrypted_at', { withTimezone: true }),
   unsealedAt: timestamp('unsealed_at', { withTimezone: true }),
   evaluatedAt: timestamp('evaluated_at', { withTimezone: true }),
+  // KEK version used to encrypt this row's DEK — nullable for existing rows; set on seal / rotation
+  kekVersion: integer('kek_version').references(() => kekVersions.version),
 });
 
 export type HoldoutVault = typeof holdoutVault.$inferSelect;

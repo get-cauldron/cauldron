@@ -1,6 +1,6 @@
 {
-  "id": "5c697ef8-6618-4073-a86b-d83a40c7264e",
-  "prevId": "204f25d8-299a-4647-b67d-c36d896cab14",
+  "id": "be3d3160-a51b-464a-9bf9-d044e0031097",
+  "prevId": "5c697ef8-6618-4073-a86b-d83a40c7264e",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -705,6 +705,98 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.kek_rotation_log": {
+      "name": "kek_rotation_log",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "event": {
+          "name": "event",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payload": {
+          "name": "payload",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::jsonb"
+        },
+        "occurred_at": {
+          "name": "occurred_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.kek_versions": {
+      "name": "kek_versions",
+      "schema": "",
+      "columns": {
+        "version": {
+          "name": "version",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "kek_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "activated_at": {
+          "name": "activated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "retired_at": {
+          "name": "retired_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "key_fingerprint": {
+          "name": "key_fingerprint",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.holdout_vault": {
       "name": "holdout_vault",
       "schema": "",
@@ -783,6 +875,12 @@
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
+        },
+        "kek_version": {
+          "name": "kek_version",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -798,6 +896,19 @@
             "id"
           ],
           "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "holdout_vault_kek_version_kek_versions_version_fk": {
+          "name": "holdout_vault_kek_version_kek_versions_version_fk",
+          "tableFrom": "holdout_vault",
+          "tableTo": "kek_versions",
+          "columnsFrom": [
+            "kek_version"
+          ],
+          "columnsTo": [
+            "version"
+          ],
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
@@ -1339,6 +1450,14 @@
         "asset_job_completed",
         "asset_job_failed",
         "asset_job_canceled"
+      ]
+    },
+    "public.kek_status": {
+      "name": "kek_status",
+      "schema": "public",
+      "values": [
+        "active",
+        "retired"
       ]
     },
     "public.holdout_status": {

@@ -3,6 +3,7 @@ export * from './interview.js';
 export * from './seed.js';
 export * from './bead.js';
 export * from './event.js';
+export * from './kek.js';
 export * from './holdout.js';
 export * from './snapshot.js';
 export * from './llm-usage.js';

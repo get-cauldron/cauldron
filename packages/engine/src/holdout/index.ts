@@ -4,3 +4,4 @@ export * from './generator.js';
 export * from './vault.js';
 export * from './evaluator.js';
 export * from './events.js';
+export * from './rotation.js';
