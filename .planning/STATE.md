@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Architectural Hardening
-status: in-progress
-stopped_at: Completed 22-01-PLAN.md
-last_updated: "2026-04-01T00:25:00.000Z"
-last_activity: 2026-04-01 — Executed 22-01-PLAN.md — schema integrity indexes and migrations
+status: executing
+stopped_at: Phase 22 context gathered
+last_updated: "2026-04-02T00:53:58.535Z"
+last_activity: 2026-04-02 -- Phase 22 execution started
 progress:
   total_phases: 8
   completed_phases: 0
-  total_plans: 0
+  total_plans: 2
   completed_plans: 0
   percent: 0
 ---
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-01)
 
 **Core value:** User describes what they want; Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves until the goal is met with humans steering at key decision points.
-**Current focus:** Phase 22 — Schema Migrations: Integrity Indexes
+**Current focus:** Phase 22 — Schema Migrations — Integrity Indexes
 
 ## Current Position
 
-Phase: 22 of 29 (Schema Migrations — Integrity Indexes)
-Plan: 1 of 1 in current phase
-Status: In progress — 22-01 complete
-Last activity: 2026-04-01 — Completed 22-01: schema constraints, indexes, appendEvent retry logic
+Phase: 22 (Schema Migrations — Integrity Indexes) — EXECUTING
+Plan: 1 of 2
+Status: Executing Phase 22
+Last activity: 2026-04-02 -- Phase 22 execution started
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -44,10 +44,6 @@ Progress: [░░░░░░░░░░] 0%
 ### Decisions
 
 Prior milestone decisions archived to `.planning/milestones/v1.1-ROADMAP.md`.
-
-v1.2 execution decisions (22-01):
-- Data-only migration (0015) needs no Drizzle snapshot — Drizzle rejects identical adjacent snapshots; data cleanup before constraint DDL is the correct pattern
-- appendEvent retry uses `instanceof postgres.PostgresError` (default import namespace) rather than named import — correct for postgres v3 `export =` module format
 
 v1.2 roadmap decisions:
 
