@@ -43,7 +43,7 @@ export class LiveInfra {
    * Pre-flight: check API keys exist. Returns list of missing keys.
    */
   static checkApiKeys(): string[] {
-    const required = ['OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'GOOGLE_GENERATIVE_AI_API_KEY'];
+    const required = ['MISTRAL_API_KEY', 'ANTHROPIC_API_KEY', 'GOOGLE_GENERATIVE_AI_API_KEY'];
     return required.filter((key) => !process.env[key]);
   }
 

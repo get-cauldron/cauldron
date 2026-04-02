@@ -38,7 +38,7 @@ describe('costs router wiring', () => {
     const project = await ctx.fixtures.project();
     await ctx.fixtures.llmUsage({ projectId: project.id, model: 'claude-sonnet-4-6', costCents: 15 });
     await ctx.fixtures.llmUsage({ projectId: project.id, model: 'claude-sonnet-4-6', costCents: 25 });
-    await ctx.fixtures.llmUsage({ projectId: project.id, model: 'gpt-4o', costCents: 10 });
+    await ctx.fixtures.llmUsage({ projectId: project.id, model: 'mistral-large-latest', costCents: 10 });
     const byModel = await ctx.caller.costs.getByModel({ projectId: project.id });
     expect(byModel).toHaveLength(2);
     const claude = byModel.find((r) => r.model === 'claude-sonnet-4-6');

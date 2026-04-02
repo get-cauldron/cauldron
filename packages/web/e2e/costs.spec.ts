@@ -64,7 +64,7 @@ async function seedProjectWithCosts() {
       projectId: project.id,
       seedId: seed.id,
       stage: 'decomposition',
-      model: 'gpt-4.1',
+      model: 'mistral-large-latest',
       promptTokens: 2000,
       completionTokens: 600,
       totalTokens: 2600,
@@ -115,7 +115,7 @@ test('costs page shows per-model breakdown', async ({ page }) => {
   // Both model names should appear in the COST BY MODEL section
   await expect(page.getByText('COST BY MODEL')).toBeVisible({ timeout: 5000 });
   await expect(page.getByText('claude-sonnet-4-5')).toBeVisible({ timeout: 5000 });
-  await expect(page.getByText('gpt-4.1')).toBeVisible({ timeout: 5000 });
+  await expect(page.getByText('mistral-large-latest')).toBeVisible({ timeout: 5000 });
 });
 
 // ---------------------------------------------------------------------------

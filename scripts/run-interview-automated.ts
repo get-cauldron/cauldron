@@ -12,7 +12,7 @@ import { homedir } from 'node:os';
 dotenvConfig({ path: resolve(homedir(), '.env') });
 
 // Strip stray quotes
-for (const key of ['OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'GOOGLE_GENERATIVE_AI_API_KEY', 'HOLDOUT_ENCRYPTION_KEY']) {
+for (const key of ['MISTRAL_API_KEY', 'ANTHROPIC_API_KEY', 'GOOGLE_GENERATIVE_AI_API_KEY', 'HOLDOUT_ENCRYPTION_KEY']) {
   const val = process.env[key];
   if (val) {
     process.env[key] = val.replace(/^"|"$/g, '');

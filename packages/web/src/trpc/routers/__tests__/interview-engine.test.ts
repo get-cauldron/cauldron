@@ -201,11 +201,11 @@ describe('sendAnswer tRPC mutation — InterviewFSM wiring', () => {
       userAnswer: 'No constraints',
       freeformText: 'extra',
       ambiguityScoreSnapshot: scores,
-      model: 'gpt-4.1',
+      model: 'mistral-large-latest',
       allCandidates: [],
       timestamp: new Date().toISOString(),
     };
-    const nextQuestion = { selectedCandidate: { question: 'Next question', perspective: 'researcher', model: 'gpt-4.1' }, mcOptions: [], allCandidates: [] };
+    const nextQuestion = { selectedCandidate: { question: 'Next question', perspective: 'researcher', model: 'mistral-large-latest' }, mcOptions: [], allCandidates: [] };
 
     mockSubmitAnswer.mockResolvedValue({ turn, scores, nextQuestion, thresholdMet: false });
 

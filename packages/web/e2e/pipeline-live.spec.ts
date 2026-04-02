@@ -5,13 +5,13 @@
  * project through the entire pipeline using real LLM calls.
  *
  * - Simulated user: Claude Haiku (Anthropic) — never same provider as interviewer
- * - Pipeline models: ultra-cheap (gpt-4.1-mini, gemini-2.5-flash)
+ * - Pipeline models: ultra-cheap (mistral-small-latest, gemini-2.5-flash)
  * - Infrastructure: self-contained Docker + dev servers
  *
  * Run: pnpm -F @get-cauldron/web test:live
  *
  * Prerequisites:
- * - API keys set: OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_GENERATIVE_AI_API_KEY
+ * - API keys set: MISTRAL_API_KEY, ANTHROPIC_API_KEY, GOOGLE_GENERATIVE_AI_API_KEY
  * - Docker available
  * - Ports 3000, 3001, 5435, 6380, 8290 available
  */
@@ -42,24 +42,24 @@ should cover round-trip shorten→expand, duplicate URLs, and invalid input.`,
   },
 
   models: {
-    interview: ['gpt-4.1-mini'],
+    interview: ['mistral-small-latest'],
     holdout: ['gemini-2.5-flash'],
-    implementation: ['gpt-4.1-mini'],
+    implementation: ['mistral-small-latest'],
     evaluation: ['gemini-2.5-flash'],
-    decomposition: ['gpt-4.1-mini'],
-    context_assembly: ['gpt-4.1-mini'],
-    conflict_resolution: ['gpt-4.1-mini'],
+    decomposition: ['mistral-small-latest'],
+    context_assembly: ['mistral-small-latest'],
+    conflict_resolution: ['mistral-small-latest'],
   },
 
   perspectiveModels: {
-    researcher: 'gpt-4.1-mini',
-    simplifier: 'gpt-4.1-mini',
-    architect: 'gpt-4.1-mini',
-    'breadth-keeper': 'gpt-4.1-mini',
-    'seed-closer': 'gpt-4.1-mini',
+    researcher: 'mistral-small-latest',
+    simplifier: 'mistral-small-latest',
+    architect: 'mistral-small-latest',
+    'breadth-keeper': 'mistral-small-latest',
+    'seed-closer': 'mistral-small-latest',
   },
 
-  scoringModel: 'gpt-4.1-mini',
+  scoringModel: 'mistral-small-latest',
 
   timeouts: {
     interview: 5 * 60_000,
@@ -92,7 +92,7 @@ if (SKIP) {
 // ────────────────────────────────────────────────────────────────────────────
 
 test.describe('Live Pipeline E2E', () => {
-  test.skip(() => SKIP, 'Requires API keys: OPENAI, ANTHROPIC, GOOGLE');
+  test.skip(() => SKIP, 'Requires API keys: MISTRAL, ANTHROPIC, GOOGLE');
   test.describe.configure({ mode: 'serial' });
 
   const infra = new LiveInfra({

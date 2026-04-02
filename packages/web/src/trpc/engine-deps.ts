@@ -75,13 +75,13 @@ export async function getEngineDeps(): Promise<{
       const { defineConfig } = await import('@get-cauldron/engine');
       _config = defineConfig({
         models: {
-          interview: ['claude-sonnet-4-6', 'gpt-4.1'],
-          holdout: ['gemini-2.5-pro', 'gpt-4.1'],
-          implementation: ['claude-sonnet-4-6', 'gpt-4.1'],
+          interview: ['claude-sonnet-4-6', 'mistral-large-latest'],
+          holdout: ['gemini-2.5-pro', 'mistral-large-latest'],
+          implementation: ['claude-sonnet-4-6', 'mistral-large-latest'],
           evaluation: ['gemini-2.5-pro', 'claude-sonnet-4-6'],
-          decomposition: ['claude-sonnet-4-6', 'gpt-4.1'],
-          context_assembly: ['gpt-4.1-mini', 'gpt-4o-mini'],
-          conflict_resolution: ['claude-sonnet-4-6', 'gpt-4.1'],
+          decomposition: ['claude-sonnet-4-6', 'mistral-large-latest'],
+          context_assembly: ['mistral-small-latest', 'ollama:qwen3-30b-a3b'],
+          conflict_resolution: ['claude-sonnet-4-6', 'mistral-large-latest'],
         },
         budget: { defaultLimitCents: 500 },
         selfBuild: true,
