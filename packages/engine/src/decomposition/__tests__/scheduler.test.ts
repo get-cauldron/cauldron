@@ -350,13 +350,23 @@ describe('completeBead', () => {
   });
 
   it('Test 10: transitions status to completed and emits bead_completed event', async () => {
-    const mockReturning = vi.fn().mockResolvedValue([{ id: 'bead-1', status: 'completed', version: 3 }]);
+    const currentBead = { id: 'bead-1', status: 'claimed', version: 2 };
+    const updatedBead = { id: 'bead-1', version: 3 };
+
+    // First select: fetch current bead for version check
+    mockSelect.mockReturnValueOnce({
+      from: vi.fn().mockReturnValue({
+        where: vi.fn().mockResolvedValue([currentBead]),
+      }),
+    });
+
+    const mockReturning = vi.fn().mockResolvedValue([updatedBead]);
     const mockWhere = vi.fn().mockReturnValue({ returning: mockReturning });
     const mockSet = vi.fn().mockReturnValue({ where: mockWhere });
     mockUpdate.mockReturnValue({ set: mockSet });
 
-    // select for conditional check
-    mockSelect.mockReturnValue({
+    // select for conditional check (use once to avoid leaking into subsequent tests)
+    mockSelect.mockReturnValueOnce({
       from: vi.fn().mockReturnValue({
         where: vi.fn().mockResolvedValue([]),  // no conditional edges
       }),
@@ -364,7 +374,11 @@ describe('completeBead', () => {
 
     const { appendEvent } = await import('@get-cauldron/shared');
     const { completeBead } = await import('../scheduler.js');
-    await completeBead(mockDb, 'bead-1', 'completed', 'project-1', 'seed-1');
+    const result = await completeBead(mockDb, 'bead-1', 'completed', 'project-1', 'seed-1');
+
+    // Verify success result
+    expect(result.success).toBe(true);
+    expect(result.beadId).toBe('bead-1');
 
     // Verify event was emitted
     expect(appendEvent).toHaveBeenCalledWith(
@@ -374,13 +388,23 @@ describe('completeBead', () => {
   });
 
   it('Test 11: transitions status to failed and emits bead_failed event', async () => {
-    const mockReturning = vi.fn().mockResolvedValue([{ id: 'bead-1', status: 'failed', version: 3 }]);
+    const currentBead = { id: 'bead-1', status: 'claimed', version: 2 };
+    const updatedBead = { id: 'bead-1', version: 3 };
+
+    // First select: fetch current bead for version check
+    mockSelect.mockReturnValueOnce({
+      from: vi.fn().mockReturnValue({
+        where: vi.fn().mockResolvedValue([currentBead]),
+      }),
+    });
+
+    const mockReturning = vi.fn().mockResolvedValue([updatedBead]);
     const mockWhere = vi.fn().mockReturnValue({ returning: mockReturning });
     const mockSet = vi.fn().mockReturnValue({ where: mockWhere });
     mockUpdate.mockReturnValue({ set: mockSet });
 
-    // select for conditional check - no downstream conditional beads
-    mockSelect.mockReturnValue({
+    // select for conditional check - no downstream conditional beads (use once to avoid leakage)
+    mockSelect.mockReturnValueOnce({
       from: vi.fn().mockReturnValue({
         where: vi.fn().mockResolvedValue([]),
       }),
@@ -388,8 +412,9 @@ describe('completeBead', () => {
 
     const { appendEvent } = await import('@get-cauldron/shared');
     const { completeBead } = await import('../scheduler.js');
-    await completeBead(mockDb, 'bead-1', 'failed', 'project-1', 'seed-1');
+    const result = await completeBead(mockDb, 'bead-1', 'failed', 'project-1', 'seed-1');
 
+    expect(result.success).toBe(true);
     expect(appendEvent).toHaveBeenCalledWith(
       mockDb,
       expect.objectContaining({ type: 'bead_failed', beadId: 'bead-1' })
@@ -397,8 +422,17 @@ describe('completeBead', () => {
   });
 
   it('Test 12: marks downstream conditional bead as failed when upstream fails (D-14)', async () => {
-    // upstream bead failed
-    const mockReturning = vi.fn().mockResolvedValue([{ id: 'bead-1', status: 'failed', version: 3 }]);
+    const currentBead = { id: 'bead-1', status: 'claimed', version: 2 };
+    const updatedBead = { id: 'bead-1', version: 3 };
+
+    // First select: fetch current bead for version check
+    mockSelect.mockReturnValueOnce({
+      from: vi.fn().mockReturnValue({
+        where: vi.fn().mockResolvedValue([currentBead]),
+      }),
+    });
+
+    const mockReturning = vi.fn().mockResolvedValue([updatedBead]);
     const mockWhere = vi.fn().mockReturnValue({ returning: mockReturning });
     const mockSet = vi.fn().mockReturnValue({ where: mockWhere });
     mockUpdate.mockReturnValue({ set: mockSet });
@@ -428,6 +462,94 @@ describe('completeBead', () => {
       call => (call[1]?.payload as Record<string, unknown>)?.['reason'] === 'upstream_conditional_failed'
     );
     expect(skippedCalls.length).toBeGreaterThan(0);
+  });
+
+  it('Test 13: returns { success: false } when version conflict (concurrent update)', async () => {
+    const currentBead = { id: 'bead-1', status: 'claimed', version: 2 };
+
+    // First select: fetch current bead
+    mockSelect.mockReturnValueOnce({
+      from: vi.fn().mockReturnValue({
+        where: vi.fn().mockResolvedValue([currentBead]),
+      }),
+    });
+
+    // Update returns empty (version mismatch — another agent updated first)
+    const mockReturning = vi.fn().mockResolvedValue([]);
+    const mockWhere = vi.fn().mockReturnValue({ returning: mockReturning });
+    const mockSet = vi.fn().mockReturnValue({ where: mockWhere });
+    mockUpdate.mockReturnValue({ set: mockSet });
+
+    const { completeBead } = await import('../scheduler.js');
+    const result = await completeBead(mockDb, 'bead-1', 'completed', 'project-1', 'seed-1');
+
+    expect(result.success).toBe(false);
+    expect(result.beadId).toBe('bead-1');
+    expect(result.newVersion).toBeUndefined();
+  });
+
+  it('Test 14: returns { success: false } when bead is already in terminal status (completed)', async () => {
+    // Bead already completed — should not double-complete
+    const alreadyCompleted = { id: 'bead-1', status: 'completed', version: 5 };
+
+    mockSelect.mockReturnValueOnce({
+      from: vi.fn().mockReturnValue({
+        where: vi.fn().mockResolvedValue([alreadyCompleted]),
+      }),
+    });
+
+    const { completeBead } = await import('../scheduler.js');
+    const result = await completeBead(mockDb, 'bead-1', 'completed', 'project-1', 'seed-1');
+
+    expect(result.success).toBe(false);
+    expect(result.beadId).toBe('bead-1');
+    // Should not attempt DB update
+    expect(mockUpdate).not.toHaveBeenCalled();
+  });
+
+  it('Test 15: returns { success: false } when bead not found', async () => {
+    mockSelect.mockReturnValueOnce({
+      from: vi.fn().mockReturnValue({
+        where: vi.fn().mockResolvedValue([]),
+      }),
+    });
+
+    const { completeBead } = await import('../scheduler.js');
+    const result = await completeBead(mockDb, 'nonexistent', 'completed', 'project-1', 'seed-1');
+
+    expect(result.success).toBe(false);
+    expect(result.beadId).toBe('nonexistent');
+    expect(mockUpdate).not.toHaveBeenCalled();
+  });
+
+  it('Test 16: returns { success: true, newVersion } on successful completion', async () => {
+    const currentBead = { id: 'bead-1', status: 'claimed', version: 3 };
+    const updatedBead = { id: 'bead-1', version: 4 };
+
+    mockSelect.mockReturnValueOnce({
+      from: vi.fn().mockReturnValue({
+        where: vi.fn().mockResolvedValue([currentBead]),
+      }),
+    });
+
+    const mockReturning = vi.fn().mockResolvedValue([updatedBead]);
+    const mockWhere = vi.fn().mockReturnValue({ returning: mockReturning });
+    const mockSet = vi.fn().mockReturnValue({ where: mockWhere });
+    mockUpdate.mockReturnValue({ set: mockSet });
+
+    // No conditional edges (use once to avoid leaking into subsequent describe blocks)
+    mockSelect.mockReturnValueOnce({
+      from: vi.fn().mockReturnValue({
+        where: vi.fn().mockResolvedValue([]),
+      }),
+    });
+
+    const { completeBead } = await import('../scheduler.js');
+    const result = await completeBead(mockDb, 'bead-1', 'completed', 'project-1', 'seed-1');
+
+    expect(result.success).toBe(true);
+    expect(result.beadId).toBe('bead-1');
+    expect(result.newVersion).toBe(4);
   });
 });
 
