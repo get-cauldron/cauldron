@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { router, publicProcedure } from '../init';
-import { projects, events, llmUsage } from '@get-cauldron/shared';
-import { eq, desc, sql, isNull, and, not, like } from 'drizzle-orm';
+import { projects, llmUsage } from '@get-cauldron/shared';
+import { eq, sql } from 'drizzle-orm';
 
 export const projectsRouter = router({
   list: publicProcedure
@@ -9,51 +9,63 @@ export const projectsRouter = router({
     .query(async ({ ctx, input }) => {
     const includeArchived = input?.includeArchived ?? false;
 
-    const conditions = includeArchived
-      ? isNull(projects.deletedAt)
-      : and(isNull(projects.deletedAt), not(like(projects.name, '[archived]%')));
+    // Single query with LATERAL subqueries — eliminates N+1 pattern (PERF-01).
+    // The events table has a composite index on (project_id, occurred_at) from Phase 22,
+    // so the LATERAL subquery for latest event uses an index seek, not a full scan.
+    const archiveFilter = includeArchived
+      ? sql``
+      : sql`AND p.name NOT LIKE '[archived]%'`;
 
-    const rows = await ctx.db
-      .select({
-        id: projects.id,
-        name: projects.name,
-        description: projects.description,
-        settings: projects.settings,
-        createdAt: projects.createdAt,
-        updatedAt: projects.updatedAt,
-      })
-      .from(projects)
-      .where(conditions)
-      .orderBy(desc(projects.updatedAt));
+    const rows = await ctx.db.execute<{
+      id: string;
+      name: string;
+      description: string | null;
+      settings: Record<string, unknown> | null;
+      createdAt: Date;
+      updatedAt: Date;
+      lastActivity: Date;
+      lastEventType: string | null;
+      totalCostCents: string;
+    }>(sql`
+      SELECT
+        p.id,
+        p.name,
+        p.description,
+        p.settings,
+        p.created_at AS "createdAt",
+        p.updated_at AS "updatedAt",
+        COALESCE(le.occurred_at, p.created_at) AS "lastActivity",
+        le.type AS "lastEventType",
+        COALESCE(cu.total_cost, 0) AS "totalCostCents"
+      FROM projects p
+      LEFT JOIN LATERAL (
+        SELECT e.type, e.occurred_at
+        FROM events e
+        WHERE e.project_id = p.id
+        ORDER BY e.occurred_at DESC
+        LIMIT 1
+      ) le ON true
+      LEFT JOIN LATERAL (
+        SELECT SUM(u.cost_cents) AS total_cost
+        FROM llm_usage u
+        WHERE u.project_id = p.id
+      ) cu ON true
+      WHERE p.deleted_at IS NULL
+        ${archiveFilter}
+      ORDER BY p.updated_at DESC
+    `);
 
-    // For each project, get latest event and total cost
-    const result = await Promise.all(
-      rows.map(async (project) => {
-        const [latestEvent] = await ctx.db
-          .select({
-            type: events.type,
-            occurredAt: events.occurredAt,
-          })
-          .from(events)
-          .where(eq(events.projectId, project.id))
-          .orderBy(desc(events.occurredAt))
-          .limit(1);
-
-        const [costRow] = await ctx.db
-          .select({
-            totalCost: sql<number>`COALESCE(SUM(${llmUsage.costCents}), 0)`,
-          })
-          .from(llmUsage)
-          .where(eq(llmUsage.projectId, project.id));
-
-        return {
-          ...project,
-          lastActivity: latestEvent?.occurredAt ?? project.createdAt,
-          lastEventType: latestEvent?.type ?? null,
-          totalCostCents: Number(costRow?.totalCost ?? 0),
-        };
-      }),
-    );
+    const result = rows.map((row) => ({
+      id: row.id,
+      name: row.name,
+      description: row.description,
+      settings: row.settings as typeof projects.$inferSelect['settings'],
+      createdAt: new Date(row.createdAt),
+      updatedAt: new Date(row.updatedAt),
+      lastActivity: new Date(row.lastActivity),
+      lastEventType: row.lastEventType ?? null,
+      totalCostCents: Number(row.totalCostCents),
+    }));
 
     return result;
   }),
