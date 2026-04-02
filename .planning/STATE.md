@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Architectural Hardening
-status: verifying
-stopped_at: Completed 23-fk-cascade-strategy 23-02-PLAN.md
-last_updated: "2026-04-02T01:55:50.788Z"
+status: executing
+stopped_at: Completed 24-01-PLAN.md (CONC-01 + CONC-02)
+last_updated: "2026-04-02T02:30:38.749Z"
 last_activity: 2026-04-02
 progress:
   total_phases: 8
   completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 6
+  completed_plans: 5
   percent: 0
 ---
 
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** User describes what they want; Cauldron autonomously designs, decomposes, implements, tests, evaluates, and evolves until the goal is met with humans steering at key decision points.
-**Current focus:** Phase 23 — FK Cascade Strategy
+**Current focus:** Phase 24 — Concurrency & Performance
 
 ## Current Position
 
-Phase: 24
-Plan: Not started
-Status: Phase complete — ready for verification
+Phase: 24 (Concurrency & Performance) — EXECUTING
+Plan: 2 of 2
+Status: Ready to execute
 Last activity: 2026-04-02
 
 Progress: [░░░░░░░░░░] 0%
@@ -54,6 +54,7 @@ Progress: [░░░░░░░░░░] 0%
 
 | Phase 23-fk-cascade-strategy P01 | 25 | 2 tasks | 11 files |
 | Phase 23-fk-cascade-strategy P02 | 7 | 1 tasks | 4 files |
+| Phase 24-concurrency-performance P01 | 17m | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -67,6 +68,8 @@ Progress: [░░░░░░░░░░] 0%
 - [Phase 23-fk-cascade-strategy]: CASCADE for structural FK relationships (seeds/beads/bead_edges/holdout_vault/interviews/snapshots/asset_jobs) and SET NULL for audit relationships (events/llm_usage) — projectId and related FKs
 - [Phase 23-fk-cascade-strategy]: Hand-crafted migration required for FK behavior changes — Drizzle db:generate cannot generate DROP+ADD CONSTRAINT pairs
 - [Phase 23-fk-cascade-strategy]: Added migration 0018 to drop legacy auto-named FK constraints missed by 0017 — needed for CASCADE to work on databases with early Drizzle auto-named _fkey constraints
+- [Phase 24-01]: Usage recording moved outside executeWithFailover to prevent DB errors from triggering provider re-failover
+- [Phase 24-01]: completeBead returns CompleteBeadResult with version-conditioned WHERE, same pattern as claimBead
 
 ### Pending Todos
 
@@ -80,6 +83,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-02T01:52:33.197Z
-Stopped at: Completed 23-fk-cascade-strategy 23-02-PLAN.md
+Last session: 2026-04-02T02:30:38.747Z
+Stopped at: Completed 24-01-PLAN.md (CONC-01 + CONC-02)
 Resume file: None
