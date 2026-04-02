@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Architectural Hardening
 status: executing
-stopped_at: Phase 30 context gathered
-last_updated: "2026-04-02T14:09:03.906Z"
-last_activity: 2026-04-02 -- Phase 28 execution started
+stopped_at: Completed 28-01-PLAN.md — KEK rotation infrastructure
+last_updated: "2026-04-02T14:18:50.695Z"
+last_activity: 2026-04-02
 progress:
   total_phases: 9
   completed_phases: 6
   total_plans: 12
-  completed_plans: 10
+  completed_plans: 11
   percent: 0
 ---
 
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 ## Current Position
 
 Phase: 28 (KEK Rotation Infrastructure) — EXECUTING
-Plan: 1 of 2
-Status: Executing Phase 28
-Last activity: 2026-04-02 -- Phase 28 execution started
+Plan: 2 of 2
+Status: Ready to execute
+Last activity: 2026-04-02
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -56,6 +56,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 25-process-reliability-transactions P02 | 15 | 1 tasks | 4 files |
 | Phase 25-process-reliability-transactions P01 | 20 | 2 tasks | 3 files |
 | Phase 27 P01 | 8 | 2 tasks | 2 files |
+| Phase 28-kek-rotation-infrastructure P01 | 35 | 2 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,9 @@ Progress: [░░░░░░░░░░] 0%
 - [Phase 25-process-reliability-transactions]: Holdout failure reverts interview to reviewing phase not gathering — summary remains valid, user retries crystallization
 - [Phase 27]: ConflictResolutionSchema uses z.enum confidence so confidence is typed, never string-scanned
 - [Phase 27]: NoObjectGeneratedError propagates uncaught from resolveConflict — explicit failure over silent fallback (CONC-05)
+- [Phase 28-kek-rotation-infrastructure]: kek_versions uses serial PK (not UUID) so holdout_vault can carry a compact integer FK
+- [Phase 28-kek-rotation-infrastructure]: HOLDOUT_ENCRYPTION_KEY_PREV env var (not DB) for dual-key window — avoids storing key material in database
+- [Phase 28-kek-rotation-infrastructure]: kek_rotation_log is not project-scoped — rotation is a global infrastructure operation
 
 ### Pending Todos
 
@@ -88,6 +92,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-02T14:09:03.903Z
-Stopped at: Phase 30 context gathered
-Resume file: .planning/phases/30-replace-openai-provider/30-CONTEXT.md
+Last session: 2026-04-02T14:18:50.690Z
+Stopped at: Completed 28-01-PLAN.md — KEK rotation infrastructure
+Resume file: None

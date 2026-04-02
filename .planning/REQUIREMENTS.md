@@ -25,7 +25,7 @@ Requirements for architectural hardening. Each maps to roadmap phases.
 
 ### Security & UX
 
-- [ ] **SEC-01**: KEK rotation infrastructure with versioned key table, audit trail, and bulk re-encryption capability
+- [x] **SEC-01**: KEK rotation infrastructure with versioned key table, audit trail, and bulk re-encryption capability
 - [ ] **SEC-02**: All tRPC routes use authenticatedProcedure (dev-mode bypass preserved when CAULDRON_API_KEY is unset)
 - [x] **SEC-03**: DAGCanvas wrapped in React error boundary with fallback UI — layout failures don't crash the execution page
 
@@ -65,7 +65,7 @@ Requirements for architectural hardening. Each maps to roadmap phases.
 | CONC-03 | Phase 25 | Complete |
 | CONC-04 | Phase 25 | Complete |
 | CONC-05 | Phase 27 | Complete |
-| SEC-01 | Phase 28 | Pending |
+| SEC-01 | Phase 28 | Complete |
 | SEC-02 | Phase 26 | Pending |
 | SEC-03 | Phase 25 | Complete |
 | PERF-01 | Phase 24 | Pending |
