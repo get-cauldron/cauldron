@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Architectural Hardening
 status: executing
-stopped_at: Completed 28-01-PLAN.md — KEK rotation infrastructure
-last_updated: "2026-04-02T14:18:50.695Z"
+stopped_at: Completed 28-02-PLAN.md
+last_updated: "2026-04-02T14:24:48.410Z"
 last_activity: 2026-04-02
 progress:
   total_phases: 9
@@ -56,7 +56,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 25-process-reliability-transactions P02 | 15 | 1 tasks | 4 files |
 | Phase 25-process-reliability-transactions P01 | 20 | 2 tasks | 3 files |
 | Phase 27 P01 | 8 | 2 tasks | 2 files |
-| Phase 28-kek-rotation-infrastructure P01 | 35 | 2 tasks | 11 files |
+| Phase 28-kek-rotation-infrastructure P02 | 204 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -72,9 +72,7 @@ Progress: [░░░░░░░░░░] 0%
 - [Phase 25-process-reliability-transactions]: Holdout failure reverts interview to reviewing phase not gathering — summary remains valid, user retries crystallization
 - [Phase 27]: ConflictResolutionSchema uses z.enum confidence so confidence is typed, never string-scanned
 - [Phase 27]: NoObjectGeneratedError propagates uncaught from resolveConflict — explicit failure over silent fallback (CONC-05)
-- [Phase 28-kek-rotation-infrastructure]: kek_versions uses serial PK (not UUID) so holdout_vault can carry a compact integer FK
-- [Phase 28-kek-rotation-infrastructure]: HOLDOUT_ENCRYPTION_KEY_PREV env var (not DB) for dual-key window — avoids storing key material in database
-- [Phase 28-kek-rotation-infrastructure]: kek_rotation_log is not project-scoped — rotation is a global infrastructure operation
+- [Phase 28-kek-rotation-infrastructure]: KEK rotate-kek CLI: keys injected exclusively via env vars to prevent shell history exposure; retire is always a separate invocation from rotate
 
 ### Pending Todos
 
@@ -92,6 +90,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-02T14:18:50.690Z
-Stopped at: Completed 28-01-PLAN.md — KEK rotation infrastructure
+Last session: 2026-04-02T14:24:48.405Z
+Stopped at: Completed 28-02-PLAN.md
 Resume file: None

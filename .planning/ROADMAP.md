@@ -148,8 +148,8 @@ Plans:
   4. The old KEK is not retired in the same deployment that introduces the new KEK — no in-flight evaluation can see a missing key
 **Plans:** 1/2 plans executed
 Plans:
-- [x] 28-01-PLAN.md — Schema (kek_versions, kek_rotation_log, kek_version column), rotation core logic, dual-key unseal, unit tests
-- [ ] 28-02-PLAN.md — CLI rotate-kek command with --init, rotation, and --retire-old modes
+- [ ] 28-01-PLAN.md — Schema (kek_versions, kek_rotation_log, kek_version column), rotation core logic, dual-key unseal, unit tests
+- [x] 28-02-PLAN.md — CLI rotate-kek command with --init, rotation, and --retire-old modes
 
 ### Phase 29: MCP Cross-Process IPC
 **Goal**: Push notifications from the Inngest worker process reach the MCP stdio process reliably via Redis pub/sub — push is best-effort and pull via check-job-status remains the correctness path

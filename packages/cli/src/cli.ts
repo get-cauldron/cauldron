@@ -24,6 +24,7 @@ import { webhookCommand } from './commands/webhook.js';
 import { logsCommand } from './commands/logs.js';
 import { configCommand } from './commands/config.js';
 import { verifyCommand } from './commands/verify.js';
+import { rotateKekCommand } from './commands/rotate-kek.js';
 
 const COMMANDS = [
   'health',
@@ -43,6 +44,7 @@ const COMMANDS = [
   'webhook',
   'config',
   'verify',
+  'rotate-kek',
 ] as const;
 
 type Command = (typeof COMMANDS)[number];
@@ -78,6 +80,7 @@ function printUsage(): void {
   console.log('  resolve        Manually resolve a stalled or failed bead');
   console.log('  health         Check local pre-execution prerequisites');
   console.log('  verify         Verify local asset pipeline health');
+  console.log('  rotate-kek     Rotate the holdout encryption key (KEK)');
   console.log('');
   console.log(chalk.cyan('Options:'));
   console.log('  --json         Output machine-readable JSON');
@@ -158,6 +161,12 @@ async function main(): Promise<void> {
   // Verify command uses bootstrap() directly — not tRPC
   if (command === 'verify') {
     await verifyCommand(commandArgs, flags);
+    return;
+  }
+
+  // rotate-kek command uses bootstrap() directly — not tRPC
+  if (command === 'rotate-kek') {
+    await rotateKekCommand(commandArgs, flags);
     return;
   }
 
