@@ -1,9 +1,11 @@
 import { exec } from 'node:child_process';
+import type { ChildProcess } from 'node:child_process';
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
 import type { TddLoopOptions, ExecutionResult, AgentContext, TestRunnerConfig } from './types.js';
 import type { LLMGateway } from '../gateway/gateway.js';
 import type { WorktreeManager } from './worktree-manager.js';
+import type { TimeoutSupervisor } from './timeout-supervisor.js';
 
 /** Parsed output from an agent LLM response — a file path and its content */
 interface AgentOutput {
@@ -21,19 +23,24 @@ Do not mock the database, filesystem, or internal modules in integration tests.
  * Wraps node's exec with a promise interface.
  * Uses a manual wrapper (not promisify) because mocked exec in tests may
  * not carry util.promisify.custom, causing destructuring to yield undefined.
+ *
+ * CONC-03: Optional onProcess callback receives the ChildProcess synchronously
+ * so callers can register it with TimeoutSupervisor.setKillTarget().
  */
 function execPromise(
   cmd: string,
-  options: { cwd: string }
+  options: { cwd: string },
+  onProcess?: (proc: ChildProcess) => void
 ): Promise<{ stdout: string; stderr: string }> {
   return new Promise((resolve, reject) => {
-    exec(cmd, options, (err, stdout, stderr) => {
+    const child = exec(cmd, options, (err, stdout, stderr) => {
       if (err) {
         reject(Object.assign(err, { stdout: stdout ?? '', stderr: stderr ?? '' }));
       } else {
         resolve({ stdout: stdout ?? '', stderr: stderr ?? '' });
       }
     });
+    onProcess?.(child);
   });
 }
 
@@ -48,56 +55,63 @@ function execPromise(
 export class AgentRunner {
   constructor(
     private readonly gateway: LLMGateway,
-    private readonly worktreeManager: WorktreeManager
+    private readonly worktreeManager: WorktreeManager,
+    private readonly supervisor?: TimeoutSupervisor
   ) {}
 
   /**
    * Run the TDD self-healing loop for a bead.
    * Returns ExecutionResult with success flag, iteration count, and modified files.
+   * CONC-03: supervisor (if provided) is started at entry and stopped in finally.
    */
   async runWithTddLoop(options: TddLoopOptions): Promise<ExecutionResult> {
     const { agentContext, worktreePath, beadId, projectId, maxIterations } = options;
     let currentContext: AgentContext = { ...agentContext };
 
-    for (let iteration = 0; iteration < maxIterations; iteration++) {
-      // Phase A: Generate tests first on iteration 0 (TDD — D-19)
-      if (iteration === 0) {
-        const testOutputs = await this.agentGenerateTests(currentContext, worktreePath, projectId);
-        await this.writeAgentOutput(testOutputs, worktreePath);
+    this.supervisor?.start();
+    try {
+      for (let iteration = 0; iteration < maxIterations; iteration++) {
+        // Phase A: Generate tests first on iteration 0 (TDD — D-19)
+        if (iteration === 0) {
+          const testOutputs = await this.agentGenerateTests(currentContext, worktreePath, projectId);
+          await this.writeAgentOutput(testOutputs, worktreePath);
+        }
+
+        // Phase B: Generate/update implementation
+        const implOutputs = await this.agentGenerateImplementation(
+          currentContext,
+          worktreePath,
+          iteration,
+          projectId
+        );
+        await this.writeAgentOutput(implOutputs, worktreePath);
+
+        // Phase C: Commit current state
+        await this.worktreeManager.commitWorktreeChanges(
+          worktreePath,
+          `bead(${beadId.slice(0, 8)}): iteration ${iteration + 1}`
+        );
+
+        // Phase D: Run verification (all test levels + typecheck)
+        const verifyResult = await this.runVerification(worktreePath, currentContext.testRunner);
+
+        if (verifyResult.allPassed) {
+          const filesModified = await this.getModifiedFiles(worktreePath);
+          return { success: true, iterations: iteration + 1, filesModified };
+        }
+
+        // Pass errors back to next iteration
+        currentContext = { ...currentContext, previousErrors: verifyResult.errors };
       }
 
-      // Phase B: Generate/update implementation
-      const implOutputs = await this.agentGenerateImplementation(
-        currentContext,
-        worktreePath,
-        iteration,
-        projectId
-      );
-      await this.writeAgentOutput(implOutputs, worktreePath);
-
-      // Phase C: Commit current state
-      await this.worktreeManager.commitWorktreeChanges(
-        worktreePath,
-        `bead(${beadId.slice(0, 8)}): iteration ${iteration + 1}`
-      );
-
-      // Phase D: Run verification (all test levels + typecheck)
-      const verifyResult = await this.runVerification(worktreePath, currentContext.testRunner);
-
-      if (verifyResult.allPassed) {
-        const filesModified = await this.getModifiedFiles(worktreePath);
-        return { success: true, iterations: iteration + 1, filesModified };
-      }
-
-      // Pass errors back to next iteration
-      currentContext = { ...currentContext, previousErrors: verifyResult.errors };
+      return {
+        success: false,
+        iterations: maxIterations,
+        finalErrors: currentContext.previousErrors,
+      };
+    } finally {
+      this.supervisor?.stop();
     }
-
-    return {
-      success: false,
-      iterations: maxIterations,
-      finalErrors: currentContext.previousErrors,
-    };
   }
 
   /**
@@ -255,7 +269,9 @@ export class AgentRunner {
 
     for (const cmd of commands) {
       try {
-        await execPromise(cmd, { cwd: worktreePath });
+        await execPromise(cmd, { cwd: worktreePath }, (proc) => {
+          this.supervisor?.setKillTarget(proc);
+        });
       } catch (err) {
         const error = err as Error & { stdout?: string; stderr?: string };
         const output = [
