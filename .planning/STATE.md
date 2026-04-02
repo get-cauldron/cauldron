@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 Phase: 30 (Replace OpenAI Provider) — EXECUTING
 Plan: 2 of 3
 Status: Ready to execute
-Last activity: 2026-04-02
+Last activity: 2026-04-02 - Completed quick task 260402-o0w: Add Cousin Eddie persona to interview FSM
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -96,6 +96,12 @@ None yet.
 - Phase 19 needs the exact required FLUX.2 artifact map and integrity strategy for guided acquisition
 - Phase 20 needs a concrete runtime submission and observation contract for the chosen local execution path
 - The runtime bundle must stay subset-only; copying the entire ComfyUI models tree remains out of scope
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Status | Directory |
+|---|-------------|------|--------|--------|-----------|
+| 260402-o0w | Add Cousin Eddie persona to interview FSM | 2026-04-02 | pending | Verified | [260402-o0w-add-cousin-eddie-persona-to-interview-fs](./quick/260402-o0w-add-cousin-eddie-persona-to-interview-fs/) |
 
 ## Session Continuity
 
