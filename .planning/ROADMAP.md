@@ -54,7 +54,7 @@ See `.planning/milestones/v1.1-ROADMAP.md` for full details.
 - [x] **Phase 22: Schema Migrations — Integrity Indexes** - Add uniqueness constraints and composite indexes as pure additive migrations (completed 2026-04-02)
 - [x] **Phase 23: FK Cascade Strategy** - Assign CASCADE or SET NULL per foreign key relationship based on structural vs. audit table classification (completed 2026-04-02)
 - [x] **Phase 24: Concurrency & Performance** - Enforce optimistic locking on bead completion, synchronous usage recording, and N+1 query elimination (completed 2026-04-02)
-- [ ] **Phase 25: Process Reliability & Transactions** - Enforce two-phase timeout kill, transactional holdout failure rollback, and DAGCanvas error boundary
+- [x] **Phase 25: Process Reliability & Transactions** - Enforce two-phase timeout kill, transactional holdout failure rollback, and DAGCanvas error boundary (completed 2026-04-02)
 - [ ] **Phase 26: Auth Middleware** - Wire authenticatedProcedure to all tRPC mutation routes
 - [ ] **Phase 27: Structured Conflict Resolution** - Replace string-scanning heuristic with Zod-schema-validated AI SDK Output.object() extraction
 - [ ] **Phase 28: KEK Rotation Infrastructure** - Two-phase key rotation with versioned KEK table, bulk re-encryption, and append-only audit log
@@ -166,7 +166,7 @@ Plans:
 | 22. Schema Migrations — Integrity Indexes | v1.2 | 1/2 | Complete    | 2026-04-02 |
 | 23. FK Cascade Strategy | v1.2 | 2/2 | Complete    | 2026-04-02 |
 | 24. Concurrency & Performance | v1.2 | 1/2 | Complete    | 2026-04-02 |
-| 25. Process Reliability & Transactions | v1.2 | 1/2 | In Progress|  |
+| 25. Process Reliability & Transactions | v1.2 | 2/2 | Complete   | 2026-04-02 |
 | 26. Auth Middleware | v1.2 | 0/? | Not started | - |
 | 27. Structured Conflict Resolution | v1.2 | 0/? | Not started | - |
 | 28. KEK Rotation Infrastructure | v1.2 | 0/? | Not started | - |
