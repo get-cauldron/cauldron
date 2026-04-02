@@ -92,9 +92,10 @@ v1.0 delivered the complete autonomous builder pipeline. v1.1 added local asset 
 - ✓ Auth middleware on tRPC mutation routes (authenticatedProcedure, dev-mode bypass) — v1.2
 - ✓ Structured merge conflict resolution with Zod-validated generateObject (CONC-05) — v1.2
 
+- ✓ KEK rotation infrastructure with versioned keys, audit trail, dual-key unseal, CLI command (SEC-01) — v1.2
+
 ### Active
 
-- KEK rotation infrastructure with audit trail
 - MCP push notifications via IPC or shared-process architecture (v1.1 tech debt)
 
 ### Deferred
