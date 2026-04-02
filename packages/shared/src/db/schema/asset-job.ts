@@ -21,7 +21,7 @@ export const assetJobStatusEnum = pgEnum('asset_job_status', [
 
 export const assetJobs = pgTable('asset_jobs', {
   id: uuid('id').primaryKey().defaultRandom(),
-  projectId: uuid('project_id').notNull().references(() => projects.id),
+  projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
   status: assetJobStatusEnum('status').notNull().default('pending'),
   priority: integer('priority').notNull().default(0),
   prompt: text('prompt').notNull(),

@@ -18,7 +18,7 @@ export const beadEdgeTypeEnum = pgEnum('bead_edge_type', [
 
 export const beads = pgTable('beads', {
   id: uuid('id').primaryKey().defaultRandom(),
-  seedId: uuid('seed_id').notNull().references(() => seeds.id),
+  seedId: uuid('seed_id').notNull().references(() => seeds.id, { onDelete: 'cascade' }),
   moleculeId: uuid('molecule_id'), // DAG-01: parent molecule for hierarchy; null = top-level bead
   title: text('title').notNull(),
   spec: text('spec').notNull(),
@@ -37,8 +37,8 @@ export const beads = pgTable('beads', {
 
 export const beadEdges = pgTable('bead_edges', {
   id: uuid('id').primaryKey().defaultRandom(),
-  fromBeadId: uuid('from_bead_id').notNull().references(() => beads.id),
-  toBeadId: uuid('to_bead_id').notNull().references(() => beads.id),
+  fromBeadId: uuid('from_bead_id').notNull().references(() => beads.id, { onDelete: 'cascade' }),
+  toBeadId: uuid('to_bead_id').notNull().references(() => beads.id, { onDelete: 'cascade' }),
   edgeType: beadEdgeTypeEnum('edge_type').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 }, (table) => [

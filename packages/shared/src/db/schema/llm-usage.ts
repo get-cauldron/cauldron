@@ -5,9 +5,9 @@ import { seeds } from './seed.js';
 
 export const llmUsage = pgTable('llm_usage', {
   id: uuid('id').primaryKey().defaultRandom(),
-  projectId: uuid('project_id').notNull().references(() => projects.id),
-  beadId: uuid('bead_id').references(() => beads.id),
-  seedId: uuid('seed_id').references(() => seeds.id),
+  projectId: uuid('project_id').references(() => projects.id, { onDelete: 'set null' }),
+  beadId: uuid('bead_id').references(() => beads.id, { onDelete: 'set null' }),
+  seedId: uuid('seed_id').references(() => seeds.id, { onDelete: 'set null' }),
   evolutionCycle: integer('evolution_cycle'),
   stage: text('stage').notNull(),
   model: text('model').notNull(),

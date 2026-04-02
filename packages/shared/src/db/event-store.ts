@@ -95,7 +95,8 @@ export async function appendEvent(
     const [maxSeq] = await db
       .select({ max: sql<number>`COALESCE(MAX(${schema.events.sequenceNumber}), 0)` })
       .from(schema.events)
-      .where(eq(schema.events.projectId, event.projectId));
+      // event.projectId is always provided at insert time; null only after project hard-delete (SET NULL FK)
+      .where(eq(schema.events.projectId, event.projectId!));
 
     const sequenceNumber = (maxSeq?.max ?? 0) + 1;
 

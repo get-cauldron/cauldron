@@ -15,7 +15,7 @@ export const interviewModeEnum = pgEnum('interview_mode', [
 
 export const interviews = pgTable('interviews', {
   id: uuid('id').primaryKey().defaultRandom(),
-  projectId: uuid('project_id').notNull().references(() => projects.id),
+  projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
   status: interviewStatusEnum('status').notNull().default('active'),
   mode: interviewModeEnum('mode').notNull().default('greenfield'),
   // FSM phase: 'gathering' | 'reviewing' | 'approved' | 'crystallized' per D-02

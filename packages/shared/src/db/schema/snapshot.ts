@@ -3,7 +3,7 @@ import { projects } from './project.js';
 
 export const projectSnapshots = pgTable('project_snapshots', {
   id: uuid('id').primaryKey().defaultRandom(),
-  projectId: uuid('project_id').notNull().unique().references(() => projects.id),
+  projectId: uuid('project_id').notNull().unique().references(() => projects.id, { onDelete: 'cascade' }),
   state: jsonb('state').notNull(),
   lastEventSequence: integer('last_event_sequence').notNull(),
   snapshotAt: timestamp('snapshot_at', { withTimezone: true }).notNull().defaultNow(),

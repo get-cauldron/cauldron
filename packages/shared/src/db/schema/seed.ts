@@ -1,4 +1,4 @@
-import { pgTable, pgEnum, uuid, text, timestamp, jsonb, real, integer, uniqueIndex } from 'drizzle-orm/pg-core';
+import { pgTable, pgEnum, uuid, text, timestamp, jsonb, real, integer, uniqueIndex, type AnyPgColumn } from 'drizzle-orm/pg-core';
 import { isNotNull } from 'drizzle-orm';
 import { projects } from './project.js';
 import { interviews } from './interview.js';
@@ -10,8 +10,8 @@ export const seedStatusEnum = pgEnum('seed_status', [
 
 export const seeds = pgTable('seeds', {
   id: uuid('id').primaryKey().defaultRandom(),
-  projectId: uuid('project_id').notNull().references(() => projects.id),
-  parentId: uuid('parent_id'), // D-03: self-referencing FK for evolution lineage (recursive CTE traversal)
+  projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
+  parentId: uuid('parent_id').references((): AnyPgColumn => seeds.id, { onDelete: 'set null' }), // D-03: self-referencing FK for evolution lineage (recursive CTE traversal)
   interviewId: uuid('interview_id').references(() => interviews.id),
   version: integer('version').notNull().default(1),
   status: seedStatusEnum('status').notNull().default('draft'),

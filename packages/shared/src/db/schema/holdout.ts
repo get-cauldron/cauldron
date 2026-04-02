@@ -11,7 +11,7 @@ export const holdoutStatusEnum = pgEnum('holdout_status', [
 
 export const holdoutVault = pgTable('holdout_vault', {
   id: uuid('id').primaryKey().defaultRandom(),
-  seedId: uuid('seed_id').notNull().references(() => seeds.id),
+  seedId: uuid('seed_id').notNull().references(() => seeds.id, { onDelete: 'cascade' }),
   // Encryption columns — nullable until sealed (pending_review/approved rows have no ciphertext)
   ciphertext: text('ciphertext'),      // base64-encoded AES-256-GCM ciphertext
   encryptedDek: text('encrypted_dek'), // compound: base64(dekIv):base64(dekAuthTag):base64(dekCiphertext)

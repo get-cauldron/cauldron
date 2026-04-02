@@ -1,4 +1,5 @@
 import { pgTable, pgEnum, uuid, timestamp, jsonb, integer, unique, index } from 'drizzle-orm/pg-core';
+import { projects } from './project.js';
 
 export const eventTypeEnum = pgEnum('event_type', [
   'interview_started',
@@ -40,7 +41,7 @@ export const eventTypeEnum = pgEnum('event_type', [
 
 export const events = pgTable('events', {
   id: uuid('id').primaryKey().defaultRandom(),
-  projectId: uuid('project_id').notNull(),
+  projectId: uuid('project_id').references(() => projects.id, { onDelete: 'set null' }),
   seedId: uuid('seed_id'),
   beadId: uuid('bead_id'),
   type: eventTypeEnum('type').notNull(),
