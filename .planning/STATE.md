@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Architectural Hardening
 status: executing
-stopped_at: Completed 29-02-PLAN.md
-last_updated: "2026-04-02T23:17:29.069Z"
-last_activity: 2026-04-02 -- Phase 30 execution started
+stopped_at: Completed 30-02-PLAN.md
+last_updated: "2026-04-02T23:32:19.204Z"
+last_activity: 2026-04-02
 progress:
   total_phases: 9
   completed_phases: 8
   total_plans: 17
-  completed_plans: 14
+  completed_plans: 16
   percent: 0
 ---
 
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 ## Current Position
 
 Phase: 30 (Replace OpenAI Provider) — EXECUTING
-Plan: 1 of 3
-Status: Executing Phase 30
-Last activity: 2026-04-02 -- Phase 30 execution started
+Plan: 2 of 3
+Status: Ready to execute
+Last activity: 2026-04-02
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -59,6 +59,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 28-kek-rotation-infrastructure P02 | 204 | 1 tasks | 2 files |
 | Phase 29-mcp-cross-process-ipc P01 | 363 | 2 tasks | 6 files |
 | Phase 29-mcp-cross-process-ipc P02 | 8 | 2 tasks | 5 files |
+| Phase 30-replace-openai-provider P02 | 5 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -79,6 +80,8 @@ Progress: [░░░░░░░░░░] 0%
 - [Phase 29-mcp-cross-process-ipc]: Use psubscribe wildcard pattern cauldron:job-status:* in MCP subscriber -- one connection covers all jobs
 - [Phase 29-mcp-cross-process-ipc]: publishJobStatusChanged called immediately after onJobStatusChanged on every state transition — both in-process callback and cross-process IPC fire together
 - [Phase 29-mcp-cross-process-ipc]: createJobStatusSubscriber called after server.connect() to ensure MCP server is ready for notifications before subscribing
+- [Phase 30-replace-openai-provider]: Mistral-large-latest pricing at 200/600 cents per MToken used in pricing test case
+- [Phase 30-replace-openai-provider]: D-08 enforced in cauldron.config.ts holdout chain — hosted providers only (gemini, mistral, claude)
 
 ### Pending Todos
 
@@ -96,6 +99,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-02T14:55:11.139Z
-Stopped at: Completed 29-02-PLAN.md
+Last session: 2026-04-02T23:32:19.201Z
+Stopped at: Completed 30-02-PLAN.md
 Resume file: None
