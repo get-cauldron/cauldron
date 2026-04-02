@@ -12,6 +12,7 @@ export type {
   TurnResult,
   EarlyCrystallizationWarning,
   PerspectiveActivation,
+  ContrarianFraming,
 } from './types.js';
 
 export {
@@ -32,6 +33,12 @@ export {
 } from './perspectives.js';
 
 export { rankCandidates, RANKER_SYSTEM_PROMPT, serializeTranscript } from './ranker.js';
+
+export {
+  runContrarianAnalysis,
+  CONTRARIAN_SYSTEM_PROMPT,
+  contrarianOutputSchema,
+} from './contrarian.js';
 
 export { synthesizeFromTranscript, seedSummarySchema, SYNTHESIZER_SYSTEM_PROMPT } from './synthesizer.js';
 export { crystallizeSeed, ImmutableSeedError, getSeedLineage } from './crystallizer.js';

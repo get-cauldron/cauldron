@@ -85,3 +85,12 @@ export interface PerspectiveActivation {
   name: PerspectiveName;
   activeWhen: (scores: AmbiguityScores | null, turnCount: number) => boolean;
 }
+
+// Cousin Eddie: contrarian analysis framing
+// NOTE: ContrarianFraming is NOT a PerspectiveName — it is a separate analytical layer
+// that feeds INTO the primary interviewer as context, not a perspective in the panel.
+export interface ContrarianFraming {
+  hypothesis: string;    // The user statement reframed as a testable hypothesis
+  alternative: string;   // An orthogonal alternative framing from a perpendicular dimension
+  reasoning: string;     // Why this alternative is worth considering
+}
