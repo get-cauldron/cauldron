@@ -6,7 +6,9 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": "./dist/index.js",
-  "files": ["dist/"],
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
@@ -20,6 +22,7 @@
     "dotenv": "^16.4.0",
     "drizzle-orm": "^0.45.1",
     "inngest": "^4.1.0",
+    "ioredis": "^5.10.1",
     "pino": "^10.3.1",
     "postgres": "^3.4.8",
     "zod": "^4.3.6"
