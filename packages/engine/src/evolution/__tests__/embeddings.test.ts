@@ -4,8 +4,8 @@ vi.mock('ai', () => ({
   embed: vi.fn(),
 }));
 
-vi.mock('@ai-sdk/openai', () => ({
-  openai: {
+vi.mock('@ai-sdk/mistral', () => ({
+  mistral: {
     embedding: vi.fn(() => 'mock-embedding-model'),
   },
 }));

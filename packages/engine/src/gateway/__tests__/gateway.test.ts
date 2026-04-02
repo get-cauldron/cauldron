@@ -18,8 +18,11 @@ vi.mock('ai', () => ({
 vi.mock('@ai-sdk/anthropic', () => ({
   anthropic: (modelId: string) => ({ provider: 'anthropic', modelId }),
 }));
-vi.mock('@ai-sdk/openai', () => ({
-  openai: (modelId: string) => ({ provider: 'openai', modelId }),
+vi.mock('@ai-sdk/mistral', () => ({
+  mistral: (modelId: string) => ({ provider: 'mistral', modelId }),
+}));
+vi.mock('ai-sdk-ollama', () => ({
+  ollama: (modelId: string) => ({ provider: 'ollama', modelId }),
 }));
 vi.mock('@ai-sdk/google', () => ({
   google: (modelId: string) => ({ provider: 'google', modelId }),
@@ -48,13 +51,13 @@ function makeBudgetDb(currentCents: number) {
 
 const testConfig: GatewayConfig = {
   models: {
-    interview: ['claude-sonnet-4-6', 'gpt-4o'],
-    holdout: ['gpt-4o', 'gemini-2.5-pro'],
+    interview: ['claude-sonnet-4-6', 'mistral-large-latest'],
+    holdout: ['mistral-large-latest', 'gemini-2.5-pro'],
     implementation: ['claude-sonnet-4-6'],
     evaluation: ['gemini-2.5-pro'],
-    decomposition: ['claude-sonnet-4-6', 'gpt-4.1'],
-    context_assembly: ['gpt-4o-mini', 'gpt-4o'],
-    conflict_resolution: ['claude-sonnet-4-6', 'gpt-4o'],
+    decomposition: ['claude-sonnet-4-6', 'mistral-large-latest'],
+    context_assembly: ['mistral-small-latest', 'mistral-large-latest'],
+    conflict_resolution: ['claude-sonnet-4-6', 'mistral-large-latest'],
   },
   budget: { defaultLimitCents: 1000 },
 };

@@ -2,7 +2,10 @@ import type { LanguageModelUsage } from 'ai';
 import type { z } from 'zod';
 
 export type PipelineStage = 'interview' | 'holdout' | 'implementation' | 'evaluation' | 'decomposition' | 'context_assembly' | 'conflict_resolution';
-export type ProviderFamily = 'anthropic' | 'openai' | 'google';
+export type ProviderFamily = 'anthropic' | 'mistral' | 'ollama' | 'google';
+
+export type CapabilityLevel = 'strong' | 'moderate' | 'weak';
+export type CapabilityDimension = 'coding' | 'reasoning' | 'instruction-following' | 'creativity' | 'speed';
 
 export interface GatewayCallOptions {
   projectId: string;

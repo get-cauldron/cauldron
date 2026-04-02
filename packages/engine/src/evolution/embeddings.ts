@@ -1,10 +1,10 @@
 import { embed } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { mistral } from '@ai-sdk/mistral';
 import { createHash } from 'node:crypto';
 
 export async function computeEmbedding(text: string): Promise<number[]> {
   const { embedding } = await embed({
-    model: openai.embedding('text-embedding-3-large'),
+    model: mistral.embedding('mistral-embed'),
     value: text,
   });
   return embedding;

@@ -20,9 +20,10 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.64",
     "@ai-sdk/google": "^3.0.53",
-    "@ai-sdk/openai": "^3.0.48",
+    "@ai-sdk/mistral": "^3.0.28",
     "@get-cauldron/shared": "workspace:*",
     "ai": "^6.0.138",
+    "ai-sdk-ollama": "^3.8.2",
     "drizzle-orm": "^0.45.1",
     "inngest": "^4.1.0",
     "ioredis": "^5.10.1",
