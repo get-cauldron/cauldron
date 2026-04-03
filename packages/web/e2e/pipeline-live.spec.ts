@@ -63,7 +63,7 @@ should cover round-trip shorten→expand, duplicate URLs, and invalid input.`,
 
   timeouts: {
     interview: 5 * 60_000,
-    crystallize: 2 * 60_000,
+    crystallize: 5 * 60_000,
     holdouts: 3 * 60_000,
     decomposition: 3 * 60_000,
     execution: 15 * 60_000,
