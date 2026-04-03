@@ -189,12 +189,23 @@ test.describe('Live Pipeline E2E', () => {
       // or we confirm the interview is already active (gathering state visible).
       console.log('[pipeline-live] Waiting for interview to become active...');
 
+      let readinessAttempts = 0;
       await expect(async () => {
+        readinessAttempts++;
         // Interview is truly ready when ALL of these hold:
         // 1. "Interview not started" text is gone (auto-start completed)
         // 2. "gathering" phase is visible in the progress indicator
         // 3. Send button is enabled (interview exists in DB, input is wired)
         // 4. No Next.js compilation in progress
+        //
+        // In dev mode, HMR can leave the page in a bad state. If we've been
+        // waiting a while, reload the page to re-trigger the auto-start effect.
+        if (readinessAttempts > 0 && readinessAttempts % 10 === 0) {
+          console.log(`[pipeline-live] Readiness stalled after ${readinessAttempts} attempts — reloading page...`);
+          await page.reload();
+          await page.waitForTimeout(3000);
+        }
+
         const notStarted = page.getByText('Interview not started');
         const isNotStartedVisible = await notStarted.isVisible().catch(() => false);
         if (isNotStartedVisible) {
