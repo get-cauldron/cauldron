@@ -60,6 +60,7 @@ export default function InterviewPage() {
     Record<string, HoldoutStatus>
   >({});
   const [seedId, setSeedId] = React.useState<string | null>(null);
+  const [crystallizeError, setCrystallizeError] = React.useState<string | null>(null);
 
   const holdoutsQuery = useQuery({
     ...trpc.interview.getHoldouts.queryOptions({ seedId: seedId ?? '' }),
@@ -161,21 +162,29 @@ export default function InterviewPage() {
 
   async function handleApproveSummary() {
     if (!summaryData?.summary) return;
+    setCrystallizeError(null);
     const s = summaryData.summary;
-    const result = await approveSummaryMutation.mutateAsync({
-      projectId,
-      summary: {
-        goal: s.goal,
-        constraints: s.constraints,
-        acceptanceCriteria: s.acceptanceCriteria,
-        ontologySchema: (s.ontologySchema as { entities: Array<{ name: string; attributes: string[]; relations: Array<{ to: string; type: string }> }> }) ?? { entities: [] },
-        evaluationPrinciples: s.evaluationPrinciples ?? [],
-        exitConditions: (s.exitConditions as Record<string, unknown> | Array<{ condition: string; description: string }>) ?? {},
-      },
-    });
-    setSeedId(result.seedId);
-    await transcriptQuery.refetch();
-    await summaryQuery.refetch();
+    try {
+      const result = await approveSummaryMutation.mutateAsync({
+        projectId,
+        summary: {
+          goal: s.goal,
+          constraints: s.constraints,
+          acceptanceCriteria: s.acceptanceCriteria,
+          ontologySchema: (s.ontologySchema as { entities: Array<{ name: string; attributes: string[]; relations: Array<{ to: string; type: string }> }> }) ?? { entities: [] },
+          evaluationPrinciples: s.evaluationPrinciples ?? [],
+          exitConditions: (s.exitConditions as Record<string, unknown> | Array<{ condition: string; description: string }>) ?? {},
+        },
+      });
+      setSeedId(result.seedId);
+      await transcriptQuery.refetch();
+      await summaryQuery.refetch();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Crystallization failed';
+      setCrystallizeError(message);
+      // Refetch to get current state (phase may have reverted to reviewing)
+      await transcriptQuery.refetch();
+    }
   }
 
   async function handleRejectSummary() {
@@ -333,6 +342,25 @@ export default function InterviewPage() {
             {/* Seed approval card — inline in chat when reviewing */}
             {showSeedApproval && summaryData?.summary && (
               <div style={{ marginTop: 16 }}>
+                {crystallizeError && (
+                  <div
+                    role="alert"
+                    style={{
+                      backgroundColor: '#1a1012',
+                      border: '1px solid #4a2020',
+                      borderRadius: 8,
+                      padding: '12px 16px',
+                      marginBottom: 12,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                    }}
+                  >
+                    <p style={{ fontSize: 13, color: '#f87171', margin: 0 }}>
+                      Crystallization failed: {crystallizeError}. Please try again.
+                    </p>
+                  </div>
+                )}
                 <SeedApprovalCard
                   summary={summaryData.summary as SeedSummaryData}
                   onApprove={handleApproveSummary}

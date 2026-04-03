@@ -399,6 +399,9 @@ test.describe('Live Pipeline E2E', () => {
         timeout: LIVE_CONFIG.timeouts.crystallize,
       });
 
+      // Wait for any Next.js compilation to finish before interacting
+      await expect(page.getByText('Compiling')).toBeHidden({ timeout: 60_000 });
+
       // Click "Crystallize Seed" button in the SeedApprovalCard
       const crystallizeButton = page.getByRole('button', { name: /crystallize seed/i });
       await expect(crystallizeButton).toBeVisible({ timeout: 60_000 });
@@ -406,10 +409,26 @@ test.describe('Live Pipeline E2E', () => {
 
       console.log('[pipeline-live] Seed crystallized, waiting for holdout review...');
 
-      // Wait for phase to transition — holdout cards should appear
-      await expect(
-        page.getByText(/holdout test review/i)
-      ).toBeVisible({ timeout: LIVE_CONFIG.timeouts.crystallize });
+      // Check for crystallization error — if the mutation failed, the error banner appears
+      // and we should retry clicking the button
+      const errorBanner = page.locator('[role="alert"]').filter({ hasText: /crystallization failed/i });
+      const holdoutReview = page.getByText(/holdout test review/i);
+
+      // Poll for either holdout review (success) or error banner (failure with retry)
+      await expect(async () => {
+        if (await holdoutReview.isVisible().catch(() => false)) return;
+        if (await errorBanner.isVisible().catch(() => false)) {
+          console.log('[pipeline-live] Crystallization failed, retrying...');
+          // Wait for any compilation to finish before retry
+          await expect(page.getByText('Compiling')).toBeHidden({ timeout: 30_000 });
+          const retryButton = page.getByRole('button', { name: /crystallize seed/i });
+          if (await retryButton.isVisible().catch(() => false)) {
+            await retryButton.click();
+          }
+          throw new Error('Retrying crystallization');
+        }
+        throw new Error('Waiting for holdout review or error');
+      }).toPass({ timeout: LIVE_CONFIG.timeouts.crystallize });
 
       console.log('[pipeline-live] Seed approved and crystallized');
     } catch (err) {

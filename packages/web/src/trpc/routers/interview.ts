@@ -393,20 +393,31 @@ export const interviewRouter = router({
 
       // draftScenarios contains an array of individual test scenarios
       // Each entry in holdout_vault is one scenario set; we flatten them for review
+      // HoldoutScenario fields: id, title, given, when, then, category, acceptanceCriterionRef, severity
       const scenarios = vaultEntries.flatMap((entry) => {
         const drafts = (entry.draftScenarios as Array<{
           id?: string;
-          name?: string;
-          description?: string;
-          testCode?: string;
+          title?: string;
+          given?: string;
+          when?: string;
+          then?: string;
+          category?: string;
+          acceptanceCriterionRef?: string;
+          severity?: string;
         }> | null) ?? [];
 
         return drafts.map((scenario, idx) => ({
           id: `${entry.id}:${idx}`,
           holdoutVaultId: entry.id,
-          name: scenario.name ?? `Scenario ${idx + 1}`,
-          description: scenario.description ?? '',
-          testCode: scenario.testCode ?? '',
+          name: scenario.title ?? `Scenario ${idx + 1}`,
+          description: [
+            scenario.given ? `Given: ${scenario.given}` : '',
+            scenario.when ? `When: ${scenario.when}` : '',
+            scenario.then ? `Then: ${scenario.then}` : '',
+          ].filter(Boolean).join('\n'),
+          testCode: '',
+          category: scenario.category ?? '',
+          severity: scenario.severity ?? '',
           status: entry.status as 'pending_review' | 'approved' | 'sealed' | 'unsealed' | 'evaluated',
         }));
       });
