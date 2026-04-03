@@ -163,7 +163,24 @@ test.describe('Live Pipeline E2E', () => {
   test('Stage 2: Complete interview with simulated user', async ({ page }) => {
     try {
       expect(projectId).toBeTruthy();
-      await page.goto(ROUTES.interview(projectId));
+
+      // Warm up the interview page — Next.js dev mode can 500 on first load
+      // while routes are still compiling. Retry until the page loads cleanly.
+      await expect(async () => {
+        await page.goto(ROUTES.interview(projectId), { waitUntil: 'networkidle' });
+        // Check for server errors that indicate Next.js isn't ready
+        const hasError = await page.getByText(/500|Internal Server Error|Unexpected end of JSON/i)
+          .isVisible({ timeout: 2000 }).catch(() => false);
+        if (hasError) {
+          console.log('[pipeline-live] Interview page returned error — Next.js warming up, retrying...');
+          await page.waitForTimeout(3000);
+          throw new Error('Page not ready');
+        }
+        // Verify the AMBIGUITY SCORE heading rendered (confirms React hydrated)
+        await expect(page.getByText('AMBIGUITY SCORE')).toBeVisible({ timeout: 10_000 });
+      }).toPass({ timeout: 60_000, intervals: [5_000] });
+
+      console.log('[pipeline-live] Interview page loaded cleanly');
 
       // Capture browser console errors for debugging
       page.on('console', (msg) => {
@@ -174,14 +191,6 @@ test.describe('Live Pipeline E2E', () => {
       page.on('pageerror', (err) => {
         console.log(`[browser:pageerror] ${err.message}`);
       });
-
-      // Wait for Next.js to finish compiling before interacting
-      console.log('[pipeline-live] Waiting for page to finish compiling...');
-      await expect(page.getByText('Compiling')).toBeHidden({ timeout: 60_000 });
-
-      // Wait for the page to fully load — the AMBIGUITY SCORE heading confirms render
-      console.log('[pipeline-live] Waiting for page to fully render...');
-      await expect(page.getByText('AMBIGUITY SCORE')).toBeVisible({ timeout: 30_000 });
 
       // Wait for the auto-start to create the interview.
       // The auto-start may complete before we can observe "Interview not started",
