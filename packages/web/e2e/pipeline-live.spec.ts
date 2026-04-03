@@ -236,15 +236,15 @@ test.describe('Live Pipeline E2E', () => {
           throw new Error('Gathering not visible');
         }
 
-        // Verify Send button is enabled — this confirms the interview is fully wired
+        // Verify Send button exists (it's disabled when empty — that's correct)
         const sendBtn = page.getByRole('button', { name: /send answer/i });
-        const isSendEnabled = await sendBtn.isEnabled().catch(() => false);
-        if (!isSendEnabled) {
-          console.log('[pipeline-live] Send button not yet enabled — interview may not be ready');
-          throw new Error('Send button disabled');
+        const isSendVisible = await sendBtn.isVisible().catch(() => false);
+        if (!isSendVisible) {
+          console.log('[pipeline-live] Send button not visible — interview input not rendered');
+          throw new Error('Send button not visible');
         }
 
-        console.log('[pipeline-live] gathering visible: true, send enabled: true');
+        console.log('[pipeline-live] gathering visible: true, send button visible: true');
       }).toPass({ timeout: 90_000, intervals: [2_000] });
 
       console.log('[pipeline-live] Interview active. Sending first message...');
