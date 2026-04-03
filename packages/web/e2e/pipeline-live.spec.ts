@@ -190,24 +190,47 @@ test.describe('Live Pipeline E2E', () => {
       console.log('[pipeline-live] Waiting for interview to become active...');
 
       await expect(async () => {
-        // Interview is active when: "Interview not started" is gone AND progress shows a phase
+        // Interview is truly ready when ALL of these hold:
+        // 1. "Interview not started" text is gone (auto-start completed)
+        // 2. "gathering" phase is visible in the progress indicator
+        // 3. Send button is enabled (interview exists in DB, input is wired)
+        // 4. No Next.js compilation in progress
         const notStarted = page.getByText('Interview not started');
         const isNotStartedVisible = await notStarted.isVisible().catch(() => false);
         if (isNotStartedVisible) {
           console.log('[pipeline-live] Saw "Interview not started" — waiting for auto-start...');
           throw new Error('Interview not yet started');
         }
-        // Confirm we're in an active state (gathering/reviewing/approved)
+
+        const compiling = page.getByText('Compiling');
+        const isCompiling = await compiling.isVisible().catch(() => false);
+        if (isCompiling) {
+          console.log('[pipeline-live] Next.js still compiling — waiting...');
+          throw new Error('Still compiling');
+        }
+
         const gathering = page.getByText('gathering');
         const isGathering = await gathering.isVisible().catch(() => false);
-        console.log(`[pipeline-live] gathering visible: ${isGathering}`);
-        expect(isGathering).toBe(true);
-      }).toPass({ timeout: 60_000, intervals: [2_000] });
+        if (!isGathering) {
+          console.log('[pipeline-live] gathering not visible yet');
+          throw new Error('Gathering not visible');
+        }
+
+        // Verify Send button is enabled — this confirms the interview is fully wired
+        const sendBtn = page.getByRole('button', { name: /send answer/i });
+        const isSendEnabled = await sendBtn.isEnabled().catch(() => false);
+        if (!isSendEnabled) {
+          console.log('[pipeline-live] Send button not yet enabled — interview may not be ready');
+          throw new Error('Send button disabled');
+        }
+
+        console.log('[pipeline-live] gathering visible: true, send enabled: true');
+      }).toPass({ timeout: 90_000, intervals: [2_000] });
 
       console.log('[pipeline-live] Interview active. Sending first message...');
 
-      // Stabilization pause — auto-start may still be completing in dev mode
-      await page.waitForTimeout(3000);
+      // Stabilization pause — let React settle after all conditions passed
+      await page.waitForTimeout(2000);
 
       // Send the first message. This is the most fragile step due to dev mode races:
       // - React controlled inputs need native value setter
