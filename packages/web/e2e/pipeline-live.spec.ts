@@ -166,19 +166,25 @@ test.describe('Live Pipeline E2E', () => {
 
       // Warm up the interview page — Next.js dev mode can 500 on first load
       // while routes are still compiling. Retry until the page loads cleanly.
+      // Don't use networkidle — HMR websockets keep network busy indefinitely.
+      await page.goto(ROUTES.interview(projectId));
+
+      // Wait for Next.js compilation to finish (first load from cleared cache is slow)
+      console.log('[pipeline-live] Waiting for page compilation...');
+      await expect(page.getByText('Compiling')).toBeHidden({ timeout: 120_000 });
+
+      // If the page shows a server error, reload and wait again
       await expect(async () => {
-        await page.goto(ROUTES.interview(projectId), { waitUntil: 'networkidle' });
-        // Check for server errors that indicate Next.js isn't ready
         const hasError = await page.getByText(/500|Internal Server Error|Unexpected end of JSON/i)
           .isVisible({ timeout: 2000 }).catch(() => false);
         if (hasError) {
-          console.log('[pipeline-live] Interview page returned error — Next.js warming up, retrying...');
-          await page.waitForTimeout(3000);
+          console.log('[pipeline-live] Interview page returned error — reloading...');
+          await page.reload();
+          await page.waitForTimeout(5000);
           throw new Error('Page not ready');
         }
-        // Verify the AMBIGUITY SCORE heading rendered (confirms React hydrated)
-        await expect(page.getByText('AMBIGUITY SCORE')).toBeVisible({ timeout: 10_000 });
-      }).toPass({ timeout: 60_000, intervals: [5_000] });
+        await expect(page.getByText('AMBIGUITY SCORE')).toBeVisible({ timeout: 15_000 });
+      }).toPass({ timeout: 90_000, intervals: [10_000] });
 
       console.log('[pipeline-live] Interview page loaded cleanly');
 
