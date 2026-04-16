@@ -27,6 +27,150 @@ importers:
         specifier: ^4.1.0
         version: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@25.6.0))
 
+  packages/agent-core:
+    dependencies:
+      '@get-cauldron/types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
+      '@vitest/coverage-v8':
+        specifier: ^4.1.0
+        version: 4.1.4(vitest@4.1.4)
+      typescript:
+        specifier: ^6.0.0
+        version: 6.0.2
+      vitest:
+        specifier: ^4.1.0
+        version: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@25.6.0))
+
+  packages/ai:
+    dependencies:
+      '@get-cauldron/types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
+      '@vitest/coverage-v8':
+        specifier: ^4.1.0
+        version: 4.1.4(vitest@4.1.4)
+      typescript:
+        specifier: ^6.0.0
+        version: 6.0.2
+      vitest:
+        specifier: ^4.1.0
+        version: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@25.6.0))
+
+  packages/mcp-server:
+    devDependencies:
+      '@vitest/coverage-v8':
+        specifier: ^4.1.0
+        version: 4.1.4(vitest@4.1.4)
+      typescript:
+        specifier: ^6.0.0
+        version: 6.0.2
+      vitest:
+        specifier: ^4.1.0
+        version: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@25.6.0))
+
+  packages/native:
+    devDependencies:
+      '@vitest/coverage-v8':
+        specifier: ^4.1.0
+        version: 4.1.4(vitest@4.1.4)
+      typescript:
+        specifier: ^6.0.0
+        version: 6.0.2
+      vitest:
+        specifier: ^4.1.0
+        version: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@25.6.0))
+
+  packages/session:
+    dependencies:
+      '@get-cauldron/agent-core':
+        specifier: workspace:*
+        version: link:../agent-core
+      '@get-cauldron/ai':
+        specifier: workspace:*
+        version: link:../ai
+      '@get-cauldron/tools':
+        specifier: workspace:*
+        version: link:../tools
+      '@get-cauldron/workflow':
+        specifier: workspace:*
+        version: link:../workflow
+    devDependencies:
+      '@vitest/coverage-v8':
+        specifier: ^4.1.0
+        version: 4.1.4(vitest@4.1.4)
+      typescript:
+        specifier: ^6.0.0
+        version: 6.0.2
+      vitest:
+        specifier: ^4.1.0
+        version: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@25.6.0))
+
+  packages/tools:
+    dependencies:
+      '@get-cauldron/agent-core':
+        specifier: workspace:*
+        version: link:../agent-core
+      '@get-cauldron/native':
+        specifier: workspace:*
+        version: link:../native
+    devDependencies:
+      '@vitest/coverage-v8':
+        specifier: ^4.1.0
+        version: 4.1.4(vitest@4.1.4)
+      typescript:
+        specifier: ^6.0.0
+        version: 6.0.2
+      vitest:
+        specifier: ^4.1.0
+        version: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@25.6.0))
+
+  packages/tui:
+    dependencies:
+      '@get-cauldron/session':
+        specifier: workspace:*
+        version: link:../session
+    devDependencies:
+      '@vitest/coverage-v8':
+        specifier: ^4.1.0
+        version: 4.1.4(vitest@4.1.4)
+      typescript:
+        specifier: ^6.0.0
+        version: 6.0.2
+      vitest:
+        specifier: ^4.1.0
+        version: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@25.6.0))
+
+  packages/types:
+    devDependencies:
+      '@vitest/coverage-v8':
+        specifier: ^4.1.0
+        version: 4.1.4(vitest@4.1.4)
+      typescript:
+        specifier: ^6.0.0
+        version: 6.0.2
+      vitest:
+        specifier: ^4.1.0
+        version: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@25.6.0))
+
+  packages/workflow:
+    dependencies:
+      '@get-cauldron/agent-core':
+        specifier: workspace:*
+        version: link:../agent-core
+    devDependencies:
+      '@vitest/coverage-v8':
+        specifier: ^4.1.0
+        version: 4.1.4(vitest@4.1.4)
+      typescript:
+        specifier: ^6.0.0
+        version: 6.0.2
+      vitest:
+        specifier: ^4.1.0
+        version: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(vite@8.0.8(@types/node@25.6.0))
+
 packages:
 
   '@babel/helper-string-parser@7.27.1':
