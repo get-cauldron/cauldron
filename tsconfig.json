@@ -1,0 +1,14 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/types" },
+    { "path": "packages/native" },
+    { "path": "packages/ai" },
+    { "path": "packages/agent-core" },
+    { "path": "packages/tools" },
+    { "path": "packages/workflow" },
+    { "path": "packages/session" },
+    { "path": "packages/tui" },
+    { "path": "packages/mcp-server" }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "cauldron",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.33.0",
+  "engines": { "node": ">=22.0.0" },
+  "scripts": {
+    "build": "turbo build",
+    "test": "turbo test",
+    "lint": "turbo lint",
+    "typecheck": "tsc --build"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@vitest/coverage-v8": "^4.1.0",
+    "dependency-cruiser": "^17.3.0",
+    "turbo": "^2.9.0",
+    "typescript": "^6.0.0",
+    "vitest": "^4.1.0"
+  }
+}
